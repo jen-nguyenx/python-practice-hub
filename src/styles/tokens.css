@@ -1,0 +1,93 @@
+/* PyLadder design tokens. Light on :root; dark via OS preference (unless data-theme="light") or data-theme="dark".
+   Accent colours come from Python's logo: blue = where you are / interactive, yellow = hints only.
+   Green and red mean pass and fail only. No gradients, no purple (hue 250-320 banned). */
+:root {
+  color-scheme: light;
+  --bg: #f4f6f8;
+  --bg-inset: #eceff3;
+  --surface: #ffffff;
+  --surface-2: #f7f8fa;
+  --surface-3: #e2e7ed;
+  --border: #d5dbe2;
+  --border-strong: #b9c1cb;
+  --border-control: #7d8794;
+  --text: #14181d;
+  --text-muted: #4a5460;
+  --text-faint: #5b6571;
+  --accent: #2c64a3;
+  --accent-hover: #245488;
+  --accent-soft: rgba(44, 100, 163, 0.09);
+  --accent-line: rgba(44, 100, 163, 0.35);
+  --on-accent: #ffffff;
+  --hint: #825c00;
+  --hint-fill: #fff1bf;
+  --hint-line: #e8c96a;
+  --ok: #17753f;
+  --ok-fill: #e2f3e8;
+  --ok-line: #9fd2b1;
+  --bad: #b8322a;
+  --bad-fill: #fbe8e6;
+  --bad-line: #eeb0aa;
+  --easy: #17753f;
+  --easy-fill: #e2f3e8;
+  --medium: #825c00;
+  --medium-fill: #fff1bf;
+  --hard: #a8420c;
+  --hard-fill: #fcebdf;
+  --focus: #2c64a3;
+  --shadow-overlay: 0 8px 24px rgba(16, 24, 40, 0.14);
+  --editor-bg: #ffffff;
+  --editor-line: #f4f6f8;
+  --editor-selection: #d6e8ff;
+  --syn-keyword: #0b50a8;
+  --syn-string: #a31515;
+  --syn-number: #0b6b43;
+  --syn-comment: #4f6f3a;
+  --syn-function: #74501c;
+  --syn-builtin: #1f6f7a;
+  --heat-0: #eceff3; --heat-1: #d3eedb; --heat-2: #a7dcb6; --heat-3: #5fb57c; --heat-4: #17753f;
+  --heat-text-0: #14181d; --heat-text-1: #14181d; --heat-text-2: #14181d; --heat-text-3: #0b1a10; --heat-text-4: #ffffff;
+
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --fs-11: 0.6875rem; --fs-12: 0.75rem; --fs-13: 0.8125rem; --fs-14: 0.875rem; --fs-16: 1rem; --fs-20: 1.25rem; --fs-28: 1.75rem;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px; --sp-7: 48px;
+  --r-1: 4px; --r-2: 6px; --r-3: 8px;
+  --dur: 140ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0d1117; --bg-inset: #0a0d12; --surface: #141a21; --surface-2: #1a2129; --surface-3: #222a34;
+    --border: #2a333e; --border-strong: #3a4552; --border-control: #66717e;
+    --text: #e3e8ee; --text-muted: #9ba6b3; --text-faint: #8b96a3;
+    --accent: #6aa6e6; --accent-hover: #8bbaec; --accent-soft: rgba(106, 166, 230, 0.12); --accent-line: rgba(106, 166, 230, 0.4); --on-accent: #0d1117;
+    --hint: #f2c230; --hint-fill: #2e2608; --hint-line: #6b5714;
+    --ok: #4fc488; --ok-fill: #12291c; --ok-line: #2b6b49;
+    --bad: #f07a6e; --bad-fill: #35191a; --bad-line: #7a3a35;
+    --easy: #4fc488; --easy-fill: #12291c; --medium: #f2c230; --medium-fill: #2e2608; --hard: #f59a5b; --hard-fill: #352113;
+    --focus: #6aa6e6; --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --editor-bg: #0d1117; --editor-line: #141a21; --editor-selection: #1d3b5a;
+    --syn-keyword: #569cd6; --syn-string: #ce9178; --syn-number: #b5cea8; --syn-comment: #7fa56b; --syn-function: #dcdcaa; --syn-builtin: #4ec9b0;
+    --heat-0: #1a2129; --heat-1: #173a2a; --heat-2: #1f5a3a; --heat-3: #2f8a53; --heat-4: #4fc488;
+    --heat-text-0: #e3e8ee; --heat-text-1: #e3e8ee; --heat-text-2: #e3e8ee; --heat-text-3: #ffffff; --heat-text-4: #0d1117;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d1117; --bg-inset: #0a0d12; --surface: #141a21; --surface-2: #1a2129; --surface-3: #222a34;
+  --border: #2a333e; --border-strong: #3a4552; --border-control: #66717e;
+  --text: #e3e8ee; --text-muted: #9ba6b3; --text-faint: #8b96a3;
+  --accent: #6aa6e6; --accent-hover: #8bbaec; --accent-soft: rgba(106, 166, 230, 0.12); --accent-line: rgba(106, 166, 230, 0.4); --on-accent: #0d1117;
+  --hint: #f2c230; --hint-fill: #2e2608; --hint-line: #6b5714;
+  --ok: #4fc488; --ok-fill: #12291c; --ok-line: #2b6b49;
+  --bad: #f07a6e; --bad-fill: #35191a; --bad-line: #7a3a35;
+  --easy: #4fc488; --easy-fill: #12291c; --medium: #f2c230; --medium-fill: #2e2608; --hard: #f59a5b; --hard-fill: #352113;
+  --focus: #6aa6e6; --shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --editor-bg: #0d1117; --editor-line: #141a21; --editor-selection: #1d3b5a;
+  --syn-keyword: #569cd6; --syn-string: #ce9178; --syn-number: #b5cea8; --syn-comment: #7fa56b; --syn-function: #dcdcaa; --syn-builtin: #4ec9b0;
+  --heat-0: #1a2129; --heat-1: #173a2a; --heat-2: #1f5a3a; --heat-3: #2f8a53; --heat-4: #4fc488;
+  --heat-text-0: #e3e8ee; --heat-text-1: #e3e8ee; --heat-text-2: #e3e8ee; --heat-text-3: #ffffff; --heat-text-4: #0d1117;
+}

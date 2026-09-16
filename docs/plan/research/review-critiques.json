@@ -1,0 +1,252 @@
+[
+ {
+  "verdict": "The plan covers almost everything the user asked for. Topic map, lock rule, session and mistake logging, varied formats, VS Code-like editor, dark and light themes, answers, hints, difficulty tags, reports and patterns are all specified, often in more depth than needed. The real gaps are elsewhere: (1) the default unlock rule adds a \"submit one question\" condition, but the plan calls it the user's literal wording; (2) the plan treats an ambiguous topic order as settled; (3) a free coding space is pushed to an opt-in extra; (4) the size and jargon of the plan work against \"students who just started learning python\"; (5) the schedule ignores that it is already about week 8 of UWA Semester 2 2026. v1.0 lands near the final exam, and topics 1-4 cover material the student has already been taught. There are also smaller internal problems. Solution code is optional even for code questions. Paper mode's \"half of what they would lose in practice mode\" refers to a penalty the plan removed. The timeline figures differ between §1 (14/17 days) and §9 (14.5/16.5 days). The pinned versions (Vite 8.3.0, TS 7.0.2, Vitest 5.0.1, Pyodide 314.0.7, Node 26) were not checked here and should be confirmed in M1. Before M1 starts, the user should explicitly approve the plan and the topic order.",
+  "gaps": [
+   {
+    "requirement": "\"make a plan first before implemented\"",
+    "problem": "The plan labels itself \"definitive plan, ready for milestone 1\". The first user checkpoint is at the end of M2, after about 3 days of build. There is no explicit gate asking the user to approve the plan before any code is written.",
+    "fix": "Add a Checkpoint 0 before M1: the user approves the topic order, unlock default, scope (MVP vs v1.0) and timeline. Change the status line to \"awaiting approval\"."
+   },
+   {
+    "requirement": "\"the topics are locked unless the previous one is opened\"",
+    "problem": "Contradiction. The default `attempt` mode needs the previous topic opened AND one question submitted, yet §2 and risk #4 call this \"the user's literal wording\". The literal wording is simply \"opened\". Topic 1's always-open state is also never stated.",
+    "fix": "Add an `opened` mode (unlock when a `topic_open` event exists for topic N) and make it the default. Keep `attempt`, `checkpoint` and `mastery` as options. Be honest in the plan: the literal rule lets a student click through every topic, so recommend `attempt` at Checkpoint 0 as a choice for the user. State that topic 1 is always open."
+   },
+   {
+    "requirement": "\"the topic should go from easier like if else to harder like function and for loop\"",
+    "problem": "The plan reads this as decisions, then for loops, then functions, and calls it \"the user's request\". The user wrote \"function and for loop\", which could equally mean functions before for loops. The plan also adds a Variables topic before if/else even though the user named if/else as the easy starting point. Both are unconfirmed interpretations. The chosen order also forces `def` scaffolding into topics 1-3.",
+    "fix": "List the two readings side by side at Checkpoint 0: (A) if/else → for → functions, or (B) if/else → functions → for. Say that Variables is an added warm-up topic 0/1 and can be merged into if/else. Since the order lives in topics.ts, either choice is a data change. Record the user's answer in topics.ts and the topic 2 card note."
+   },
+   {
+    "requirement": "\"make sure there is a simulated coding space where the student can type code and it feels like in vscode\"",
+    "problem": "Weak. The only place to type code is inside a question's workbench. A free coding space (Playground or REPL) appears in routes as an \"extra\" and is ranked #3 in §11, after v1.0. A beginner who wants to just try code has nowhere to do it in the MVP.",
+    "fix": "Move a basic Playground into M4: a Monaco editor with multiple scratch files saved in IndexedDB, Run, Terminal with input replay, the Problems panel and the Explain card. Leave only step-through as the §11 extra. Add \"Open in Playground\" on every code snippet."
+   },
+   {
+    "requirement": "\"aimed primarily at students, who just started learning python\"",
+    "problem": "Weak. The UI assumes a VS Code power user: activity bar, command palette, quick open, 6 panel tabs, chorded shortcuts, `.pz`/`.table` file names. Internal words like L4, credit, mastery, ladder rung, channel and hint dependence leak into the UI and reports. There is no first-run onboarding and no beginner-friendly default layout. The report has 10 dense sections.",
+    "fix": "Add a first-run tour (about 60 s: how to run code, check an answer, get a hint). Default to a simplified layout showing only prompt, editor and a Tests/Output panel; the full VS Code chrome is opt-in under 'More'. Add a plain-language copy rule to §7.6, e.g. 'Hint 1-3 / Show answer', 'score', 'skill'. Open the report with a single 'Strengths / Work on next' card and fold the other sections below it."
+   },
+   {
+    "requirement": "\"this is for an university student ... first year at UWA studying CITS1401\" (timing)",
+    "problem": "Not addressed. Today is 2026-09-16, about week 8 of Semester 2. The MVP (topics 1-4) arrives about 17 working days out, in mid-October, and v1.0 with files, exceptions, projects and recursion about 32 working days out, near the November final exam. The pilot delivers material the student has already covered and delivers exam-critical topics last.",
+    "fix": "Re-sequence content by urgency. After the M6 engine work, author the topics the student faces soonest (current lab and project topics, dictionaries, files/CSV, recursion) before the early topics. Alternatively, let the pilot include recursion and one project-simulator scenario. Put the final exam date into the plan and schedule the Final exam simulator (§11 #2) before M10 hardening."
+   },
+   {
+    "requirement": "\"should also include answers, and maybe hint if relevant\"",
+    "problem": "Weak. In the schema, `solution.code` is marked \"optional\", so a write, fixBug or refactor item could ship with only a walkthrough. Hidden-test details are shown only after reveal, but the reveal flow for testWriter and paper mode is not specified. Paper mode's \"syntax errors score half of what they would lose in practice mode\" contradicts §3.3, which says practice mode has no penalties.",
+    "fix": "Make `solution.code` required for every code format (write, fixBug, cloze, parsons, refactor, testWriter) and enforce it in the verifier. Specify that paper mode reveals a model answer and a marking breakdown after Submit. Replace the paper-mode syntax rule with an explicit marks deduction, e.g. -1 mark per syntax error, capped."
+   },
+   {
+    "requirement": "\"within each topic ... a couple of scenarios / test / could be mcq, codes, short functions, etc, be creative and include varying examples\"",
+    "problem": "Mostly covered, with two weak spots. (a) \"test\" may mean an end-of-topic test, but the plan only offers test-out on locked topics, and the MVP pilot has no such test. (b) Every scenario uses Perth or UWA flavour and 5 of 12 formats are deferred to M8, so the pilot mixes only 7 formats. Nothing guards content quality beyond correctness, and \"be creative\" with no AI slop needs human review.",
+    "fix": "Add an optional 'Topic test' (the same 5-question test-out engine) to every open topic from M6. Add a content-review step to M6/M8/M9: the student or user samples 10% of items for tone, clarity and variety. Add a verifier warning when one scenario theme or one format makes up more than 40% of a topic."
+   },
+   {
+    "requirement": "\"it should have data on to the user session, what they did, what their progress, what the mistakes they make\"",
+    "problem": "Covered, but hard to find. Session history is item 8 of 10 in the report. Each report section stays empty until 5 attempts, so a new student sees mostly blank space after the first session. Reports only arrive at M7, after the pilot, so pilot users cannot see this data.",
+    "fix": "Add a small 'This session' summary on the landing page and at session end: questions done, time, new mistakes, topics touched. It should show data from the first attempt on. Move a minimal session and mistake view into M6 so the pilot shows it."
+   },
+   {
+    "requirement": "\"there should also be choice, or tags onto the question difficulty\"",
+    "problem": "Covered by filters and chips. However, the difficulty tags are only checked for consistency with `expectedSec`, and the check is weak. Nothing tells the student what Easy, Medium and Hard mean.",
+    "fix": "Add a one-line legend for the difficulty chips (e.g. 'Easy: one idea, under 2 min'). Let student data flag questions whose first-submit pass rate contradicts their tag, and show those in the Flagged questions list for re-tagging."
+   },
+   {
+    "requirement": "\"no AI slop. no purple gradient\"",
+    "problem": "Covered by bans and a hue test. But the chosen look (near-black, Inter, neon green accent #4ade80, mastery rings) is itself a common template aesthetic. It is judged only in code at M2, with no visual preview approved beforehand.",
+    "fix": "Before M2, produce 2 static mockups (landing and workbench, dark and light) for the user to approve at Checkpoint 0/1. Consider a less saturated accent in dark mode."
+   }
+  ],
+  "extraIdeas": [
+   "Placement quiz and catch-up path: a 10-15 minute mixed quiz on first launch places the student and pre-opens mastered topics. It outputs a dated study plan counting down to the student's CITS1401 final exam and project deadlines. This matters because the student starts mid-semester.",
+   "'Take it to Thonny/VS Code': a button that downloads the current code, visible tests and data files as a .py file plus a sample CSV. This connects in-browser practice to the local tools the student uses in labs and projects, and shows how to run the tests there.",
+   "Beginner glossary with hover definitions: terms like argument, return value, iterable, traceback, accumulator and slice get a 1-line definition and a tiny example wherever they appear in prompts, hints and error explanations. This lowers the jargon barrier for true beginners.",
+   "Personal mistake journal: after fixing a logged mistake, the student can write one line in their own words ('I forgot range stops before n'). The journal becomes a printable revision sheet grouped by topic. This reuses the mistake_fixed and self_explain events and is ideal for closed-book exam revision.",
+   "Visual memory model on reveal: for predict, trace and fixBug answers, show a Python Tutor-style frames-and-objects diagram at the key line (aliasing, mutation, the recursion call stack). Deliver it as a static generated SVG from the verifier's tracer, not the full step-through Playground."
+  ]
+ },
+ {
+  "verdict": "The architecture holds up: Vite with npm Monaco, Pyodide 314.0.7 in one module worker, IndexedDB with export, and generated outputs checked by a verifier. It matches the tech facts and I found no fatal version or API error. But the plan is not \"definitive, ready for M1\". I found four kinds of problem. (1) The arithmetic is wrong. The topic-3 format mix sums to 12, not the 13 its E/M/H split needs. Formats total 154, not 155. Core totals 102, not 104. Engineering days total 20, not 19.5. M4 is labelled L at 3 days, but L means 3.5 days or more. (2) Several grading and runtime details break on real beginner code. Blocking os through meta_path does nothing, because os is already loaded. Deep recursion can kill the WASM interpreter instead of raising RecursionError. Import dedup throws away distinct mistake events. testWriter treats two NaN results as different. Set order depends on the hash seed. Monaco's default Ctrl+Enter and F1 bindings take over the planned Run and palette shortcuts. (3) Some theming claims fail when measured. Light text-faint on --bg is 4.47:1. Dark text-faint on --surface-3 is 4.12:1. Borders are 1.3–1.4:1. The light number and builtin syntax colours fall under 4.5:1 on the current-line colour and to about 3.0:1 on the selection colour. Monaco's default dark bracket colours include orchid #DA70D6, which breaks the purple ban. The Monarch python tokenizer cannot produce the function, builtin or variable roles the syntax table lists. (4) The schedule is too optimistic, and the content order is wrong for the calendar. Realistic effort is about 45–50 days, not 32. Today is week 9 of S2, so topics 9–13 (projects, files, recursion, final exam) arrive after the student needs them. Fix these before M1. None of them needs a redesign.",
+  "gaps": [
+   {
+    "requirement": "Plan arithmetic (§2 table, §9 totals)",
+    "problem": "Topic 3's format mix (mcq 1, predict 3, trace 2, cloze 1, parsons 2, fixBug 1, write 2) sums to 12, but its E/M/H split 4/6/3 sums to 13. Format mixes total 154, not 155. The Core column sums to 102, not 104. With 12 items in topic 3, the pilot is 41 questions, not 42. Engineering days sum to 20 (1.5+1.5+2+3+2+1.5+2+2+2+2.5), not 19.5. §1 says pilot at about 14 days and MVP at about 17, but §9 says 14.5 and 16.5. M4 is labelled L but is sized at 3 days, and L is defined as 3.5–7.",
+    "fix": "Add the missing topic-3 item (for example a second predict or multi), recompute the Core column, and derive every total from topics.ts with a unit test so the plan and the code can't drift. Relabel M4 and use one set of dates everywhere."
+   },
+   {
+    "requirement": "Realistic milestone sizes",
+    "problem": "M4 in 3 days covers harness.py, about 33 AST flags, errors.py plus the matcher, 4 graders and renderers (Parsons with keyboard, pointer and adaptation), 6 panels, focus mode and autosave. That is 6–8 days. M2 in 1.5 days covers tokens, shell, command palette, quick open, contrast and hue tests, a 3-browser shortcut audit and docs: about 3 days. M7 in 2 days covers 9 report sections plus about 22 pattern cards with bad and good snippets: about 4–5 days. Content at 1 day per topic means 12 questions, each with 3 hints, a walkthrough, tagged hidden tests, mutants or distractors, plus 3–4 scenario stories, a cheat sheet and a worked example. That is about 40 minutes per question, or 1.5–2 days per topic. M1 promises Safari 16.4+, which can't be tested on this macOS 26 machine, and Firefox on Windows or Linux shortcut checks, with no machine named.",
+    "fix": "Re-estimate: M1 2.5 d, M2 3 d, M4 7 d (split into M4a runner and harness, M4b write/fixBug/cloze/parsons UI), M7 4 d, M10 4 d, content 1.75 d per topic. Total is about 48 days. Change the browser matrix to 'current Chrome, Firefox and Safari on macOS, plus Chrome on Windows via a named VM or BrowserStack'."
+   },
+   {
+    "requirement": "Timing against the student's semester (CITS1401, S2 2026 started 20 Jul; today is 16 Sep, about week 9)",
+    "problem": "By the plan's own dates, the topic 1–4 pilot arrives in early October and topics 9–13 (files, exceptions, project simulator, recursion) in November. The mid-semester test is already over. The project and the closed-book final, including the mandatory recursion question, are what this student needs now, and they ship last.",
+    "fix": "Ask at Checkpoint 1 which semester the app is for. If it is the current one, reorder authoring after the pilot: T13 recursion, T9 files and CSV, and T12 project simulator (plus paper mode) first, then T5–8. Keep the unlock chain, but point out the Unlock-all setting."
+   },
+   {
+    "requirement": "Unlock rule: 'locked unless the previous one is opened' (verbatim)",
+    "problem": "The default `attempt` mode needs an open plus a submitted question. The plan calls that 'the user's literal wording', but it isn't. The literal reading is just a topic_open event.",
+    "fix": "Add an `opened` mode that implements the literal wording (a topic_open event on topic N) and show it first at Checkpoint 1 next to `attempt`. Stop calling `attempt` literal. topicStatus already takes the mode, so this adds one branch and its tests."
+   },
+   {
+    "requirement": "Core questions and mastery while † items are deferred",
+    "problem": "† items such as trace t03-s1-q2 and errorTranslator t08-s1-q2 are core:true. Completion rule (a) needs every core question attempted. If the pilot counts unshipped core items, no topic can complete. If it doesn't, adding them in M8 turns completed topics back into in-progress and breaks the 'Topic complete' moment and the report.",
+    "fix": "Compute core only over shipped questions, and freeze a topic's completed status once it is earned (store a `topic_completed` event and never recompute it downward). Report new core items as 'new questions added' instead."
+   },
+   {
+    "requirement": "Concept-order checker vs early `def`",
+    "problem": "§3.5 allows FunctionDef before topic 4 only inside `starter`. The reference solutions for T1–3 write items, the T2 fixBug `buggy` (swim_ok) and the T3 parsons `lines` (def sum_of_squares) all contain a def. The verifier as specified would fail on the plan's own examples.",
+    "fix": "Before topic 4, allow exactly one top-level FunctionDef in any code field (reference, buggy, parsons lines, cloze template) whose signature matches the starter or the declared fnName. Ban return-vs-print and scope concepts before topic 4."
+   },
+   {
+    "requirement": "Sandbox and isolation (§4.3)",
+    "problem": "A meta_path hook never runs for modules already in sys.modules, and Pyodide imports os at startup, so `import os` isn't blocked. Dropping 'student-imported modules' from sys.modules after each run forces random, math and others to be re-imported, which slows every run and can split module state (the random instance the harness seeded is not the one the student gets). The grader files go in /lib, next to /lib/python3.14, as top-level names like `errors`, `tracer` and `stdin`, which student code can import or shadow.",
+    "fix": "Enforce blocks with a builtins.__import__ wrapper that checks whether the calling frame's co_filename is '<student>'. Don't purge stdlib modules; purge only names absent from a baseline snapshot and not under the stdlib path. Put the grader files in a private package, /pyladder/_pl/*.py, imported as `_pl.harness`. Restore builtins.input, print and open in a finally block after every run."
+   },
+   {
+    "requirement": "Recursion topic (T13) and runtime stability",
+    "problem": "Infinite or deep recursion is the most common recursion bug. In Pyodide it can exhaust the JS/WASM stack before the Python recursion limit, especially in Safari and Firefox and with settrace adding frames. The result can be a fatal 'Pyodide has suffered a fatal error' or a RangeError that leaves the interpreter unusable, not a clean RecursionError.",
+    "fix": "Set sys.setrecursionlimit to a measured safe value (for example 300–500) around student runs, map RecursionError to a 'no base case reached' explanation, detect Pyodide fatal errors in pyClient and respawn automatically. Add an M1 go/no-go test: `def f(n): return f(n+1)` recovers in all three browsers, with and without the tracer."
+   },
+   {
+    "requirement": "Output flooding and stdout handling",
+    "problem": "`while True: print(1)` runs for up to 2 s before the soft budget fires. With setStdout({batched}), each line is a postMessage, so hundreds of thousands of messages can freeze the main thread even though a 64 KB cap exists. Batched mode also holds back text without a newline (print(x, end='')) until a newline comes.",
+    "fix": "Enforce the 64 KB cap inside the worker: count bytes in a setStdout({write}) handler, then raise an OutputLimit exception into Python. Buffer output and flush to the main thread every 50 ms or 4 KB, and flush at the end of each run."
+   },
+   {
+    "requirement": "Hidden tests: module-level code (§4.6)",
+    "problem": "The harness execs the whole student file again for every test. A top-level infinite loop, input() call, or leftover `print(min_max_mean([...]))` or `main('data.csv')` debug line (common in CITS1401 submissions) costs a timeout or crash per test: 4 tests × 1 s plus the watchdog. The student then sees 4 identical failures instead of one clear message.",
+    "fix": "Exec once as a pre-flight under the soft budget. If module-level code raises, times out or calls input, stop there with a single 'top-level code crashed at line N' result logged as `top_level_code`. Otherwise re-exec per test (still needed for freshness), and cache the compiled code object."
+   },
+   {
+    "requirement": "Grading: mutation of test inputs",
+    "problem": "Fresh literals per test stop leaks between tests, but no test can check that the student did not mutate an argument, for example sorting the caller's list in place. That is a key CITS1401 aliasing mistake (T6 covers aliasing). The testWriter grader runs the reference and then the buggy version, and a reference that mutates the parsed argument changes what the buggy version receives.",
+    "fix": "Add an optional `setup` field (for example `data = [3, 1, 2]`) plus `call: sorted_copy(data)` and `argsUnchanged: ['data']`. The harness deep-copies the arguments before the call and compares after it, logging `mutated_input`. In testWriter, call ast.literal_eval separately for each implementation."
+   },
+   {
+    "requirement": "Grading: floating point and rounding edge cases",
+    "problem": "(a) `cmp` defaults to `eq`, and an author who forgets `cmp: float` makes 0.1+0.2-style results fail. (b) The 2 dp rounding tests can hit round-half-even and binary boundaries: round(2.675, 2) is 2.67, while students using int(x*100+0.5)/100 get 2.68, which fails with no clear reason. (c) `unordered` does not define how to handle unhashable elements or floats. (d) testWriter says an answer is correct when the return values 'differ', and nan != nan, so the input (['nan'],) marks the student correct without finding the bug.",
+    "fix": "(a) Have the verifier fail when `expect` contains a float literal and cmp is `eq`, unless strictNum is set. (b) Have the verifier warn when a reference's unrounded value is within 1e-9 of a half-unit boundary. (c) Define `unordered` as a greedy match using the same recursive comparison as `float`. (d) In testWriter, compare with the same recursive comparison as `float`, treating NaN as equal to NaN, and compare exception types separately."
+   },
+   {
+    "requirement": "Grading: nondeterministic output",
+    "problem": "Pyodide randomises string hashing, so `print({'a', 'b'})`, set iteration and the order of set(list_of_str) can differ between the Node verifier and the browser, and between runs. `id()` values and `<function f at 0x...>` output also vary. The generated expected output would then be flaky. `random.seed(1401)` before every Run also makes the Playground's random always produce the same numbers, which confuses students.",
+    "fix": "Have the verifier run every predict, twins or trace snippet twice with different PYTHONHASHSEED values (set through the env option of loadPyodide) and fail if the outputs differ. Ban printing sets of str and id() in read formats. Seed random only for tests and inside a replay session. A plain Playground Run uses a fresh seed, kept the same across replays of that run."
+   },
+   {
+    "requirement": "Predict answers typed by students",
+    "problem": "macOS and iOS text fields insert smart quotes, en dashes and autocapitalisation, so typing 'Hot' can store ‘Hot’ and be graded wrong. Tab moves focus, so the student cannot type the output of print('a\\tb'). Nothing stops `stdoutFloat` from being used on predict items, where 0.30000000000000004 versus 0.3 is exactly the lesson.",
+    "fix": "Set autocorrect=off, autocapitalize=off and spellcheck=false on answer inputs, and map curly quotes and dashes to ASCII before normalising. Ban literal tabs in predict code, or render them as a visible → and accept a single tab or 4 spaces. Make the schema reject stdoutFloat for predict, trace and twins."
+   },
+   {
+    "requirement": "Trace table generation",
+    "problem": "The rule 'snapshot at the first line event after anchorLine, or on frame return' records two rows on the last loop pass. After line 3 runs, the next event is line 2 (the for header) and then the module frame's return event, which gives a duplicate final row. That row would be graded as off_by_one_range.",
+    "fix": "Snapshot exactly once per execution of anchorLine: set a pending flag when anchorLine's line event fires, take the snapshot at the next line or return event, then clear the flag. Add a fixture test using the §3.4 example (4 rows expected)."
+   },
+   {
+    "requirement": "Hard watchdog timing",
+    "problem": "The budget is the sum of the test budgets plus 3 s, so a 4-test write item can hang the UI for about 7 s before terminate(). If the watchdog starts when the request is queued, not when it is dispatched, it can kill a worker that is still loading Pyodide (10–30 s on first visit), which then keeps reloading.",
+    "fix": "Start the watchdog only when the ready worker sends a `started {id}` acknowledgement. Cap the hard limit at min(sum + 3000, 6000) ms. Also stop the whole request on the first soft timeout, marking the remaining tests as 'not run'."
+   },
+   {
+    "requirement": "Keyboard shortcuts inside Monaco (§6.6)",
+    "problem": "Standalone Monaco binds Ctrl/Cmd+Enter to insertLineAfter, Ctrl/Cmd+Shift+Enter to insertLineBefore, and F1 to its own quick command widget, and it swallows Ctrl/Cmd+K chord sequences such as Ctrl+K Ctrl+C. So Run inserts a line, F1 opens Monaco's palette instead of the app's, and focus mode and theme toggle never fire while the editor has focus. The single-key shortcuts `[`, `]`, `?` and 1–4 would fire while the student is typing in predict or trace inputs, and WCAG 2.1.4 needs character-key shortcuts to be scoped or possible to turn off.",
+    "fix": "Register Run, Submit, F1 and the Ctrl/Cmd+K chords with editor.addCommand (KeyMod.chord) so they override Monaco's defaults. Ignore single-key shortcuts when the focused element is editable, and add a Settings toggle for them. Document Ctrl+M (Monaco's Tab-trap escape) in the shortcut sheet."
+   },
+   {
+    "requirement": "No keyboard trap (WCAG 2.1.2) in the editors",
+    "problem": "In both Monaco and the textarea fallback, Tab inserts spaces, so a keyboard-only user cannot tab out of the editor. The plan never mentions tab focus mode.",
+    "fix": "Turn on Monaco's tabFocusMode toggle (Ctrl+M) and show a hint in the status bar. In the textarea, Esc followed by Tab moves focus on. State both in the editor's aria-describedby text."
+   },
+   {
+    "requirement": "Colour contrast (§7.1 claims)",
+    "problem": "Measured ratios: light text-faint #687280 on --bg #f4f5f7 is 4.47:1 and on --surface-3 is 4.27:1. Dark text-faint #808a95 on --surface-3 (hover) is 4.12:1. Light warn #a16207 on --surface-3 is 4.31:1, and the hints panel sits on surface-2 or 3, although the rule allows semantic text only on surface-1. Borders #dde1e6 on white (1.31:1) and #2a3039 on #0f1115 (1.42:1) fail the 3:1 non-text contrast rule (1.4.11) for input, toggle and segmented-control outlines. Heat cells that print their number fail with the default text colour: #e6e8eb on #4ade80 is 1.42:1, and white on #5fb57c is 2.5:1.",
+    "fix": "Darken light text-faint to about #5f6873 and warn to about #8a5306. Lighten dark text-faint to about #8f99a4. Add an --border-control token that reaches 3:1 (light about #8a929c, dark about #5b6470) for interactive outlines. Give each heat step its own text-colour token (dark text on the bright steps). Have contrast.test.ts check every text token against every surface token, including hover."
+   },
+   {
+    "requirement": "Editor syntax colours in both themes",
+    "problem": "The Monarch python tokenizer only emits keyword, identifier, number, string, comment and delimiter tokens, so the 'Function', 'Builtin / type' and 'Variable' roles can never be coloured. Light number #098658 and builtin #267f99 drop to about 4.2:1 on the current-line colour #f4f5f7 and about 3.0:1 on the selection colour #add6ff. Dark comment #6a9955 on selection #264f78 is 2.55:1.",
+    "fix": "Copy and extend the python Monarch definition: add a builtins list, use identifier followed by '(' for function names, and a keyword-driven state for def and class names. Alternatively drop those rows. Use a paler selection (light about #d6e8ff, dark about #1d3b5a), and have the contrast test check syntax colours against editor-bg, editor-line and editor-selection."
+   },
+   {
+    "requirement": "No purple (hue ban)",
+    "problem": "bracketPairColorization is turned on, and Monaco's default dark bracket colours include orchid #DA70D6 (hue about 302°). Default widget colours such as suggest and find highlights are not tokens either. The hue test only scans tokens.css, so it would pass while the editor shows purple.",
+    "fix": "In defineTheme, set editorBracketHighlight.foreground1–6 and the unexpectedBracket colour to palette values. Export the theme objects from themes.ts and point the hue-ban and contrast tests at them as well."
+   },
+   {
+    "requirement": "Theming mechanics",
+    "problem": "With dark on :root and only a data-theme=light override, 'System' depends on the inline script and does not follow the OS when it changes mid-session. Without `color-scheme`, native scrollbars, date inputs and form controls stay light in dark mode. Monaco measures its font once, so if JetBrains Mono loads from Google Fonts after the editor is created, the cursor and selection sit in the wrong place.",
+    "fix": "Put light values under @media (prefers-color-scheme: light) :root:not([data-theme=dark]), and set color-scheme on :root for each theme. Listen for matchMedia change events and re-apply defineTheme. Before creating Monaco, await document.fonts.load('14px \"JetBrains Mono\"'), and call monaco.editor.remeasureFonts() when document.fonts.ready resolves."
+   },
+   {
+    "requirement": "Touch detection for the textarea fallback",
+    "problem": "`(pointer: coarse)` is true on iPads with a trackpad and on some Windows touchscreen laptops, which would force the textarea and remove the VS Code feel for those users.",
+    "fix": "Use `(any-pointer: fine)` together with a width of 700 px or more to choose Monaco, and keep the Settings override."
+   },
+   {
+    "requirement": "Storage durability (§5)",
+    "problem": "Safari removes all script-writable storage (IndexedDB and localStorage) for a site not interacted with in 7 days of Safari use, so a student who pauses for a week can lose everything. In Firefox, navigator.storage.persist() shows a permission prompt, and calling it at startup with no user action is jarring or gets denied. Two open tabs would write sessions and derived caches at the same time and run two Pyodide instances, 100–200 MB.",
+    "fix": "Detect Safari and show a stronger backup reminder at 5 days. Call persist() only from a Settings button or right after the first export. Use a Web Lock or BroadcastChannel to make one tab the writer and show 'PyLadder is open in another tab' in the others, and handle IndexedDB `versionchange` by closing the connection."
+   },
+   {
+    "requirement": "Import merge correctness (§5.5)",
+    "problem": "Deduplicating on (ts, type, qid, sessionId) merges events that are genuinely different. One check logs several `mistake` events with the same ts and qid. Two hint events can share a millisecond. session_start and export have no qid. Merging would silently delete mistake history, the core of the report.",
+    "fix": "Give every event `eid: crypto.randomUUID()` (secure context, so it works on Pages and localhost) and deduplicate on eid only. Migrations assign eids to old events from a hash of their content plus their position."
+   },
+   {
+    "requirement": "Session end and unload writes",
+    "problem": "IndexedDB transactions started in `pagehide` often don't commit, especially on mobile Safari, so session_end and durationMs would often be missing.",
+    "fix": "Don't depend on session_end. Derive a session's end from its last event's ts plus a small idle tail, keep a heartbeat of focusedMs in memory, and write it on each attempt or run."
+   },
+   {
+    "requirement": "Hosting on GitHub Pages",
+    "problem": "`base: '/python-practice-hub/'` assumes that exact repo name. The directory isn't a git repo yet and has no remote, so a different name or a user site gives a blank page. Pages from a free account needs a public repo, which makes content and hidden tests public. After a redeploy, an open tab that lazily imports an old hashed chunk (Monaco or a topic) gets a 404 and fails with 'Failed to fetch dynamically imported module'. `verify -- --check` uses git diff, but the local project isn't a git repo, so `npm run check` breaks locally.",
+    "fix": "Use base './', which works with a hash router and new URL(worker, import.meta.url), or read it from an env var set in the workflow. Note the public-repo requirement at Checkpoint 1. Handle the `vite:preloadError` event with a single reload. Implement --check by comparing the regenerated JSON with the files on disk in memory, not with git. Give the workflow permissions pages: write and id-token: write, and state that Pages must be set to the Actions source."
+   },
+   {
+    "requirement": "Service worker (M10)",
+    "problem": "A cache-first shell serves an old index.html that references hashed assets and generated content a newer deploy has already removed. Cached Pyodide wasm must keep `Content-Type: application/wasm`, or streaming compilation fails.",
+    "fix": "Use network-first (with a cache fallback) for index.html, and cache-first for hashed /assets and the versioned jsdelivr Pyodide URLs. Store the full CORS response so its headers survive. Scope the worker to the base path and name each cache version by build hash."
+   },
+   {
+    "requirement": "Node verifier running TypeScript content directly",
+    "problem": "Node type stripping ignores tsconfig. A normal `import { Question } from './schema.ts'` whose names are types only throws at runtime, because the export doesn't exist. Content modules that pull in Vite-only imports (?raw harness.py, *.md cheat sheets, import.meta.glob) fail in Node.",
+    "fix": "Turn on `verbatimModuleSyntax: true` so type-only imports must use `import type`. Keep content modules free of Vite-specific imports: cheat sheets load in ui/ through import.meta.glob, and the verifier reads the .py files with fs.readFileSync. Add a CI step that imports every content module under plain Node."
+   },
+   {
+    "requirement": "Landing performance budget (under 150 KB gzipped)",
+    "problem": "The landing cards need per-question metadata for mastery rings and counts. If topics.ts imports every scenario file (155 questions with solutions, hints and generated outputs, several hundred KB), the budget is blown. The in-house Markdown renderer uses monaco.editor.colorize for code blocks, which pulls Monaco onto the landing and topic pages even though Monaco is meant to be lazy.",
+    "fix": "Have the verifier also emit generated/question-index.json (id, topic, format, diff, core, ladder) for the landing page, and load each topic's content with dynamic import(). Highlight cheat-sheet code with a small regex highlighter that uses the same token colours, and use colorize only inside the workbench."
+   },
+   {
+    "requirement": "Accessibility scheduled late",
+    "problem": "Screen-reader labels, aria-live results and the keyboard-only walkthrough all sit in M10, after roughly 40 components and 12 format renderers are built. Adding ARIA to Parsons, trace grids and heatmaps at the end is expensive, and Lighthouse's 95 score doesn't cover interaction.",
+    "fix": "Add a11y checks to each milestone's definition of done: keyboard pass, labelled controls, and aria-live announcements for test results, runtime status and Parsons moves. Run axe-core in Vitest with jsdom on each renderer. M10 then only audits."
+   },
+   {
+    "requirement": "Rendering untrusted text",
+    "problem": "Import accepts a JSON file, possibly shared by a classmate, and prompt, note, flag and self-explain text is shown with an in-house Markdown renderer. If any path uses innerHTML, script can be injected into the origin and change or wipe progress.",
+    "fix": "Render with h() and textContent only. The Markdown-lite renderer builds DOM nodes and never uses innerHTML. Validate imports against a schema and cap string lengths."
+   },
+   {
+    "requirement": "Guessing on binary and revealed items",
+    "problem": "A twins 'differs' answer earns 0.5 with 2 checks, so the second check is a free 0.5, and true/false mcq is a coin flip. The 24-hour re-solve rule lets a student re-answer an mcq or predict item whose answer was revealed right after submit, so this measures memory, not mastery. In `mastery` mode, a few wrong mcq answers can block a topic for 24 hours.",
+    "fix": "Give twins one check for 'differs' and two checks only for the outputs. For re-solves of revealed read-format items, shuffle the options, or count them only when a different question from the same scenario and concepts is solved. Otherwise keep the 0.9 cap only for code formats."
+   },
+   {
+    "requirement": "Monaco completions",
+    "problem": "A custom provider for 'names already in the file' duplicates Monaco's built-in word-based suggestions, so every entry appears twice.",
+    "fix": "Keep wordBasedSuggestions: 'currentDocument' and have the custom provider add only keywords and builtins with kind and detail. In paper mode, turn off both."
+   }
+  ],
+  "extraIdeas": [
+   "Start Pyodide loading only when the browser isn't in data-saver mode (navigator.connection.saveData) and the device has enough memory (navigator.deviceMemory at least 4). Otherwise start it when the first code question opens, so a phone reading cheat sheets doesn't download 13.5 MB and use 100 MB.",
+   "Record a 'grading disagreement' fixture set. Every Report-this-question flag the author confirms becomes a regression test in the slow Node Pyodide suite.",
+   "Add an exam-countdown card linked to the S2 2026 exam period, plus a 'final-exam fast track' preset (recursion, files, paper-mode writes) for students arriving late in semester.",
+   "Ship an `opened` unlock mode alongside `attempt`, so Checkpoint 1 is a real choice that includes the user's literal wording.",
+   "Add a verifier 'mutation smoke test': automatically apply common beginner mutations (range end minus 1, accumulator reset inside the loop, print instead of return) to each reference and warn when no hidden test catches one. This shows weak test suites without manual review.",
+   "Use a Web Lock so only one tab owns the Pyodide worker, and let other tabs send run requests to it through BroadcastChannel, which saves 100 MB per extra tab."
+  ]
+ }
+]

@@ -1,0 +1,8 @@
+/* App shell layout. Owner: shell agent. */
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+.app-header { display: flex; align-items: center; gap: var(--sp-5); height: 48px; padding: 0 var(--sp-4); background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20; }
+.app-logo { font-family: var(--mono); font-weight: 600; color: var(--text); text-decoration: none; }
+.app-logo span { color: var(--accent); }
+.app-nav { display: flex; gap: var(--sp-4); }
+.app-nav a { color: var(--text-muted); text-decoration: none; font-size: var(--fs-13); }
+.app-main { flex: 1; padding: var(--sp-5) var(--sp-4); }

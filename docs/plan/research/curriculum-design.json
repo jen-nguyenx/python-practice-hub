@@ -1,0 +1,849 @@
+{
+ "topics": [
+  {
+   "id": "variables-expressions",
+   "title": "Variables, Types and Expressions",
+   "order": 1,
+   "band": "core — follows the unit exactly (L3-L4, L6 math, Lab 01 'Python basics'). No deviation.",
+   "objectives": [
+    "Evaluate expressions using precedence, /, //, %, ** and predict the resulting type (int, float, str, bool)",
+    "Convert between types with int(), float(), str() and predict which conversions raise ValueError (e.g. int('12.0'))",
+    "Trace a sequence of assignment statements, including reassignment and a variable swap",
+    "Choose valid, meaningful snake_case identifiers (3+ characters) that do not shadow built-ins",
+    "Format results with round() and f-strings"
+   ],
+   "prerequisites": [],
+   "questionMix": "12 questions: 5 easy / 5 medium / 2 hard. 2 mcq, 1 select-all, 1 true-false, 3 predict-output, 1 trace-table, 1 fill-blank, 1 fix-bug, 2 write-function (CodeRunner). 8 core.",
+   "mistakeCategories": [
+    "int_vs_float_division",
+    "str_int_concat",
+    "input_without_int",
+    "int_of_float_string",
+    "name_typo",
+    "unclosed_bracket",
+    "shadow_builtin",
+    "style_naming"
+   ],
+   "bestPractices": [
+    "Use // only when you really want a whole-number result, and remember -7 // 2 is -4",
+    "Convert input or file text with int()/float() before doing maths on it",
+    "Use lowercase snake_case names of 3+ characters (circle_area, not CircleArea or x)",
+    "Never name a variable list, sum, max, min, str or input",
+    "Build output with f-strings instead of joining str + number with +"
+   ],
+   "sampleQuestions": [
+    "[predict-output, easy] Rottnest ferry timetable: trip_minutes = 135; print(trip_minutes // 60, 'h', trip_minutes % 60, 'min'); print(7 / 2, 7 // 2, -7 // 2). Expected: '2 h 15 min' then '3.5 3 -4'. Distractors tag int_vs_float_division ('3 3 -3').",
+    "[select-all, medium] Which lines raise an error? (a) int('12.0') (b) float('12.0') (c) int(12.9) (d) 'Bus ' + 950 (e) str(950) + ' bus'. Answer: (a) ValueError and (d) TypeError. (c) gives 12 because int() truncates. Wrong picks log int_of_float_string / str_int_concat.",
+    "[write-function, hard] UWA visitor parking costs $2.50 per started hour. Write parking_cost(minutes) using no if and no imports. Sketch: hours = (minutes + 59) // 60; return hours * 2.5. Tests: parking_cost(60) -> 2.5, parking_cost(61) -> 5.0, parking_cost(0) -> 0.0 (hidden edge case)."
+   ]
+  },
+  {
+   "id": "if-elif-else",
+   "title": "Decisions: if, elif, else and Boolean Logic",
+   "order": 2,
+   "band": "core — deviation: the unit teaches for/range (L5) before decisions (L7-L8). We put decisions first because you asked for if/else as the easy start, and Lab 03 tests 'Conditions and simple loops' together anyway, so nothing assessed is missed.",
+   "objectives": [
+    "Write comparisons and combine them with and, or, not, including chained comparisons (50 <= mark < 60)",
+    "Predict which branch runs in if/elif/else chains and tell a chain of elifs apart from separate ifs",
+    "Use the in operator and string comparison correctly",
+    "Rewrite nested ifs as a single if/elif chain or one boolean expression that behaves the same way",
+    "Return a boolean expression directly instead of using if True/else False"
+   ],
+   "prerequisites": [
+    "variables-expressions"
+   ],
+   "questionMix": "12 questions: 4 easy / 5 medium / 3 hard. 2 mcq, 1 true-false, 2 predict-output, 1 spot-the-difference, 1 select-all (which blocks are syntactically incorrect), 1 parsons, 1 fix-bug, 2 write-function (CodeRunner), 1 refactor. 8 core.",
+   "mistakeCategories": [
+    "missing_colon",
+    "indent_error",
+    "assign_vs_compare",
+    "is_vs_equals",
+    "or_with_literal",
+    "elif_vs_if",
+    "compare_to_true",
+    "case_sensitive_compare"
+   ],
+   "bestPractices": [
+    "Use elif when the branches rule each other out, so only one can run",
+    "Write 'if flag:' rather than 'if flag == True:'",
+    "Repeat the variable on both sides: x == 1 or x == 2 (or x in (1, 2)), never x == 1 or 2",
+    "Use chained comparisons (60 <= mark < 70) for grade bands",
+    "Use a guard clause or early return instead of deep nesting"
+   ],
+   "sampleQuestions": [
+    "[write-function, easy] Write uwa_grade(mark) that returns the UWA grade band: 'HD' for 80+, 'D' for 70-79, 'CR' for 60-69, 'P' for 50-59, 'N' below 50, and 'invalid' outside 0-100. Sketch: guard for invalid first, then if mark >= 80 ... elif mark >= 70 ... Tests: 80 -> 'HD', 79 -> 'D', 50 -> 'P', 49 -> 'N', 101 -> 'invalid' (hidden).",
+    "[spot-the-difference, medium] Perth heatwave alert. Snippet A: temp = 41; if temp > 35: print('Hot'); if temp > 40: print('Extreme'). Snippet B is the same but the second if is an elif. Do the outputs differ? Yes. A prints 'Hot' then 'Extreme'; B prints only 'Hot'. Wrong answers log elif_vs_if.",
+    "[fix-bug, medium] Cottesloe swim check: def swim_ok(uv, wind_kmh): if uv < 8 and wind_kmh < 25 or 30: return True / else: return False. The function returns True for every input. Fix: the 'or 30' is always truthy, so write return uv < 8 and wind_kmh < 25. Hidden test swim_ok(5, 40) -> False exposes or_with_literal."
+   ]
+  },
+  {
+   "id": "for-loops-range",
+   "title": "Definite Loops with for and range()",
+   "order": 3,
+   "band": "core — deviation: the unit teaches this in L5, before decisions. It sits one slot later here so beginners can put an if inside a loop straight away. The harder loop work (while, nested loops, series with tolerance) comes later in its own topic, as in L16-L18.",
+   "objectives": [
+    "Predict the values produced by range(stop), range(start, stop) and range(start, stop, step), including the stop value that is left out",
+    "Use the accumulator pattern (sum, product, count) with correct setup before the loop",
+    "Trace a for loop in a trace table, variable by variable and iteration by iteration",
+    "Combine a for loop with an if statement to filter or count",
+    "Solve maths-style loop problems such as Fibonacci terms and sums of squares"
+   ],
+   "prerequisites": [
+    "if-elif-else"
+   ],
+   "questionMix": "13 questions: 4 easy / 6 medium / 3 hard. 1 mcq, 3 predict-output, 2 trace-table, 1 fill-blank (range bounds), 2 parsons (paired distractors range(1, n) vs range(1, n+1)), 1 fix-bug, 2 write-function (CodeRunner), 1 paper-exam. 9 core.",
+   "mistakeCategories": [
+    "off_by_one_range",
+    "accumulator_init",
+    "modify_loop_var",
+    "early_return_in_loop",
+    "indent_error",
+    "missing_colon",
+    "shadow_builtin"
+   ],
+   "bestPractices": [
+    "Set up accumulators before the loop: 0 for sums, 1 for products",
+    "Remember that range(a, b) stops before b; write range(1, n + 1) to include n",
+    "Never assign to the loop variable inside the loop body",
+    "Put return after the loop unless you mean to stop early",
+    "Check your loop with 0, 1 and many iterations"
+   ],
+   "sampleQuestions": [
+    "[trace-table, easy] Jacob's Ladder training plan: total = 0; for day in range(1, 5): total += day * 2. Fill in day and total for each iteration. Expected rows: (1, 2), (2, 6), (3, 12), (4, 20). A missing row 4 logs off_by_one_range; a wrong first row logs accumulator_init.",
+    "[parsons, medium] Put these lines in order to build sum_of_squares(n), which returns 1^2 + ... + n^2. Lines: def ..., total = 0, for k in range(1, n + 1):, total += k ** 2, return total, plus the paired distractors for k in range(1, n): and total = k ** 2. Graded by running tests: sum_of_squares(3) -> 14, sum_of_squares(0) -> 0.",
+    "[write-function, hard] From the coordinator's practice sheet: write fib_sum(n) that returns the sum of the first n Fibonacci numbers (1, 1, 2, 3, 5, ...) using a for loop. Sketch: a, b, total = 1, 1, 0; for _ in range(n): total += a; a, b = b, a + b; return total. Tests: fib_sum(5) -> 12, fib_sum(1) -> 1, fib_sum(0) -> 0."
+   ]
+  },
+  {
+   "id": "functions-basics",
+   "title": "Functions Part 1: def, Parameters and return",
+   "order": 4,
+   "band": "core — follows L9 and Lab 02. You named functions as harder, so the topic is split in two: the basics sit here, where the unit assesses them early, and scope, defaults and the main() project structure are in topic 11 (functions-project-patterns).",
+   "objectives": [
+    "Define a function with def, parameters and a docstring, and tell parameters apart from arguments",
+    "Return values instead of printing them, and use the returned value at the call site",
+    "Predict the output of code that ignores a return value or prints None",
+    "Call built-ins (abs, round, len, int) and your own helpers from inside a function",
+    "Return boolean expressions and computed strings directly"
+   ],
+   "prerequisites": [
+    "for-loops-range"
+   ],
+   "questionMix": "12 questions: 4 easy / 5 medium / 3 hard. 2 mcq, 1 fill-blank (function name, parameters, return), 2 predict-output, 1 error-translator, 1 parsons, 1 fix-bug, 3 write-function (CodeRunner), 1 refactor. 8 core.",
+   "mistakeCategories": [
+    "print_vs_return",
+    "forgot_to_call",
+    "early_return_in_loop",
+    "scope_confusion",
+    "indent_error",
+    "shadow_builtin",
+    "compare_to_true"
+   ],
+   "bestPractices": [
+    "Return results; leave printing to the caller (the Moodle marker checks return values)",
+    "Start every function with a one-line docstring",
+    "Give each function one job and a verb name (wait_time, is_odd)",
+    "Return boolean expressions directly (return n % 2 != 0)",
+    "Test a function from the shell with a few edge-case arguments"
+   ],
+   "sampleQuestions": [
+    "[mcq, easy] def fare(zones): print(zones * 2.5). Then x = fare(2); print(x). What is displayed? Answer: '5.0' then 'None'. Distractor '5.0 5.0' logs print_vs_return; distractor 'Error' logs forgot_to_call confusion.",
+    "[write-function, medium] Circle Route bus: the first bus leaves at minute first_bus and then runs every interval minutes. Write wait_time(now, first_bus, interval) that returns the minutes until the next bus. Sketch: if now <= first_bus: return first_bus - now; return (interval - (now - first_bus) % interval) % interval. Tests: (430, 420, 15) -> 5, (435, 420, 15) -> 0, hidden (400, 420, 15) -> 20.",
+    "[refactor, medium] Rewrite def is_weekend(day): if day == 'Sat' or day == 'Sun': return True / else: return False as a single return statement. Answer: return day == 'Sat' or day == 'Sun'. Graded by tests plus an ast check that there is no if/else returning literal booleans."
+   ]
+  },
+  {
+   "id": "strings",
+   "title": "Strings: Indexing, Slicing and Methods",
+   "order": 5,
+   "band": "core — follows L10-L11. No deviation.",
+   "objectives": [
+    "Index and slice strings with positive and negative indices and steps, including s[::-1]",
+    "Use upper, lower, strip, split, join, find, replace, count and explain that each returns a new string",
+    "Build a new string with a loop, because strings cannot be changed in place",
+    "Compare strings without caring about case, and check for palindromes",
+    "Loop over the characters of a string, and use ord/chr for simple encodings"
+   ],
+   "prerequisites": [
+    "functions-basics"
+   ],
+   "questionMix": "12 questions: 4 easy / 5 medium / 3 hard. 1 mcq, 3 predict-output, 1 spot-the-difference, 1 error-translator, 1 fill-blank, 1 fix-bug, 3 write-function (CodeRunner), 1 paper-exam. 8 core.",
+   "mistakeCategories": [
+    "string_immutability",
+    "index_out_of_range",
+    "off_by_one_range",
+    "case_sensitive_compare",
+    "str_int_concat",
+    "none_from_inplace"
+   ],
+   "bestPractices": [
+    "Assign the result of a string method: name = name.strip().lower()",
+    "Loop over the characters directly (for ch in text) instead of using range(len(text))",
+    "Normalise case once, at the start, before you compare",
+    "Use ' '.join(parts) instead of adding strings with + in a loop when combining a list",
+    "Use slicing (s[::-1]) for simple reversals and explain why it works"
+   ],
+   "sampleQuestions": [
+    "[predict-output, easy] unit = 'CITS1401'; print(unit[:4].lower(), unit[-4:], unit[4] + unit[-1]). Expected: 'cits 1401 11'. Distractor 'cits 1401 2' logs str_int_concat (treating the digits as numbers).",
+    "[write-function, medium] Exam-style (5 marks): write is_palindrome_plate(plate) for WA number plates, ignoring hyphens and spaces and ignoring case. Sketch: cleaned = plate.replace('-', '').replace(' ', '').lower(); return cleaned == cleaned[::-1]. Tests: '1AB-BA1' -> True, 'Abba' -> True, 'UWA-001' -> False.",
+    "[fix-bug, medium] def initials(full_name): full_name.upper(); full_name[0] = full_name[0]; ... is supposed to return 'J.N.' for 'jennifer nguyen'. Fix: result = ''; for part in full_name.split(): result += part[0].upper() + '.'; return result. Buggy runs raise TypeError: 'str' object does not support item assignment, which logs string_immutability."
+   ]
+  },
+  {
+   "id": "lists-tuples",
+   "title": "Lists, Tuples and Sorting",
+   "order": 6,
+   "band": "core — follows L12 and Lab 04 (sorted_items, cubed_tuple). No deviation.",
+   "objectives": [
+    "Build lists with append in a loop, and index, slice and change them in place",
+    "Tell apart methods that change a list and return None (sort, append) from functions that return a new list (sorted)",
+    "Sort with key and reverse, including tie-breaks on a second field",
+    "Pack and unpack tuples to return and receive more than one value",
+    "Work with lists of lists (matrices) and explain aliasing versus copying"
+   ],
+   "prerequisites": [
+    "strings"
+   ],
+   "questionMix": "13 questions: 4 easy / 5 medium / 4 hard. 2 mcq, 2 predict-output, 1 trace-table, 1 spot-the-difference (sort vs sorted), 1 parsons, 1 fix-bug, 3 write-function (CodeRunner), 1 refactor, 1 paper-exam. 9 core.",
+   "mistakeCategories": [
+    "none_from_inplace",
+    "aliasing_copy",
+    "mutate_while_iterating",
+    "index_out_of_range",
+    "tuple_immutability",
+    "off_by_one_range",
+    "sort_tiebreak",
+    "return_type_wrong"
+   ],
+   "bestPractices": [
+    "Never write x = lst.sort(); call lst.sort() or use x = sorted(lst)",
+    "Build a new list rather than removing items from the list you are looping over",
+    "Copy with lst[:] or list(lst) when you need an independent copy",
+    "Use a key tuple for tie-breaks: key=lambda t: (-t[1], t[0])",
+    "Return a tuple when the spec says tuple, and a list when it says list"
+   ],
+   "sampleQuestions": [
+    "[mcq, easy] Optus Stadium seating: seats = ['A1', 'A2']; backup = seats; backup.append('A3'); print(len(seats)). Answer: 3, because both names refer to the same list. Distractor 2 logs aliasing_copy.",
+    "[write-function, medium] Write min_max_mean(temps) for a week of Perth February maxima. Return (lowest, highest, mean rounded to 2 dp) using one loop, and return None for an empty list. Tests: [38.1, 41.2, 29.5] -> (29.5, 41.2, 36.27); [] -> None (hidden, exposes index_out_of_range).",
+    "[write-function, hard] Perth Scorchers fantasy leaderboard: given a list of (player, points) tuples, return a new list sorted by points descending and then by name A-Z. Sketch: return sorted(scores, key=lambda t: (-t[1], t[0])). Test: [('Turner', 88), ('Agar', 88), ('Marsh', 95)] -> [('Marsh', 95), ('Agar', 88), ('Turner', 88)]. A missing tie-break logs sort_tiebreak."
+   ]
+  },
+  {
+   "id": "while-nested-loops",
+   "title": "While Loops, Nested Loops and Series",
+   "order": 7,
+   "band": "core — follows L16-L18. Every recent final includes a 15-mark series-with-tolerance question and a 15-mark nested-loop combinations question, so this topic has extra hard items.",
+   "objectives": [
+    "Write while loops with a correct loop condition, an update step and a sentinel or tolerance stop",
+    "Pull digits out of a number with % and //, and compute gcd or binary conversions",
+    "Sum a series until the size of a term drops below a tolerance, rounding only at the end",
+    "Use nested loops to generate every combination from several pools",
+    "Merge two sorted lists with a while loop without calling sort()"
+   ],
+   "prerequisites": [
+    "lists-tuples"
+   ],
+   "questionMix": "13 questions: 3 easy / 5 medium / 5 hard. 1 mcq, 2 predict-output, 2 trace-table, 1 fill-blank, 1 parsons, 1 fix-bug (infinite loop), 3 write-function (CodeRunner), 2 paper-exam. 8 core.",
+   "mistakeCategories": [
+    "infinite_while",
+    "accumulator_init",
+    "off_by_one_range",
+    "float_equality",
+    "modify_loop_var",
+    "early_return_in_loop",
+    "round_mid_calc"
+   ],
+   "bestPractices": [
+    "Make sure every while loop changes a variable in its condition",
+    "Compare floats against a tolerance (abs(term) >= tol), never with ==",
+    "Use for when you know how many times to loop and while when you do not",
+    "Round only the final answer, not partway through a series",
+    "Name each nested loop variable after what it holds (for guild in guilds)"
+   ],
+   "sampleQuestions": [
+    "[trace-table, easy] SmartRider checksum helper: n = 4096; total = 0; while n > 0: total += n % 10; n //= 10. Fill in n and total per row. Expected: (4096, 0), (409, 6), (40, 15), (4, 15), (0, 19).",
+    "[paper-exam, hard, 15 marks] Write e_series(tol), which adds up 1/0! + 1/1! + 1/2! + ... while the current term is >= tol, and returns the sum rounded to 6 dp. No imports, and keep a running factorial instead of recomputing it. Sketch: total, term, k = 0, 1.0, 0; while term >= tol: total += term; k += 1; term /= k; return round(total, 6). Test: e_series(0.001) -> 2.718056.",
+    "[write-function, hard] UWA O-Day stall roster: roster(guild_reps, club_reps, volunteers) returns every 'g c v' string, in loop order, using three nested loops. Test: roster(['Ann'], ['Bo', 'Cy'], ['Di']) -> ['Ann Bo Di', 'Ann Cy Di']; output length = product of the list lengths; any empty pool -> []."
+   ]
+  },
+  {
+   "id": "dictionaries",
+   "title": "Dictionaries: Counting, Grouping and Ranking",
+   "order": 8,
+   "band": "core — follows L20-L21 and Lab 05 (get_name, make_dictionary, run_length_encode). No deviation. Once this topic is mastered, the project-style CSV topics unlock.",
+   "objectives": [
+    "Create, read, update and loop over dictionaries with keys(), values() and items()",
+    "Count how often things appear with dict.get(key, 0) or an in check, without KeyError",
+    "Turn a dictionary into a list of (key, value) tuples sorted by value with a tie-break",
+    "Group records into dictionaries of lists and nested dictionaries",
+    "Use tuples as dictionary keys, and predict the output of dictionary code"
+   ],
+   "prerequisites": [
+    "while-nested-loops"
+   ],
+   "questionMix": "12 questions: 3 easy / 5 medium / 4 hard. 1 mcq, 2 predict-output, 1 error-translator, 1 fill-blank, 1 parsons, 1 fix-bug, 3 write-function (CodeRunner), 1 refactor (manual counting to dict.get), 1 paper-exam. 8 core.",
+   "mistakeCategories": [
+    "dict_keyerror",
+    "mutate_while_iterating",
+    "sort_tiebreak",
+    "case_sensitive_compare",
+    "return_type_wrong",
+    "shadow_builtin"
+   ],
+   "bestPractices": [
+    "Count with counts[k] = counts.get(k, 0) + 1",
+    "Loop with for key, value in d.items()",
+    "Never add or delete keys while looping over the same dictionary",
+    "Normalise key case before counting ('Perth' and 'perth' are one key)",
+    "Sort items() into a list of tuples when the spec asks for an ordered result"
+   ],
+   "sampleQuestions": [
+    "[error-translator, easy] stock = {'flat white': 3}; print(stock.get('latte', 0)); stock['latte'] += 1. What is printed, and which line raises? Answer: prints 0, then line 3 raises KeyError: 'latte'. The fix is stock['latte'] = stock.get('latte', 0) + 1. Wrong picks log dict_keyerror.",
+    "[write-function, medium] Transperth tap-ons: tap_counts(stops) takes a list of stop names and returns a dict of counts, ignoring case and stripping spaces. Test: [' Elizabeth Quay', 'elizabeth quay', 'Perth Underground'] -> {'elizabeth quay': 2, 'perth underground': 1}.",
+    "[paper-exam, hard, 10 marks] Campus coffee: rank_cafes(sales) returns a list of (cafe, cups) tuples sorted by cups descending and then by name A-Z. Test: {'Hackett': 120, 'Barry J': 95, 'Reid': 120} -> [('Hackett', 120), ('Reid', 120), ('Barry J', 95)]. Sketch: items = list(sales.items()); items.sort(key=lambda t: (-t[1], t[0])); return items."
+   ]
+  },
+  {
+   "id": "files-csv-by-hand",
+   "title": "Text Files and CSV Parsing Without Imports",
+   "order": 9,
+   "band": "late-semester / project + exam — deviation: the unit teaches files in L13-L14, before while loops and dictionaries, but Lab 05 pairs files with dictionaries, and the projects need header-to-index dictionaries and grouping. Placing files here lets every file task look like a project task.",
+   "objectives": [
+    "Open, read (readline, or looping over lines) and write text files, closing them properly (with open)",
+    "Parse CSV lines by hand with strip() and split(','), without the csv module",
+    "Find column indexes from the header row by name, whatever the column order and case",
+    "Convert fields with int() or float(), and skip rows with blank or invalid values",
+    "Read the file once and write results to a new file in the required format"
+   ],
+   "prerequisites": [
+    "dictionaries"
+   ],
+   "questionMix": "11 questions: 2 easy / 5 medium / 4 hard. 1 mcq, 1 predict-output, 1 select-all (which snippets break the no-imports / file-name rules), 1 parsons, 2 fix-bug, 3 write-function (CodeRunner with virtual files), 1 paper-exam (read-then-write file). 7 core.",
+   "mistakeCategories": [
+    "file_newline",
+    "header_order_assumed",
+    "csv_ext_assumed",
+    "case_sensitive_compare",
+    "file_not_closed",
+    "efficiency_repeat_pass",
+    "import_used",
+    "invalid_row_not_skipped"
+   ],
+   "bestPractices": [
+    "Call line.strip() before split(',') so values do not end with '\\n'",
+    "Find each column with header.index(name), never a hard-coded position",
+    "Read the file once and keep what you need in lists or dicts",
+    "Use 'with open(filename) as f' so the file is always closed",
+    "Never add or check a '.csv' extension; use the filename exactly as given"
+   ],
+   "sampleQuestions": [
+    "[write-function, medium] BOM-style file perth_rain.csv: 'Station,Year,Rainfall_mm' / 'Perth Airport,2024,720.4' / 'Swanbourne,2024,N/A' / 'perth airport,2025,640.0'. Write column_mean(filename, column) that finds the column by header name (ignoring case), skips values that are not numbers, and returns the mean rounded to 4 dp. column_mean(f, 'rainfall_mm') -> 680.2. A hidden test shuffles the columns (header_order_assumed).",
+    "[fix-bug, medium] This code finds Swan River sensor readings for a site: for line in open(fname): parts = line.split(','); if parts[2] == 'Maylands': readings.append(float(parts[1])). It returns [] and crashes on the header. Fix: skip the header with readline(), strip() each line, compare parts[2].strip().lower() == 'maylands', and use with open. Logs file_newline and file_not_closed.",
+    "[parsons, hard] Assemble load_rows(fname), which returns a list of dicts keyed by lower-case header names. It includes a paired distractor that calls f.readlines() inside the loop, which logs efficiency_repeat_pass. Graded by running it on two virtual files with different column orders."
+   ]
+  },
+  {
+   "id": "exceptions-graceful",
+   "title": "Exceptions and Graceful Termination",
+   "order": 10,
+   "band": "late-semester / project + exam — follows L19. The project specs and the file question in every final require the program to 'terminate gracefully' on I/O and data errors.",
+   "objectives": [
+    "Read a traceback and name the exception type, the line and the likely cause",
+    "Use try/except with specific exceptions (FileNotFoundError, ValueError, ZeroDivisionError, IndexError)",
+    "Return an empty result or None on error instead of crashing or printing",
+    "Validate function inputs (type, range, empty) before processing",
+    "Choose where to put try/except so one bad row does not end the whole run"
+   ],
+   "prerequisites": [
+    "files-csv-by-hand"
+   ],
+   "questionMix": "11 questions: 3 easy / 5 medium / 3 hard. 1 mcq, 1 select-all (best handler choice), 2 predict-output (try/except flow), 2 error-translator, 1 fix-bug, 3 write-function (CodeRunner), 1 test-writer (find an input that crashes buggy code). 7 core.",
+   "mistakeCategories": [
+    "bare_except",
+    "no_graceful_exit",
+    "zero_division",
+    "int_of_float_string",
+    "print_in_main",
+    "invalid_row_not_skipped"
+   ],
+   "bestPractices": [
+    "Catch the specific exception you expect, never a bare except",
+    "Keep the try block small: only the line that can fail",
+    "Return [], {} or None on failure as the spec says; do not print the error",
+    "Guard against division by zero before computing a mean with no valid rows",
+    "Use the traceback's last line first: type, message, then line number"
+   ],
+   "sampleQuestions": [
+    "[error-translator, easy] Traceback: File '<student>', line 6, in load_levels: level = float(parts[2]) / ValueError: could not convert string to float: 'N/A'. Pick the cause and the fix. Answer: the Swan River sensor file has a missing reading; wrap the conversion in try/except ValueError and skip that row.",
+    "[write-function, medium] Write safe_average(values), which takes a list of strings from a Fringe World ticket-sales form, converts each one, skips invalid entries and returns the mean, or None if nothing is valid. Tests: ['12', 'x', '18'] -> 15.0; ['n/a'] -> None; [] -> None (hidden zero_division test).",
+    "[test-writer, hard] Given a spec and a secretly buggy load_bookings(filename) for Reid Library study rooms, type a filename or file content that makes it crash. Graded by running the reference and buggy versions and checking that they differ. A good answer is a missing file (the buggy version has no FileNotFoundError handler) or a row with an empty room field."
+   ]
+  },
+  {
+   "id": "functions-project-patterns",
+   "title": "Functions Part 2: Scope, Defaults and the main() Contract",
+   "order": 11,
+   "band": "late-semester / project + exam — follows L15 plus the project rule set. This is where your 'functions are harder' lands: local scope, default parameters and structuring main(csvfile) cost students the most project marks (missing main scores zero, a marker fix costs -4).",
+   "objectives": [
+    "Explain local vs global scope and fix UnboundLocalError by passing values in and returning them",
+    "Use default parameters safely (regularise=False), avoiding mutable defaults",
+    "Split a program into helpers called from a top-level main(csvfile, ...) that returns lists, tuples or dicts",
+    "Follow the Moodle marker rules: no import, no input(), no print() except on graceful termination, round to 4 dp only at output",
+    "Check the arguments passed to main and return consistent types in every code path"
+   ],
+   "prerequisites": [
+    "exceptions-graceful"
+   ],
+   "questionMix": "12 questions: 2 easy / 5 medium / 5 hard. 1 mcq, 2 predict-output (scope), 1 error-translator, 1 select-all (rule violations), 1 fix-bug, 2 refactor (project lint), 3 write-function (CodeRunner), 1 csv-project (mini main). 8 core.",
+   "mistakeCategories": [
+    "scope_confusion",
+    "mutable_default_arg",
+    "print_vs_return",
+    "global_state",
+    "import_used",
+    "input_called",
+    "print_in_main",
+    "round_mid_calc",
+    "missing_main",
+    "return_type_wrong",
+    "csv_ext_assumed"
+   ],
+   "bestPractices": [
+    "Pass data in as parameters and return results out; avoid global variables",
+    "Use None as a default and create the list inside the function",
+    "Define main with exactly the required signature and keep it short: read, compute, return",
+    "Round only when putting values into the returned lists, never during calculation",
+    "Put your name at the top, comment each helper, and use meaningful names (style is worth 5/30)"
+   ],
+   "sampleQuestions": [
+    "[predict-output, easy] taps = 0; def tap_on(): taps = taps + 1; tap_on(); print(taps). What happens? Answer: UnboundLocalError: cannot access local variable 'taps'... because the assignment makes taps local. The fix is def tap_on(taps): return taps + 1, then taps = tap_on(taps). Logs scope_confusion.",
+    "[refactor, medium] A draft project submission has import csv, name = input('File?'), if not csvfile.endswith('.csv'): return, avg = round(total / n, 4) inside the loop, and print(result) at the end. List each rule broken with its marking consequence, then rewrite it so it passes. Graded by lint checks (no import/input/print, no endswith check, round outside loops) plus hidden tests.",
+    "[write-function, hard] Benford-lite: write digit_distribution(numbers, normalise=False), which returns a 9-item list of leading-digit counts for digits 1-9 (skipping 0 and using abs for negatives), or proportions rounded to 4 dp when normalise=True. Tests: [123, 19, 245, 1000] -> [3, 1, 0, 0, 0, 0, 0, 0, 0]; with normalise=True -> [0.75, 0.25, 0.0, ...]; calling it twice gives independent results (mutable_default_arg)."
+   ]
+  },
+  {
+   "id": "project-simulator",
+   "title": "Project Simulator: CSV Statistics and Ranking",
+   "order": 12,
+   "band": "late-semester / project + exam — mirrors Project 1 (15%) and Project 2 (20%): 22/30 automated tests, 5 style, 3 efficiency. Tasks use a synthetic Perth suburbs CSV with shuffled headers, an extra column, mixed case, duplicates and invalid rows.",
+   "objectives": [
+    "Compute the mean, standard deviation and standard error by hand using ** 0.5",
+    "Implement cosine similarity and simple distance measures without imports",
+    "Rank records with multi-level tie-breaks and build nested dicts {group: {item: [values..., rank]}}",
+    "Skip invalid, duplicate or zero/negative rows, and treat strings as case-insensitive",
+    "Get all results from a single pass over the file and return correctly typed, 4-dp results"
+   ],
+   "prerequisites": [
+    "functions-project-patterns"
+   ],
+   "questionMix": "10 questions: 1 easy / 4 medium / 5 hard. 1 mcq (formula reading), 1 predict-output, 1 fix-bug (rounding too early), 2 write-function (stats helpers), 1 refactor (two passes to one), 1 test-writer (edge-case CSV), 3 csv-project (full main with hidden test files). 6 core.",
+   "mistakeCategories": [
+    "round_mid_calc",
+    "header_order_assumed",
+    "invalid_row_not_skipped",
+    "case_sensitive_compare",
+    "sort_tiebreak",
+    "efficiency_repeat_pass",
+    "zero_division",
+    "no_graceful_exit",
+    "return_type_wrong",
+    "missing_main"
+   ],
+   "bestPractices": [
+    "Write one small tested helper per statistic (mean, std_dev, cosine_sim)",
+    "Check for empty or zero denominators and return the result the spec asks for",
+    "Collect IDs you have already seen in a set or dict to detect duplicates",
+    "Build rank tie-breaks as a key tuple, then add rank numbers in a separate loop",
+    "Before submitting, test against your own edge-case CSV files (missing file, shuffled columns, bad rows)"
+   ],
+   "sampleQuestions": [
+    "[write-function, medium] cosine_sim(a, b) for two equal-length lists of weekly patronage figures, with no imports, rounded to 4 dp, returning None if either vector has zero length. Sketch: dot = sum of a[i]*b[i]; mag = (sum of x*x) ** 0.5 for each list. Test: [1, 2, 3], [4, 5, 6] -> 0.9746.",
+    "[csv-project, hard] main(csvfile, lga) on perth_suburbs.csv (columns Suburb, LGA, Population, Area_km2, Postcode in any order) returns (mean_density, std_density), each rounded to 4 dp, for suburbs in the given LGA (case-insensitive). Skip rows with area <= 0, blank names or duplicate suburbs. Return None for a missing file or when there are no valid rows. Hidden tests: shuffled headers, 'CITY OF STIRLING' vs 'city of stirling', a file name with no .csv extension.",
+    "[csv-project, hard] main(csvfile) returns {lga: {suburb: [population, density, rank]}}, where rank goes by population descending, ties are broken by density descending and then suburb name A-Z, and density is rounded to 4 dp. Sketch: one pass to build a dict of lists per LGA; for each LGA, sort with key=lambda r: (-r.pop, -r.density, r.name) and number the ranks from 1. The tie test exposes sort_tiebreak."
+   ]
+  },
+  {
+   "id": "recursion",
+   "title": "Recursion (Mandatory Exam Question)",
+   "order": 13,
+   "band": "late-semester / project + exam — follows L27-L28. It is last in the unit, but every final since 2017 has a recursion question worth 10-20 marks with 'looping is not allowed', so the topic has plenty of paper-exam items.",
+   "objectives": [
+    "Identify the base case and the recursive case, and explain why each call gets closer to the base case",
+    "Trace recursive calls and returned values in a call-stack table",
+    "Write recursive functions on numbers (sum_digits, power) and strings (reverse, palindrome) without loops",
+    "Recurse through arbitrarily nested lists and tuples (total, product, flatten, keep only strings)",
+    "Compare recursive and iterative solutions and convert simple ones between the two"
+   ],
+   "prerequisites": [
+    "project-simulator"
+   ],
+   "questionMix": "12 questions: 3 easy / 4 medium / 5 hard. 1 mcq, 2 predict-output, 2 trace-table (call stack), 1 error-translator (RecursionError), 1 parsons, 1 fix-bug (missing return), 2 write-function (CodeRunner with a no-loop ast check), 2 paper-exam. 8 core.",
+   "mistakeCategories": [
+    "missing_base_case",
+    "recursion_result_ignored",
+    "loop_in_recursion",
+    "print_vs_return",
+    "index_out_of_range",
+    "return_type_wrong"
+   ],
+   "bestPractices": [
+    "Write the base case first and test it on its own",
+    "Make sure every recursive call works on a smaller input (n // 10, s[1:], lst[1:])",
+    "Return the result of the recursive call; do not just call it",
+    "Use isinstance(item, (list, tuple)) to decide whether to go deeper",
+    "In the exam, sketch the call stack for a small input before writing code"
+   ],
+   "sampleQuestions": [
+    "[predict-output, easy] def countdown(n): if n == 0: return 'Liftoff'; return str(n) + ' ' + countdown(n - 1). print(countdown(3)). Expected: '3 2 1 Liftoff'. Distractor 'Liftoff 1 2 3' logs a wrong idea of the order in which calls return.",
+    "[paper-exam, medium, 10 marks] Write sum_digits(n) using recursion only (looping is not allowed). Sketch: if n < 10: return n; return n % 10 + sum_digits(n // 10). Test: sum_digits(6009) -> 15; the ast check rejects for/while (loop_in_recursion).",
+    "[write-function, hard, 20 marks] Rottnest quokka survey: count_quokkas(survey) totals the integers in an arbitrarily nested list (bays, then transects, then sightings). Sketch: total = 0 if survey is empty; if isinstance(survey, int): return survey; return count_quokkas(survey[0]) + count_quokkas(survey[1:]). Test: [3, [2, [5]], [], 1] -> 11; [] -> 0."
+   ]
+  }
+ ],
+ "unlockRule": "Topic 1 is always open. On every topic, the cheat sheet, the worked example and the 'common mistakes' preview can be read even while its questions are locked. Topic N+1 unlocks when all three of these are true for topic N: (a) every question tagged core has been attempted; (b) mastery is at least 70%, where mastery is the average of the best score per core question, and scores are weighted by hints used (no hint 1.0, L1 nudge 0.9, L2 strategy 0.75, L3 partial code 0.5, L4 full solution 0). A variant solved later replaces an earlier revealed-solution score, so no one is stuck with a 0 forever; (c) at least one assemble/repair item (parsons, fix-bug or fill-blank) and one write item (write-function, paper-exam or csv-project) are solved without viewing the L4 solution, so passing on multiple choice alone is impossible. The locked card shows progress, e.g. '6 of 8 core attempted, 64% of 70%, write item done, repair item needed'. Test-out override: any locked topic whose prerequisite is unlocked offers a 5-question test (1 predict-output or trace-table, 1 mcq, 1 fix-bug or parsons, 2 write-function; medium and hard only; no hints; timed at about 15 minutes). A score of 4/5 or better unlocks the topic and gives the previous topic a 'tested out' badge; the report notes it was tested out rather than practised. A failed test-out can be retried after 3 practice questions in the previous topic or after 24 hours. Global override: a settings toggle, 'Unlock all topics (I know what I'm doing)', which is logged as override:true and shown as a caveat in the report. Mastered topics never lock again; a spaced review (+2, +7, +21 days, 3 questions) that scores below 2/3 only marks the topic 'needs review' on the landing page and in the report.",
+ "difficultyRubric": "Difficulty is tagged per question as easy, medium or hard. Score one point for each criterion met: (1) combines more than one concept (for example loop + condition, or dict + sort); (2) nesting depth of 1 or more (if inside a loop with an accumulator, loop inside a loop, recursion); (3) solution length: easy up to 8 lines, medium 8-20, hard over 20 lines or more than one function; (4) a hidden edge case not stated in the prompt (empty input, boundary value, negative, duplicate, missing file); (5) needs decomposition or a choice of data structure; (6) tracing more than about 4 iterations, or two variables changing together, or more than one call-stack level; (7) program- or file-level I/O, or the main(csvfile) contract, rather than a single pure function; (8) targets a strategic mistake (tie-breaks, efficiency, graceful termination) rather than a syntax or conceptual one. Easy = 0-1 points: one taught pattern used exactly as shown, expected time up to 2 minutes, CITS1401 equivalent is a 1-mark lab question. Medium = 2-3 points: the pattern with one twist, 2-6 minutes, equivalent to a CodeRunner lab task or a 5-10 mark exam question. Hard = 4 or more points: a new combination of patterns, 6-15 minutes (csv-project up to 25), equivalent to a 15-20 mark exam question or a project sub-task. Format defaults: mcq, true-false, select-all, predict-output and fill-blank are mostly easy or medium; trace-table, spot-the-difference, error-translator, parsons and fix-bug are mostly medium; write-function, refactor, test-writer, paper-exam and csv-project are medium or hard. A hard mcq must be justified by criteria 1, 6 or 8 (for example aliasing or scope). Exam-mode questions also show marks (5/10/15/20) that scale with the score. Every question also carries: format, concepts[], mistakes[] (the ids it can detect), core (bool), week (CITS1401 lecture alignment), expectedSec, and hints [L1 nudge, L2 strategy, L3 partial code, L4 annotated solution + self-explanation prompt]. A scenario's shown difficulty is derived from the min and max of its questions. The topic page offers filter chips for difficulty and format.",
+ "questionFormats": [
+  {
+   "id": "mcq",
+   "name": "Multiple choice (single answer)",
+   "grading": "Auto-graded by option id, one submission only. Each distractor carries a mistake id that is logged when chosen. The explanation for the chosen option and for the correct one are shown right away. 1 mark."
+  },
+  {
+   "id": "select-all",
+   "name": "Select all that apply (Moodle style, e.g. which blocks are syntactically incorrect)",
+   "grading": "Auto-graded per option: score = max(0, correct picks - wrong picks) / number of correct options. Each wrong pick or miss logs that option's mistake id. One submission, then the answer is revealed."
+  },
+  {
+   "id": "true-false",
+   "name": "True / False on semantics",
+   "grading": "Auto-graded, one submission, with an optional 'Sure / Not sure' confidence rating to catch lucky guesses. A wrong answer logs the statement's mistake id."
+  },
+  {
+   "id": "predict-output",
+   "name": "Predict the output (without running)",
+   "grading": "The expected stdout is produced by running the reference snippet in Pyodide at load time. The answer is compared after normalising (trailing whitespace stripped, line endings unified, optional float tolerance). Easy items use an MCQ variant with misconception distractors; medium and hard items take free text. 2 attempts, then a step-through reveal."
+  },
+  {
+   "id": "trace-table",
+   "name": "Trace table (variables per iteration or call)",
+   "grading": "The expected table comes from running the reference code under sys.settrace, snapshotting variables at the loop header or call. Graded cell by cell for partial credit, with diagnostics: wrong first row -> accumulator_init, missing or extra last row -> off_by_one_range, table never ends -> infinite_while. 2 attempts."
+  },
+  {
+   "id": "spot-the-difference",
+   "name": "Spot-the-difference twins",
+   "grading": "Two snippets that differ by one token (/ vs //, elif vs if, return inside vs after the loop). The student answers whether the outputs differ and predicts both. Auto-graded against both reference outputs; each part is worth half. The twin's mistake id is logged on error."
+  },
+  {
+   "id": "error-translator",
+   "name": "Error translator / which line raises",
+   "grading": "Shows a real CPython 3.12 traceback or a snippet. Two steps: pick the line and exception type, then pick the cause or fixing line from options. Auto-graded by line number, type and option id, half credit per step."
+  },
+  {
+   "id": "fill-blank",
+   "name": "Fill in the blank (cloze, 1-3 blanks)",
+   "grading": "The blanks are put into the template, which is then run against hidden tests, so equivalent answers are accepted (i < len(x) vs i <= len(x) - 1). If the code can't be run, answers are compared as normalised tokens. 3 attempts."
+  },
+  {
+   "id": "parsons",
+   "name": "Parsons puzzle (drag to order, with indentation at medium/hard)",
+   "grading": "The assembled code is run against tests, so any valid order passes. Paired distractor lines each carry a mistake id. After the 2nd failed attempt, one distractor is removed or the first line is locked. 3 attempts, then reveal."
+  },
+  {
+   "id": "fix-bug",
+   "name": "Fix the bug",
+   "grading": "The edited code is run against visible examples plus hidden tests, each tagged with the mistake it exposes. A small bonus goes to minimal fixes (2 or fewer lines changed from the original). The planted bug's mistake id is logged if hidden tests still fail."
+  },
+  {
+   "id": "write-function",
+   "name": "Write a function (CodeRunner style, VS Code-like editor)",
+   "grading": "Unlimited runs against a visible Test/Result table; the submission runs hidden tests in a fresh namespace in the Pyodide worker, with a 3 s timeout, float tolerance 1e-6 or exact 4-dp comparison for rounded results, and repr equality for lists, tuples and dicts. A Moodle-style penalty of 10% per failed hidden submission applies, down to a minimum of 50%. Static ast checks (shadowing, print-vs-return, mutable default, no-import) appear as warnings even when the tests pass."
+  },
+  {
+   "id": "paper-exam",
+   "name": "Paper exam mode (closed book)",
+   "grading": "Plain editor with no syntax highlighting, autocomplete or Run button; marks (5-20) and a timer are shown. When the student submits, the code is run once against hidden tests to get a score, and the model solution is revealed with a marks breakdown. Syntax slips count half as much as they would in a normal write task, because a human marker would read past them. Logged as mode 'exam' for the exam readiness report."
+  },
+  {
+   "id": "refactor",
+   "name": "Refactor to idiom / project lint",
+   "grading": "Must still pass the hidden tests AND pass ast checks that the anti-pattern is gone or the target idiom is present (no if/else returning True/False, dict.get used, no import/input/print, round not inside a loop). Half credit if tests pass but the idiom check fails. Feeds the best-practice pattern cards."
+  },
+  {
+   "id": "test-writer",
+   "name": "Test writer (break the buggy code)",
+   "grading": "The student supplies an input (arguments or small file content). The reference and a secretly buggy version both run on it; the answer is correct if their outputs or exceptions differ. Trains edge-case thinking. 3 attempts."
+  },
+  {
+   "id": "csv-project",
+   "name": "CSV project task (main(csvfile, ...) contract)",
+   "grading": "Runs main against the sample CSV plus hidden virtual files (shuffled headers, extra columns, mixed case, invalid or duplicate rows, missing file, no .csv extension), weighted like the rubric: 22 for tests, 5 for style (auto-checked names, docstrings, comments, name at top), 3 for efficiency (a single pass is detected by counting file reads and loops). A marker lint for import, input(), print() and rounding mid-calculation shows the real consequence (zero, or -4)."
+  }
+ ],
+ "mistakeTaxonomy": [
+  {
+   "code": "missing_colon",
+   "label": "[syntax] Missing colon after if/for/while/def/try",
+   "detection": "Runtime: SyntaxError \"expected ':'\". Static: regex on block-opening keywords whose line lacks a trailing colon."
+  },
+  {
+   "code": "indent_error",
+   "label": "[syntax] Wrong or inconsistent indentation",
+   "detection": "Runtime: IndentationError (expected an indented block / unexpected indent / unindent does not match) or TabError. Static: mixed tabs and spaces. Distractor: predict-output option that treats a dedented line as inside the block."
+  },
+  {
+   "code": "unclosed_bracket",
+   "label": "[syntax] Unbalanced brackets or quotes",
+   "detection": "Runtime: SyntaxError \"'(' was never closed\" or unterminated string literal. Logged as a slip, shown de-emphasised unless repeated."
+  },
+  {
+   "code": "name_typo",
+   "label": "[syntax] Misspelt variable or function name",
+   "detection": "Runtime: NameError with the 3.12 'Did you mean' suggestion. Counted separately as a slip."
+  },
+  {
+   "code": "int_vs_float_division",
+   "label": "[conceptual] Confusing / with // (or % results)",
+   "detection": "Runtime: TypeError 'list indices must be integers... not float'. Static: FloorDiv where the spec expects a mean. Test: expects 2.5, gets 2 (or the reverse). Distractor: 7/2 == 3."
+  },
+  {
+   "code": "str_int_concat",
+   "label": "[conceptual] Joining str and int with +",
+   "detection": "Runtime: TypeError 'can only concatenate str (not \"int\") to str'. Distractor: numeric-looking string treated as a number."
+  },
+  {
+   "code": "input_without_int",
+   "label": "[conceptual] Doing maths on unconverted text (input or file field)",
+   "detection": "Runtime: TypeError \"'<' not supported between 'str' and 'int'\". Test: '3' + '4' -> '34'. Static: Name assigned from input() or split() used in BinOp/Compare with a number, without int()/float()."
+  },
+  {
+   "code": "int_of_float_string",
+   "label": "[conceptual] int('12.0') or int('N/A') expected to work",
+   "detection": "Runtime: ValueError 'invalid literal for int() with base 10'. Distractor in select-all / error-translator items."
+  },
+  {
+   "code": "assign_vs_compare",
+   "label": "[conceptual] = used where == is meant (or the reverse)",
+   "detection": "Runtime: SyntaxError 'Maybe you meant == or := instead of =?'. Static: statement-level Compare expression that has no effect. Distractor: '= checks equality'."
+  },
+  {
+   "code": "is_vs_equals",
+   "label": "[conceptual] 'is' used to compare values",
+   "detection": "Runtime: SyntaxWarning '\"is\" with a literal'. Static: Compare with Is/IsNot against a constant other than None/True/False."
+  },
+  {
+   "code": "or_with_literal",
+   "label": "[conceptual] x == 1 or 2 style condition",
+   "detection": "Static: BoolOp with a constant operand. Test: the always-true branch fails a hidden test for a value that should be rejected."
+  },
+  {
+   "code": "elif_vs_if",
+   "label": "[conceptual] Separate ifs where elif is meant (or the reverse)",
+   "detection": "Test: an input matching two conditions gives double output or the wrong category. Distractor: spot-the-difference twin."
+  },
+  {
+   "code": "compare_to_true",
+   "label": "[style] Comparing to True/False or if-return True/else-return False",
+   "detection": "Static: Compare with a True/False constant; If whose branches only return boolean literals. Warning only."
+  },
+  {
+   "code": "off_by_one_range",
+   "label": "[conceptual] Wrong range bounds or loop boundary",
+   "detection": "Static: range(1, len(x)), range(len(x)+1), or range(0, n-1) compared with the spec. Test: first/last element and n=0 tests. Trace table: missing or extra last row. Distractor: includes the stop value."
+  },
+  {
+   "code": "accumulator_init",
+   "label": "[conceptual] Accumulator missing, reset inside loop, or wrong start value",
+   "detection": "Runtime: NameError/UnboundLocalError on the accumulator. Static: accumulator assigned a constant and aug-assigned in the same loop body; product starting at 0; max starting at 0. Test: all-negative list. Trace table: wrong first row."
+  },
+  {
+   "code": "modify_loop_var",
+   "label": "[conceptual] Changing the for-loop variable in the body",
+   "detection": "Static: Assign/AugAssign to the For target inside its body. Trace table / distractor showing i jumping."
+  },
+  {
+   "code": "early_return_in_loop",
+   "label": "[conceptual] return inside loop ends it after the first item",
+   "detection": "Static: Return directly inside a For/While body with no enclosing If. Test: a list where the answer depends on a later element."
+  },
+  {
+   "code": "infinite_while",
+   "label": "[conceptual] while loop never terminates",
+   "detection": "Runtime: sys.settrace step budget raises a friendly timeout, with worker.terminate() after 5 s as backstop. Static: While whose condition names are never assigned in the body and that has no break. Trace table: cannot finish."
+  },
+  {
+   "code": "float_equality",
+   "label": "[conceptual] Comparing floats with == or wrong tolerance stop",
+   "detection": "Static: Compare with Eq/NotEq where a side is a float expression. Test: series or tolerance tests hang or give the wrong term count."
+  },
+  {
+   "code": "print_vs_return",
+   "label": "[conceptual] Printing instead of returning",
+   "detection": "Test harness: return value is None while captured stdout equals the expected value; also 'return print(...)'. Static: FunctionDef with no Return but with a print call when the spec says return. Distractor: x = f() holds the printed value."
+  },
+  {
+   "code": "forgot_to_call",
+   "label": "[conceptual] Using a function name without calling it",
+   "detection": "Runtime: TypeError mentioning 'function'; stdout contains '<function '. Static: bare Name of a def used as a statement or in a Compare."
+  },
+  {
+   "code": "scope_confusion",
+   "label": "[conceptual] Expecting a function to change or see an outer variable",
+   "detection": "Runtime: UnboundLocalError 'cannot access local variable'; NameError on a function-local name used at module level. Static: name assigned both at module level and inside a def without passing it in. Distractor."
+  },
+  {
+   "code": "mutable_default_arg",
+   "label": "[conceptual] List/dict used as a default parameter",
+   "detection": "Static: FunctionDef default is a List, Dict or Set. Test: calling twice must give independent results."
+  },
+  {
+   "code": "string_immutability",
+   "label": "[conceptual] Trying to change a string in place or discarding a method result",
+   "detection": "Runtime: TypeError \"'str' object does not support item assignment\". Static: expression statement calling upper/lower/strip/replace whose result is thrown away. Test: output unchanged."
+  },
+  {
+   "code": "case_sensitive_compare",
+   "label": "[conceptual] Comparing strings without normalising case/whitespace",
+   "detection": "Test: hidden mixed-case or padded input ('PERTH ', 'perth') fails. Static: Compare on string fields with no lower()/strip() applied in the function."
+  },
+  {
+   "code": "index_out_of_range",
+   "label": "[conceptual] Indexing past the end or into an empty sequence",
+   "detection": "Runtime: IndexError list/string/tuple index out of range. Static: x[len(x)]. Test: empty and single-element inputs."
+  },
+  {
+   "code": "none_from_inplace",
+   "label": "[conceptual] Assigning the None result of sort/append/reverse",
+   "detection": "Static: Assign whose value is a call to sort/append/extend/reverse/insert. Runtime: later TypeError on 'NoneType'."
+  },
+  {
+   "code": "aliasing_copy",
+   "label": "[conceptual] Believing b = a copies a list",
+   "detection": "Distractor in predict-output/MCQ items. Test: function mutates the caller's list when the spec says return a new one (input list checked after the call)."
+  },
+  {
+   "code": "tuple_immutability",
+   "label": "[conceptual] Trying to change a tuple",
+   "detection": "Runtime: TypeError \"'tuple' object does not support item assignment\"."
+  },
+  {
+   "code": "mutate_while_iterating",
+   "label": "[conceptual] Adding/removing items from the collection being looped over",
+   "detection": "Runtime: RuntimeError 'dictionary changed size during iteration'. Static: X.remove/pop/append/del inside 'for ... in X'. Test: adjacent matches such as [1, 2, 2, 3]."
+  },
+  {
+   "code": "dict_keyerror",
+   "label": "[conceptual] Reading or incrementing a key that may not exist",
+   "detection": "Runtime: KeyError with the key name. Static: d[k] += 1 in a loop with no prior 'in' check, get or setdefault. Test: unseen key."
+  },
+  {
+   "code": "file_newline",
+   "label": "[conceptual] Not stripping '\\n' / whitespace from file lines",
+   "detection": "Test: hidden file whose last-column string comparisons fail. Static: line.split(',') with no strip() on the line or field."
+  },
+  {
+   "code": "zero_division",
+   "label": "[conceptual] Dividing by a count or magnitude that can be zero",
+   "detection": "Runtime: ZeroDivisionError. Test: empty list, no valid rows, zero vector."
+  },
+  {
+   "code": "missing_base_case",
+   "label": "[conceptual] Recursion without a reachable base case",
+   "detection": "Runtime: RecursionError 'maximum recursion depth exceeded'. Static: recursive FunctionDef with no Return on a branch that does not call itself."
+  },
+  {
+   "code": "recursion_result_ignored",
+   "label": "[conceptual] Recursive call made but its value not returned",
+   "detection": "Static: recursive call used as an expression statement. Test harness: None returned for inputs that go past the base case."
+  },
+  {
+   "code": "loop_in_recursion",
+   "label": "[exam-rule] Using a loop where 'looping is not allowed'",
+   "detection": "Static: For/While/comprehension found in a function whose question has noLoops=true; exam items score 0 and practice items show a warning."
+  },
+  {
+   "code": "shadow_builtin",
+   "label": "[style] Naming a variable after a built-in (list, sum, max, str, input)",
+   "detection": "Static: Assign/For/parameter names in the built-ins set. Runtime: TypeError \"'list' object is not callable\"."
+  },
+  {
+   "code": "style_naming",
+   "label": "[style] Unclear names, missing docstring/comments",
+   "detection": "Static: identifiers under 3 characters (except i, j, k loop counters), CamelCase functions, FunctionDef without a docstring, no name comment at the top of project tasks. Feeds the 5-mark style estimate."
+  },
+  {
+   "code": "global_state",
+   "label": "[style] Relying on global variables instead of parameters/returns",
+   "detection": "Static: a 'global' statement, or a function reading a module-level mutable variable. Style warning only (not a documented hard project rule)."
+  },
+  {
+   "code": "sort_tiebreak",
+   "label": "[strategic] Missing or wrong tie-break when sorting/ranking",
+   "detection": "Test: hidden ties (equal values) fail. Static: sort/sorted key that returns a single field when the spec lists two."
+  },
+  {
+   "code": "return_type_wrong",
+   "label": "[strategic] Returning the wrong type/shape (list vs tuple, unrounded, str vs float)",
+   "detection": "Test harness compares type and structure before values and reports 'expected tuple, got list' or 'not rounded to 4 dp'."
+  },
+  {
+   "code": "header_order_assumed",
+   "label": "[project] Using fixed column positions instead of the header names",
+   "detection": "Test: hidden CSV with shuffled and extra columns. Static: numeric subscripts on split rows with no header.index lookup in the function."
+  },
+  {
+   "code": "csv_ext_assumed",
+   "label": "[project] Adding or checking a '.csv' extension",
+   "detection": "Static: string literal '.csv' or endswith('.csv') in code. Test: hidden file name with no extension."
+  },
+  {
+   "code": "invalid_row_not_skipped",
+   "label": "[project] Not ignoring blank, invalid, duplicate or out-of-range rows",
+   "detection": "Test: hidden files containing N/A, empty names, zero/negative values and duplicate keys."
+  },
+  {
+   "code": "no_graceful_exit",
+   "label": "[project] Crashing instead of returning empty/None on bad input or missing file",
+   "detection": "Test: missing file, wrong argument type and empty-file tests raise an exception instead of returning the specified value."
+  },
+  {
+   "code": "bare_except",
+   "label": "[style] Catching everything with a bare except",
+   "detection": "Static: ExceptHandler with type None, or 'except Exception' wrapping the whole function body."
+  },
+  {
+   "code": "file_not_closed",
+   "label": "[style] open() without with / close",
+   "detection": "Static: an open() call that is not a with-item and has no matching close()."
+  },
+  {
+   "code": "efficiency_repeat_pass",
+   "label": "[project] Re-reading the file or looping over the same data repeatedly",
+   "detection": "Instrumented harness: counts open() and readline/readlines calls and nested full scans. Static: readlines() or open() inside a loop. Feeds the 3-mark efficiency estimate."
+  },
+  {
+   "code": "import_used",
+   "label": "[project] Importing a module (even csv or math)",
+   "detection": "Static: any Import/ImportFrom node. Marker lint message: project/exam answer would not be accepted."
+  },
+  {
+   "code": "input_called",
+   "label": "[project] Calling input() in submitted code",
+   "detection": "Static: a call to input(). Runtime: the stdin stub raises if called during hidden tests. Marker lint: submission would not be tested."
+  },
+  {
+   "code": "print_in_main",
+   "label": "[project] print() outside graceful-termination branches",
+   "detection": "Static: a print call not inside an except handler or an early-return error branch. Test harness: stdout was captured during a normal-path test."
+  },
+  {
+   "code": "round_mid_calc",
+   "label": "[project] Rounding during calculation instead of only at output",
+   "detection": "Static: round() inside a loop or on an intermediate variable that is used again. Test: hidden data where early rounding changes the 4th decimal place."
+  },
+  {
+   "code": "missing_main",
+   "label": "[project] main() missing or signature does not match the spec",
+   "detection": "Harness: the namespace has no callable 'main', or inspect.signature parameter names/count differ. Marker lint: 'graded zero'."
+  }
+ ]
+}

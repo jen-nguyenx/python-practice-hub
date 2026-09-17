@@ -8,34 +8,29 @@ import { Report } from '../ui/screens/Report.tsx';
 import { TopicTest } from '../ui/screens/TopicTest.tsx';
 import { MidsemTest } from '../ui/screens/MidsemTest.tsx';
 import { Settings } from '../ui/screens/Settings.tsx';
+import { AppShell } from '../ui/shell/AppShell.tsx';
 
 export function App() {
   const r = route.value;
   let screen;
   switch (r.name) {
     case 'landing': screen = <Landing />; break;
-    case 'topic': screen = <TopicPage topicId={r.topicId} />; break;
+    case 'topic': screen = <TopicPage key={r.topicId} topicId={r.topicId} />; break;
     case 'question': screen = <QuestionPage qid={r.qid} />; break;
     case 'playground': screen = <Playground />; break;
     case 'report': screen = <Report topicId={r.topicId} />; break;
     case 'topic-test': screen = <TopicTest topicId={r.topicId} />; break;
     case 'midsem': screen = <MidsemTest />; break;
     case 'settings': screen = <Settings />; break;
-    default: screen = <div class="empty-state">Page not found. <a href={href.landing()}>Back to topics</a></div>;
+    default:
+      screen = (
+        <div class="page page-narrow">
+          <div class="empty-state">
+            <p><strong>Page not found.</strong></p>
+            <p>That link doesn't match anything in PyLadder. <a href={href.landing()}>Back to topics</a></p>
+          </div>
+        </div>
+      );
   }
-  return (
-    <div class="app">
-      <header class="app-header">
-        <a class="app-logo" href={href.landing()}>Py<span>Ladder</span></a>
-        <nav class="app-nav" aria-label="Main">
-          <a href={href.landing()}>Topics</a>
-          <a href={href.playground()}>Playground</a>
-          <a href={href.midsem()}>Mid-sem test</a>
-          <a href={href.report()}>Report</a>
-          <a href={href.settings()}>Settings</a>
-        </nav>
-      </header>
-      <main class="app-main" id="main">{screen}</main>
-    </div>
-  );
+  return <AppShell route={r}>{screen}</AppShell>;
 }

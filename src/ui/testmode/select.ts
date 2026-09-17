@@ -1,0 +1,251 @@
+// Pure question selection for the topic test and the mid-semester practice test.
+// No DOM, no store: unit-tested in select.test.ts.
+import type { Diff, Format, Ladder, TopicId } from '../../content/ids.ts';
+import { FORMAT_LADDER, OFFLINE_FORMATS } from '../../content/ids.ts';
+import { TOPICS } from '../../content/topics.ts';
+import type { GeneratedQuestion, Question } from '../../content/schema.ts';
+
+/** The fields selection needs. Anything with these fields can be selected (questions, index entries, test items). */
+export interface Candidate {
+  id: string;
+  topicId: TopicId;
+  format: Format;
+  diff: Diff;
+  /** write question in paper (exam) mode */
+  paper: boolean;
+  expectedSec: number;
+}
+
+export type Rng = () => number;
+
+/** Small seeded generator (mulberry32) so tests are repeatable. */
+export function seededRng(seed: number): Rng {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+export function shuffle<T>(items: readonly T[], rng: Rng): T[] {
+  const out = items.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+/** Read formats whose grading needs pre-generated data from the verifier. */
+const NEEDS_GENERATED: readonly Format[] = ['predict', 'trace', 'twins', 'errorTranslator'];
+
+export function isPaper(q: Question): boolean {
+  return q.format === 'write' && q.mode === 'paper';
+}
+
+/** A question can go into a test only if it can be graded: read formats that need generated data must have it. */
+export function isGradable(q: Question, generated: GeneratedQuestion | undefined): boolean {
+  if (NEEDS_GENERATED.includes(q.format)) return generated !== undefined;
+  return true;
+}
+
+export function toCandidate(q: Question, topicId: TopicId): Candidate {
+  return { id: q.id, topicId, format: q.format, diff: q.diff, paper: isPaper(q), expectedSec: q.expectedSec };
+}
+
+// ---------------------------------------------------------------- topic test
+
+export const TOPIC_TEST_SIZE = 5;
+export const TOPIC_TEST_MINUTES = 15;
+export const TOPIC_TEST_PASS = 4;
+
+export interface Slot {
+  /** Formats that fit this slot, most preferred first. */
+  formats: readonly Format[];
+  /** Fallback: any question on the same rung. */
+  rung: Ladder;
+}
+
+/** 1 predict/trace/mcq, 1 mcq/multi/twins/errorTranslator, 1 cloze/parsons/fixBug, 2 write/fixBug/refactor. */
+export const TOPIC_TEST_SLOTS: readonly Slot[] = [
+  { formats: ['predict', 'trace', 'mcq'], rung: 'read' },
+  { formats: ['mcq', 'multi', 'twins', 'errorTranslator'], rung: 'read' },
+  { formats: ['cloze', 'parsons', 'fixBug'], rung: 'repair' },
+  { formats: ['write', 'fixBug', 'refactor'], rung: 'write' },
+  { formats: ['write', 'refactor', 'fixBug'], rung: 'write' },
+];
+
+/** Pass mark for a topic test of `total` questions: 4 of 5, or 80% rounded up when fewer questions exist. */
+export function topicTestPassMark(total: number): number {
+  if (total >= TOPIC_TEST_SIZE) return TOPIC_TEST_PASS;
+  return Math.max(1, Math.ceil(total * 0.8));
+}
+
+/** 0 = preferred (medium or hard), 1 = easy. */
+function topicDiffRank(d: Diff): number {
+  return d === 'easy' ? 1 : 0;
+}
+
+/**
+ * Pick up to 5 questions for a topic test, ordered read -> repair -> write.
+ * Levels are tried across all slots before falling back, so a fallback never steals a question another slot needs:
+ * 0 exact format (no paper), 1 same rung (no paper), 2 any question (no paper), 3 anything including paper-mode write.
+ * The most constrained slot fills first at each level. Within a level: medium/hard before easy, then format preference.
+ */
+export function selectTopicTest<T extends Candidate>(pool: readonly T[], rng: Rng = Math.random, slots: readonly Slot[] = TOPIC_TEST_SLOTS): T[] {
+  const shuffled = shuffle(pool, rng);
+  const used = new Set<string>();
+  const picks: (T | undefined)[] = slots.map(() => undefined);
+
+  const fits = (slot: Slot, c: T, level: number): boolean => {
+    if (level < 3 && c.paper) return false;
+    if (level === 0) return slot.formats.includes(c.format);
+    if (level === 1) return FORMAT_LADDER[c.format] === slot.rung;
+    return true;
+  };
+  const rank = (slot: Slot, c: T): number => {
+    const fi = slot.formats.indexOf(c.format);
+    return topicDiffRank(c.diff) * 100 + (fi < 0 ? 50 : fi);
+  };
+
+  for (let level = 0; level <= 3; level++) {
+    const open = slots.map((_, i) => i).filter((i) => !picks[i]);
+    if (open.length === 0) break;
+    const countFor = (i: number) => shuffled.filter((c) => !used.has(c.id) && fits(slots[i], c, level)).length;
+    // Most constrained first (stable on slot order).
+    const order = open.map((i) => ({ i, n: countFor(i) })).sort((a, b) => a.n - b.n || a.i - b.i);
+    for (const { i } of order) {
+      let best: T | undefined;
+      let bestRank = Infinity;
+      for (const c of shuffled) {
+        if (used.has(c.id) || !fits(slots[i], c, level)) continue;
+        const r = rank(slots[i], c);
+        if (r < bestRank) { best = c; bestRank = r; }
+      }
+      if (best) { picks[i] = best; used.add(best.id); }
+    }
+  }
+  return picks.filter((p): p is T => p !== undefined);
+}
+
+// ---------------------------------------------------------------- mid-semester practice test
+
+export const MIDSEM_COUNTS = [10, 15, 20, 30] as const;
+export const MIDSEM_MINUTES = [20, 30, 45, 60] as const;
+export const MIDSEM_PASS_PERCENT = 50;
+
+export interface MidsemOptions {
+  topicIds: readonly TopicId[];
+  count: number;
+  /** Off: read formats only (no Python needed). On: every format, including paper-mode write. */
+  includeCoding: boolean;
+}
+
+/** Questions allowed in a mid-sem test with these options (before balancing). */
+export function midsemEligible<T extends Candidate>(pool: readonly T[], opts: Pick<MidsemOptions, 'topicIds' | 'includeCoding'>): T[] {
+  return pool.filter((c) => opts.topicIds.includes(c.topicId) && (opts.includeCoding || (OFFLINE_FORMATS.includes(c.format) && !c.paper)));
+}
+
+/**
+ * Split `n` across buckets as evenly as possible without exceeding each bucket's capacity.
+ * Leftover goes to buckets in the given order.
+ */
+export function waterFill(capacities: readonly number[], n: number): number[] {
+  const out = capacities.map(() => 0);
+  let left = Math.min(n, capacities.reduce((a, b) => a + b, 0));
+  while (left > 0) {
+    const open = capacities.map((cap, i) => i).filter((i) => out[i] < capacities[i]);
+    if (open.length === 0) break;
+    const share = Math.floor(left / open.length);
+    if (share === 0) {
+      // Fewer items than open buckets: one each, fullest capacity first so scarce buckets are not favoured, ties by order.
+      const byRoom = open.slice().sort((a, b) => (capacities[b] - out[b]) - (capacities[a] - out[a]) || a - b);
+      for (const i of byRoom.slice(0, left)) out[i]++;
+      break;
+    }
+    for (const i of open) {
+      const add = Math.min(share, capacities[i] - out[i]);
+      out[i] += add;
+      left -= add;
+    }
+  }
+  return out;
+}
+
+/** Medium first; read questions treat easy and hard alike; repair and write prefer easy over hard (time). */
+function midsemDiffRank(c: Candidate): number {
+  if (c.diff === 'medium') return 0;
+  if (FORMAT_LADDER[c.format] === 'read') return 1;
+  return c.diff === 'easy' ? 1 : 2;
+}
+
+const RUNGS: readonly Ladder[] = ['read', 'repair', 'write'];
+const TOPIC_ORDER: Record<string, number> = Object.fromEntries(TOPICS.map((t, i) => [t.id, i]));
+
+/**
+ * Pick questions for a mid-semester practice test.
+ * Balanced across the chosen topics and across read / repair / write (read only when coding is off), preferring medium.
+ * Result is ordered read -> repair -> write, then by topic order, like a paper: warm-up questions first.
+ */
+export function selectMidsem<T extends Candidate>(pool: readonly T[], opts: MidsemOptions, rng: Rng = Math.random): T[] {
+  const eligible = shuffle(midsemEligible(pool, opts), rng);
+  const n = Math.min(Math.max(0, Math.floor(opts.count)), eligible.length);
+  if (n === 0) return [];
+
+  const topics = opts.topicIds.filter((t, i) => opts.topicIds.indexOf(t) === i);
+  const rungs = opts.includeCoding ? RUNGS : (['read'] as const);
+  const topicTargets = waterFill(topics.map((t) => eligible.filter((c) => c.topicId === t).length), n);
+  const rungTargets = waterFill(rungs.map((r) => eligible.filter((c) => FORMAT_LADDER[c.format] === r).length), n);
+  const topicCount = topics.map(() => 0);
+  const rungCount = rungs.map(() => 0);
+
+  const used = new Set<string>();
+  const picked: T[] = [];
+  for (let k = 0; k < n; k++) {
+    let best: { ti: number; ri: number; key: number[] } | undefined;
+    for (let ti = 0; ti < topics.length; ti++) {
+      for (let ri = 0; ri < rungs.length; ri++) {
+        const avail = eligible.filter((c) => !used.has(c.id) && c.topicId === topics[ti] && FORMAT_LADDER[c.format] === rungs[ri]);
+        if (avail.length === 0) continue;
+        const tDef = topicTargets[ti] - topicCount[ti];
+        const rDef = rungTargets[ri] - rungCount[ri];
+        const bothOpen = (tDef > 0 ? 1 : 0) + (rDef > 0 ? 1 : 0);
+        const relative = (topicTargets[ti] ? tDef / topicTargets[ti] : -1) + (rungTargets[ri] ? rDef / rungTargets[ri] : -1);
+        // Higher is better: both deficits open, larger relative deficit, scarcer cell first (so it is not starved later).
+        const key = [bothOpen, relative, -avail.length];
+        if (!best || compareKeys(key, best.key) > 0) best = { ti, ri, key };
+      }
+    }
+    if (!best) break;
+    const { ti, ri } = best;
+    let choice: T | undefined;
+    for (const c of eligible) {
+      if (used.has(c.id) || c.topicId !== topics[ti] || FORMAT_LADDER[c.format] !== rungs[ri]) continue;
+      if (!choice || midsemDiffRank(c) < midsemDiffRank(choice)) choice = c;
+    }
+    if (!choice) break;
+    used.add(choice.id);
+    picked.push(choice);
+    topicCount[ti]++;
+    rungCount[ri]++;
+  }
+
+  return picked.sort((a, b) =>
+    RUNGS.indexOf(FORMAT_LADDER[a.format]) - RUNGS.indexOf(FORMAT_LADDER[b.format]) ||
+    (TOPIC_ORDER[a.topicId] ?? 99) - (TOPIC_ORDER[b.topicId] ?? 99));
+}
+
+function compareKeys(a: number[], b: number[]): number {
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return a[i] > b[i] ? 1 : -1;
+  }
+  return 0;
+}
+
+/** Sum of expected solving time, in minutes, rounded up. */
+export function estimatedMinutes(items: readonly Candidate[]): number {
+  return Math.ceil(items.reduce((s, c) => s + c.expectedSec, 0) / 60);
+}

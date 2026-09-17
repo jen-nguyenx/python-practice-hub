@@ -29,6 +29,14 @@ const PATHS: Record<string, string> = {
   file: 'M5 2h7l4 4v12H5z M12 2v4h4',
   grip: 'M8 5h.01 M12 5h.01 M8 10h.01 M12 10h.01 M8 15h.01 M12 15h.01',
   target: 'M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16z M10 14a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M10 10h.01',
+  // additions (shell agent)
+  menu: 'M3 5.5h14 M3 10h14 M3 14.5h14',
+  keyboard: 'M2 5h16v10H2z M5.5 8h.01 M8.5 8h.01 M11.5 8h.01 M14.5 8h.01 M6 12h8',
+  unlock: 'M5 10V7a5 5 0 0 1 9.7-1.7 M4 10h12v8H4z',
+  trash: 'M4 6h12 M8 6V3.5h4V6 M5.5 6l1 11.5h7l1-11.5',
+  shield: 'M10 2l6.5 2.5v5c0 4-2.8 7-6.5 8.5-3.7-1.5-6.5-4.5-6.5-8.5v-5z M7 10l2 2 4-4',
+  filter: 'M3 4h14l-5.5 6.5V16l-3 1.5v-7z',
+  dot: 'M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
 };
 export type IconName = keyof typeof PATHS;
 

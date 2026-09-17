@@ -1,0 +1,15 @@
+/* Segmented control (report range, mid-sem setup). */
+.seg { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 6px; }
+.seg-legend { padding: 0; }
+.seg-track { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-2); width: fit-content; max-width: 100%; }
+.seg-opt { position: relative; display: inline-flex; }
+.seg-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
+.seg-opt span {
+  display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: var(--r-1); cursor: pointer;
+  font-size: var(--fs-13); font-weight: 500; color: var(--text-muted); white-space: nowrap; font-variant-numeric: tabular-nums;
+  border: 1px solid transparent; transition: background var(--dur) ease-out;
+}
+.seg-opt span:hover { color: var(--text); background: var(--surface-3); }
+.seg-opt.on span { background: var(--surface); color: var(--text); border-color: var(--border-control); }
+.seg-opt input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 1px; }
+.seg.sm .seg-opt span { height: 24px; padding: 0 9px; font-size: var(--fs-12); }

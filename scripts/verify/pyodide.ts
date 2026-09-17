@@ -1,0 +1,73 @@
+// Node loader for the Python grading package. Used by the verifier and by src/runtime/__tests__/harness.test.ts.
+import { readFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { loadPyodide } from 'pyodide';
+import type { PyodideAPI } from 'pyodide';
+import { PY_ENTRY, PY_MODULES, PY_PACKAGE, PY_ROOT } from '../../src/runtime/python/manifest.ts';
+import type { AstFinding, PairResult, PyError, RunResult, TestsResult, VirtualFile } from '../../src/runtime/protocol.ts';
+import type { RuleId } from '../../src/content/ids.ts';
+import type { Test } from '../../src/content/schema.ts';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+export const PROJECT_ROOT = resolve(HERE, '..', '..');
+export const PY_DIR = join(PROJECT_ROOT, 'src', 'runtime', 'python');
+
+export interface TraceResult { rows: string[][]; stdout: string; error?: PyError }
+export interface CaptureResult { stdout: string; error?: PyError; timedOut?: boolean }
+export interface LiteralInfo { ok: boolean; error?: string; hasFloat: boolean; isTuple: boolean; typeName: string }
+export interface DefinesResult { defined: boolean; compileError?: PyError; error?: PyError }
+export interface ConstructsResult { parsed: boolean; used: string[]; defs: string[] }
+export type TimedTestsResult = TestsResult & { outcomes: (TestsResult['outcomes'][number] & { durationMs?: number })[] };
+
+export interface Harness {
+  py: PyodideAPI;
+  runProgram(code: string, stdin?: string[], files?: VirtualFile[], budgetMs?: number): RunResult;
+  runTests(
+    code: string, tests: Test[], kind: 'function' | 'program' | 'project', fnName?: string, rules?: RuleId[],
+    budgetMsPerTest?: number, timing?: boolean,
+  ): TimedTestsResult;
+  analyze(code: string): { syntaxError?: PyError; flags: AstFinding[] };
+  pair(reference: string, buggy: string, fnName: string, argsRepr: string): PairResult;
+  trace(code: string, watch: string[], anchorLine: number, stdin?: string[]): TraceResult;
+  runCapture(code: string, stdin?: string[]): CaptureResult;
+  literalInfo(expr: string): LiteralInfo;
+  defines(code: string, fnName: string): DefinesResult;
+  constructs(code: string): ConstructsResult;
+}
+
+type PyFn = (...args: unknown[]) => string;
+
+/** Load Pyodide, write the _pl package from src/runtime/python and import the harness. */
+export async function createHarness(opts: { hashSeed?: string } = {}): Promise<Harness> {
+  const env: Record<string, string> = { HOME: '/home/pyodide' };
+  if (opts.hashSeed !== undefined) env.PYTHONHASHSEED = opts.hashSeed;
+  const py = await loadPyodide({ env, stdout: () => {}, stderr: () => {} });
+  const pkgDir = `${PY_ROOT}/${PY_PACKAGE}`;
+  py.FS.mkdirTree(pkgDir);
+  for (const name of PY_MODULES) {
+    py.FS.writeFile(`${pkgDir}/${name}`, readFileSync(join(PY_DIR, name), 'utf8'));
+  }
+  py.runPython(`import sys\nif ${JSON.stringify(PY_ROOT)} not in sys.path:\n    sys.path.insert(0, ${JSON.stringify(PY_ROOT)})`);
+  const mod = py.pyimport(PY_ENTRY) as unknown as Record<string, PyFn>;
+  const fn = (name: string): PyFn => {
+    const f = mod[name];
+    if (typeof f !== 'function') throw new Error(`harness.${name} is missing`);
+    return f;
+  };
+  const call = <T>(name: string, ...args: unknown[]): T => JSON.parse(fn(name)(...args)) as T;
+  const j = (v: unknown) => JSON.stringify(v ?? null);
+  return {
+    py,
+    runProgram: (code, stdin = [], files = [], budgetMs = 2000) => call('run_program', code, j(stdin), j(files), budgetMs),
+    runTests: (code, tests, kind, fnName, rules = [], budgetMsPerTest = 1000, timing = false) =>
+      call('run_tests', code, j(tests), kind, fnName ?? null, j(rules), budgetMsPerTest, timing),
+    analyze: (code) => call('analyze', code),
+    pair: (reference, buggy, fnName, argsRepr) => call('pair', reference, buggy, fnName, argsRepr),
+    trace: (code, watch, anchorLine, stdin = []) => call('trace', code, j(watch), anchorLine, j(stdin)),
+    runCapture: (code, stdin = []) => call('run_capture', code, j(stdin)),
+    literalInfo: (expr) => call('literal_info', expr),
+    defines: (code, fnName) => call('defines', code, fnName),
+    constructs: (code) => call('constructs', code),
+  };
+}

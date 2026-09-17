@@ -11,7 +11,7 @@
 .ed-tab {
   display: inline-flex; align-items: center; padding: 0 var(--sp-4); margin-left: var(--sp-3);
   font-family: var(--mono); font-size: var(--fs-13); color: var(--editor-text); background: var(--editor-bg);
-  box-shadow: inset 0 2px 0 var(--accent); white-space: nowrap;
+  box-shadow: inset 0 -2px 0 var(--editor-text); white-space: nowrap;
 }
 .ed-tabs-right { display: flex; align-items: center; gap: var(--sp-3); padding-right: var(--sp-3); min-width: 0; }
 .ed-runtime {
@@ -20,7 +20,7 @@
 .ed-runtime.error { color: var(--bad); }
 .ed-body { position: relative; min-width: 0; background: var(--editor-bg); }
 .ed-body .code-editor .ce-frame { border: 0; border-radius: 0; outline: none; }
-.ed-body .code-editor .ce-frame:focus-within { outline: none; box-shadow: inset 2px 0 0 var(--accent); }
+.ed-body .code-editor .ce-frame:focus-within { outline: none; box-shadow: inset 2px 0 0 var(--focus); }
 .ed-body .ce-hint { display: none; }
 .ed-foot {
   display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; min-width: 0;
@@ -29,14 +29,18 @@
 .ed-kbd { margin-left: auto; font-family: var(--mono); font-size: var(--fs-12); color: var(--editor-muted); white-space: nowrap; }
 .ed-note { font-family: var(--mono); font-size: var(--fs-12); color: var(--editor-muted); }
 
-/* Buttons inside the dark card: primary keeps the rung; secondary is a quiet outline readable on the editor ground. */
-.ed-card .btn { height: 40px; }
+/* Buttons inside the dark card (both themes): primary is a light fill with dark text so it reads on the editor ground;
+   secondary is a quiet outline. */
+.ed-card .btn { --btn-h: 40px; }
+.ed-card .btn.sm { --btn-h: 32px; }
+.ed-card .btn.primary { background: var(--editor-text); border-color: var(--editor-text); color: var(--editor-bg); }
+.ed-card .btn.primary:hover { background: var(--editor-text); border-color: var(--editor-text); opacity: 0.88; }
 .ed-card .btn:not(.primary) { background: transparent; color: var(--editor-text); border-color: var(--editor-gutter); }
 .ed-card .btn:not(.primary):hover { background: var(--editor-chrome); border-color: var(--editor-muted); color: var(--editor-text); }
+.ed-card .btn:disabled, .ed-card .btn.primary:disabled { opacity: 0.45; }
+.ed-card .btn.primary:disabled { background: var(--editor-text); border-color: var(--editor-text); color: var(--editor-bg); }
 .ed-card .btn:not(.primary):disabled:hover { background: transparent; border-color: var(--editor-gutter); }
-.ed-card .btn.sm { height: 32px; }
-.ed-card .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.ed-card .btn.primary:disabled { opacity: 0.55; }
+.ed-card .btn:focus-visible { outline: 2px solid var(--editor-text); outline-offset: 2px; }
 
 /* OUTPUT area at the bottom of a card */
 .ed-output { border-top: 1px solid var(--editor-line); padding: var(--sp-3) var(--sp-4) var(--sp-4); background: var(--editor-chrome); min-width: 0; }

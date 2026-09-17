@@ -10,11 +10,11 @@ import { continueTarget, topicProgressAll } from '../../engine/progress.ts';
 import type { AppEvent } from '../../engine/types.ts';
 import { store } from '../../app/services.ts';
 import { href } from '../../app/router.ts';
-import { Button, LinkButton } from '../components/Button.tsx';
+import { Button, IconButton, LinkButton } from '../components/Button.tsx';
 import { Callout } from '../components/Callout.tsx';
 import { Icon } from '../components/Icon.tsx';
+import { Segmented } from '../components/Segmented.tsx';
 import { ReportBody } from '../report/ReportView.tsx';
-import { Segmented } from '../report/Segmented.tsx';
 import { formatDate } from '../report/format.ts';
 import { eventsForTopic, narrowReport } from '../report/topicFilter.ts';
 import '../report/report.css';
@@ -121,8 +121,11 @@ function ReportScreen({ topicId }: { topicId?: string }) {
 
   if (!validTopic) {
     return (
-      <div class="rp">
-        <div class="empty-state">There is no topic called "{topicId}". <a href={href.report()}>Open the full report</a></div>
+      <div class="page rp">
+        <section class="rp-card rp-empty">
+          <h1 class="rp-empty-title">There is no topic called "{topicId}"</h1>
+          <div class="rp-empty-actions"><LinkButton href={href.report()} variant="primary">Open the full report</LinkButton></div>
+        </section>
       </div>
     );
   }
@@ -136,57 +139,49 @@ function ReportScreen({ topicId }: { topicId?: string }) {
   })();
 
   return (
-    <div class="rp">
+    <div class="page rp">
       <header class="rp-head">
         <div class="rp-title">
           {meta ? (
-            <nav class="rp-crumbs muted rp-no-print" aria-label="Breadcrumb">
-              <a href={href.report()}>Report</a> <span aria-hidden="true">›</span> {meta.short}
+            <nav class="rp-crumbs rp-no-print" aria-label="Breadcrumb">
+              <a href={href.report()}>Report</a><span aria-hidden="true"> / </span><span>Topic {meta.num}</span>
             </nav>
           ) : null}
-          <span class="label">{meta ? `Topic ${meta.num} report` : 'Progress report'}</span>
-          <h1>{meta ? meta.title : 'Your report'}</h1>
-          <p class="muted rp-scope" aria-live="polite">
-            Showing {RANGE_WORDS[range]}
-            <span class="rp-print-only"> · printed {formatDate(now)}</span>
-          </p>
-          {meta ? (
-            <p class="rp-topic-actions rp-no-print">
-              <a href={href.topic(meta.id)}>Open topic</a>
-              <a href={href.topicTest(meta.id)}>Take the topic test</a>
-              <a href={href.report()}>Full report</a>
-            </p>
-          ) : null}
+          <h1>{meta ? meta.title : 'Report'}</h1>
+          <p class="rp-scope rp-print-only">Showing {RANGE_WORDS[range]} · printed {formatDate(now)}</p>
+          <p class="sr-only" aria-live="polite">Showing {RANGE_WORDS[range]}</p>
         </div>
         <div class="rp-head-actions rp-no-print">
-          <Segmented name="rp-range" label="Time range" options={RANGES} value={range} onChange={setRange} />
-          <Button onClick={() => window.print()}><Icon name="download" /> Print / Save as PDF</Button>
+          <Segmented label="Time range" options={RANGES} value={range} onChange={setRange} />
+          <IconButton icon="download" label="Print or save as PDF" bordered onClick={() => window.print()} />
         </div>
+        {meta ? (
+          <p class="rp-topic-actions rp-no-print">
+            <a href={href.topic(meta.id)}>Open topic</a>
+            <a href={href.topicTest(meta.id)}>Take the topic test</a>
+          </p>
+        ) : null}
       </header>
 
       {!ready || !built ? (
-        <p class="muted" role="status">Loading your progress…</p>
+        <p class="rp-muted" role="status">Loading your progress…</p>
       ) : !built.ok ? (
         <Callout tone="bad" title="The report could not be built">
           <p>Something went wrong while adding up your progress: {built.error}</p>
           <p>Your practice history is still saved. Try reloading the page.</p>
         </Callout>
       ) : !built.data.hasEnoughData ? (
-        <section class="card rp-empty">
-          <Icon name="chart" size={28} />
-          <h2>Not enough practice {range === 'all' ? (meta ? `in ${meta.short} ` : '') + 'yet' : `in ${RANGE_WORDS[range]}`}</h2>
-          <p class="muted">
-            Your report fills in after you check answers to a few questions{meta ? ` in ${meta.short}` : ''}. It then shows your strengths, what to work on next, and the mistakes that keep coming up.
-          </p>
+        <section class="rp-card rp-empty" aria-labelledby="rp-empty-h">
+          <span class="rp-empty-icon" aria-hidden="true"><Icon name="chart" size={20} /></span>
+          <h2 id="rp-empty-h" class="rp-empty-title">Not enough practice {range === 'all' ? (meta ? `in ${meta.short} ` : '') + 'yet' : `in ${RANGE_WORDS[range]}`}</h2>
+          <p class="rp-muted">Check a few answers{meta ? ` in ${meta.short}` : ''} and your strengths, next steps and repeated mistakes show up here.</p>
           <div class="rp-empty-actions">
             <LinkButton href={resume} variant="primary">Start practising <Icon name="arrowRight" /></LinkButton>
-            {range !== 'all' ? <Button onClick={() => setRange('all')}>Show all time</Button> : null}
+            {range !== 'all' ? <Button variant="ghost" onClick={() => setRange('all')}>Show all time</Button> : null}
           </div>
         </section>
       ) : (
-        <div class="rp-body">
-          <ReportBody data={built.data} events={built.events} topicId={tid} now={now} />
-        </div>
+        <ReportBody data={built.data} events={built.events} topicId={tid} now={now} />
       )}
     </div>
   );

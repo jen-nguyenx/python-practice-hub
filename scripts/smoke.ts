@@ -45,8 +45,8 @@ async function visit(p: Page, hash: string, shot?: string) {
 await visit(page, '#/', 'landing');
 // Python should become ready.
 try {
-  await page.waitForFunction(() => /ready/i.test(document.querySelector('header')?.textContent ?? ''), null, { timeout: 90000 });
-} catch { failures.push('Python runtime never showed ready in the header'); }
+  await page.waitForFunction(() => /ready/i.test(document.body.innerText), null, { timeout: 90000 });
+} catch { failures.push('Python runtime never showed ready'); }
 
 for (const hash of ['#/playground', '#/report', '#/midsem', '#/settings']) await visit(page, hash, hash.replace(/[#/]/g, '') || 'root');
 

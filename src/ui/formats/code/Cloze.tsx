@@ -18,7 +18,7 @@ import { ExplainError } from '../../workbench/ExplainError.tsx';
 import { runTestsLogged } from '../../workbench/runner.ts';
 import { MOD, useRunShortcuts } from '../../workbench/shortcuts.ts';
 import { ResultsCard, TestRows, TestsStatusChip } from '../../workbench/TestsTable.tsx';
-import { asciiText } from './logic.ts';
+import { asciiText, clozeGapRight } from './logic.ts';
 import { BusyLine } from './Workspace.tsx';
 import './code.css';
 
@@ -42,7 +42,7 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
   const [answers, setAnswers] = useState<Answers>(() => draftAnswers(props.draft));
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
-  const [res, setRes] = useState<{ result: TestsResult; code: string } | null>(null);
+  const [res, setRes] = useState<{ result: TestsResult; code: string; answers: Answers } | null>(null);
   const [checks, setChecks] = useState(0);
   const [tab, setTab] = useState('tests');
   const wb = useWorkbench();
@@ -77,7 +77,7 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
     setBusy(false);
     setFailure(f);
     if (!result) return;
-    setRes({ result, code });
+    setRes({ result, code, answers: filled });
     setChecks((n) => n + 1);
     const graded = gradeFromTests(q, result);
     props.onCheck(graded, { answers: filled, code, flags: result.flags.map((x) => x.flag) });
@@ -109,7 +109,8 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
     const n = order.indexOf(id) + 1;
     // Review (answer shown): keep what the student typed, marked right or wrong, with an accepted answer beside it.
     const review = revealed;
-    const right = accept.includes(asciiText(typed).trim());
+    const checkedPass = !!res && res.result.total > 0 && res.result.passed === res.result.total && asciiText(typed) === res.answers[id];
+    const right = clozeGapRight(typed, accept, checkedPass);
     const width = Math.max(3, review ? typed.length : Math.max(...accept.map((a) => a.length), typed.length)) + 1;
     const input = (
       <input
@@ -141,7 +142,7 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
       <span key={`blank-${id}`} class="cloze-review">
         {input}
         <span class={`cloze-mark ${right ? 'right' : 'wrong'}`} aria-hidden="true"><Icon name={right ? 'check' : 'x'} size={12} /></span>
-        {!right && accept[0] !== undefined ? <span class="cloze-accept" aria-hidden="true">{accept[0]}</span> : null}
+        {!right && accept[0] !== undefined ? <span class="cloze-accept" aria-hidden="true"><span class="cloze-accept-label">answer</span> {accept[0]}</span> : null}
       </span>
     );
   }
@@ -158,9 +159,9 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
           <Icon name="check" size={14} /> {busy ? 'Checking…' : testMode ? 'Submit answer' : 'Check'}
         </Button>
       ) : null}
-      <span class="ed-note" aria-live="polite">{readOnly && !revealed ? '' : checksNote}</span>
+      <span class="ed-note" aria-live="polite">{readOnly ? '' : checksNote}</span>
       {!allFilled && !readOnly ? <span class="ed-note">Fill every gap to check</span> : null}
-      {revealed ? <span class="ed-note">Your answers are marked · accepted answers in green</span> : null}
+      {revealed ? <span class="ed-note">Your answers are marked · an accepted answer sits beside each wrong gap</span> : null}
       <span class="ed-kbd" aria-hidden="true">{MOD} + Enter</span>
     </>
   );
@@ -169,7 +170,7 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
     <div class="cloze ct" ref={rootRef} data-run-scope>
       <p class="sr-only">Type into each gap. Press Enter to move to the next gap; Enter on the last gap checks your answer.</p>
       <EditorCard file="solution.py" label="Code with gaps to fill" footer={footer}>
-        <pre class="cloze-code"><code>{parts}</code></pre>
+        <pre class="cloze-code syn-dark"><code>{parts}</code></pre>
       </EditorCard>
       {busy ? <BusyLine status={status} starting="about 10 to 30 seconds on the first visit" running="Running the tests…" /> : null}
       {failure ? <Callout tone="bad" title="Python is not available">{failure}</Callout> : null}

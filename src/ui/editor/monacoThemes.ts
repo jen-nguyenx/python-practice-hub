@@ -13,22 +13,23 @@ export interface ThemeData {
 
 interface Palette {
   bg: string; chrome: string; line: string; selection: string; text: string; gutter: string; muted: string;
-  accent: string; ok: string; bad: string; hint: string;
+  bad: string; hint: string; focus: string;
 }
 
+/** --syn-* tokens: VS Code Dark+ syntax colours, with a grey comment colour instead of Dark+'s green. */
 const SYN = {
-  keyword: '#569cd6', control: '#c586c0', string: '#ce9178', number: '#b5cea8', comment: '#6a9955',
-  fn: '#dcdcaa', builtin: '#4ec9b0', variable: '#9cdcfe', delimiter: '#d4d4d4',
+  keyword: '#569cd6', control: '#c586c0', string: '#ce9178', number: '#b5cea8', comment: '#7c8591',
+  fn: '#dcdcaa', builtin: '#4fc1ff', variable: '#9cdcfe', delimiter: '#d4d4d4',
 };
 
-/** Editor tokens as defined on :root (the editor card inside the light app theme). */
+/** --editor-* tokens as defined on :root (the editor card inside the light app theme). */
 const ON_LIGHT: Palette = {
-  bg: '#1b1f1c', chrome: '#232824', line: '#232824', selection: '#1e3a31', text: '#e8eaf0', gutter: '#4e5568', muted: '#7a8090',
-  accent: '#5fc4a0', ok: '#6bcb85', bad: '#f2837a', hint: '#f2a94b',
+  bg: '#1b1b1d', chrome: '#232325', line: '#252528', selection: '#34404f', text: '#e8eaf0', gutter: '#5a5d66', muted: '#8a8d96',
+  bad: '#f2837a', hint: '#f2a94b', focus: '#8ab0f0',
 };
 
-/** Editor tokens in the dark app theme. */
-const ON_DARK: Palette = { ...ON_LIGHT, bg: '#161a17', chrome: '#1b1f1c', line: '#1f2420' };
+/** --editor-* tokens in the dark app theme. */
+const ON_DARK: Palette = { ...ON_LIGHT, bg: '#141415', chrome: '#1a1a1c', line: '#1f1f21' };
 
 const strip = (hex: string) => hex.replace('#', '');
 
@@ -54,8 +55,8 @@ function build(p: Palette): ThemeData {
     colors: {
       'editor.background': p.bg,
       'editor.foreground': p.text,
-      'editor.lineHighlightBackground': p.chrome,
-      'editor.lineHighlightBorder': p.chrome,
+      'editor.lineHighlightBackground': p.line,
+      'editor.lineHighlightBorder': p.line,
       'editor.selectionBackground': p.selection,
       'editor.inactiveSelectionBackground': p.selection,
       'editor.selectionHighlightBackground': p.selection + '99',
@@ -63,17 +64,17 @@ function build(p: Palette): ThemeData {
       'editor.wordHighlightStrongBackground': p.selection,
       'editor.findMatchBackground': p.selection,
       'editor.findMatchHighlightBackground': p.selection + '99',
-      'editorCursor.foreground': p.accent,
+      'editorCursor.foreground': p.text,
       'editorLineNumber.foreground': p.gutter,
       'editorLineNumber.activeForeground': p.muted,
-      'editorIndentGuide.background1': p.line,
+      'editorIndentGuide.background1': p.chrome,
       'editorIndentGuide.activeBackground1': p.gutter,
       'editorWhitespace.foreground': p.gutter,
       'editorRuler.foreground': p.line,
       'editorGutter.background': p.bg,
       'editorError.foreground': p.bad,
       'editorWarning.foreground': p.hint,
-      'editorInfo.foreground': p.accent,
+      'editorInfo.foreground': p.focus,
       'editorBracketMatch.background': p.selection,
       'editorBracketMatch.border': p.gutter,
       'editorBracketHighlight.foreground1': SYN.fn,
@@ -94,17 +95,17 @@ function build(p: Palette): ThemeData {
       'editorSuggestWidget.foreground': p.text,
       'editorSuggestWidget.selectedBackground': p.selection,
       'editorSuggestWidget.selectedForeground': p.text,
-      'editorSuggestWidget.highlightForeground': p.accent,
-      'editorSuggestWidget.focusHighlightForeground': p.accent,
+      'editorSuggestWidget.highlightForeground': SYN.builtin,
+      'editorSuggestWidget.focusHighlightForeground': SYN.builtin,
       'list.hoverBackground': p.line,
       'list.activeSelectionBackground': p.selection,
       'list.activeSelectionForeground': p.text,
-      'list.focusOutline': p.accent,
-      'focusBorder': p.accent,
+      'list.focusOutline': p.focus,
+      'focusBorder': p.focus,
       'input.background': p.bg,
       'input.border': p.gutter,
       'input.foreground': p.text,
-      'inputOption.activeBorder': p.accent,
+      'inputOption.activeBorder': p.focus,
       'scrollbarSlider.background': p.gutter + '80',
       'scrollbarSlider.hoverBackground': p.gutter,
       'scrollbarSlider.activeBackground': p.muted,
@@ -118,7 +119,7 @@ function build(p: Palette): ThemeData {
       'symbolIcon.eventForeground': SYN.builtin,
       'symbolIcon.snippetForeground': p.muted,
       'widget.shadow': '#00000066',
-      'diffEditor.insertedTextBackground': p.ok + '26',
+      'diffEditor.insertedTextBackground': p.selection,
       'diffEditor.removedTextBackground': p.bad + '26',
     },
   };

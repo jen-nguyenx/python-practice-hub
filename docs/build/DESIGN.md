@@ -11,6 +11,7 @@ Decisions the student made, in order (later ones win):
 Tokens: `src/styles/tokens.css`. Fonts: `--display` Bricolage Grotesque (headings), `--sans` Atkinson Hyperlegible Next (body), `--mono` JetBrains Mono (code, labels, numbers).
 
 ## Colour roles
+- **Accent presets (the student asked for a choice of two-colour accents):** Settings > Appearance > Accent colours offers Mono (default), Blue + Gold, Navy + Coral, Ink + Tangerine. Stored as `settings.accent`, applied as `<html data-accent>`. Every screen must use `--accent` for the primary button (and `--accent-soft` / `--accent-line` for selected tints) and `--accent-2` (via `--progress`) for progress bars and "you are here" markers, so all presets work automatically. Never hard-code accent colours.
 - Ground: warm paper `--bg` with white cards in light; neutral near-black greys in dark.
 - **Primary action** (one per region): `--accent` fill with `--on-accent` text (black button in light, white button in dark). Hover `--accent-hover`.
 - **Progress bars**: `--progress` on `--progress-track`. Current/selected rows: `--accent-soft` background, `--accent-line` border.

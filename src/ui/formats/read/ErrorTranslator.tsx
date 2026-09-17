@@ -124,10 +124,11 @@ function ErrorTranslatorBody(props: FormatProps<Q>) {
             const selected = draft.line === n;
             const isRaise = showAnswer && err?.line === n;
             const markThis = selected && mLine !== null;
-            const tone = markThis ? (mLine ? 'ok' : 'bad') : isRaise ? 'answer' : '';
+            // The line that really raised gets a red tint once known; a wrong pick stays neutral with a red mark.
+            const tone = markThis ? (mLine ? 'raised' : 'wrong') : isRaise ? 'raised' : '';
             let tag: { text: string; icon: 'check' | 'x' | 'alert' | 'target'; tone: string } | null = null;
-            if (markThis) tag = mLine ? { text: 'Raised here', icon: 'check', tone: 'ok' } : { text: 'Your pick', icon: 'x', tone: 'bad' };
-            else if (isRaise) tag = { text: 'Raised here', icon: 'alert', tone: 'ok' };
+            if (markThis) tag = mLine ? { text: 'Correct: raised here', icon: 'check', tone: 'ok' } : { text: 'Not this line', icon: 'x', tone: 'bad' };
+            else if (isRaise) tag = { text: 'Raised here', icon: 'alert', tone: 'raised' };
             else if (selected) tag = { text: 'Your pick', icon: 'target', tone: 'pick' };
             const aria = `Line ${n}: ${text.trim()}${markThis ? (mLine ? '. Your pick: correct' : '. Your pick: not quite') : ''}${isRaise && !(markThis && mLine) ? '. Raised here' : ''}`;
             return (
@@ -139,7 +140,7 @@ function ErrorTranslatorBody(props: FormatProps<Q>) {
                 onClick={() => set({ line: n })}
                 onKeyDown={onLineKey(i)}
               >
-                <span class={cx('rf-line-gut', tag?.tone)} aria-hidden="true">{tag ? <Icon name={tag.icon} size={12} /> : null}</span>
+                <span class={cx('rf-line-gut', tag?.tone)} aria-hidden="true">{tag ? <Icon name={tag.icon} size={14} /> : null}</span>
                 <span class="rf-line-no" aria-hidden="true">{n}</span>
                 <span class="rf-line-code" aria-hidden="true">{codeTokens(text)}</span>
                 {tag ? (

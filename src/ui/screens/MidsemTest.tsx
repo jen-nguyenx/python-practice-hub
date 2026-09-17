@@ -147,7 +147,6 @@ export function MidsemTest() {
   return (
     <div class="tx-page ms">
       <header class="tx-head">
-        <span class="tx-eyebrow">Tests</span>
         <h1>Mid-semester practice test</h1>
         <p>A timed mix of questions from the topics you choose, with one check each and a full review at the end.</p>
       </header>
@@ -158,18 +157,18 @@ export function MidsemTest() {
           onDiscard={() => { clearProgress('midsem', PROGRESS_KEY); setSaved(null); }} />
       ) : null}
 
-      <section class="tx-card" aria-labelledby="ms-setup">
-        <h2 id="ms-setup" class="sr-only">Set up your test</h2>
+      <section class="tx-card ms-form" aria-label="Set up your test">
 
         <fieldset class="ms-topics">
-          <div class="ms-topics-head">
-            <legend>Topics</legend>
-            <span class="tx-mono">{setup.topicIds.length} of {TOPICS.length} chosen</span>
-            <div class="ms-quick">
-              <Button size="sm" variant="ghost" aria-pressed={isDefault} onClick={() => setSetup({ topicIds: DEFAULT_TOPICS })}>Mid-sem topics</Button>
-              <Button size="sm" variant="ghost" onClick={() => setSetup({ topicIds: TOPICS.map((t) => t.id) })}>All</Button>
-              <Button size="sm" variant="ghost" onClick={() => setSetup({ topicIds: [] })}>Clear</Button>
-            </div>
+          <legend class="sr-only">Topics</legend>
+          <div class="ms-row-head">
+            <span class="ms-label" aria-hidden="true">Topics</span>
+            <span class="ms-sub tx-mono">{setup.topicIds.length} of {TOPICS.length}</span>
+            <span class="ms-quick">
+              <button type="button" class="tx-textbtn" aria-pressed={isDefault} onClick={() => setSetup({ topicIds: DEFAULT_TOPICS })}>Mid-sem topics</button>
+              <button type="button" class="tx-textbtn" onClick={() => setSetup({ topicIds: TOPICS.map((t) => t.id) })}>All</button>
+              <button type="button" class="tx-textbtn" onClick={() => setSetup({ topicIds: [] })}>Clear</button>
+            </span>
           </div>
           <ul class="ms-grid">
             {TOPICS.map((t) => {
@@ -177,13 +176,14 @@ export function MidsemTest() {
               const n = eligibleByTopic.get(t.id);
               return (
                 <li key={t.id}>
-                  <label class={`ms-topic${on ? ' on' : ''}${n === 0 && !on ? ' empty' : ''}`}>
-                    <span class="ms-num" aria-hidden="true">{Number(t.num)}</span>
-                    <span class="ms-topic-text">
-                      <span class="ms-topic-name">{t.short}</span>
-                      <span class="ms-topic-count">{pool === null ? '…' : n === 0 ? 'no questions yet' : plural(n ?? 0, 'question')}</span>
+                  <label class={`ms-tile${on ? ' on' : ''}${n === 0 ? ' empty' : ''}`} title={t.title}>
+                    <input class="sr-only" type="checkbox" checked={on} onChange={() => toggleTopic(t.id)}
+                      aria-label={`Topic ${Number(t.num)}: ${t.title}${n === 0 ? ' (no questions yet)' : ''}`} />
+                    <span class="ms-tile-top" aria-hidden="true">
+                      <span class="ms-tile-num">{t.num}<span class="ms-tile-count">{pool === null ? '' : n === 0 ? ' · none yet' : ` · ${plural(n ?? 0, 'question')}`}</span></span>
+                      <span class="ms-tile-mark">{on ? <Icon name="check" size={12} /> : null}</span>
                     </span>
-                    <input type="checkbox" checked={on} onChange={() => toggleTopic(t.id)} aria-label={`Topic ${Number(t.num)}: ${t.title}`} />
+                    <span class="ms-tile-name">{t.short}</span>
                   </label>
                 </li>
               );
@@ -193,48 +193,46 @@ export function MidsemTest() {
 
         <div class="ms-options">
           <div class="ms-field">
-            <span id="ms-count-l" class="ms-field-label">Questions</span>
+            <span id="ms-count-l" class="ms-label">Questions</span>
             <Segmented labelledBy="ms-count-l" value={String(setup.count)}
               options={MIDSEM_COUNTS.map((c) => ({ value: String(c), label: String(c) }))} onChange={(v) => setSetup({ count: Number(v) })} />
           </div>
           <div class="ms-field">
-            <span id="ms-time-l" class="ms-field-label">Time</span>
+            <span id="ms-time-l" class="ms-label">Time</span>
             <Segmented labelledBy="ms-time-l" value={String(setup.minutes)}
               options={MIDSEM_MINUTES.map((m) => ({ value: String(m), label: `${m} min` }))} onChange={(v) => setSetup({ minutes: Number(v) })} />
           </div>
-          <div class="ms-switch">
+          <div class="ms-field ms-switch">
             <Switch checked={setup.includeCoding} onChange={(includeCoding) => setSetup({ includeCoding })} label="Include coding questions" describedBy="ms-coding-sub" />
-            <span id="ms-coding-sub" class="ms-switch-sub">
-              {setup.includeCoding
-                ? 'Fill in the blank, Parsons, fix the bug and write code run real Python in your browser.'
-                : 'Reading questions only: multiple choice, predict the output, trace and spot the difference.'}
+            <span id="ms-coding-sub" class="ms-sub">
+              {setup.includeCoding ? 'Runs real Python in your browser.' : 'Reading questions only.'}
             </span>
           </div>
         </div>
 
-        <div class="ms-summary">
-          <p class="ms-summary-line" aria-live="polite">
+        <div class="ms-start">
+          <p class="ms-summary" aria-live="polite">
             {pool === null ? <span role="status">Loading questions…</span> : setup.topicIds.length === 0 ? <span>Choose at least one topic.</span> : selection.length === 0 ? (
-              <span>No questions are ready in these topics{setup.includeCoding ? '' : ' without coding'}. Try more topics{setup.includeCoding ? '' : ' or include coding questions'}.</span>
+              <span>No questions are ready in these topics{setup.includeCoding ? '' : ' without coding'}.</span>
             ) : (
-              <span><b>{selection.length}</b> questions · {rungCounts.map((x) => `${x.n} ${RUNG_WORDS[x.r]}`).join(', ')} · usually about <b>{est} min</b></span>
+              <span><b>{selection.length}</b> questions · {rungCounts.map((x) => `${x.n} ${RUNG_WORDS[x.r]}`).join(', ')} · about <b>{est} min</b></span>
             )}
           </p>
           {shortBy > 0 && selection.length > 0 ? (
-            <p class="ms-warn"><Icon name="info" /> Only {plural(selection.length, 'question')} match these choices, so the test has {selection.length} instead of {setup.count}.</p>
+            <p class="ms-note"><Icon name="info" size={16} /> <span>Only {plural(selection.length, 'question')} match these choices.</span></p>
           ) : null}
           {selection.length > 0 && est > setup.minutes * 1.2 ? (
-            <p class="ms-warn"><Icon name="clock" /> These usually take about {est} minutes. Choose more time or fewer questions, or keep it as practice under pressure.</p>
+            <p class="ms-note"><Icon name="clock" size={16} /> <span>These usually take about {est} minutes, so the time will be tight.</span></p>
           ) : null}
-          <p class="ms-honest">
-            <Icon name="info" />
-            <span>Built from PyLadder questions, so it is practice, not the official test. Check LMS for this semester's format; older CITS1401 mid-semester tests were multiple choice.</span>
+          <p class="ms-note">
+            <Icon name="info" size={16} />
+            <span>Practice built from PyLadder questions, not the official test. Check LMS for this semester's format.</span>
           </p>
           <div class="tx-actions">
-            <Button variant="primary" size="lg" onClick={start} disabled={!canStart}>
+            <Button variant={saved ? "secondary" : "primary"} size="lg" onClick={start} disabled={!canStart}>
               Start test <Icon name="arrowRight" />
             </Button>
-            {canStart ? <Button variant="ghost" onClick={() => setSeed(Math.floor(Math.random() * 2 ** 31))}><Icon name="refresh" /> Pick different questions</Button> : null}
+            {canStart ? <Button variant="ghost" onClick={() => setSeed(Math.floor(Math.random() * 2 ** 31))}><Icon name="refresh" /> Different questions</Button> : null}
           </div>
         </div>
       </section>

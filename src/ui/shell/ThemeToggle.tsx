@@ -12,6 +12,13 @@ export function applyTheme(theme: Settings['theme']) {
   document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', theme === 'system' ? 'light dark' : theme);
 }
 
+/** Two-colour accent preset on <html data-accent>. 'mono' removes the attribute. */
+export function applyAccent(accent: Settings['accent']) {
+  const root = document.documentElement;
+  if (accent && accent !== 'mono') root.setAttribute('data-accent', accent);
+  else root.removeAttribute('data-accent');
+}
+
 /** The theme actually on screen, resolving "system" through prefers-color-scheme. */
 export function effectiveTheme(theme: Settings['theme']): 'light' | 'dark' {
   if (theme === 'light' || theme === 'dark') return theme;

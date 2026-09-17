@@ -178,7 +178,7 @@ function TestRow({ t, o, revealed, blocked }: { t?: Test; o?: TestOutcome; revea
       : <span class="tr-icon idle" aria-hidden="true" />;
   if (hidden) {
     return (
-      <li class={`tr-row ${state}`}>
+      <li class={`tr-row ${state} hidden-test`}>
         {icon}
         <span class="tr-main">
           <span class="tr-hidden"><Icon name="lock" size={12} /> Hidden test</span> <span class="tr-label">{label}</span>

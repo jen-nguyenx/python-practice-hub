@@ -1,23 +1,23 @@
 // Playground (#/playground): free coding space with scratch files, Run with input, Output, Problems and Explain.
+// Layout: one full-height dark card (file tabs + runtime + Run strip; editor | output split, stacked under 900px).
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { AstFinding, PyError } from '../../runtime/protocol.ts';
 import type { ScratchFile } from '../../store/types.ts';
 import { py, store } from '../../app/services.ts';
 import { Button } from '../components/Button.tsx';
 import { Callout } from '../components/Callout.tsx';
-import { Icon } from '../components/Icon.tsx';
 import { CodeEditor } from '../editor/CodeEditor.tsx';
-import { useConfirm } from '../workbench/Dialog.tsx';
-import { ExplainError } from '../workbench/ExplainError.tsx';
 import { takePendingPlaygroundFile } from '../workbench/openInPlayground.ts';
 import { backupScratch, takeScratchBackup } from '../workbench/unsaved.ts';
-import { stdinLines } from '../formats/code/logic.ts';
-import { PanelTabs } from '../workbench/PanelTabs.tsx';
-import { markersFrom, runtimeStatusText, warningFlags } from '../workbench/plain.ts';
-import { ProblemsList } from '../workbench/ProblemsList.tsx';
+import { markersFrom } from '../workbench/plain.ts';
 import { useProgramRunner } from '../workbench/runner.ts';
-import { kbdRun, useRunShortcuts } from '../workbench/shortcuts.ts';
-import { Terminal } from '../workbench/Terminal.tsx';
+import { kbdRunShort, useRunShortcuts } from '../workbench/shortcuts.ts';
+import { useConfirmDelete } from '../playground/ConfirmDelete.tsx';
+import { CardIconButton, FileTabs } from '../playground/FileTabs.tsx';
+import { OutputPane } from '../playground/OutputPane.tsx';
+import type { OutputTab } from '../playground/OutputPane.tsx';
+import { runtimeLabel } from '../playground/runtimeLabel.ts';
+import { useMediaQuery, useSplit } from '../playground/useSplit.ts';
 import '../workbench/playground.css';
 
 export const HELLO_CODE = `# Welcome to the Playground. Press Run (Ctrl+Enter) to try this.
@@ -72,14 +72,17 @@ export function Playground() {
   const [files, setFiles] = useState<ScratchFile[] | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [renaming, setRenaming] = useState<{ id: string; value: string; error?: string } | null>(null);
-  const [tab, setTab] = useState('output');
+  const [renameRequest, setRenameRequest] = useState<string | null>(null);
+  const [tab, setTab] = useState<OutputTab>('output');
   const [analysis, setAnalysis] = useState<{ syntaxError?: PyError; flags: AstFinding[] } | null>(null);
-  const [confirmEl, confirm] = useConfirm();
+  const [confirmEl, confirmDelete] = useConfirmDelete();
   const runner = useProgramRunner({ qid: null, topicId: null });
   const status = py.status.value;
   const saveTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const latest = useRef<ScratchFile[]>([]);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const stacked = useMediaQuery('(max-width: 899px)');
+  const { split, dragging, separatorProps } = useSplit(bodyRef, !stacked);
 
   useEffect(() => {
     py.warmUp();
@@ -167,6 +170,7 @@ export function Playground() {
   };
 
   const select = (id: string) => {
+    if (id === activeId) return;
     setActiveId(id);
     writeActive(id);
     setAnalysis(null);
@@ -181,38 +185,28 @@ export function Playground() {
     setFiles(next);
     store.saveScratch(f).catch(() => undefined);
     select(f.id);
-    setRenaming({ id: f.id, value: f.name });
+    setRenameRequest(f.id);
   };
 
-  const commitRename = () => {
-    if (!renaming || !files) return;
-    const raw = renaming.value.trim();
-    if (!raw) {
-      setRenaming({ ...renaming, error: 'Type a file name.' });
-      return;
-    }
+  const rename = (id: string, value: string): string | null => {
+    const current = latest.current;
+    const raw = value.trim();
+    if (!raw) return 'Type a file name.';
     const name = /\.py$/i.test(raw) ? raw : `${raw}.py`;
-    if (/[\\/]/.test(name)) {
-      setRenaming({ ...renaming, error: 'File names cannot contain / or \\.' });
-      return;
-    }
-    if (files.some((f) => f.id !== renaming.id && f.name.toLowerCase() === name.toLowerCase())) {
-      setRenaming({ ...renaming, error: 'Another file already has that name.' });
-      return;
-    }
-    update(renaming.id, { name });
-    setRenaming(null);
+    if (/[\\/]/.test(name)) return 'File names cannot contain / or \\.';
+    if (current.some((f) => f.id !== id && f.name.toLowerCase() === name.toLowerCase())) return 'Another file already has that name.';
+    if (current.find((f) => f.id === id)?.name !== name) update(id, { name });
+    return null;
   };
 
   const remove = async (f: ScratchFile) => {
-    if (!files) return;
-    const ok = await confirm({ title: `Delete ${f.name}?`, body: 'This removes the file from this browser. It cannot be undone.', confirmLabel: 'Delete', danger: true });
-    if (!ok) return;
+    if (!(await confirmDelete(f))) return;
+    const current = latest.current;
     const t = saveTimers.current.get(f.id);
     if (t) clearTimeout(t);
     saveTimers.current.delete(f.id);
     await store.deleteScratch(f.id).catch(() => undefined);
-    let next = files.filter((x) => x.id !== f.id);
+    let next = current.filter((x) => x.id !== f.id);
     if (!next.length) {
       const blank: ScratchFile = { id: newId(), name: 'untitled.py', code: '', stdin: '', updatedAt: Date.now() };
       next = [blank];
@@ -220,7 +214,13 @@ export function Playground() {
     }
     latest.current = next;
     setFiles(next);
-    if (activeId === f.id) select(next[Math.max(0, files.findIndex((x) => x.id === f.id) - 1)]?.id ?? next[0].id);
+    if (activeId === f.id) {
+      const nextId = next[Math.max(0, current.findIndex((x) => x.id === f.id) - 1)]?.id ?? next[0].id;
+      setActiveId(nextId);
+      writeActive(nextId);
+      setAnalysis(null);
+      runner.clear();
+    }
   };
 
   // Problems: parse-only analysis, debounced.
@@ -238,140 +238,90 @@ export function Playground() {
   const run = () => {
     if (!active || runner.state.running) return;
     setTab('output');
-    void runner.run(active.code, stdinLines(active.stdin));
+    // Input lines are typed into the Output pane when the program asks (replayed from the top each time).
+    void runner.run(active.code, []);
   };
   useRunShortcuts({ onRun: run });
 
   const runErr = runner.state.result?.error ?? null;
   const syntaxError = analysis?.syntaxError ?? (runErr?.type === 'SyntaxError' || runErr?.type === 'IndentationError' ? runErr : null);
   const flags = analysis?.flags ?? EMPTY;
-  const markers = useMemo(() => markersFrom({ syntaxError, runtimeError: runErr && runErr !== syntaxError ? runErr : null, flags }), [syntaxError, runErr, flags]);
-  const problemCount = (syntaxError ? 1 : 0) + warningFlags(flags).length;
+  const runIsSyntax = runErr?.type === 'SyntaxError' || runErr?.type === 'IndentationError';
+  const markers = useMemo(
+    () => markersFrom({ syntaxError, runtimeError: runErr && !runIsSyntax ? runErr : null, flags }),
+    [syntaxError, runErr, flags],
+  );
 
-  if (!files || !active) {
-    return (
-      <div class="pg">
-        <div class="pg-head"><h1 class="pg-title">Playground</h1></div>
-        <div class="pg-loading muted">Opening your files…</div>
-      </div>
-    );
-  }
+  const editorHelp = 'Esc then Tab leaves the editor. Ctrl+M makes Tab move focus instead of indenting.';
+  const bodyStyle = stacked ? undefined : { gridTemplateColumns: `minmax(0, ${split}fr) 1px minmax(0, ${100 - split}fr)` };
 
   return (
     <div class="pg">
       {confirmEl}
-      <div class="pg-head">
-        <h1 class="pg-title">Playground</h1>
-        <p class="muted pg-sub">Try anything. Files are saved in this browser.</p>
-        <span class="spacer" />
-        <span class={`pg-status ${status.state}`} aria-live="polite"><span class="sb-dot" aria-hidden="true" />{runtimeStatusText(status)}</span>
-      </div>
-      {loadError ? <Callout tone="bad" title="Your saved files could not be opened">{loadError} Changes may not be saved.</Callout> : null}
-      <div class="pg-files">
-      <div class="pg-tablist" role="tablist" aria-label="Scratch files">
-        {files.map((f) => {
-          const selected = f.id === active.id;
-          if (renaming?.id === f.id) {
-            return (
-              <form key={f.id} class="pg-rename" onSubmit={(e) => { e.preventDefault(); commitRename(); }}>
-                <label class="sr-only" for="pg-rename-input">New name for {f.name}</label>
-                <input
-                  id="pg-rename-input"
-                  value={renaming.value}
-                  autoFocus
-                  spellcheck={false}
-                  autocomplete="off"
-                  aria-invalid={renaming.error ? true : undefined}
-                  aria-describedby={renaming.error ? 'pg-rename-error' : undefined}
-                  onInput={(e) => setRenaming({ id: f.id, value: e.currentTarget.value })}
-                  onKeyDown={(e) => { if (e.key === 'Escape') { e.preventDefault(); setRenaming(null); } }}
-                  onBlur={commitRename}
-                />
-                {renaming.error ? <span id="pg-rename-error" class="pg-rename-error" role="alert">{renaming.error}</span> : null}
-              </form>
-            );
-          }
-          return (
-            <button
-              key={f.id}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              tabIndex={selected ? 0 : -1}
-              class={`pg-file${selected ? ' active' : ''}`}
-              onClick={() => select(f.id)}
-              onDblClick={() => setRenaming({ id: f.id, value: f.name })}
-              onKeyDown={(e) => {
-                const i = files.findIndex((x) => x.id === f.id);
-                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-                  e.preventDefault();
-                  const n = files[(i + (e.key === 'ArrowRight' ? 1 : -1) + files.length) % files.length];
-                  select(n.id);
-                  requestAnimationFrame(() => (document.querySelector('.pg-file.active') as HTMLElement | null)?.focus());
-                } else if (e.key === 'F2') {
-                  e.preventDefault();
-                  setRenaming({ id: f.id, value: f.name });
-                }
-              }}
+      <h1 class="sr-only">Playground</h1>
+      {loadError ? <Callout tone="bad" title="Your saved files could not be opened" class="pg-callout">{loadError} Changes may not be saved.</Callout> : null}
+      <div class="pg-card" data-run-scope>
+        <div class="pg-strip">
+          {files && active ? (
+            <FileTabs
+              files={files}
+              activeId={active.id}
+              onSelect={select}
+              onAdd={newFile}
+              onRename={rename}
+              onDelete={remove}
+              renameRequest={renameRequest}
+              onRenameRequestHandled={() => setRenameRequest(null)}
+            />
+          ) : <div class="pg-files" />}
+          <div class="pg-strip-end">
+            <span class={`pg-runtime ${status.state}`} title="Your code runs on this computer. Nothing is sent anywhere.">{runtimeLabel(status)}</span>
+            <CardIconButton icon="keyboard" label="Keyboard help" tip={editorHelp} class="pg-help" />
+            <Button
+              variant="primary"
+              size="sm"
+              class="pg-run"
+              onClick={run}
+              disabled={!active || runner.state.running}
+              kbd={kbdRunShort}
+              icon="play"
+              aria-keyshortcuts="Meta+Enter Control+Enter"
             >
-              <Icon name="file" size={13} /> {f.name}
-            </button>
-          );
-        })}
-      </div>
-        <Button size="sm" variant="ghost" onClick={newFile}><span aria-hidden="true">+</span> New file</Button>
-      </div>
-      <div class="pg-toolbar" role="toolbar" aria-label="File actions">
-        <Button variant="primary" onClick={run} disabled={runner.state.running} kbd={kbdRun}>
-          <Icon name="play" size={14} /> {runner.state.running ? 'Running…' : 'Run'}
-        </Button>
-        <Button size="sm" variant="ghost" onClick={() => setRenaming({ id: active.id, value: active.name })}>Rename</Button>
-        <Button size="sm" variant="ghost" onClick={() => remove(active)}>Delete</Button>
-        <span class="spacer" />
-        <span class="faint pg-note">Programs that use input() replay from the top each time you type a line.</span>
-      </div>
-      <div class="pg-main">
-        <div class="pg-editor">
-          <CodeEditor
-            key={active.id}
-            value={active.code}
-            onChange={(v) => update(active.id, { code: v })}
-            markers={markers}
-            onRun={run}
-            ariaLabel={`Code editor for ${active.name}`}
-            fill
+              {runner.state.running ? 'Running…' : 'Run'}
+            </Button>
+          </div>
+        </div>
+        <div class={`pg-body${stacked ? ' stacked' : ''}${dragging ? ' dragging' : ''}`} ref={bodyRef} style={bodyStyle}>
+          <div class="pg-editor">
+            {active ? (
+              <CodeEditor
+                key={active.id}
+                value={active.code}
+                onChange={(v) => update(active.id, { code: v })}
+                markers={markers}
+                onRun={run}
+                ariaLabel={`Code editor for ${active.name}. Press Escape then Tab to leave the editor.`}
+                hideHint
+                fill
+              />
+            ) : (
+              <p class="pg-loading">Opening your files…</p>
+            )}
+          </div>
+          <div class="pg-divider" {...separatorProps} />
+          <OutputPane
+            tab={tab}
+            onTab={setTab}
+            state={runner.state}
+            onInput={runner.answer}
+            onClear={runner.clear}
+            onRestart={() => py.restart('retry after failure')}
+            syntaxError={syntaxError}
+            flags={flags}
+            runError={runErr}
+            code={code}
           />
         </div>
-        <PanelTabs
-          label="Playground panels"
-          class="pg-panel"
-          active={tab}
-          onChange={setTab}
-          tabs={[
-            {
-              id: 'output', label: 'Output', badge: runErr ? '!' : null, tone: 'bad',
-              content: <Terminal state={runner.state} onInput={runner.answer} onClear={runner.clear} onExplain={() => setTab('explain')} />,
-            },
-            {
-              id: 'input', label: 'Input', badge: stdinLines(active.stdin).length || null,
-              content: (
-                <div class="stdin-box">
-                  <label for="pg-stdin"><strong>Input lines</strong> for {active.name}</label>
-                  <textarea id="pg-stdin" value={active.stdin} spellcheck={false} onInput={(e) => update(active.id, { stdin: e.currentTarget.value })} placeholder={'One line per input() call, e.g.\nAda\n42'} />
-                  <p>Each line answers one <code>input()</code> call, in order. If the program asks for more, the Output tab asks you to type it.</p>
-                </div>
-              ),
-            },
-            {
-              id: 'problems', label: 'Problems', badge: problemCount || null, tone: syntaxError ? 'bad' : 'hint',
-              content: <ProblemsList syntaxError={syntaxError} flags={flags} />,
-            },
-            {
-              id: 'explain', label: 'Explain', badge: runErr ? '!' : null, tone: 'bad',
-              content: <ExplainError error={runErr} code={active.code} />,
-            },
-          ]}
-        />
       </div>
     </div>
   );

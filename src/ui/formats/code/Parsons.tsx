@@ -396,7 +396,6 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
       {busy ? <BusyLine status={status} starting="about 10 to 30 seconds on the first visit" running="Running the tests…" /> : null}
       {failure ? <Callout tone="bad" title="Python is not available">{failure}</Callout> : null}
       {res && hideResult ? <Callout tone="info" title="Answer submitted">Results appear when the test ends.</Callout> : null}
-      {wb.resultSlot}
       <div class="pz-bar" role="group" aria-label="Puzzle actions">
         <div class="pz-bar-left">{wb.helpSlot}</div>
         <div class="pz-bar-right">
@@ -409,6 +408,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
           ) : null}
         </div>
       </div>
+      {wb.resultSlot}
       {shownResult ? (
         <ResultsCard
           label="Test results"

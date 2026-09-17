@@ -19,7 +19,7 @@ export function scratchCodeFor(q: Question): string {
       return q.code;
     case 'mcq':
     case 'multi':
-      return q.code ?? '# Try out an idea from the question here, then press Run.\n';
+      return q.code?.trim() ? q.code : '# Try out an idea from the question here, then press Run.\n';
     case 'twins':
       return `# Version A\n${q.left.trimEnd()}\n\n# Version B\n${q.right.trimEnd()}\n`;
     default:

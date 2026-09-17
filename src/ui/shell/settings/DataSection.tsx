@@ -148,13 +148,14 @@ export function DataSection() {
         label="Export progress"
         desc={
           <>
-            Downloads a file with your answers, progress and Playground files. Last backup:{' '}
-            <strong>{settings.lastExportTs ? `${relativeDay(settings.lastExportTs)} (${shortDate(settings.lastExportTs)})` : 'never'}</strong>.
+            Last backup:{' '}
+            <span class="set-strong">{settings.lastExportTs ? `${relativeDay(settings.lastExportTs)} (${shortDate(settings.lastExportTs)})` : 'never'}</span>.
+            {' '}Answers, progress and Playground files in one file.
             <StatusLine status={exportStatus} />
           </>
         }
       >
-        <button type="button" class="btn" onClick={doExport} disabled={exporting} aria-describedby="set-export-desc">
+        <button type="button" class="btn sm primary" onClick={doExport} disabled={exporting} aria-describedby="set-export-desc">
           <Icon name="download" size={14} />
           {exporting ? 'Exporting...' : 'Export progress'}
         </button>
@@ -163,12 +164,12 @@ export function DataSection() {
       <SettingRow
         id="set-import"
         label="Import progress"
-        desc={<>Load a file you exported, from this or another device. You choose to merge or replace next.<StatusLine status={importStatus} /></>}
+        desc={<>Load an exported file. You choose merge or replace next.<StatusLine status={importStatus} /></>}
       >
         <input ref={fileInput} type="file" accept="application/json,.json" class="sr-only" tabIndex={-1} aria-hidden="true" onChange={onFile} />
-        <button type="button" class="btn" onClick={() => fileInput.current?.click()} aria-describedby="set-import-desc">
+        <button type="button" class="btn sm" onClick={() => fileInput.current?.click()} aria-describedby="set-import-desc">
           <Icon name="upload" size={14} />
-          Import from file...
+          Import...
         </button>
       </SettingRow>
 
@@ -179,13 +180,15 @@ export function DataSection() {
           <>
             {persist === 'granted'
               ? 'Your browser has agreed to keep PyLadder data.'
-              : "Browsers can clear site data when space runs low. Ask this browser to keep PyLadder's data."}
+              : persist === 'unsupported'
+                ? "This browser can't promise to keep data. Export backups."
+                : 'Ask this browser not to clear PyLadder data when space runs low.'}
             <StatusLine status={persistMsg} />
           </>
         }
       >
-        <button type="button" class="btn" onClick={doPersist} disabled={persist === 'granted'} aria-describedby="set-persist-desc">
-          <Icon name="shield" size={14} />
+        <button type="button" class="btn sm" onClick={doPersist} disabled={persist === 'granted'} aria-describedby="set-persist-desc">
+          <Icon name={persist === 'granted' ? 'check' : 'shield'} size={14} />
           {persist === 'granted' ? 'Data is kept' : 'Keep my data'}
         </button>
       </SettingRow>
@@ -193,9 +196,9 @@ export function DataSection() {
       <SettingRow
         id="set-reset"
         label="Reset progress"
-        desc={<>Deletes all progress, drafts and Playground files in this browser. Export first if you might want them back.<StatusLine status={resetStatus} /></>}
+        desc={<>Deletes all progress, drafts and Playground files here. Export first.<StatusLine status={resetStatus} /></>}
       >
-        <button type="button" class="btn danger" onClick={() => { setResetText(''); setResetOpen(true); }} aria-describedby="set-reset-desc">
+        <button type="button" class="btn sm danger" onClick={() => { setResetText(''); setResetOpen(true); }} aria-describedby="set-reset-desc">
           <Icon name="trash" size={14} />
           Reset...
         </button>
@@ -247,7 +250,7 @@ export function DataSection() {
         footer={
           <>
             <button type="button" class="btn" onClick={() => setResetOpen(false)} disabled={resetting}>Cancel</button>
-            <button type="button" class="btn danger" onClick={doReset} disabled={resetText !== 'RESET' || resetting}>
+            <button type="button" class="btn danger solid set-confirm" onClick={doReset} disabled={resetText !== 'RESET' || resetting}>
               {resetting ? 'Deleting...' : 'Delete everything'}
             </button>
           </>

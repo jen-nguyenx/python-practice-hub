@@ -40,7 +40,7 @@ export function ResultCard(p: ResultCardProps) {
   const finite = p.checksLeft !== undefined && Number.isFinite(p.checksLeft);
   const outOfChecks = !!result && !result.correct && finite && p.checksLeft! <= 0;
   const tone = !result ? '' : result.correct ? 'ok' : 'bad';
-  const word = !result ? '' : result.correct ? 'Correct' : result.score > 0 ? 'Partly right' : 'Not quite';
+  const word = !result ? '' : result.correct ? 'Correct' : 'Not quite';
   const score = scoreText(p);
   const left = !!result && !result.correct && !p.answerShown && finite && p.checksLeft! > 0
     ? `${p.checksLeft} ${p.checksLeft === 1 ? 'check' : 'checks'} left` : '';

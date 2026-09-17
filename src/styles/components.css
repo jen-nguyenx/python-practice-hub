@@ -1,12 +1,12 @@
-/* Shared primitives (src/ui/components), from the student's design system v0.1: rung-green primary, white bordered
-   secondary, amber only for help, fully rounded tinted chips, sunken code wells. Tokens only. */
+/* Shared primitives (src/ui/components), calm monochrome: ink/white primary (--accent), outlined secondary,
+   blue text links and format chips, amber only for help, red only for wrong, sunken code wells. Tokens only. */
 
 /* ---------- Button ---------- */
 .btn {
   --btn-h: 40px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   height: var(--btn-h); padding: 0 16px; border-radius: var(--r-2);
-  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text);
+  border: 1px solid var(--border-control); background: var(--surface); color: var(--text);
   font-family: var(--sans); font-size: var(--fs-15); font-weight: 600; line-height: 1; letter-spacing: 0;
   cursor: pointer; white-space: nowrap; text-decoration: none; user-select: none;
   transition: background-color var(--dur) ease-out, border-color var(--dur) ease-out, color var(--dur) ease-out;
@@ -20,24 +20,32 @@
 .btn svg { flex: none; }
 .btn .kbd-hint { font-family: var(--mono); font-size: var(--fs-12); font-weight: 500; opacity: 0.75; letter-spacing: 0; }
 
-/* primary: the one rung-green action in a region */
+/* primary: the one ink (light) / white (dark) action in a region */
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 .btn.primary:active { background: var(--accent); }
 .btn.primary:disabled, .btn.primary[aria-disabled="true"] { background: var(--bg-inset); border-color: var(--border); color: var(--text-muted); }
 
-/* outline: rung border and text on white (a strong secondary, e.g. "Start practice test") */
+/* outline: ink border and text (a strong secondary) */
 .btn.outline { border-color: var(--accent); color: var(--accent-fg); }
 .btn.outline:hover { background: var(--accent-soft); }
 
-/* ghost: a rung text link with a quiet hover wash */
+/* ghost: quiet text button with a hover wash */
 .btn.ghost { border-color: transparent; background: transparent; color: var(--accent-fg); padding: 0 12px; }
 .btn.ghost:hover { background: var(--surface-2); }
 .btn.ghost:active { background: var(--surface-3); }
 .btn.ghost:disabled, .btn.ghost[aria-disabled="true"] { background: transparent; border-color: transparent; }
 
+/* link: blue text link that behaves like a button */
+.btn.link { border-color: transparent; background: transparent; color: var(--blue); padding: 0 4px; font-weight: 600; text-decoration: none; }
+.btn.link:hover { background: transparent; text-decoration: underline; }
+.btn.link:active { background: transparent; }
+.btn.link:disabled, .btn.link[aria-disabled="true"] { background: transparent; border-color: transparent; }
+
 .btn.danger { color: var(--bad); border-color: var(--bad-line); }
 .btn.danger:hover { background: var(--bad-soft); border-color: var(--bad); }
+.btn.danger.solid { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+.btn.danger.solid:hover { background: var(--bad); opacity: 0.9; }
 
 /* hint: amber tint, only ever for help */
 .btn.hint { background: var(--hint-soft); border-color: var(--hint-line); color: var(--hint); }
@@ -72,7 +80,7 @@ button.chip {
 button.chip:hover { background: var(--surface-2); }
 button.chip[aria-pressed="true"] { border-color: var(--accent-line); color: var(--accent-fg); background: var(--accent-soft); font-weight: 600; }
 
-/* ---------- Difficulty pips (ink-2, never coloured) ---------- */
+/* ---------- Difficulty pips (muted, never coloured) ---------- */
 .pips { display: inline-flex; align-items: center; gap: 3px; vertical-align: middle; }
 .pips i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); }
 .pips i.off { background: transparent; box-shadow: inset 0 0 0 1px var(--border-strong); }
@@ -86,19 +94,19 @@ kbd, .kbd {
 
 /* ---------- Callout: tinted panel with a small mono label ---------- */
 .callout {
-  display: grid; gap: 6px; padding: 14px 18px; border: 1px solid transparent; border-radius: var(--r-2);
-  background: var(--bg-inset); font-size: var(--fs-15); line-height: 1.6; color: var(--text);
+  display: grid; gap: 6px; padding: 14px 18px; border: 1px solid var(--border); border-radius: var(--r-2);
+  background: var(--surface-2); font-size: var(--fs-15); line-height: 1.6; color: var(--text);
 }
 .callout .callout-title {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--mono); font-size: var(--fs-12); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);
 }
 .callout .callout-title::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
-.callout.info { background: var(--blue-soft); }
+.callout.info { background: var(--blue-soft); border-color: var(--blue-line); }
 .callout.info .callout-title { color: var(--blue); }
-.callout.ok { background: var(--ok-soft); }
+.callout.ok { background: var(--ok-soft); border-color: var(--ok-line); }
 .callout.ok .callout-title { color: var(--ok); }
-.callout.bad { background: var(--bad-soft); }
+.callout.bad { background: var(--bad-soft); border-color: var(--bad-line); }
 .callout.bad .callout-title { color: var(--bad); }
 .callout.hint { background: var(--hint-soft); border-color: var(--hint-line); }
 .callout.hint .callout-title { color: var(--hint); }
@@ -108,7 +116,7 @@ kbd, .kbd {
 
 /* ---------- CodeBlock: sunken well ---------- */
 .code-block {
-  margin: 0; padding: 16px 20px; background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--r-2);
+  margin: 0; padding: 16px 20px; background: var(--bg-inset); border: 1px solid transparent; border-radius: var(--r-2);
   font-family: var(--mono); font-size: var(--fs-14); line-height: 1.7; overflow-x: auto; white-space: pre; color: var(--text); tab-size: 4;
 }
 .code-block.numbered { counter-reset: ln; padding-left: 0; }
@@ -116,9 +124,9 @@ kbd, .kbd {
 .code-block.numbered .ln::before { counter-increment: ln; content: counter(ln); position: absolute; left: 0; width: 34px; text-align: right; color: var(--text-muted); opacity: 0.7; }
 .code-block .ln.hl { background: var(--bad-soft); box-shadow: inset 2px 0 0 var(--bad); }
 .code-block.shell .sh-prompt { color: var(--text-muted); user-select: none; }
-.code-block.shell .sh-out { color: var(--text-muted); }
+.code-block.shell .sh-out { color: var(--text); }
 .code-block.dark { background: var(--editor-bg); border-color: var(--editor-bg); color: var(--editor-text); }
-.code-block.dark .sh-prompt, .code-block.dark .sh-out { color: var(--editor-muted); }
+.code-block.dark .sh-prompt { color: var(--editor-muted); }
 .code-block.dark.numbered .ln::before { color: var(--editor-gutter); opacity: 1; }
 
 /* Syntax on light wells (paper): readable in both themes via tokens. */
@@ -138,17 +146,18 @@ kbd, .kbd {
 
 /* ---------- Markdown ---------- */
 .md { display: grid; gap: 12px; font-family: var(--sans); font-size: var(--fs-16); line-height: 1.6; max-width: 68ch; }
-.md p code, .md li code { font-family: var(--mono); font-size: 0.88em; padding: 1px 6px; border-radius: var(--r-1); background: var(--bg-inset); border: 1px solid var(--border); }
+.md p code, .md li code { font-family: var(--mono); font-size: 0.88em; padding: 1px 5px; border-radius: var(--r-1); background: var(--bg-inset); }
 .md ul, .md ol { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
 .md strong { font-weight: 700; }
 .md li::marker { color: var(--text-muted); }
-.md a { color: var(--accent-fg); }
+.md a { color: var(--blue); }
+.md h1, .md h2, .md h3, .md h4 { font-family: var(--display); }
 
 /* ---------- Progress ---------- */
-.progress-track { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; }
-.progress-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 300ms ease-out; }
+.progress-track { height: 6px; border-radius: 999px; background: var(--progress-track); overflow: hidden; }
+.progress-fill { height: 100%; background: var(--progress); border-radius: 999px; transition: width 150ms ease-out; }
 
 /* ---------- Empty state ---------- */
-.empty-state { padding: var(--sp-7) var(--sp-5); text-align: center; color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--r-3); background: var(--surface); display: grid; gap: 8px; justify-items: center; }
+.empty-state { padding: var(--sp-7) var(--sp-5); text-align: center; color: var(--text-muted); border: 1px dashed var(--border-strong); border-radius: var(--r-3); background: transparent; display: grid; gap: 8px; justify-items: center; }
 .empty-state strong { color: var(--text); font-weight: 600; }
 .diff { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: var(--fs-13); white-space: nowrap; }

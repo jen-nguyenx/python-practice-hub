@@ -6,7 +6,7 @@
   background: var(--editor-bg); min-width: 0;
 }
 .code-editor.fill .ce-frame { flex: 1; min-height: 0; }
-.ce-frame:focus-within { border-color: var(--accent); outline: 1px solid var(--accent); outline-offset: 0; }
+.ce-frame:focus-within { border-color: var(--focus); outline: 1px solid var(--focus); outline-offset: 0; }
 .ce-host { position: absolute; inset: 0; }
 .ce-skeleton { position: absolute; inset: 0; background: var(--editor-bg); display: flex; flex-direction: column; overflow: hidden; }
 .ce-skel-line { display: flex; align-items: center; gap: 14px; }
@@ -32,7 +32,7 @@
 .ta-input {
   flex: 1; min-width: 0; margin: 0; border: 0; outline: none; resize: none; padding: 16px 12px 20px;
   background: var(--editor-bg); color: var(--editor-text); font: inherit; line-height: inherit; tab-size: 4;
-  white-space: pre; overflow: auto; caret-color: var(--accent);
+  white-space: pre; overflow: auto; caret-color: var(--editor-text);
 }
 .ta-input:focus-visible { outline: none; }
 .ta-markers { list-style: none; margin: 0; padding: 6px 12px; background: var(--editor-bg); display: grid; gap: 2px; font-size: var(--fs-12); }

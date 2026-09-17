@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { asciiText, displayArgs, draftCode, signatureOf, stableShuffle, stdinLines } from '../logic.ts';
+import { asciiText, clozeGapRight, displayArgs, draftCode, signatureOf, stableShuffle, stdinLines } from '../logic.ts';
 
 describe('code format helpers', () => {
   it('maps smart quotes and dashes to ASCII', () => {
@@ -32,5 +32,12 @@ describe('code format helpers', () => {
     expect(displayArgs('(5,)')).toBe('(5)');
     expect(displayArgs("(['a'], 2)")).toBe("(['a'], 2)");
     expect(displayArgs('5')).toBe('(5)');
+  });
+  it('marks a cloze gap by the accepted answers, ignoring spacing, or right when every test passed', () => {
+    expect(clozeGapRight('x+1', ['x + 1'], false)).toBe(true);
+    expect(clozeGapRight('‘a’', ["'a'"], false)).toBe(true);
+    expect(clozeGapRight('x - 1', ['x + 1'], false)).toBe(false);
+    expect(clozeGapRight('', ['x'], false)).toBe(false);
+    expect(clozeGapRight('total + n', ['x + 1'], true)).toBe(true);
   });
 });

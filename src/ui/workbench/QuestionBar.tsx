@@ -1,86 +1,77 @@
-// Focused question bar (56px) that replaces the global top bar on question pages: "‹ Ladder | Topic" back links,
-// progress dots for the topic's questions with small previous/next controls and "Question N of M", then the
-// format pill and "Save & exit" (drafts save as you type; it returns to the topic page).
+// First row of the question page (the global frame stays visible above it): "‹ Topic" back link, progress dots for
+// the topic's questions (filled = attempted, check = solved, ring = current) with "Question N of M", previous/next
+// icon buttons, the blue format chip and the "Report this question" flag button.
 import type { Format, TopicId } from '../../content/ids.ts';
 import { FORMAT_LABEL } from '../../content/ids.ts';
 import type { QuestionStats } from '../../engine/progress.ts';
 import { href } from '../../app/router.ts';
 import { Icon } from '../components/Icon.tsx';
-import { Tip } from './Tip.tsx';
+import { FlagButton } from './FlagDialog.tsx';
+import { IconLink } from './Tip.tsx';
 import './questionPage.css';
 
 export interface QuestionBarProps {
+  qid: string;
   topicId: TopicId;
   topicShort: string;
   questions: readonly { id: string; title: string }[];
   index: number;
   stats: Map<string, QuestionStats>;
   format: Format;
-  onExit?: () => void;
+  onLeave?: () => void;
 }
 
-function dotState(s: QuestionStats | undefined): { cls: string; text: string } {
-  if (!s) return { cls: '', text: 'not started' };
-  if (s.solved) return { cls: 'done', text: 'solved' };
-  if (s.revealed) return { cls: 'done', text: 'answer seen' };
-  if (s.attempts > 0) return { cls: 'done', text: 'attempted' };
-  return { cls: '', text: 'not started' };
+export type DotState = 'solved' | 'attempted' | 'new';
+
+export function dotState(s: QuestionStats | undefined): DotState {
+  if (!s) return 'new';
+  if (s.solved) return 'solved';
+  if (s.revealed || s.attempts > 0) return 'attempted';
+  return 'new';
 }
 
-export function QuestionBar({ topicId, topicShort, questions, index, stats, format, onExit }: QuestionBarProps) {
+const DOT_TEXT: Record<DotState, string> = { solved: 'solved', attempted: 'attempted', new: 'not started' };
+
+export function QuestionBar({ qid, topicId, topicShort, questions, index, stats, format, onLeave }: QuestionBarProps) {
   const prev = index > 0 ? questions[index - 1] : undefined;
   const next = index >= 0 && index < questions.length - 1 ? questions[index + 1] : undefined;
   return (
-    <header class="qbar">
-      <nav class="qbar-left" aria-label="Back">
-        <a class="qbar-back" href={href.landing()}><Icon name="chevronLeft" size={16} /> Ladder</a>
-        <span class="qbar-sep" aria-hidden="true" />
-        <a class="qbar-topic" href={href.topic(topicId)}>{topicShort}</a>
-      </nav>
-      <nav class="qbar-center" aria-label="Questions in this topic">
-        <NavArrow dir="prev" target={prev} />
-        <ol class="qbar-dots">
+    <div class="qrow">
+      <a class="qrow-back" href={href.topic(topicId)} onClick={() => onLeave?.()}>
+        <Icon name="chevronLeft" size={16} />
+        <span class="qrow-back-text">{topicShort}</span>
+      </a>
+      <nav class="qrow-center" aria-label="Questions in this topic">
+        <ol class="qrow-dots">
           {questions.map((x, i) => {
             const st = dotState(stats.get(x.id));
             const current = i === index;
             return (
               <li key={x.id}>
                 <a
-                  class={`qbar-dot${st.cls ? ' ' + st.cls : ''}${current ? ' current' : ''}`}
+                  class={`qdot ${st}${current ? ' current' : ''}`}
                   href={href.question(x.id)}
+                  onClick={() => onLeave?.()}
                   aria-current={current ? 'step' : undefined}
-                  aria-label={`Question ${i + 1}: ${x.title}, ${st.text}`}
+                  aria-label={`Question ${i + 1}: ${x.title}, ${DOT_TEXT[st]}`}
                   title={`${i + 1}. ${x.title}`}
-                />
+                >
+                  {st === 'solved' ? <Icon name="check" size={8} /> : null}
+                </a>
               </li>
             );
           })}
         </ol>
-        <NavArrow dir="next" target={next} />
-        <span class="qbar-count num">Question {index + 1} of {questions.length}</span>
+        <span class="qrow-count num">Question {index + 1} of {questions.length}</span>
       </nav>
-      <div class="qbar-right">
-        <span class="format-pill">{FORMAT_LABEL[format]}</span>
-        <a class="qbar-exit" href={href.topic(topicId)} onClick={() => onExit?.()}>Save &amp; exit</a>
+      <div class="qrow-right">
+        <span class="qrow-arrows">
+          <IconLink icon="chevronLeft" label={prev ? `Previous question: ${prev.title}` : 'No previous question'} tip="Previous question · [" href={prev ? href.question(prev.id) : undefined} />
+          <IconLink icon="chevronRight" label={next ? `Next question: ${next.title}` : 'No next question'} tip="Next question · ]" href={next ? href.question(next.id) : undefined} align="end" />
+        </span>
+        <span class="format-chip"><span class="format-dot" aria-hidden="true" />{FORMAT_LABEL[format]}</span>
+        <FlagButton qid={qid} variant="icon" />
       </div>
-    </header>
-  );
-}
-
-function NavArrow({ dir, target }: { dir: 'prev' | 'next'; target?: { id: string; title: string } }) {
-  const label = dir === 'prev' ? 'Previous question' : 'Next question';
-  const keys = dir === 'prev' ? '[' : ']';
-  const icon = dir === 'prev' ? 'chevronLeft' : 'chevronRight';
-  if (!target) {
-    return <span class="qbar-arrow disabled" aria-hidden="true"><Icon name={icon} size={16} /></span>;
-  }
-  return (
-    <Tip text={`${label} · ${keys}`} side="bottom">
-      {(id) => (
-        <a class="qbar-arrow" href={href.question(target.id)} aria-label={`${label}: ${target.title}`} aria-describedby={id} aria-keyshortcuts={keys}>
-          <Icon name={icon} size={16} />
-        </a>
-      )}
-    </Tip>
+    </div>
   );
 }

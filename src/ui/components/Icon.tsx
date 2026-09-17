@@ -1,4 +1,4 @@
-// 1.5px-stroke inline icons. Decorative by default (aria-hidden); pass `label` to expose.
+// 1.5px-stroke inline icons on a 20px grid. Decorative by default (aria-hidden); pass `label` to expose.
 const PATHS: Record<string, string> = {
   lock: 'M5 10V7a5 5 0 0 1 10 0v3 M4 10h12v8H4z',
   check: 'M4 10.5l4 4 8-9',
@@ -46,6 +46,9 @@ const PATHS: Record<string, string> = {
   chevronLeft: 'M12 5l-5 5 5 5',
   chevronUp: 'M5 12l5-5 5 5',
   arrowUpRight: 'M6 14L14 6 M7 6h7v7',
+  // monochrome frame additions
+  ladder: 'M6 2.5v15 M14 2.5v15 M6 6h8 M6 10h8 M6 14h8',
+  sliders: 'M3 6h8 M15 6h2 M3 14h2 M9 14h8 M13 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M7 16a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
   help: 'M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16z M7.8 7.6a2.3 2.3 0 0 1 4.4.9c0 1.5-2.2 2-2.2 3.2 M10 14.2v.3',
 };
 export type IconName = keyof typeof PATHS;

@@ -1,15 +1,23 @@
-// Settings (#/settings): appearance, editor, progress, shortcuts, data and about.
+// Settings (#/settings): an editor-style list. Left: section index (sticky, tracks scroll). Right: one white card per section.
+import { useEffect, useState } from 'preact/hooks';
 import { py, store } from '../../app/services.ts';
 import type { Settings as SettingsT } from '../../engine/types.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { Segmented } from '../components/Segmented.tsx';
 import { Switch } from '../components/Switch.tsx';
-import { applyTheme } from '../shell/ThemeToggle.tsx';
+import { applyAccent, applyTheme } from '../shell/ThemeToggle.tsx';
 import { DataSection } from '../shell/settings/DataSection.tsx';
 import { SettingRow, SettingsSection } from '../shell/settings/SettingRow.tsx';
 import { shortcutSheetOpen, tourOpen } from '../shell/uiState.ts';
 import '../shell/settings/settings.css';
+
+const ACCENT_OPTIONS: { id: SettingsT['accent']; label: string }[] = [
+  { id: 'mono', label: 'Mono' },
+  { id: 'blue-gold', label: 'Blue + Gold' },
+  { id: 'navy-coral', label: 'Navy + Coral' },
+  { id: 'ink-tangerine', label: 'Ink + Tangerine' },
+];
 
 const PYODIDE_VERSION = '314.0.7';
 
@@ -20,13 +28,49 @@ const SECTIONS = [
   { id: 'shortcuts', label: 'Shortcuts' },
   { id: 'data', label: 'Data' },
   { id: 'about', label: 'About' },
-];
+] as const;
+type SectionId = (typeof SECTIONS)[number]['id'];
+
+function scroller(): HTMLElement | null {
+  return document.getElementById('main');
+}
+
+function prefersReducedMotion() {
+  return document.documentElement.getAttribute('data-motion') === 'reduce'
+    || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+}
 
 function jumpTo(id: string) {
   const heading = document.getElementById(`set-${id}-title`);
   if (!heading) return;
-  heading.scrollIntoView({ block: 'start' });
+  heading.scrollIntoView({ block: 'start', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   heading.focus({ preventScroll: true });
+}
+
+/** The section whose heading most recently passed the top of the scroll area. */
+function useActiveSection(): [SectionId, (id: SectionId) => void] {
+  const [active, setActive] = useState<SectionId>('appearance');
+  useEffect(() => {
+    const main = scroller();
+    if (!main) return;
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const top = main.getBoundingClientRect().top + 96;
+      let current: SectionId = SECTIONS[0].id;
+      for (const sec of SECTIONS) {
+        const el = document.getElementById(`set-${sec.id}`);
+        if (el && el.getBoundingClientRect().top <= top) current = sec.id;
+      }
+      if (main.scrollTop + main.clientHeight >= main.scrollHeight - 4) current = SECTIONS[SECTIONS.length - 1].id;
+      setActive(current);
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(measure); };
+    main.addEventListener('scroll', onScroll, { passive: true });
+    measure();
+    return () => { main.removeEventListener('scroll', onScroll); if (frame) cancelAnimationFrame(frame); };
+  }, []);
+  return [active, setActive];
 }
 
 function pythonVersionText() {
@@ -34,10 +78,10 @@ function pythonVersionText() {
   switch (s.state) {
     case 'ready':
     case 'running': return `Python ${s.python}`;
-    case 'loading': return 'Python is still loading';
-    case 'restarting': return 'Python is restarting';
-    case 'error': return 'Python failed to load';
-    default: return 'Python has not started yet';
+    case 'loading': return 'Still loading';
+    case 'restarting': return 'Restarting';
+    case 'error': return 'Failed to load';
+    default: return 'Not started yet';
   }
 }
 
@@ -54,20 +98,31 @@ function setUnlockAll(value: boolean) {
 export function Settings() {
   const s = store.settings.value;
   const set = (patch: Partial<SettingsT>) => store.updateSettings(patch);
-  const motion: 'system' | 'on' = s.reducedMotion === 'on' ? 'on' : 'system';
+  const [active, setActive] = useActiveSection();
 
   return (
     <div class="page settings-page">
-      <header class="screen-head">
+      <header class="set-head">
         <h1>Settings</h1>
-        <p class="muted">Saved in this browser as soon as you change them.</p>
+        <p class="set-lede">Saved in this browser as soon as you change them.</p>
       </header>
 
       <div class="settings-grid">
         <nav class="set-index" aria-label="Settings sections">
-          {SECTIONS.map((sec) => (
-            <button key={sec.id} type="button" class="set-index-link" onClick={() => jumpTo(sec.id)}>{sec.label}</button>
-          ))}
+          <ul>
+            {SECTIONS.map((sec) => (
+              <li key={sec.id}>
+                <button
+                  type="button"
+                  class={`set-index-link${active === sec.id ? ' is-current' : ''}`}
+                  aria-current={active === sec.id ? 'true' : undefined}
+                  onClick={() => { setActive(sec.id); jumpTo(sec.id); }}
+                >
+                  {sec.label}
+                </button>
+              </li>
+            ))}
+          </ul>
         </nav>
 
         <div class="set-sections">
@@ -78,46 +133,43 @@ export function Settings() {
                 value={s.theme}
                 onChange={(v) => { set({ theme: v }); applyTheme(v); }}
                 options={[
-                  { value: 'system', label: <><Icon name="monitor" size={14} />System</> },
                   { value: 'light', label: <><Icon name="sun" size={14} />Light</> },
                   { value: 'dark', label: <><Icon name="moon" size={14} />Dark</> },
+                  { value: 'system', label: <><Icon name="monitor" size={14} />System</> },
                 ]}
               />
             </SettingRow>
-            <SettingRow id="set-motion" label="Reduce motion" desc="Turns off small animations. Follow system uses your computer's accessibility setting.">
-              <Segmented<'system' | 'on'>
+            <SettingRow id="set-accent" label="Accent colours" desc="Buttons use the first colour; progress bars and markers use the second.">
+              <div class="accent-picker" role="radiogroup" aria-labelledby="set-accent-label">
+                {ACCENT_OPTIONS.map((o) => (
+                  <button
+                    key={o.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={s.accent === o.id}
+                    class={`accent-opt${s.accent === o.id ? ' is-on' : ''}`}
+                    data-preview={o.id}
+                    onClick={() => { set({ accent: o.id }); applyAccent(o.id); }}
+                  >
+                    <span class="accent-swatch" aria-hidden="true"><i class="a1" /><i class="a2" /></span>
+                    <span class="accent-name">{o.label}</span>
+                  </button>
+                ))}
+              </div>
+            </SettingRow>
+            <SettingRow id="set-motion" label="Reduce motion" desc="Always turn off small animations. Off follows your computer.">
+              <Switch
+                checked={s.reducedMotion === 'on'}
+                onChange={(v) => set({ reducedMotion: v ? 'on' : 'system' })}
                 labelledBy="set-motion-label"
-                value={motion}
-                onChange={(v) => set({ reducedMotion: v })}
-                options={[
-                  { value: 'system', label: 'Follow system' },
-                  { value: 'on', label: 'Always reduce' },
-                ]}
+                describedBy="set-motion-desc"
               />
             </SettingRow>
           </SettingsSection>
 
           <SettingsSection id="editor" title="Editor">
-            <SettingRow id="set-layout" label="Question layout" stack>
-              <fieldset class="radio-cards two">
-                <legend class="sr-only">Question layout</legend>
-                <label class={`radio-card${s.layout === 'simple' ? ' on' : ''}`}>
-                  <input type="radio" name="layout" value="simple" checked={s.layout === 'simple'} onChange={() => set({ layout: 'simple' })} />
-                  <span>
-                    <span class="radio-card-title">Simple</span>
-                    <span class="radio-card-desc">The question, your code and one output panel. Best while you're learning.</span>
-                  </span>
-                </label>
-                <label class={`radio-card${s.layout === 'full' ? ' on' : ''}`}>
-                  <input type="radio" name="layout" value="full" checked={s.layout === 'full'} onChange={() => set({ layout: 'full' })} />
-                  <span>
-                    <span class="radio-card-title">Full</span>
-                    <span class="radio-card-desc">Adds a question list, test and problem panels, like VS Code.</span>
-                  </span>
-                </label>
-              </fieldset>
-            </SettingRow>
-            <SettingRow id="set-font" label="Code font size" desc="Used in the code editor and Playground.">
+            {/* The old simple/full question layout setting no longer changes anything (every question page uses one layout), so it is not shown. */}
+            <SettingRow id="set-font" label="Code font size" desc="Used in the code editor and the Playground." class="font-row">
               <div class="font-size">
                 <input
                   type="range"
@@ -126,14 +178,15 @@ export function Settings() {
                   step={1}
                   value={s.editorFontSize}
                   aria-labelledby="set-font-label"
+                  aria-describedby="set-font-desc"
                   aria-valuetext={`${s.editorFontSize} pixels`}
                   onInput={(e) => set({ editorFontSize: Number((e.currentTarget as HTMLInputElement).value) })}
                 />
-                <output class="mono font-size-value" aria-hidden="true">{s.editorFontSize} px</output>
+                <output class="font-size-value" aria-hidden="true">{s.editorFontSize}px</output>
               </div>
             </SettingRow>
             <div class="font-preview" aria-hidden="true" style={{ fontSize: `${s.editorFontSize}px` }}>
-              <CodeBlock code={'total = 0\nfor i in range(3):\n    total = total + i * 2\nprint(total)'} />
+              <CodeBlock code={'for i in range(3):\n    print(i * 2)'} />
             </div>
           </SettingsSection>
 
@@ -141,9 +194,12 @@ export function Settings() {
             <SettingRow
               id="set-unlock"
               label="Unlock all topics"
-              desc={<>Open every topic without reaching the minimums. <strong>This is noted in your report.</strong></>}
+              desc="Open every topic without the minimums. Your report shows this is on."
             >
               <Switch checked={s.unlockAll} onChange={setUnlockAll} labelledBy="set-unlock-label" describedBy="set-unlock-desc" />
+            </SettingRow>
+            <SettingRow id="set-tour" label="Welcome tour" desc="The short introduction from your first visit.">
+              <button type="button" class="btn sm" onClick={() => { tourOpen.value = true; }} aria-describedby="set-tour-desc">Show the tour again</button>
             </SettingRow>
           </SettingsSection>
 
@@ -151,39 +207,37 @@ export function Settings() {
             <SettingRow
               id="set-single"
               label="Single-key shortcuts"
-              desc={<>Use <kbd>]</kbd> <kbd>[</kbd> <kbd>1-5</kbd> and <kbd>?</kbd> when you're not typing in a text field. Turn off if you use voice control or a screen reader that sends single keys.</>}
+              desc={<>Use <kbd>]</kbd> <kbd>[</kbd> <kbd>1-5</kbd> <kbd>?</kbd> outside text fields. Turn off for voice control.</>}
             >
               <Switch checked={s.singleKeyShortcuts} onChange={(v) => set({ singleKeyShortcuts: v })} labelledBy="set-single-label" describedBy="set-single-desc" />
             </SettingRow>
             <SettingRow id="set-sheet" label="All keyboard shortcuts" desc="Run, Submit, hints and moving between questions.">
-              <button type="button" class="btn" onClick={() => { shortcutSheetOpen.value = true; }}>
-                <Icon name="keyboard" size={14} />
-                Show shortcuts
+              <button type="button" class="btn link set-link" onClick={() => { shortcutSheetOpen.value = true; }} aria-describedby="set-sheet-desc">
+                <Icon name="keyboard" size={16} />
+                Open shortcut sheet
               </button>
-            </SettingRow>
-            <SettingRow id="set-tour" label="Welcome tour" desc="The four-step introduction shown on your first visit.">
-              <button type="button" class="btn" onClick={() => { tourOpen.value = true; }}>Show the tour</button>
             </SettingRow>
           </SettingsSection>
 
           <DataSection />
 
           <SettingsSection id="about" title="About">
-            <dl class="about-list">
-              <div class="about-row"><dt>Python</dt><dd class="mono" aria-live="polite">{pythonVersionText()}</dd></div>
-              <div class="about-row"><dt>Pyodide</dt><dd class="mono">{PYODIDE_VERSION}</dd></div>
-              <div class="about-row">
-                <dt>Privacy</dt>
-                <dd>
-                  Your progress stays in this browser on this device. There are no accounts, no analytics and no tracking.
-                  The only downloads are Python itself (Pyodide, from jsDelivr) and fonts (Google Fonts).
-                </dd>
-              </div>
-              <div class="about-row">
-                <dt>Unit</dt>
-                <dd>Not affiliated with UWA. Aligned with public CITS1401 materials; check your LMS for this semester's rules.</dd>
-              </div>
-            </dl>
+            <SettingRow id="set-python" label="Python" desc="Runs in your browser with Pyodide.">
+              <span class="set-value" aria-live="polite">{pythonVersionText()}</span>
+            </SettingRow>
+            <SettingRow id="set-pyodide" label="Pyodide">
+              <span class="set-value">{PYODIDE_VERSION}</span>
+            </SettingRow>
+            <SettingRow
+              id="set-privacy"
+              label="Privacy"
+              desc="Your progress stays in this browser. No accounts, no tracking. Only Python and fonts are downloaded."
+            />
+            <SettingRow
+              id="set-unit"
+              label="Not affiliated with UWA"
+              desc="Aligned with public CITS1401 materials. Check your LMS for this semester's rules."
+            />
           </SettingsSection>
         </div>
       </div>

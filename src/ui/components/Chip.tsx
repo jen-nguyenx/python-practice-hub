@@ -1,4 +1,4 @@
-// Chips are fully rounded tinted pills (format, pass/fail, status). Difficulty is 1-3 pips in ink-2, never coloured.
+// Chips are fully rounded tinted pills (format, pass/fail, status). Difficulty is 1-3 muted pips, never coloured.
 import type { ComponentChildren } from 'preact';
 import type { Diff, Format } from '../../content/ids.ts';
 import { FORMAT_LABEL } from '../../content/ids.ts';
@@ -30,7 +30,7 @@ export function DiffChip({ diff, showText }: { diff: Diff; showText?: boolean })
   );
 }
 
-/** Format pill: info tint with a dot, e.g. "Predict the output". */
+/** Format pill: blue tint with a dot, e.g. "Predict the output". */
 export function FormatChip({ format }: { format: Format }) {
   return <Chip class="fmt">{FORMAT_LABEL[format]}</Chip>;
 }

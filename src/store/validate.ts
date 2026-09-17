@@ -2,7 +2,7 @@
 // Imported data is untrusted: every field is checked, unknown fields are dropped and strings are capped.
 import { AST_FLAGS, DIFFS, FORMATS, MISTAKE_IDS, TOPIC_IDS } from '../content/ids.ts';
 import type { AstFlag, MistakeId, TopicId } from '../content/ids.ts';
-import { DEFAULT_SETTINGS } from '../engine/types.ts';
+import { DEFAULT_SETTINGS, ACCENT_IDS } from '../engine/types.ts';
 import type { AppEvent, DetectionChannel, Mode, Settings } from '../engine/types.ts';
 import type { ScratchFile, Snapshot } from './types.ts';
 
@@ -136,6 +136,7 @@ export function sanitizeSettings(raw: unknown): Partial<Settings> {
   if (!isRec(raw)) return {};
   const out: Partial<Settings> = {};
   if (raw.theme === 'system' || raw.theme === 'light' || raw.theme === 'dark') out.theme = raw.theme;
+  if (typeof raw.accent === 'string' && (ACCENT_IDS as readonly string[]).includes(raw.accent)) out.accent = raw.accent as Settings['accent'];
   if (raw.layout === 'simple' || raw.layout === 'full') out.layout = raw.layout;
   if (isNum(raw.editorFontSize) && raw.editorFontSize >= 8 && raw.editorFontSize <= 40) out.editorFontSize = Math.round(raw.editorFontSize);
   if (isBool(raw.unlockAll)) out.unlockAll = raw.unlockAll;

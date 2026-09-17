@@ -25,7 +25,7 @@ import { firstTestsError, runTestsLogged, useProgramRunner } from '../../workben
 import { MOD, useRunShortcuts } from '../../workbench/shortcuts.ts';
 import { Terminal } from '../../workbench/Terminal.tsx';
 import type { CardTab } from '../../workbench/TestsTable.tsx';
-import { ResultsCard, TestRows, TestsStatusChip, allPassed } from '../../workbench/TestsTable.tsx';
+import { ResultsCard, TestRows, TestsStatusChip } from '../../workbench/TestsTable.tsx';
 import { IconButton } from '../../workbench/Tip.tsx';
 import { draftCode, stdinLines } from './logic.ts';
 import { BusyLine } from './Workspace.tsx';
@@ -179,9 +179,7 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     [paper, sub, syntaxError, explainable, flags],
   );
   const problemTotal = (syntaxError ? 1 : 0) + (paper ? 0 : warningFlags(flags).length);
-  const visiblePass = !!runRes && allPassed(runRes);
   const graded = sub?.graded ?? null;
-  const solvedHere = locked || !!graded?.correct;
 
   const tabs: CardTab[] = [];
   tabs.push({
@@ -243,7 +241,6 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   const activeTab = tabs.some((t) => t.id === tab) ? tab : 'tests';
 
   const runLabel = cfg.kind === 'program' ? 'Run' : 'Run tests';
-  const submitPrimary = visiblePass && !solvedHere && !revealed;
   const footer = paper ? (
     <>
       <Button variant="primary" onClick={submit} disabled={!canSubmit}>
@@ -255,10 +252,10 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     </>
   ) : (
     <>
-      <Button variant={submitPrimary || solvedHere || revealed ? 'secondary' : 'primary'} onClick={run} disabled={!canRun} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Enter' : 'Control+Enter'}>
+      <Button variant="primary" onClick={run} disabled={!canRun} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Enter' : 'Control+Enter'}>
         <Icon name="play" size={12} /> {busy === 'run' ? 'Running…' : runLabel}
       </Button>
-      <Button variant={submitPrimary ? 'primary' : 'secondary'} onClick={submit} disabled={!canSubmit} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Shift+Enter' : 'Control+Shift+Enter'}>
+      <Button onClick={submit} disabled={!canSubmit} title={`Runs every test, including hidden ones · ${MOD}+Shift+Enter`} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Shift+Enter' : 'Control+Shift+Enter'}>
         {busy === 'submit' ? 'Checking…' : testMode ? 'Submit answer' : 'Submit'}
       </Button>
       {!testMode && !readOnly ? <Button onClick={reset} disabled={code === cfg.initialCode}>Reset code</Button> : null}

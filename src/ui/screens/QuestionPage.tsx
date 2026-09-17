@@ -1,5 +1,5 @@
-// Question page (#/q/:qid): the QuestionController. Loads the question, guards locked topics, renders the focused
-// question bar and the format component in the layout for its family (code, Parsons, read), and owns hints,
+// Question page (#/q/:qid): the QuestionController. Loads the question, guards locked topics, renders the page's top
+// row and the format component in the layout for its family (code, Parsons, read), and owns hints,
 // "Reveal full answer", check limits, the result card, navigation and event logging.
 import type { ComponentChildren } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
@@ -25,7 +25,6 @@ import { AnswerBlock, RevealControl } from '../workbench/AnswerPanel.tsx';
 import { WorkbenchContext } from '../workbench/context.ts';
 import type { WorkbenchContextValue } from '../workbench/context.ts';
 import { ShellSession, examplesFromTests } from '../workbench/EditorCard.tsx';
-import { FlagButton } from '../workbench/FlagDialog.tsx';
 import type { HintState } from '../workbench/HintLadder.tsx';
 import { HintCallouts, HintsSection, ShowHintButton, hintTotal } from '../workbench/HintLadder.tsx';
 import { QuestionBar } from '../workbench/QuestionBar.tsx';
@@ -226,6 +225,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   const family = familyOf(q.format);
   const isCode = CODE_FORMATS.includes(q.format);
   const mode: Mode = modeOverride ?? (q.format === 'write' && q.mode === 'paper' ? 'paper' : 'practice');
+  const practice = mode === 'practice' || mode === 'paper';
   // Paper (exam-style) questions allow one submission, so the model answer opens after it.
   const limit = mode === 'paper' ? 1 : CHECK_LIMIT[q.format];
   const meta = TOPIC_BY_ID[topicId];
@@ -239,8 +239,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   const events = store.events.value;
   const stats = useMemo(() => safeStats(events), [events]);
 
-  // State from earlier visits, read once per visit (this visit's own attempts do not change it). A shown answer is
-  // remembered: the question stays revealed (no credit, not solved) when the student comes back.
+  // State from earlier visits, read once per visit (for the "solved before" pill and the "earlier visit" note).
   const [before] = useState(() => {
     const s = safeStats(store.events.value).get(q.id);
     return { solved: s?.solved ?? false, revealed: s?.revealed ?? false };
@@ -250,15 +249,19 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   const [checkNo, setCheckNo] = useState(0);
   const [failed, setFailed] = useState(0);
   const [solved, setSolved] = useState(false);
-  const [revealed, setRevealed] = useState(before.revealed);
+  const [revealedHere, setRevealedHere] = useState(false);
   const [shown, setShown] = useState<ShownResult | null>(null);
   const [hintTier, setHintTier] = useState<0 | 1 | 2 | 3>(0);
   const shownAt = useRef<number[]>([0, 0, 0, 0]);
   const checksAt = useRef<number[]>([0, 0, 0, 0]);
 
+  // A shown answer is remembered from the event log (reveal events), so leaving and coming back keeps the question
+  // revealed: answers stay visible, input stays locked and later checks earn no credit.
+  const revealed = revealedHere || (practice && (stats.get(q.id)?.revealed ?? false));
+
   // Latest values for callbacks that formats call after async work.
   const live = useRef({ checkNo, failed, revealed, hintTier, solved });
-  live.current = { checkNo, failed, revealed, hintTier, solved };
+  live.current = { checkNo, failed, revealed: revealed || live.current.revealed, hintTier, solved: solved || live.current.solved };
 
   useEffect(() => {
     markTopicOpened(topicId);
@@ -288,7 +291,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   const reveal = () => {
     if (live.current.revealed) return;
     live.current = { ...live.current, revealed: true };
-    setRevealed(true);
+    setRevealedHere(true);
     safeAppend({ type: 'reveal', qid: q.id, topicId });
   };
 
@@ -389,7 +392,8 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   const h: HintState = { hints: q.hints, tier: hintTier, available: gate.available, unlockText: gate.text, onShow: showHint, closedReason: hintsClosed };
   const total = hintTotal(h);
   const freeReveal = failed >= 2 || (mode === 'paper' && checkNo > 0);
-  const revealControl = <RevealControl revealed={revealed} free={freeReveal} onReveal={reveal} />;
+  const testMode = mode === 'topic-test' || mode === 'midsem';
+  const revealControl = <RevealControl revealed={revealed} free={freeReveal} onReveal={reveal} hidden={testMode} />;
 
   const resultCard = (
     <ResultCard
@@ -410,65 +414,65 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
       selfExplain={q.selfExplain}
       onSelfExplain={(text) => safeAppend({ type: 'self_explain', qid: q.id, text: text.slice(0, 2000) })}
       hideCode={HIDE_ANSWER_CODE.includes(q.format)}
-      earlier={before.revealed}
+      earlier={before.revealed && !revealedHere}
     />
   ) : null;
 
   const hintsUsedText = total === 0 ? '' : `${hintTier} of ${total} hints used`;
-  const helpSlot = total > 0 || !revealed ? (
+  const parsonsHelp = (
     <div class="qp-bar-help">
       <ShowHintButton h={h} numbered={false} />
       {hintsUsedText ? <span class="qp-hint-count num">{hintsUsedText}</span> : null}
       {revealControl}
     </div>
-  ) : null;
+  );
 
   const ctx: WorkbenchContextValue = {
     layout: 'simple', pageShowsAnswer: true, fill: false, onQuestionPage: true,
     resultSlot: family === 'read' ? undefined : resultCard,
-    helpSlot: family === 'parsons' ? helpSlot : undefined,
+    helpSlot: family === 'parsons' ? parsonsHelp : undefined,
   };
 
-  const eyebrow = (
-    <div class="qp-eyebrow-row">
-      <span class="eyebrow">Topic {meta?.num ?? ''} · {meta?.short ?? topicId}</span>
+  const eyebrowText = `Topic ${String(meta?.num ?? '').padStart(2, '0')} · ${meta?.short ?? topicId}`;
+  const pills = (
+    <>
       {q.core ? <span class="pill">Core</span> : null}
-      {mode === 'paper' ? <span class="pill">Exam-style</span> : null}
-      {before.solved ? <span class="pill ok"><Icon name="check" size={12} /> Solved before</span> : null}
-    </div>
+      {mode === 'paper' ? <span class="pill">Exam-style{q.format === 'write' && q.marks ? ` · ${q.marks} marks` : ''}</span> : null}
+      {before.solved ? <span class="pill"><Icon name="check" size={12} /> Solved before</span> : null}
+    </>
   );
   const story = scenario.story ? <Markdown class="qp-story" text={scenario.story} /> : null;
-  const flag = <div class="qp-flag"><FlagButton qid={q.id} /></div>;
   const examples = 'tests' in q ? examplesFromTests(q.tests) : [];
 
   let body: ComponentChildren;
   if (family === 'code') {
     body = (
-      <div class="qp-page qp-code">
+      <div class="qp-code">
         <section class="qp-brief" aria-labelledby="qp-title">
           <div class="qp-brief-top">
-            {eyebrow}
+            <div class="qp-eyebrow-row"><span class="eyebrow">{eyebrowText}</span>{pills}</div>
             <h1 class="qp-title" id="qp-title">{q.title}</h1>
             {story}
             <Markdown class="qp-prompt" text={q.prompt} />
             {q.format === 'write' && q.rules?.length ? <RulesList rules={q.rules} /> : null}
             {examples.length ? <ShellSession lines={examples} label="Example calls and results" /> : null}
           </div>
-          <div class="qp-brief-bottom">
-            <HintsSection h={h} after={revealControl} />
-            {answer}
-            {flag}
-          </div>
+          {testMode ? null : (
+            <div class="qp-brief-bottom">
+              <HintsSection h={h} after={revealControl} />
+              {answer}
+            </div>
+          )}
         </section>
         <div class="qp-work"><Format {...formatProps} /></div>
       </div>
     );
   } else if (family === 'parsons') {
     body = (
-      <div class="qp-page qp-parsons">
+      <div class="qp-parsons">
         <section class="qp-top" aria-labelledby="qp-title">
           <div class="qp-top-text">
-            {eyebrow}
+            <div class="qp-eyebrow-row"><span class="eyebrow">{eyebrowText}</span>{pills}</div>
             <h1 class="qp-title" id="qp-title">{q.title}</h1>
             {story}
             <Markdown class="qp-prompt" text={q.prompt} />
@@ -478,53 +482,40 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
         </section>
         <Format {...formatProps} />
         {answer}
-        {flag}
       </div>
     );
   } else {
     body = (
-      <div class="qp-page qp-read">
+      <div class="qp-read">
         <section class="qp-read-main" aria-labelledby="qp-title">
-          <div class="qp-read-meta">
-            <span class="eyebrow">Topic {meta?.num ?? ''} · {meta?.short ?? topicId}</span>
-            <span class="eyebrow num">Question {index + 1} of {questions.length}</span>
-          </div>
-          <div class="qp-segments" aria-hidden="true">
-            {questions.map((x, i) => {
-              const s = stats.get(x.id);
-              const done = !!s && (s.solved || s.revealed || s.attempts > 0);
-              return <span key={x.id} class={`qp-seg${done ? ' done' : ''}${i === index ? ' current' : ''}`} />;
-            })}
-          </div>
-          <div class="qp-chip-row">
-            <span class="format-chip"><span class="format-dot" aria-hidden="true" />{FORMAT_LABEL[q.format]}</span>
-            {q.core ? null : <span class="pill">Extra practice</span>}
-            {before.solved ? <span class="pill ok"><Icon name="check" size={12} /> Solved before</span> : null}
-          </div>
+          <div class="qp-eyebrow-row"><span class="eyebrow">{eyebrowText}</span>{pills}</div>
           <h1 class="qp-title big" id="qp-title">{q.title}</h1>
           {story}
           <Markdown class="qp-prompt" text={q.prompt} />
           <div class="qp-format"><Format {...formatProps} /></div>
           {resultCard}
-          <div class="qp-help-row">
-            <ShowHintButton h={h} look="hint" numbered />
-            {revealControl}
-            <span class="spacer" />
-            {!solved && !revealed ? (
-              <a class="text-link" href={nextHref}>{next ? 'Skip for now' : 'Back to topic'}</a>
-            ) : null}
-          </div>
-          <HintCallouts hints={q.hints} tier={hintTier} />
-          {total > 0 && !hintsClosed ? (
-            <p class="qp-info">
-              <Icon name="bulb" size={14} />
-              {hintTier === 0
-                ? `${total} hints available. A hint lowers this question's score a little.`
-                : `${hintsUsedText}.${hintTier < total ? (gate.available ? ' The next one is ready.' : ` The next one unlocks ${gate.text}.`) : ''}`}
-            </p>
-          ) : null}
-          {answer}
-          {flag}
+          {testMode ? null : (
+            <>
+              <div class="qp-help-row">
+                <ShowHintButton h={h} look="hint" numbered />
+                {revealControl}
+                <span class="spacer" />
+                {!solved && !revealed ? (
+                  <a class="text-link blue" href={nextHref} onClick={backupRecent}>{next ? 'Skip for now' : 'Back to topic'}</a>
+                ) : null}
+              </div>
+              <HintCallouts hints={q.hints} tier={hintTier} />
+              {total > 0 && !hintsClosed ? (
+                <p class="qp-info">
+                  <Icon name="bulb" size={14} />
+                  {hintTier === 0
+                    ? `${total} hints available. A hint lowers this question's score a little.`
+                    : `${hintsUsedText}.${hintTier < total ? (gate.available ? ' The next one is ready.' : ` The next one unlocks ${gate.text}.`) : ''}`}
+                </p>
+              ) : null}
+              {answer}
+            </>
+          )}
         </section>
         <aside class="qp-read-side" aria-label="Scratch editor">
           <ScratchEditor q={q} topicId={topicId} />
@@ -535,17 +526,20 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
 
   return (
     <WorkbenchContext.Provider value={ctx}>
-      <div class={`qp qp-${family}`}>
-        <QuestionBar
-          topicId={topicId}
-          topicShort={meta?.short ?? topicId}
-          questions={questions}
-          index={index}
-          stats={stats}
-          format={q.format}
-          onExit={backupRecent}
-        />
-        <div class="qp-main">{body}</div>
+      <div class={`qp qp-family-${family}`}>
+        <div class="qp-page">
+          <QuestionBar
+            qid={q.id}
+            topicId={topicId}
+            topicShort={meta?.short ?? topicId}
+            questions={questions}
+            index={index}
+            stats={stats}
+            format={q.format}
+            onLeave={backupRecent}
+          />
+          {body}
+        </div>
       </div>
     </WorkbenchContext.Provider>
   );

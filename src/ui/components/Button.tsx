@@ -1,5 +1,6 @@
-// Buttons (design system v0.1). primary = the one rung-green action in a region. secondary = white, bordered.
-// outline = rung border on white. ghost = rung text link. danger = red outline. hint = amber tint, only for help. 40px (sm 32, lg 44), radius 8px.
+// Buttons. primary = the one action in a region (--accent fill: near-black in light, white in dark). secondary = outlined
+// (--border-control). outline = ink border. ghost = quiet text button. link = blue text link. danger = red outline.
+// hint = amber tint, only for help. 40px (sm 32, lg 44), radius 8px.
 // IconButton = square icon-only button with a required label.
 import type { ComponentChildren, JSX } from 'preact';
 import { Icon } from './Icon.tsx';
@@ -8,7 +9,7 @@ import { Tooltip } from './Tooltip.tsx';
 import type { TooltipSide } from './Tooltip.tsx';
 
 export interface ButtonProps extends Omit<JSX.HTMLAttributes<HTMLButtonElement>, 'size' | 'icon'> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'hint';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link' | 'danger' | 'hint';
   size?: 'sm' | 'md' | 'lg';
   /** Stretch to the full width of the container. */
   block?: boolean;

@@ -20,6 +20,7 @@
         document.documentElement.setAttribute('data-theme', theme);
         document.querySelector('meta[name="color-scheme"]').setAttribute('content', theme);
       }
+      if (s.accent && s.accent !== 'mono') document.documentElement.setAttribute('data-accent', s.accent);
       if (s.reducedMotion === 'on') document.documentElement.setAttribute('data-motion', 'reduce');
     } catch (e) {}
     if (location.protocol === 'file:') {

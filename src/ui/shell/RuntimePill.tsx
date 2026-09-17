@@ -1,4 +1,4 @@
-// Python runtime state in the top bar: a small dot and "Python ready".
+// Python runtime state in the title bar and status bar: a small dot and "Python ready".
 // Visible text updates every second while loading; one polite live region announces state changes only.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { py } from '../../app/services.ts';
@@ -55,15 +55,26 @@ function retry() {
   py.warmUp();
 }
 
-/** Dot + state text, a live region, and Retry on failure. */
-export function RuntimePill() {
+/**
+ * Title bar: dot + "Python ready", the one polite live region for runtime changes, and Retry on failure.
+ * Status bar (`compact`): dot + "Python 3.14" only (no live region, so changes are announced once).
+ */
+export function RuntimePill({ compact }: { compact?: boolean }) {
   const { s, d } = useRuntime();
+  if (compact) {
+    return (
+      <span class={`rt rt-${d.tone} rt-compact`}>
+        <span class="rt-dot" aria-hidden="true" />
+        <span class="rt-text">{d.tone === 'ok' || d.tone === 'busy' ? d.version : d.text}</span>
+      </span>
+    );
+  }
   return (
     <div class={`rt rt-${d.tone}`}>
       <Tooltip content={d.title} side="bottom" align="end" decorative>
         <span class="rt-main">
           <span class="rt-dot" aria-hidden="true" />
-          <span class="rt-text" aria-hidden="true">{d.text}</span>
+          <span class="rt-text">{d.text}</span>
         </span>
       </Tooltip>
       <span class="sr-only" aria-live="polite">{d.announce}</span>

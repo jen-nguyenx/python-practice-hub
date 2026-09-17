@@ -37,7 +37,7 @@ function QuestionRow({ row, stats, locked }: { row: Row; stats: Map<string, Ques
   const status = statusOf(stats.get(q.id));
   const inner = (
     <>
-      <StatusMark status={status} num={row.order + 1} />
+      <StatusMark status={status} />
       <span class="tp-q-title">
         <span class="tp-q-name">{q.title}</span>
         {row.weak.length ? <span class="tp-q-weak">Practises {row.weak.map((m) => m.label.toLowerCase()).join(', ')}</span> : null}
@@ -249,9 +249,6 @@ export function QuestionsTab({ topic, stats, filters, onFilters, locked, recent 
           <FilterPanel filters={filters} set={set} formats={formatsPresent} shown={visible.length} total={all.length} onClear={clearAll} />
         </Popover>
       </div>
-      {locked ? (
-        <p class="tp-locked-note"><Icon name="lock" size={14} />You can look through the questions now. They open when this topic unlocks.</p>
-      ) : null}
       {body}
     </div>
   );

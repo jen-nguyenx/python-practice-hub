@@ -56,8 +56,13 @@ export type NewEvent = AppEvent extends infer E ? (E extends AppEvent ? Omit<E, 
 
 // ---------- settings (localStorage) ----------
 
+export type AccentId = 'mono' | 'blue-gold' | 'navy-coral' | 'ink-tangerine';
+export const ACCENT_IDS: readonly AccentId[] = ['mono', 'blue-gold', 'navy-coral', 'ink-tangerine'];
+
 export interface Settings {
   theme: 'system' | 'light' | 'dark';
+  /** Two-colour accent preset: primary buttons + progress/markers. */
+  accent: AccentId;
   layout: 'simple' | 'full';
   editorFontSize: number;
   unlockAll: boolean;
@@ -68,7 +73,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  theme: 'system', layout: 'full', editorFontSize: 14, unlockAll: false,
+  theme: 'system', accent: 'mono', layout: 'full', editorFontSize: 14, unlockAll: false,
   reducedMotion: 'system', singleKeyShortcuts: true, seenTour: false, lastExportTs: null,
 };
 

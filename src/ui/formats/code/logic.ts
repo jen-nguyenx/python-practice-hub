@@ -61,3 +61,14 @@ export function displayArgs(args: string) {
   if (/^\(.*,\s*\)$/.test(t)) return t.replace(/,\s*\)$/, ')');
   return t.startsWith('(') ? t : `(${t})`;
 }
+
+/**
+ * Review marking for one cloze gap: right when it matches an accepted answer (ignoring spaces around operators and
+ * smart quotes), or when the student's last check passed every test (an unlisted answer that works is still right).
+ */
+export function clozeGapRight(typed: string, accept: readonly string[], lastCheckPassed: boolean): boolean {
+  if (lastCheckPassed) return true;
+  const norm = (s: string) => asciiText(s).replace(/\s+/g, '');
+  const t = norm(typed);
+  return t.length > 0 && accept.some((a) => norm(a) === t);
+}

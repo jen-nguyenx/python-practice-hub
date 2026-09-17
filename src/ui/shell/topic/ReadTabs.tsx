@@ -1,7 +1,6 @@
-// Always-readable topic tabs, each a single readable column (~72ch) in a white card: cheat sheet (with a quiet
-// "On this page" rail on wide screens), worked example (the code, then the steps) and common mistakes (bad / good
-// code side by side with a one-line note).
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+// Always-readable topic tabs: cheat sheet and worked example as a single readable column (~72ch) in a white card, and
+// common mistakes as bad / good code side by side with a one-line note.
+import { useMemo } from 'preact/hooks';
 import type { Topic } from '../../../content/schema.ts';
 import { MISTAKES } from '../../../content/mistakes.ts';
 import { CodeBlock } from '../../components/CodeBlock.tsx';
@@ -35,66 +34,19 @@ export function splitSections(md: string): Section[] {
   return out;
 }
 
-function reducedMotion() {
-  return document.documentElement.getAttribute('data-motion') === 'reduce' || matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
 export function CheatSheetTab({ topic }: { topic: Topic }) {
   const sections = useMemo(() => splitSections(topic.cheatsheet ?? ''), [topic]);
-  const titled = sections.map((s, i) => ({ ...s, i })).filter((s) => s.title);
-  const [active, setActive] = useState(0);
-  const root = useRef<HTMLDivElement>(null);
-  const idFor = (i: number) => `cs-${topic.id}-${i}`;
-
-  // Highlight the section nearest the top of the scrolling main area.
-  useEffect(() => {
-    const el = root.current;
-    if (!el || titled.length < 3 || typeof IntersectionObserver === 'undefined') return;
-    const scroller = el.closest('main');
-    const seen = new Map<number, boolean>();
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) seen.set(Number((e.target as HTMLElement).dataset.idx), e.isIntersecting);
-      const first = [...seen.entries()].filter(([, v]) => v).map(([k]) => k).sort((a, b) => a - b)[0];
-      if (first !== undefined) setActive(first);
-    }, { root: scroller, rootMargin: '0px 0px -65% 0px' });
-    el.querySelectorAll('[data-idx]').forEach((n) => io.observe(n));
-    return () => io.disconnect();
-  }, [topic.id, titled.length]);
-
   if (!topic.cheatsheet?.trim()) return <div class="tp-empty">The cheat sheet for this topic is being written.</div>;
-
-  const jump = (i: number) => {
-    const target = document.getElementById(idFor(i));
-    if (!target) return;
-    target.scrollIntoView({ block: 'start', behavior: reducedMotion() ? 'auto' : 'smooth' });
-    target.focus({ preventScroll: true });
-    setActive(i);
-  };
-
   return (
-    <div class={`tp-read tp-cs${titled.length >= 3 ? ' has-toc' : ''}`} ref={root}>
+    <div class="tp-read tp-cs">
       <article class="tp-card tp-read-main">
         {sections.map((s, i) => (
-          <section key={i} class="tp-cs-sec" data-idx={i}>
-            {s.title ? <h3 id={idFor(i)} tabIndex={-1} class="tp-read-h">{s.title}</h3> : null}
+          <section key={i} class="tp-cs-sec">
+            {s.title ? <h3 class="tp-read-h">{s.title}</h3> : null}
             {s.body ? <Markdown text={s.body} class="tp-md" /> : null}
           </section>
         ))}
       </article>
-      {titled.length >= 3 ? (
-        <nav class="tp-toc" aria-label="Cheat sheet sections">
-          <p class="tp-label">On this page</p>
-          <ul>
-            {titled.map((s) => (
-              <li key={s.i}>
-                <button type="button" class={s.i === active ? 'is-on' : undefined} aria-current={s.i === active ? 'location' : undefined} onClick={() => jump(s.i)}>
-                  {s.title}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      ) : null}
     </div>
   );
 }

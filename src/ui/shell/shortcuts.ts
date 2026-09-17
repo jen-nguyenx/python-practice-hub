@@ -30,6 +30,7 @@ export const SHORTCUT_GROUPS: ShortcutGroup[] = [
       { action: 'Previous question', keys: [[ALT_KEY, 'Shift', '[']], where: 'Anywhere' },
       { action: 'Next question', keys: [[']']], where: 'Outside text fields', singleKey: true },
       { action: 'Previous question', keys: [['[']], where: 'Outside text fields', singleKey: true },
+      { action: 'Go to a question, topic or page', keys: [[MOD_KEY, 'K'], [MOD_KEY, 'P']], where: 'Anywhere' },
       { action: 'Show this list', keys: [['?']], where: 'Outside text fields', singleKey: true },
     ],
   },

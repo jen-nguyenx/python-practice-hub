@@ -99,11 +99,6 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
     );
   }
 
-  const crumbs = (
-    <nav class="tx-crumbs" aria-label="Breadcrumb">
-      <a href={href.landing()}>Topics</a> <Icon name="chevronRight" size={12} /> <a href={href.topic(meta.id)}>{meta.short}</a> <Icon name="chevronRight" size={12} /> <span aria-current="page">Topic test</span>
-    </nav>
-  );
 
   // A locked topic's test cannot be taken: passing it would unlock the next topic while this one stayed locked.
   if (locked && ready) {
@@ -111,18 +106,15 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
     const reason = progress[meta.id]?.lockReason;
     return (
       <div class="tx-page tt-page">
-        {crumbs}
         <section class="tx-card tt-card tt-lock" aria-labelledby="tt-h">
           <span class="tt-lock-icon" aria-hidden="true"><Icon name="lock" size={20} /></span>
-          <span class="tx-eyebrow">Topic {Number(meta.num)} · test</span>
-          <h1 id="tt-h">{meta.title} is locked</h1>
-          <p class="tt-lede">The topic test opens once {meta.short} is unlocked, so you are tested on a topic you can practise.</p>
-          {reason ? <p class="tt-lock-reason">{reason}</p> : null}
+          <h1 id="tt-h">The {meta.short} test is locked</h1>
+          <p class="tt-lede">It opens when {meta.title} unlocks, so the test only covers topics you can practise.</p>
+          {reason ? <p class="tt-lock-reason"><Icon name="info" size={16} /><span>{reason}</span></p> : null}
           <div class="tx-actions">
             {opener
-              ? <LinkButton href={href.topic(opener.id)} variant="primary">Go to {opener.short} <Icon name="arrowRight" /></LinkButton>
+              ? <LinkButton href={href.topic(opener.id)} variant="primary">Work on {opener.short} <Icon name="arrowRight" /></LinkButton>
               : <LinkButton href={href.landing()} variant="primary">Back to topics</LinkButton>}
-            <LinkButton href={href.topic(meta.id)} variant="ghost">Read the {meta.short} cheat sheet</LinkButton>
           </div>
         </section>
       </div>
@@ -130,7 +122,8 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
   }
 
   const begin = () => {
-    if (!pool || pool.length === 0) return;
+    // Wait for the event log: until it loads, a locked topic cannot be told apart from an open one.
+    if (!pool || pool.length === 0 || !ready || locked) return;
     setConfirmNew(false);
     markTopicOpened(meta.id as TopicId);
     clearProgress('topic-test', meta.id);
@@ -141,7 +134,7 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
     setPicked(selectTopicTest(pool, Math.random, undefined, avoid));
   };
   const start = () => {
-    if (!pool || pool.length === 0) return;
+    if (!pool || pool.length === 0 || !ready || locked) return;
     if (saved) setConfirmNew(true);
     else begin();
   };
@@ -149,7 +142,6 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
 
   return (
     <div class="tx-page tt-page">
-      {crumbs}
 
       {saved ? (
         <ResumeCard progress={saved} pool={pool}
@@ -197,7 +189,7 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
         ) : null}
 
         <div class="tx-actions">
-          <Button variant="primary" size="lg" onClick={start} disabled={!pool || pool.length === 0}>
+          <Button variant={saved ? "secondary" : "primary"} size="lg" onClick={start} disabled={!pool || pool.length === 0 || !ready}>
             Start test <Icon name="arrowRight" />
           </Button>
           <LinkButton href={href.topic(meta.id)} variant="ghost">Practise {meta.short} first</LinkButton>

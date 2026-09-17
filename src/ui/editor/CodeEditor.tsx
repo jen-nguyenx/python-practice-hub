@@ -202,7 +202,7 @@ function baseOptions(fontSize: number, plain: boolean, readOnly: boolean): Monac
     tabSize: 4,
     insertSpaces: true,
     detectIndentation: false,
-    renderWhitespace: 'boundary',
+    renderWhitespace: 'none',
     minimap: { enabled: false },
     bracketPairColorization: { enabled: !plain },
     guides: { indentation: true, bracketPairs: false, highlightActiveIndentation: false },

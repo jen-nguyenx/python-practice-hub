@@ -1,4 +1,4 @@
-// Thin rounded progress bar in rung green, with an optional minimum tick. The segmented variant draws one segment per
+// Thin rounded progress bar (--progress on --progress-track), with an optional minimum tick. The segmented variant draws one segment per
 // item (e.g. per question): the first `value` segments are done and `current` (0-based) is shown lighter.
 import './controls.css';
 
@@ -11,7 +11,7 @@ export interface ProgressBarProps {
   valueText?: string;
   /** Position of a marker tick (same units as value), e.g. the minimum needed. */
   marker?: number;
-  /** accent = rung green (progress), ok = pass green, blue, neutral = muted grey. */
+  /** accent = --progress (default), ok = ink, blue, neutral = muted grey. */
   tone?: 'accent' | 'ok' | 'blue' | 'neutral';
   /** 4px bar (default is 6px). */
   thin?: boolean;

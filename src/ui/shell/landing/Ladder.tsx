@@ -1,85 +1,94 @@
-// Home ladder list: one 56px row per topic with a numbered circle, title, optional "Revisit" chip, progress and state.
-// The current topic row is tinted with "Next: Q4 · Write code" and a "Resume" link. Locked rows are muted.
+// Home ladder: 13 identical tiles in a 4-column grid, topics 01-08 then "Projects and final exam" and 09-13.
+// Tile = number + state icon (check when the minimum is met, filled dot on the current topic, lock when locked),
+// short name, 4px progress bar, "solved/total" and "min N" or "done". Lock reasons live in a tooltip.
 import { href } from '../../../app/router.ts';
-import type { QuestionMeta } from '../../../content/questionIndex.ts';
-import { FORMAT_LABEL } from '../../../content/ids.ts';
 import type { TopicId } from '../../../content/ids.ts';
 import { TOPICS } from '../../../content/topics.ts';
-import type { TopicProgress, TopicState } from '../../../engine/progress.ts';
+import type { TopicMeta } from '../../../content/topics.ts';
+import type { TopicProgress } from '../../../engine/progress.ts';
 import { Icon } from '../../components/Icon.tsx';
+import { Skeleton } from '../../components/Skeleton.tsx';
+import { Tooltip } from '../../components/Tooltip.tsx';
 
-const STATE_TEXT: Record<TopicState, string> = { completed: 'Complete', 'in-progress': 'In progress', open: 'Not started', locked: 'Locked' };
-
-/** A topic needs another look when its average score is low after a few questions. */
-export function needsRevisit(p: TopicProgress) {
-  return p.state !== 'locked' && p.score !== null && p.attempted >= 3 && p.score < 0.75;
+function tileLabel(t: TopicMeta, p: TopicProgress, current: boolean) {
+  const parts = [`${t.num} ${t.short}`];
+  if (p.state === 'locked') parts.push('locked');
+  else {
+    parts.push(`${p.solved} of ${p.total} solved`);
+    parts.push(p.minimumMet ? 'minimum met' : `minimum ${p.minimum.solve}`);
+    if (current) parts.push('current topic');
+  }
+  return parts.join(', ');
 }
 
-export interface NextUp { topicId: TopicId; question: QuestionMeta; number: number }
-
-export function LadderLegend() {
+function Tile({ t, p, current }: { t: TopicMeta; p: TopicProgress; current: boolean }) {
+  const locked = p.state === 'locked';
+  const pct = p.total > 0 ? Math.min(100, (p.solved / p.total) * 100) : 0;
+  const cls = `tile${current && !locked ? ' is-current' : ''}${locked ? ' is-locked' : ''}${p.minimumMet ? ' is-done' : ''}`;
+  let icon = null;
+  if (locked) icon = <Icon name="lock" size={14} />;
+  else if (p.minimumMet) icon = <Icon name="check" size={14} />;
+  else if (current) icon = <span class="tile-current-dot" />;
+  const link = (
+    <a class={cls} href={href.topic(t.id)} aria-label={tileLabel(t, p, current)}>
+      <span class="tile-top" aria-hidden="true">
+        <span class="tile-num">{t.num}</span>
+        <span class="tile-icon">{icon}</span>
+      </span>
+      <span class="tile-name" aria-hidden="true">{t.short}</span>
+      <span class="tile-bar" aria-hidden="true"><span class="tile-fill" style={{ width: `${locked ? 0 : pct}%` }} /></span>
+      <span class="tile-foot" aria-hidden="true">
+        <span>{p.solved}/{p.total}</span>
+        <span>{locked ? '' : p.minimumMet ? 'done' : `min ${p.minimum.solve}`}</span>
+      </span>
+    </a>
+  );
   return (
-    <ul class="ladder-legend" aria-label="Legend">
-      <li><span class="lg-dot is-done" aria-hidden="true" />Complete</li>
-      <li><span class="lg-dot is-progress" aria-hidden="true" />In progress</li>
-      <li><Icon name="lock" size={12} />Locked</li>
-    </ul>
+    <li class="tile-cell">
+      {locked && p.lockReason ? <Tooltip content={p.lockReason} side="bottom">{link}</Tooltip> : link}
+    </li>
   );
 }
 
-export function Ladder({ progress, next }: { progress: Record<TopicId, TopicProgress>; next: NextUp | null }) {
+export function Ladder({ progress, currentTopic }: { progress: Record<TopicId, TopicProgress>; currentTopic: TopicId | null }) {
+  const open = TOPICS.filter((t) => progress[t.id].state !== 'locked').length;
+  const core = TOPICS.filter((t) => t.band === 'core');
+  const late = TOPICS.filter((t) => t.band !== 'core');
   return (
-    <ol class="ladder card" aria-label="Topics">
-      {TOPICS.map((t, i) => {
-        const p = progress[t.id];
-        const prev = i > 0 ? progress[TOPICS[i - 1].id] : undefined;
-        const current = next?.topicId === t.id && p.state !== 'locked';
-        const locked = p.state === 'locked';
-        const circle = p.state === 'completed' ? 'is-done' : p.state === 'in-progress' || current ? 'is-progress' : locked ? 'is-locked' : 'is-open';
-        const pct = p.score !== null ? ` · ${Math.round(p.score * 100)}%` : '';
-        const lockText = prev && prev.state !== 'locked' ? `Finish ${TOPICS[i - 1].short} to unlock` : 'Locked';
-        return (
-          <li key={t.id} class={`lr${current ? ' is-current' : ''}${locked ? ' is-locked' : ''}`}>
-            <span class={`lr-num ${circle}`} aria-hidden="true">{t.order}</span>
-            <div class="lr-main">
-              <div class="lr-title-row">
-                <a class="lr-link" href={href.topic(t.id)}>
-                  {t.title}
-                  <span class="sr-only">, {STATE_TEXT[p.state]}</span>
-                </a>
-                {needsRevisit(p) ? <span class="chip hint lr-chip">Revisit</span> : null}
-              </div>
-              {current && next ? (
-                <span class="lr-next">Next: Q{next.number} · {FORMAT_LABEL[next.question.format]}</span>
-              ) : null}
-            </div>
-            {locked ? (
-              <span class="lr-lock" title={p.lockReason}>
-                <Icon name="lock" size={13} />
-                {lockText}
-              </span>
-            ) : (
-              <div class="lr-meta">
-                <span class="lr-bar" aria-hidden="true">
-                  <span class="lr-fill" style={{ width: `${p.total > 0 ? Math.min(100, (p.solved / p.total) * 100) : 0}%` }} />
-                </span>
-                <span class="lr-count mono num">
-                  {p.solved}/{p.total}{current ? '' : pct}
-                  <span class="sr-only"> solved</span>
-                </span>
-                {current && next ? (
-                  <a class="lr-resume" href={href.question(next.question.qid)}>
-                    {p.attempted > 0 ? 'Resume' : 'Start'}<span class="sr-only"> {t.short}, question {next.number}</span>
-                    <Icon name="arrowRight" size={14} />
-                  </a>
-                ) : (
-                  <Icon name="chevronRight" size={16} class="lr-chev" />
-                )}
-              </div>
-            )}
-          </li>
-        );
-      })}
-    </ol>
+    <section class="ladder" aria-labelledby="ladder-title">
+      <h2 class="ladder-head" id="ladder-title">
+        <span class="ladder-title">Your ladder</span>
+        <span class="ladder-count num">{open} of {TOPICS.length} open</span>
+      </h2>
+      <ol class="tiles">
+        {core.map((t) => <Tile key={t.id} t={t} p={progress[t.id]} current={t.id === currentTopic} />)}
+      </ol>
+      {late.length ? (
+        <>
+          <h3 class="ladder-band" id="ladder-late">Projects and final exam</h3>
+          <ol class="tiles" start={late[0].order} aria-labelledby="ladder-late">
+            {late.map((t) => <Tile key={t.id} t={t} p={progress[t.id]} current={t.id === currentTopic} />)}
+          </ol>
+        </>
+      ) : null}
+    </section>
+  );
+}
+
+export function LadderSkeleton() {
+  return (
+    <div class="ladder">
+      <Skeleton w={180} h={14} class="ladder-skel-head" />
+      <div class="tiles">
+        {Array.from({ length: 8 }, (_, i) => (
+          <div key={i} class="tile is-skel">
+            <Skeleton w={24} h={12} />
+            <Skeleton w="60%" h={16} />
+            <Skeleton h={4} />
+            <Skeleton w={40} h={12} />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

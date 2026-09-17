@@ -1,79 +1,88 @@
-// "Show answer": explanation + solution code, then a self-explanation prompt.
+// "Reveal full answer": a text link with an inline confirm (until the answer is free), and the revealed answer
+// block (explanation, model code or a diff, and an optional "explain it in your own words" prompt).
+import type { ComponentChildren } from 'preact';
 import { useState } from 'preact/hooks';
 import type { Md } from '../../content/schema.ts';
 import { Button } from '../components/Button.tsx';
 import { CodeBlock } from '../components/CodeBlock.tsx';
-import { Icon } from '../components/Icon.tsx';
 import { Markdown } from '../components/Markdown.tsx';
-import { openInPlayground } from './openInPlayground.ts';
 import './workbench.css';
 
-export interface AnswerPanelProps {
-  solution: { code?: string; explanation: Md };
-  selfExplain?: string;
+export interface RevealControlProps {
   revealed: boolean;
-  /** After 2 failed checks the answer can be shown without a confirmation step. */
-  freeReveal: boolean;
+  /** No confirm needed (after 2 failed checks, or after a paper submission). */
+  free: boolean;
   onReveal: () => void;
-  onSelfExplain: (text: string) => void;
-  /** Hide the answer's code block (e.g. the format already shows the answer inline). */
-  hideCode?: boolean;
+  /** Hide the link (test modes, or the question has no answer to show). */
+  hidden?: boolean;
+  label?: string;
 }
 
-export function AnswerPanel({ solution, selfExplain, revealed, freeReveal, onReveal, onSelfExplain, hideCode }: AnswerPanelProps) {
+/** The link plus its inline confirm. Renders nothing once revealed. */
+export function RevealControl({ revealed, free, onReveal, hidden, label = 'Reveal full answer' }: RevealControlProps) {
   const [confirming, setConfirming] = useState(false);
-  const [text, setText] = useState('');
-  const [saved, setSaved] = useState(false);
-
-  if (!revealed) {
+  if (revealed || hidden) return null;
+  if (confirming) {
     return (
-      <section class="answer" aria-label="Answer">
-        {confirming ? (
-          <div class="answer-confirm" role="group" aria-labelledby="answer-confirm-q">
-            <p id="answer-confirm-q"><strong>Show the answer now?</strong> This question will count as practised, not solved. You can come back to it later.</p>
-            <div class="row">
-              <Button variant="primary" size="sm" onClick={() => { setConfirming(false); onReveal(); }} autoFocus>Show answer</Button>
-              <Button size="sm" onClick={() => setConfirming(false)}>Keep trying</Button>
-            </div>
-          </div>
-        ) : (
-          <Button size="sm" variant="ghost" onClick={() => (freeReveal ? onReveal() : setConfirming(true))}>
-            <Icon name="eye" size={14} /> Show answer
-          </Button>
-        )}
-      </section>
+      <div class="answer-confirm" role="group" aria-labelledby="answer-confirm-q">
+        <p id="answer-confirm-q">Show the answer now? This question then counts as practised, not solved.</p>
+        <div class="row">
+          <Button size="sm" onClick={() => { setConfirming(false); onReveal(); }} autoFocus>Show the answer</Button>
+          <Button size="sm" variant="ghost" onClick={() => setConfirming(false)}>Keep trying</Button>
+        </div>
+      </div>
     );
   }
-
   return (
-    <section class="answer revealed" aria-label="Answer">
-      <h3 class="label">Answer</h3>
+    <button type="button" class="text-link quiet" onClick={() => (free ? onReveal() : setConfirming(true))}>
+      {label}
+    </button>
+  );
+}
+
+export interface AnswerBlockProps {
+  solution: { code?: string; explanation: Md };
+  selfExplain?: string;
+  onSelfExplain: (text: string) => void;
+  /** Shown instead of the model code (e.g. a diff). */
+  codeView?: ComponentChildren;
+  /** Hide the model code (the format already shows the answer inline). */
+  hideCode?: boolean;
+  /** The answer was shown on an earlier visit. */
+  earlier?: boolean;
+}
+
+export function AnswerBlock({ solution, selfExplain, onSelfExplain, codeView, hideCode, earlier }: AnswerBlockProps) {
+  const [text, setText] = useState('');
+  const [saved, setSaved] = useState(false);
+  const code = solution.code && !hideCode && !codeView ? solution.code : null;
+  return (
+    <section class="answer-block" aria-label="Answer">
+      <div class="answer-head">
+        <h2 class="answer-title">Answer</h2>
+        {earlier ? <span class="answer-note">You opened the answer on an earlier visit, so this question is practised, not solved.</span> : null}
+      </div>
       <Markdown text={solution.explanation} />
-      {solution.code && !hideCode ? (
-        <div class="answer-code">
-          <CodeBlock code={solution.code} numbered label="Model answer" />
-          <Button size="sm" variant="ghost" onClick={() => openInPlayground(solution.code!, 'answer.py')}>
-            <Icon name="terminal" size={14} /> Open in Playground
-          </Button>
-        </div>
-      ) : null}
+      {codeView ?? (code ? <CodeBlock code={code} numbered label="Model answer" /> : null)}
       {selfExplain ? (
-        <form
-          class="self-explain"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!text.trim()) return;
-            onSelfExplain(text.trim());
-            setSaved(true);
-          }}
-        >
-          <label for="self-explain-text"><strong>Explain it in your own words:</strong> {selfExplain}</label>
-          <textarea id="self-explain-text" rows={3} value={text} onInput={(e) => { setText(e.currentTarget.value); setSaved(false); }} />
-          <div class="row">
-            <Button size="sm" type="submit" disabled={!text.trim()}>Save my explanation</Button>
-            <span class="muted" aria-live="polite">{saved ? 'Saved.' : ''}</span>
-          </div>
-        </form>
+        <details class="self-explain">
+          <summary>Explain it in your own words</summary>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!text.trim()) return;
+              onSelfExplain(text.trim());
+              setSaved(true);
+            }}
+          >
+            <label for="self-explain-text">{selfExplain}</label>
+            <textarea id="self-explain-text" rows={3} value={text} onInput={(e) => { setText(e.currentTarget.value); setSaved(false); }} />
+            <div class="row">
+              <Button size="sm" type="submit" disabled={!text.trim()}>Save</Button>
+              <span class="faint" aria-live="polite">{saved ? 'Saved' : ''}</span>
+            </div>
+          </form>
+        </details>
       ) : null}
     </section>
   );

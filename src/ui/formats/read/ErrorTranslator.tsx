@@ -8,7 +8,8 @@ import { Icon } from '../../components/Icon.tsx';
 import { Markdown } from '../../components/Markdown.tsx';
 import { tokenize } from '../../components/highlight.ts';
 import { isRecord, normalizeForDisplay } from './logic.ts';
-import { CheckBar, Mark, MissingData, OutputBlock, checkShortcut, useDraftState, visibility } from './shared.tsx';
+import type { OptionRowProps } from './shared.tsx';
+import { Ask, CheckBar, Label, Mark, MissingData, OptionRow, OutputBlock, ReadFrame, cx, useDraftState, visibility } from './shared.tsx';
 
 type Q = QuestionOf<'errorTranslator'>;
 interface EtDraft { line: number | null; exception: string | null; causeId: string | null }
@@ -73,18 +74,13 @@ function ErrorTranslatorBody(props: FormatProps<Q>) {
   const judged = fresh ?? (checked && vis.marks ? checked.result : null);
   if (!vis.testMode && judged && mLine !== null && mExc !== null && mCause !== null) {
     const right = [mLine, mExc, mCause].filter(Boolean).length;
-    status = (
-      <span class="rf-status-line">
-        <Mark ok={judged.correct} />
-        {!judged.correct ? <span class="muted num"> {right} of 3 parts right.</span> : null}
-      </span>
-    );
+    status = <span><Mark ok={judged.correct} />{!judged.correct ? ` ${right} of 3 parts right.` : null}</span>;
   }
 
-  // Short text version of the line tags; shown when the container is too narrow for the tags themselves.
+  // Short text version of the line tags, for narrow panes where the tags are reduced to gutter icons.
   const summaryParts: string[] = [];
   if (draft.line !== null) summaryParts.push(`You picked line ${draft.line}${mLine === null ? '' : mLine ? ': correct' : ': not quite'}.`);
-  if (showAnswer && err) summaryParts.push(`Line ${err.line} raised the error.`);
+  if (showAnswer && err && !(draft.line === err.line && mLine)) summaryParts.push(`Line ${err.line} raised the error.`);
   const lineSummary = summaryParts.join(' ');
 
   const onLineKey = (idx: number) => (e: JSX.TargetedKeyboardEvent<HTMLButtonElement>) => {
@@ -96,116 +92,112 @@ function ErrorTranslatorBody(props: FormatProps<Q>) {
     next?.focus();
   };
 
-  const partHead = (text: string, mark: boolean | null) => (
-    <legend class="rf-legend">
-      {text}
-      {mark !== null ? <span class="rf-legend-mark"><Mark ok={mark} /></span> : null}
-    </legend>
-  );
+  const optionTone = (selected: boolean, mark: boolean | null, isRight: boolean) => {
+    let tone: OptionRowProps['tone'] = null;
+    let m: OptionRowProps['mark'] = null;
+    if (selected && mark !== null) { tone = mark ? 'ok' : 'bad'; m = { ok: mark, label: mark ? 'Correct' : 'Not this one' }; }
+    else if (isRight) { tone = 'answer'; m = { ok: true, label: 'Correct answer' }; }
+    return { tone, mark: m };
+  };
 
   return (
-    <div class="rf rf-et" ref={rootRef} onKeyDown={checkShortcut(check)}>
+    <ReadFrame
+      kind="et" rootRef={rootRef} onCheck={check}
+      bar={
+        <CheckBar
+          vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
+          ready={ready} notReadyText="Pick a line, an exception and a cause first" missing={missing} submitted={submitted}
+          onCheck={check} status={status}
+        />
+      }
+    >
       {missing ? <MissingData /> : null}
       <fieldset class="rf-fieldset">
-        {partHead('1. Which line raised the error?', mLine)}
-        <p class="rf-help" id={`${name}-lines-help`}>Select a line of code.</p>
-        <div class="rf-lines code-block" role="group" aria-describedby={`${name}-lines-help`}>
+        <Ask mark={mLine}>Which line raised the error?</Ask>
+        <p class="sr-only" id={`${name}-lines-help`}>Select a line of code. Arrow keys move between lines.</p>
+        <div class="rf-lines" role="group" aria-describedby={`${name}-lines-help`}>
           {lines.map((text, i) => {
             const n = i + 1;
-            if (text.trim() === '') return <div key={i} class="rf-line blank" aria-hidden="true"><span class="rf-line-icon" /><span class="rf-line-no">{n}</span><span class="rf-line-code">{' '}</span></div>;
+            if (text.trim() === '') {
+              return <div key={i} class="rf-line blank" aria-hidden="true"><span class="rf-line-gut" /><span class="rf-line-no">{n}</span><span class="rf-line-code">{' '}</span></div>;
+            }
             const selected = draft.line === n;
             const isRaise = showAnswer && err?.line === n;
             const markThis = selected && mLine !== null;
-            const tone = markThis ? (mLine ? 'ok' : 'bad') : isRaise ? 'ok' : '';
-            const cls = ['rf-line', selected ? 'selected' : '', tone].filter(Boolean).join(' ');
-            const tag = markThis ? (mLine ? 'Your pick: correct' : 'Your pick: not quite') : selected ? 'Your pick' : isRaise ? 'Raised here' : null;
-            const tagIcon = markThis ? (mLine ? 'check' : 'x') : selected ? 'target' : 'alert';
-            const raiseNote = isRaise && tag !== 'Raised here' && !(markThis && mLine) ? ' (raised here)' : '';
+            const tone = markThis ? (mLine ? 'ok' : 'bad') : isRaise ? 'answer' : '';
+            let tag: { text: string; icon: 'check' | 'x' | 'alert' | 'target'; tone: string } | null = null;
+            if (markThis) tag = mLine ? { text: 'Raised here', icon: 'check', tone: 'ok' } : { text: 'Your pick', icon: 'x', tone: 'bad' };
+            else if (isRaise) tag = { text: 'Raised here', icon: 'alert', tone: 'ok' };
+            else if (selected) tag = { text: 'Your pick', icon: 'target', tone: 'pick' };
+            const aria = `Line ${n}: ${text.trim()}${markThis ? (mLine ? '. Your pick: correct' : '. Your pick: not quite') : ''}${isRaise && !(markThis && mLine) ? '. Raised here' : ''}`;
             return (
               <button
-                key={i} type="button" class={cls} data-line={n}
+                key={i} type="button" class={cx('rf-line', selected && 'selected', tone)} data-line={n}
                 aria-pressed={selected}
-                aria-label={`Line ${n}: ${text.trim()}${tag && tag !== 'Your pick' ? `. ${tag}` : ''}${raiseNote}`}
+                aria-label={aria}
                 aria-disabled={vis.inputLocked ? 'true' : undefined}
                 onClick={() => set({ line: n })}
                 onKeyDown={onLineKey(i)}
               >
-                <span class="rf-line-icon" aria-hidden="true">{tag ? <Icon name={tagIcon} size={12} /> : null}</span>
+                <span class={cx('rf-line-gut', tag?.tone)} aria-hidden="true">{tag ? <Icon name={tag.icon} size={12} /> : null}</span>
                 <span class="rf-line-no" aria-hidden="true">{n}</span>
                 <span class="rf-line-code" aria-hidden="true">{codeTokens(text)}</span>
-                {tag ? <span class="rf-line-tag" aria-hidden="true"><Icon name={tagIcon} size={12} />{tag}</span> : null}
-                {raiseNote ? <span class="rf-line-tag ok" aria-hidden="true"><Icon name="alert" size={12} />Raised here</span> : null}
+                {tag ? (
+                  <span class={cx('rf-line-tag', tag.tone)} aria-hidden="true">
+                    <Icon name={tag.icon} size={12} />{tag.text}
+                  </span>
+                ) : null}
               </button>
             );
           })}
         </div>
-        {lineSummary ? <p class="rf-help rf-lines-summary" aria-hidden="true">{lineSummary}</p> : null}
+        {lineSummary ? <p class="rf-note rf-lines-summary" aria-hidden="true">{lineSummary}</p> : null}
       </fieldset>
 
       <fieldset class="rf-fieldset">
-        {partHead('2. What type of exception?', mExc)}
-        <div class="rf-options rf-exc-grid">
+        <Ask>Which exception?</Ask>
+        <div class="rf-opts rf-opts-2">
           {q.exceptionOptions.map((ex) => {
             const selected = draft.exception === ex;
-            const isRight = showAnswer && err?.type === ex;
-            const markThis = selected && mExc !== null;
-            const tone = markThis ? (mExc ? 'ok' : 'bad') : isRight ? 'ok' : '';
-            const cls = ['rf-option', selected ? 'selected' : '', vis.inputLocked ? 'locked' : '', tone].filter(Boolean).join(' ');
+            const t = optionTone(selected, mExc, showAnswer && err?.type === ex);
             return (
-              <div class={cls} key={ex}>
-                <label class="rf-option-main">
-                  <input type="radio" name={`${name}-exc`} value={ex} checked={selected} disabled={vis.inputLocked} onChange={() => set({ exception: ex })} />
-                  <span class="rf-option-body"><code class="rf-exc-name">{ex}</code></span>
-                </label>
-                {markThis ? <div class="rf-option-mark"><Mark ok={!!mExc} label={mExc ? 'Your answer: correct' : 'Your answer: not quite'} /></div>
-                  : isRight ? <div class="rf-option-mark"><Mark ok label="Correct answer" /></div> : null}
-              </div>
+              <OptionRow key={ex} type="radio" name={`${name}-exc`} value={ex} checked={selected} disabled={vis.inputLocked}
+                onChange={() => set({ exception: ex })} onEnter={check} tone={t.tone} mark={t.mark}>
+                <code class="rf-opt-code">{ex}</code>
+              </OptionRow>
             );
           })}
         </div>
       </fieldset>
 
       <fieldset class="rf-fieldset">
-        {partHead('3. What caused it?', mCause)}
-        <div class="rf-options">
+        <Ask>What caused it?</Ask>
+        <div class="rf-opts">
           {q.causes.map((c) => {
             const selected = draft.causeId === c.id;
-            const isRight = showAnswer && c.id === correctCause;
-            const markThis = selected && mCause !== null;
-            const tone = markThis ? (mCause ? 'ok' : 'bad') : isRight ? 'ok' : '';
-            const cls = ['rf-option', selected ? 'selected' : '', vis.inputLocked ? 'locked' : '', tone].filter(Boolean).join(' ');
+            const t = optionTone(selected, mCause, showAnswer && c.id === correctCause);
             return (
-              <div class={cls} key={c.id}>
-                <label class="rf-option-main">
-                  <input type="radio" name={`${name}-cause`} value={c.id} checked={selected} disabled={vis.inputLocked} onChange={() => set({ causeId: c.id })} />
-                  <span class="rf-option-body"><Markdown text={c.text} class="rf-option-md" /></span>
-                </label>
-                {markThis ? <div class="rf-option-mark"><Mark ok={!!mCause} label={mCause ? 'Your answer: correct' : 'Your answer: not quite'} /></div>
-                  : isRight ? <div class="rf-option-mark"><Mark ok label="Correct answer" /></div> : null}
-              </div>
+              <OptionRow key={c.id} type="radio" name={`${name}-cause`} value={c.id} checked={selected} disabled={vis.inputLocked}
+                onChange={() => set({ causeId: c.id })} onEnter={check} tone={t.tone} mark={t.mark}>
+                <Markdown text={c.text} class="rf-opt-md" />
+              </OptionRow>
             );
           })}
         </div>
       </fieldset>
 
       {showAnswer && err ? (
-        <div class="rf-reveal">
-          <div class="rf-subhead">What Python reported</div>
-          <pre class="rf-traceback">Line {err.line}: {err.type}{err.message ? `: ${err.message}` : ''}</pre>
+        <div class="rf-field">
+          <Label>What Python reported</Label>
+          <pre class="rf-output rf-traceback">Line {err.line}: <span class="rf-exc">{err.type}</span>{err.message ? `: ${err.message}` : ''}</pre>
           {typeof generated?.stdout === 'string' && normalizeForDisplay(generated.stdout) !== '' ? (
-            <>
-              <div class="rf-subhead">Printed before the crash</div>
+            <div class="rf-field rf-expected">
+              <Label>Printed before the crash</Label>
               <OutputBlock text={normalizeForDisplay(generated.stdout)} />
-            </>
+            </div>
           ) : null}
         </div>
       ) : null}
-
-      <CheckBar
-        vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
-        ready={ready} notReadyText="Pick a line, an exception type and a cause first." missing={missing} submitted={submitted}
-        onCheck={check} status={status}
-      />
-    </div>
+    </ReadFrame>
   );
 }

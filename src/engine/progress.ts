@@ -76,7 +76,7 @@ export function questionStats(events: readonly AppEvent[]): Map<string, Question
       const s = get(e.qid);
       s.attempts++;
       if (e.revealed) s.revealed = true;
-      if (e.correct && !e.revealed && !revealedAt.has(e.qid)) s.solved = true;
+      if ((e.mode === 'practice' || e.mode === 'paper') && e.correct && !e.revealed && !revealedAt.has(e.qid)) s.solved = true;
       const credit = e.revealed ? 0 : clamp01(Number(e.credit));
       if (credit > s.bestCredit) s.bestCredit = credit;
       s.lastTs = e.ts;
@@ -117,8 +117,10 @@ function countsByTopic(events: readonly AppEvent[]): Map<TopicId, TopicCounts> {
       case 'attempt': {
         const c = get(e.topicId);
         c.attemptedQids.add(e.qid);
-        if (e.mode === 'practice' || e.mode === 'paper') c.hasPracticeAttempt = true;
-        if (e.correct && !e.revealed && !revealedBefore.has(e.qid)) {
+        const practice = e.mode === 'practice' || e.mode === 'paper';
+        if (practice) c.hasPracticeAttempt = true;
+        // Only practice solves count toward the minimum; test answers are measured by the test result instead.
+        if (practice && e.correct && !e.revealed && !revealedBefore.has(e.qid)) {
           c.solvedQids.add(e.qid);
           if (CODE_SET.has(e.format)) c.codeSolvedQids.add(e.qid);
         }

@@ -114,6 +114,20 @@ export function weakTopics(summary: TestSummary): TopicBreakdown[] {
     .sort((a, b) => a.correct / a.total - b.correct / b.total || (TOPIC_ORDER[a.topicId] ?? 99) - (TOPIC_ORDER[b.topicId] ?? 99));
 }
 
+/**
+ * A next step for a mid-sem test where every topic scored 70% or more, or null when nothing useful can be said:
+ * never for a topic test (it has one topic and its own pass message), and not once the test was already the longest
+ * size and covered every mid-sem topic.
+ */
+export function strongNextStep(summary: TestSummary, opts: { maxCount: number; midsemTopics: number }): string | null {
+  if (summary.kind !== 'midsem' || summary.total === 0 || weakTopics(summary).length > 0) return null;
+  const longer = summary.total < opts.maxCount;
+  const wider = summary.topicIds.length < opts.midsemTopics;
+  if (!longer && !wider) return null;
+  const what = longer && wider ? 'more questions or more topics' : longer ? 'more questions' : 'more topics';
+  return `Every topic scored 70% or more. Next time, try ${what}.`;
+}
+
 const RESPONSE_LIMIT = 4000;
 
 /** Keep responses under the 4 KB limit; long ones are stored as a truncated JSON string. */
@@ -153,7 +167,7 @@ export function buildTestEvents(summary: TestSummary, items: readonly TestItem[]
   return out;
 }
 
-export interface TestHistoryEntry { ts: number; score: number; total: number; percent: number; passed: boolean; topicIds: TopicId[]; durationMs: number }
+export interface TestHistoryEntry { ts: number; score: number; total: number; percent: number; passed: boolean; topicIds: TopicId[]; durationMs: number; qids: string[] }
 
 /** Previous results of one kind, newest first. For topic tests pass `topicId` to keep only that topic. */
 export function testHistory(events: readonly AppEvent[], kind: TestKind, topicId?: TopicId): TestHistoryEntry[] {
@@ -163,7 +177,7 @@ export function testHistory(events: readonly AppEvent[], kind: TestKind, topicId
     if (topicId && !e.topicIds.includes(topicId)) continue;
     out.push({
       ts: e.ts, score: e.score, total: e.total, percent: e.total ? Math.round((e.score / e.total) * 100) : 0,
-      passed: e.passed, topicIds: e.topicIds, durationMs: e.durationMs,
+      passed: e.passed, topicIds: e.topicIds, durationMs: e.durationMs, qids: Array.isArray(e.qids) ? e.qids : [],
     });
   }
   return out.sort((a, b) => b.ts - a.ts);

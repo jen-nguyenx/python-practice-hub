@@ -88,6 +88,34 @@ describe('selectTopicTest', () => {
     expect(selectTopicTest([], seededRng(1))).toEqual([]);
   });
 
+  it('a retake avoids the questions of the last attempt when others fit', () => {
+    for (let seed = 1; seed <= 40; seed++) {
+      const pool = forLoopsTopic();
+      const first = selectTopicTest(pool, seededRng(seed));
+      const avoid = new Set(first.map((p) => p.id));
+      const again = selectTopicTest(pool, seededRng(seed), undefined, avoid);
+      expect(again).toHaveLength(5);
+      // The reading and repair slots have enough other questions, so none of them repeat.
+      expect(again.slice(0, 3).some((p) => avoid.has(p.id))).toBe(false);
+      // Only one non-paper write and one fixBug exist, so the two coding slots may have to repeat them.
+      expect(again.filter((p) => avoid.has(p.id)).length).toBeLessThanOrEqual(2);
+      expect(['write', 'fixBug', 'refactor']).toContain(again[3].format);
+      expect(again.some((p) => p.paper)).toBe(false);
+    }
+  });
+
+  it('a retake repeats a question rather than breaking the read/repair/write mix', () => {
+    const t: TopicId = 'strings';
+    const pool = [c(t, 'predict'), c(t, 'mcq'), c(t, 'parsons'), c(t, 'fixBug'), c(t, 'write'), c(t, 'predict'), c(t, 'multi')];
+    const first = selectTopicTest(pool, seededRng(2));
+    const again = selectTopicTest(pool, seededRng(2), undefined, new Set(first.map((p) => p.id)));
+    // Same slot shape as the first attempt (fixBug counts as a coding slot here).
+    expect(again.map((p) => p.format).slice(2)).toEqual(first.map((p) => p.format).slice(2));
+    expect(again.slice(0, 2).every((p) => FORMAT_LADDER[p.format] === 'read')).toBe(true);
+    // Both read slots get the two unused read questions.
+    expect(again.slice(0, 2).every((p) => !first.some((f) => f.id === p.id))).toBe(true);
+  });
+
   it('pass mark is 4 of 5, scaled down for smaller tests', () => {
     expect(topicTestPassMark(5)).toBe(4);
     expect(topicTestPassMark(4)).toBe(4);

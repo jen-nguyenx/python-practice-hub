@@ -10,9 +10,9 @@
 .ce-host { position: absolute; inset: 0; }
 .ce-skeleton { position: absolute; inset: 0; background: var(--editor-bg); display: flex; flex-direction: column; overflow: hidden; }
 .ce-skel-line { display: flex; align-items: center; gap: 14px; }
-.ce-skel-num { width: 34px; text-align: right; font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); }
-.ce-skel-bar { height: 8px; border-radius: 2px; background: var(--surface-3); }
-.ce-skel-note { position: absolute; right: 10px; bottom: 8px; font-size: var(--fs-12); color: var(--text-faint); }
+.ce-skel-num { width: 34px; text-align: right; font-family: var(--mono); font-size: var(--fs-12); color: var(--editor-gutter); }
+.ce-skel-bar { height: 8px; border-radius: 2px; background: var(--editor-chrome); }
+.ce-skel-note { position: absolute; right: 10px; bottom: 8px; font-size: var(--fs-12); color: var(--editor-muted); }
 .ce-hint { margin: 4px 2px 0; font-size: var(--fs-11); color: var(--text-faint); line-height: 1.6; }
 .ce-hint kbd { font-size: 10px; padding: 0 4px; }
 
@@ -22,21 +22,22 @@
 /* Textarea editor */
 .ta-frame { display: flex; font-family: var(--mono); }
 .ta-gutter {
-  flex: none; width: 44px; overflow: hidden; padding: 8px 0 20px; background: var(--editor-bg);
-  border-right: 1px solid var(--border); color: var(--text-faint); text-align: right; user-select: none;
+  flex: none; width: 48px; overflow: hidden; padding: 16px 0 20px; background: var(--editor-bg);
+  border-right: 0; color: var(--editor-gutter); text-align: right; user-select: none;
   font-variant-numeric: tabular-nums;
 }
 .ta-ln { padding-right: 8px; font-size: 0.85em; white-space: nowrap; }
-.ta-ln.error { color: var(--bad); font-weight: 600; background: var(--bad-fill); }
-.ta-ln.warning { color: var(--hint); font-weight: 600; background: var(--hint-fill); }
+.ta-ln.error { color: var(--editor-text); font-weight: 600; box-shadow: inset -2px 0 0 var(--bad); }
+.ta-ln.warning { color: var(--editor-text); font-weight: 600; box-shadow: inset -2px 0 0 var(--hint); }
 .ta-input {
-  flex: 1; min-width: 0; margin: 0; border: 0; outline: none; resize: none; padding: 8px 10px 20px;
-  background: var(--editor-bg); color: var(--text); font: inherit; line-height: inherit; tab-size: 4;
+  flex: 1; min-width: 0; margin: 0; border: 0; outline: none; resize: none; padding: 16px 12px 20px;
+  background: var(--editor-bg); color: var(--editor-text); font: inherit; line-height: inherit; tab-size: 4;
   white-space: pre; overflow: auto; caret-color: var(--accent);
 }
 .ta-input:focus-visible { outline: none; }
-.ta-markers { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 2px; font-size: var(--fs-12); }
-.ta-markers li.error { color: var(--bad); }
-.ta-markers li.warning { color: var(--hint); }
-.ta-markers li.info { color: var(--text-muted); }
+.ta-markers { list-style: none; margin: 0; padding: 6px 12px; background: var(--editor-bg); display: grid; gap: 2px; font-size: var(--fs-12); }
+.ta-markers li.error { color: var(--editor-text); }
+.ta-markers li.warning { color: var(--editor-text); }
+.ta-markers li.info { color: var(--editor-muted); }
+.ta-input::selection { background: var(--editor-selection); }
 .ta-input { font-variant-ligatures: none; }

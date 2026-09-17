@@ -21,11 +21,18 @@ const PY_EXCEPTIONS = [
   'AssertionError', 'RuntimeError', 'NotImplementedError', 'UnicodeDecodeError', 'PermissionError',
 ];
 
+/** Control-flow keywords coloured like VS Code Dark+ (the rest of the keywords stay blue). */
+export const PY_CONTROL = [
+  'if', 'elif', 'else', 'for', 'while', 'return', 'break', 'continue', 'try', 'except', 'finally', 'raise', 'with',
+  'yield', 'import', 'from', 'pass', 'match', 'case', 'await',
+];
+
 // Typed loosely so this file does not need Monaco's types; monaco.ts casts it to IMonarchLanguage.
 export const PY_MONARCH = {
   defaultToken: '',
   tokenPostfix: '.python',
   keywords: PY_KEYWORDS,
+  control: PY_CONTROL,
   builtins: [...PY_BUILTINS, ...PY_EXCEPTIONS],
   brackets: [
     { open: '{', close: '}', token: 'delimiter.curly' },
@@ -41,8 +48,8 @@ export const PY_MONARCH = {
       [/[,:;.]/, 'delimiter'],
       [/[{}[\]()]/, '@brackets'],
       [/@[a-zA-Z_]\w*/, 'tag'],
-      [/[a-zA-Z_]\w*(?=\s*\()/, { cases: { '@keywords': 'keyword', '@builtins': 'predefined', '@default': 'function' } }],
-      [/[a-zA-Z_]\w*/, { cases: { '@keywords': 'keyword', '@builtins': 'predefined', '@default': 'identifier' } }],
+      [/[a-zA-Z_]\w*(?=\s*\()/, { cases: { '@control': 'keyword.control', '@keywords': 'keyword', '@builtins': 'predefined', '@default': 'function' } }],
+      [/[a-zA-Z_]\w*/, { cases: { '@control': 'keyword.control', '@keywords': 'keyword', '@builtins': 'predefined', '@default': 'identifier' } }],
       [/[+\-*/%=<>!&|^~]+/, 'operator'],
     ],
     whitespace: [

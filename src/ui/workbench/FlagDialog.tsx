@@ -4,6 +4,7 @@ import { store } from '../../app/services.ts';
 import { Button } from '../components/Button.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { Dialog } from './Dialog.tsx';
+import { IconButton } from './Tip.tsx';
 import './workbench.css';
 
 type Reason = 'wrong-answer' | 'unclear' | 'too-hard' | 'other';
@@ -14,16 +15,20 @@ const REASONS: { id: Reason; label: string }[] = [
   { id: 'other', label: 'Something else' },
 ];
 
-export function FlagButton({ qid }: { qid: string }) {
+export function FlagButton({ qid, variant = 'link' }: { qid: string; variant?: 'icon' | 'link' }) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<Reason>('wrong-answer');
   const [note, setNote] = useState('');
   const [sent, setSent] = useState(false);
   return (
     <>
-      <Button size="sm" variant="ghost" onClick={() => { setOpen(true); setSent(false); }}>
-        <Icon name="flag" size={14} /> Report this question
-      </Button>
+      {variant === 'icon' ? (
+        <IconButton icon="flag" label="Report this question" side="bottom" align="end" onClick={() => { setOpen(true); setSent(false); }} />
+      ) : (
+        <button type="button" class="link-btn quiet" onClick={() => { setOpen(true); setSent(false); }}>
+          <Icon name="flag" size={13} /> Report this question
+        </button>
+      )}
       <Dialog open={open} title="Report this question" onClose={() => setOpen(false)}>
         {sent ? (
           <>

@@ -1,94 +1,57 @@
-// Landing (#/): progress sentence, Continue and Mid-sem test actions, the topic ladder in two bands, and a side column
-// with this session, recent mistakes, a backup reminder and the difficulty legend.
+// Home (#/): "Your ladder" with a one-line summary and legend, the ladder list card on the left, and on the right
+// Continue, the mid-semester practice test, this week's focus mistake and the Playground (docs/build/DESIGN.md "Home").
 import { useMemo } from 'preact/hooks';
-import { href } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
-import { QUESTION_BY_ID, QUESTION_INDEX } from '../../content/loadIndex.ts';
-import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
-import type { TopicMeta } from '../../content/topics.ts';
-import { continueTarget, currentSessionSummary } from '../../engine/progress.ts';
-import type { SessionSummary, TopicProgress } from '../../engine/progress.ts';
-import type { TopicId } from '../../content/ids.ts';
-import { Icon } from '../components/Icon.tsx';
+import { QUESTION_INDEX } from '../../content/loadIndex.ts';
+import { TOPICS } from '../../content/topics.ts';
+import { currentSessionSummary } from '../../engine/progress.ts';
+import type { SessionSummary } from '../../engine/progress.ts';
+import type { AppEvent } from '../../engine/types.ts';
 import { Skeleton } from '../components/Skeleton.tsx';
-import { plural, relativeDay } from '../shell/format.ts';
-import { DIFF_COUNTS, attemptCount, lastOtherSessionTs, recentMistakes, safeQuestionStats, safeTopicProgress } from '../shell/progressData.ts';
-import { BackupReminder, LegendCard, MistakesCard, SessionCard } from '../shell/landing/SideCards.tsx';
-import { TopicCard } from '../shell/landing/TopicCard.tsx';
+import { plural } from '../shell/format.ts';
+import { continueInfo, midsemSummary, needsBackup } from '../shell/homeData.ts';
+import { recentMistakes, safeQuestionStats, safeTopicProgress } from '../shell/progressData.ts';
+import { BackupCard, ContinueCard, FocusCard, MidsemCard, PlaygroundCard } from '../shell/landing/HomeCards.tsx';
+import type { FocusMistake } from '../shell/landing/HomeCards.tsx';
+import { Ladder, LadderLegend } from '../shell/landing/Ladder.tsx';
+import type { NextUp } from '../shell/landing/Ladder.tsx';
 import { storeReady } from '../shell/storeReady.ts';
 import '../shell/landing/landing.css';
 
-const BACKUP_AFTER_ATTEMPTS = 10;
-const BACKUP_MAX_AGE_MS = 7 * 86_400_000;
-
-const MIDSEM = TOPICS.filter((t) => t.midsem);
-const MIDSEM_RANGE = MIDSEM.length ? `topics ${Number(MIDSEM[0].num)}-${Number(MIDSEM[MIDSEM.length - 1].num)}` : '';
-
-const BANDS: { id: string; title: string; note: string; topics: TopicMeta[] }[] = [
-  {
-    id: 'core',
-    title: 'Core · mid-semester',
-    note: MIDSEM_RANGE ? `The mid-sem practice test covers ${MIDSEM_RANGE}.` : '',
-    topics: TOPICS.filter((t) => t.band === 'core'),
-  },
-  {
-    id: 'late',
-    title: 'Projects and final exam',
-    note: 'Files, exceptions, the project rules and recursion.',
-    topics: TOPICS.filter((t) => t.band === 'late'),
-  },
-];
-
-function safeSession(events: Parameters<typeof currentSessionSummary>[0], sessionId: string): SessionSummary | null {
+function safeSession(events: readonly AppEvent[], sessionId: string): SessionSummary | null {
   try { return currentSessionSummary(events, sessionId); } catch { return null; }
 }
 
-function safeContinue(events: Parameters<typeof continueTarget>[0], settings: Parameters<typeof continueTarget>[2]) {
-  try { return continueTarget(events, QUESTION_INDEX, settings); } catch { return null; }
-}
-
-function ContinueButton({ target, progress, fresh }: { target: { qid: string; topicId: TopicId } | null; progress: Record<TopicId, TopicProgress>; fresh: boolean }) {
-  if (target) {
-    const q = QUESTION_BY_ID.get(target.qid);
-    const topic = TOPIC_BY_ID[target.topicId];
-    return (
-      <a class="btn primary lg hero-continue" href={href.question(target.qid)}>
-        <Icon name="play" size={14} />
-        <span class="hero-btn-text">
-          {fresh ? 'Start' : 'Continue'}: {topic?.short ?? 'practice'}{q ? <span class="hero-btn-sub"> · {q.title}</span> : null}
-        </span>
-      </a>
-    );
+/** The most repeated mistake of the last 14 days, with the topic it happened in most. */
+function weeklyFocus(events: readonly AppEvent[]): FocusMistake | null {
+  const top = recentMistakes(events, 14)[0];
+  if (!top) return null;
+  const since = Date.now() - 14 * 86_400_000;
+  const byTopic = new Map<string, number>();
+  for (const e of events) {
+    if (e.type !== 'mistake' || e.mistake !== top.id || e.ts < since || !e.topicId) continue;
+    byTopic.set(e.topicId, (byTopic.get(e.topicId) ?? 0) + 1);
   }
-  // No question to resume: point at the furthest open topic that isn't done, else topic 1.
-  const open = TOPICS.filter((t) => progress[t.id]?.state !== 'locked');
-  const next = open.find((t) => progress[t.id]?.state !== 'completed') ?? open[open.length - 1] ?? TOPICS[0];
-  return (
-    <a class="btn primary lg hero-continue" href={href.topic(next.id)}>
-      <Icon name="play" size={14} />
-      <span class="hero-btn-text">{fresh ? 'Start' : 'Continue'}: {next.short}</span>
-    </a>
-  );
+  let topicId: string | null = top.topicId;
+  let best = 0;
+  for (const [t, n] of byTopic) if (n > best) { best = n; topicId = t; }
+  return { label: top.label, count: top.count, topicId };
 }
 
 function LandingSkeleton() {
   return (
-    <div class="page landing" aria-busy="true">
+    <div class="page home" aria-busy="true">
       <span class="sr-only" role="status">Loading your progress</span>
-      <div class="hero">
-        <Skeleton w={320} h={30} />
-        <Skeleton w={420} h={14} />
-        <div class="row"><Skeleton w={200} h={38} /><Skeleton w={180} h={38} /></div>
+      <header class="home-head">
+        <Skeleton w={220} h={36} />
+        <Skeleton w={320} h={16} />
+      </header>
+      <div class="home-ladder card home-skel">
+        {Array.from({ length: 8 }, (_, i) => (
+          <div key={i} class="lr"><Skeleton w={28} h={28} class="skel-round" /><Skeleton w="40%" h={14} /></div>
+        ))}
       </div>
-      <div class="landing-grid">
-        <div class="landing-session"><Skeleton h={120} /></div>
-        <div class="ladder">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} class="tc tc-skel"><Skeleton w={28} h={28} /><div class="stack" style={{ flex: 1 }}><Skeleton w="50%" h={16} /><Skeleton w="85%" h={12} /><Skeleton w="60%" h={8} /></div></div>
-          ))}
-        </div>
-        <aside class="side"><Skeleton h={120} /></aside>
-      </div>
+      <div class="home-cont"><div class="card home-skel-card"><Skeleton h={160} /></div></div>
     </div>
   );
 }
@@ -97,83 +60,61 @@ export function Landing() {
   const ready = storeReady.value;
   const events = store.events.value;
   const settings = store.settings.value;
-
   // sessionId is a getter that changes after 30 idle minutes, so read it on every render.
   const sessionId = store.sessionId;
 
   const progress = useMemo(() => safeTopicProgress(events, settings), [events, settings]);
   const stats = useMemo(() => safeQuestionStats(events), [events]);
+  const info = useMemo(() => continueInfo(events, settings, progress), [events, settings, progress]);
   const session = useMemo(() => safeSession(events, sessionId), [events, sessionId]);
-  const target = useMemo(() => safeContinue(events, settings), [events, settings]);
-  const mistakes = useMemo(() => recentMistakes(events), [events]);
-  const attempts = useMemo(() => attemptCount(events), [events]);
-  const lastOther = useMemo(() => lastOtherSessionTs(events, sessionId), [events, sessionId]);
+  const focus = useMemo(() => weeklyFocus(events), [events]);
+  const midsem = useMemo(() => midsemSummary(), [events]);
 
   if (!ready) return <LandingSkeleton />;
 
-  const openCount = TOPICS.filter((t) => progress[t.id].state !== 'locked').length;
-  let tried = 0;
-  for (const s of stats.values()) if (s.attempts > 0) tried++;
+  const complete = TOPICS.filter((t) => progress[t.id].state === 'completed').length;
+  let answered = 0;
+  for (const s of stats.values()) if (s.attempts > 0) answered++;
+  const fresh = answered === 0;
 
-  const sentence: string[] = [`${openCount} of ${TOPICS.length} topics open`];
-  sentence.push(tried > 0 ? `${plural(tried, 'question')} tried` : 'no questions tried yet');
-  if (lastOther !== null) sentence.push(`last session ${relativeDay(lastOther)}`);
+  let next: NextUp | null = null;
+  if (info.question) {
+    const inTopic = QUESTION_INDEX.filter((q) => q.topicId === info.topic.id);
+    const idx = inTopic.findIndex((q) => q.qid === info.question!.qid);
+    if (idx >= 0) next = { topicId: info.topic.id, question: info.question, number: idx + 1 };
+  }
+  const started = !!next && (stats.get(next.question.qid)?.attempts ?? 0) > 0;
 
-  const now = Date.now();
-  const hasSession = !!session && session.questions > 0;
-  const needsBackup = attempts >= BACKUP_AFTER_ATTEMPTS && (settings.lastExportTs === null || now - settings.lastExportTs > BACKUP_MAX_AGE_MS);
+  const summary = [
+    `${complete} of ${TOPICS.length} topics complete`,
+    fresh ? 'no questions answered yet' : `${plural(answered, 'question')} answered`,
+  ];
+  if (settings.unlockAll) summary.push('all topics unlocked');
 
   return (
-    <div class="page landing">
-      <header class="hero">
-        <h1>CITS1401 Python practice</h1>
-        <p class="hero-sentence num">{sentence.join(' · ')}</p>
-        <div class="hero-actions">
-          <ContinueButton target={target} progress={progress} fresh={attempts === 0} />
-          <a class="btn lg hero-midsem" href={href.midsem()}>
-            <Icon name="clock" size={14} />
-            Mid-sem practice test
-          </a>
+    <div class="page home">
+      <header class="home-head">
+        <h1>Your ladder</h1>
+        <div class="home-summary-row">
+          <p class="home-summary num">{summary.join(' · ')}</p>
+          <LadderLegend />
         </div>
-        {settings.unlockAll ? (
-          <p class="hero-note"><Icon name="unlock" size={14} /> All topics are unlocked in <a href={href.settings()}>Settings</a>.</p>
-        ) : null}
       </header>
 
-      <div class={`landing-grid${hasSession ? ' has-session' : ''}`}>
-        {/* Before the ladder in the DOM so a narrow screen shows it first once there is something in it. */}
-        <div class="landing-session">
-          <SessionCard summary={session} />
-        </div>
-
-        <div class="ladder">
-          {BANDS.map((band) => (
-            <section key={band.id} class="band" aria-labelledby={`band-${band.id}`}>
-              <div class="band-head">
-                <h2 id={`band-${band.id}`} class="band-title">{band.title}</h2>
-                {band.note ? <p class="band-note">{band.note}</p> : null}
-              </div>
-              <ol class="topic-list">
-                {band.topics.map((t) => (
-                  <TopicCard
-                    key={t.id}
-                    meta={t}
-                    progress={progress[t.id]}
-                    counts={DIFF_COUNTS[t.id]}
-                    prevLocked={t.order > 1 && progress[TOPICS[t.order - 2].id].state === 'locked'}
-                  />
-                ))}
-              </ol>
-            </section>
-          ))}
-        </div>
-
-        <aside class="side" aria-label="Recent activity">
-          <MistakesCard mistakes={mistakes} />
-          {needsBackup ? <BackupReminder lastExportTs={settings.lastExportTs} /> : null}
-          <LegendCard />
-        </aside>
+      <div class="home-ladder">
+        <Ladder progress={progress} next={next} />
       </div>
+
+      <div class="home-cont">
+        <ContinueCard info={info} next={next} progress={progress[info.topic.id]} fresh={fresh} started={started} session={session} />
+      </div>
+
+      <aside class="home-side" aria-label="Practice and focus">
+        <MidsemCard summary={midsem} />
+        {focus ? <FocusCard focus={focus} /> : null}
+        <PlaygroundCard />
+        {needsBackup(events, settings) ? <BackupCard lastExportTs={settings.lastExportTs} /> : null}
+      </aside>
     </div>
   );
 }

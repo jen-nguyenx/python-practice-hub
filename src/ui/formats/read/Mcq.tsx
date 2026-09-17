@@ -1,13 +1,11 @@
 // Multiple choice (and true/false with two options). Graded by option id.
 import { useRef, useState } from 'preact/hooks';
 import type { FormatProps, GradeResult } from '../../../engine/types.ts';
-import type { McqOption, QuestionOf } from '../../../content/schema.ts';
+import type { QuestionOf } from '../../../content/schema.ts';
 import { gradeMcq } from '../../../engine/grade.ts';
 import { CodeBlock } from '../../components/CodeBlock.tsx';
-import { Icon } from '../../components/Icon.tsx';
-import { Markdown } from '../../components/Markdown.tsx';
 import { isRecord } from './logic.ts';
-import { CheckBar, Mark, OptionText, checkShortcut, useDraftState, useNumberKeys, useSingleKeysOn, visibility } from './shared.tsx';
+import { CheckBar, Mark, OptionRow, OptionText, ReadFrame, useDraftState, useNumberKeys, useSingleKeysOn, visibility } from './shared.tsx';
 
 type Q = QuestionOf<'mcq'>;
 interface McqDraft { choice: string | null }
@@ -54,75 +52,50 @@ function McqBody(props: FormatProps<Q>) {
   const markedChoice = !vis.marks ? null
     : vis.full ? (checked?.choice ?? choice)
     : checked && checked.choice === choice ? choice : null;
+  const showCorrect = vis.full && vis.marks;
 
   let status = null;
   if (!vis.testMode && checked && markedChoice === checked.choice) status = <Mark ok={checked.choice === correctId} />;
 
   return (
-    <div class="rf rf-mcq" ref={rootRef} onKeyDown={checkShortcut(check)}>
+    <ReadFrame
+      kind="mcq" rootRef={rootRef} onCheck={check}
+      bar={
+        <CheckBar
+          vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
+          ready={ready} notReadyText="Pick an answer first" missing={false} submitted={submitted}
+          onCheck={check} status={status}
+        />
+      }
+    >
       {q.code ? <CodeBlock code={q.code} numbered label="Code for this question" /> : null}
       <fieldset class="rf-fieldset">
         <legend class="sr-only">Choose one answer</legend>
-        <div class="rf-options" role="presentation">
-          {q.options.map((o, i) => (
-            <OptionCard
-              key={o.id} o={o} index={i} name={name}
-              selected={choice === o.id}
-              disabled={vis.inputLocked}
-              onPick={() => pick(o.id)}
-              onEnter={check}
-              isCorrect={o.id === correctId}
-              showCorrect={vis.full && vis.marks}
-              isMarkedChoice={markedChoice === o.id}
-              showKey={keysOn && !vis.inputLocked && i < 5}
-              showOthersWhy={props.revealed && vis.marks}
-            />
-          ))}
+        <div class="rf-opts">
+          {q.options.map((o, i) => {
+            const isCorrect = o.id === correctId;
+            const chosen = markedChoice === o.id;
+            let tone: 'ok' | 'bad' | 'answer' | null = null;
+            let mark = null;
+            if (chosen) { tone = isCorrect ? 'ok' : 'bad'; mark = { ok: isCorrect, label: isCorrect ? 'Correct' : 'Not this one' }; }
+            else if (showCorrect && isCorrect) { tone = 'answer'; mark = { ok: true, label: 'Correct answer' }; }
+            return (
+              <OptionRow
+                key={o.id} type="radio" name={name} value={o.id}
+                checked={choice === o.id} disabled={vis.inputLocked}
+                onChange={() => pick(o.id)} onEnter={check}
+                keyHint={keysOn && !vis.inputLocked && i < 5 ? i + 1 : null}
+                tone={tone} mark={mark}
+                why={chosen || tone === 'answer' ? o.why : null}
+                whyToggle={props.revealed && vis.marks && !chosen && tone !== 'answer' ? o.why : null}
+                whyToggleLabel="Why not"
+              >
+                <OptionText text={o.text} />
+              </OptionRow>
+            );
+          })}
         </div>
       </fieldset>
-      <CheckBar
-        vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
-        ready={ready} notReadyText="Pick an answer first." missing={false} submitted={submitted}
-        onCheck={check} status={status}
-      />
-    </div>
-  );
-}
-
-function OptionCard(p: {
-  o: McqOption; index: number; name: string; selected: boolean; disabled: boolean;
-  onPick: () => void; onEnter: () => void;
-  isCorrect: boolean; showCorrect: boolean; isMarkedChoice: boolean; showOthersWhy: boolean; showKey: boolean;
-}) {
-  const { o } = p;
-  const markCorrect = p.showCorrect && p.isCorrect;
-  const markChosen = p.isMarkedChoice;
-  let mark = null;
-  if (markChosen && p.isCorrect) mark = <Mark ok label="Your answer: correct" />;
-  else if (markChosen) mark = <Mark ok={false} label="Your answer: not quite" />;
-  else if (markCorrect) mark = <Mark ok label="Correct answer" />;
-  const showWhy = markChosen || markCorrect;
-  const tone = markChosen ? (p.isCorrect ? 'ok' : 'bad') : markCorrect ? 'ok' : '';
-  const cls = ['rf-option', p.selected ? 'selected' : '', p.disabled ? 'locked' : '', tone].filter(Boolean).join(' ');
-  return (
-    <div class={cls}>
-      <label class="rf-option-main">
-        <input
-          type="radio" name={p.name} value={o.id} checked={p.selected} disabled={p.disabled}
-          onChange={p.onPick}
-          onKeyDown={(e) => { if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) { e.preventDefault(); p.onEnter(); } }}
-        />
-        {p.showKey ? <span class="rf-option-key" aria-hidden="true">{p.index + 1}</span> : null}
-        <span class="rf-option-body"><OptionText text={o.text} /></span>
-      </label>
-      {mark ? <div class="rf-option-mark">{mark}</div> : null}
-      {showWhy && o.why ? <div class="rf-why"><Markdown text={o.why} /></div> : null}
-      {!showWhy && p.showOthersWhy && o.why ? (
-        <details class="rf-why-more">
-          <summary><Icon name="chevronRight" size={14} class="rf-why-chevron" />Why not this one</summary>
-          <Markdown text={o.why} />
-        </details>
-      ) : null}
-    </div>
+    </ReadFrame>
   );
 }

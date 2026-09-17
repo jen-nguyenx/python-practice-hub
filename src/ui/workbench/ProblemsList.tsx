@@ -42,7 +42,7 @@ export function ProblemsList({ syntaxError, flags, compact }: ProblemsListProps)
           </li>
         ))}
       </ul>
-      {compact ? null : <p class="problems-note">Warnings are advice and do not change your score.</p>}
+      {compact ? null : <p class="problems-note">Advice only · never changes your score</p>}
     </div>
   );
 }

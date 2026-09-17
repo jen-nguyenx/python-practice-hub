@@ -4,11 +4,11 @@ import { useRef, useState } from 'preact/hooks';
 import type { FormatProps, GradeResult } from '../../../engine/types.ts';
 import type { QuestionOf } from '../../../content/schema.ts';
 import { gradeTrace } from '../../../engine/grade.ts';
-import { Button } from '../../components/Button.tsx';
 import { CodeBlock } from '../../components/CodeBlock.tsx';
 import { Icon } from '../../components/Icon.tsx';
+import { InfoPopover } from '../../components/InfoPopover.tsx';
 import { gridHasInput, parseTraceRows } from './logic.ts';
-import { CheckBar, Mark, MissingData, checkShortcut, useDraftState, visibility, noAutocorrect } from './shared.tsx';
+import { CheckBar, Glyph, Label, Mark, MissingData, ReadFrame, cx, noAutocorrect, useDraftState, visibility } from './shared.tsx';
 
 type Q = QuestionOf<'trace'>;
 interface TraceDraft { rows: string[][] }
@@ -95,76 +95,93 @@ function TraceBody(props: FormatProps<Q>) {
 
   let status = null;
   const judged = fresh ?? (checked && vis.marks ? checked.result : null);
-  if (!vis.testMode && judged && (fresh || (checked && gridSame(checked.rows, rows)))) status = <Mark ok={judged.correct} />;
+  const gridJudged = judged && (fresh || (checked && gridSame(checked.rows, rows)));
+  if (!vis.testMode && gridJudged) status = <Mark ok={judged.correct} />;
 
   const showAnswer = props.revealed && expectedRows !== null;
-  const colLabel = (c: number) => q.watch[c];
+  const showGrid = !(showAnswer && !gridHasInput(rows));
+  const gridStyle = { '--cols': String(cols) } as JSX.CSSProperties;
 
   return (
-    <div class="rf rf-trace" ref={rootRef} onKeyDown={checkShortcut(check)}>
-      <CodeBlock code={q.code} numbered highlightLines={[q.anchorLine]} class="rf-anchor-code" label="Program" />
-      <p class="rf-help">
-        <span class="rf-anchor-key">Line {q.anchorLine}</span> is marked. Add one row each time line {q.anchorLine} finishes running.
-        Write values the way Python shows them: strings in quotes like <code>'Perth'</code>, floats like <code>3.0</code>, lists like <code>[1, 2]</code>.
-      </p>
+    <ReadFrame
+      kind="trace" rootRef={rootRef} onCheck={check}
+      bar={
+        <CheckBar
+          vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
+          ready={ready} notReadyText="Fill in at least one cell first" missing={missing} submitted={submitted}
+          onCheck={check} status={status}
+        />
+      }
+    >
+      <CodeBlock code={q.code} numbered highlightLines={[q.anchorLine]} class="rf-hl-code" label="Program" />
       {missing ? <MissingData /> : null}
 
-      {showAnswer && !gridHasInput(rows) ? null : <div class="rf-table-wrap">
-        <table class="rf-trace-table">
-          <caption class="sr-only">Your trace table. One row each time line {q.anchorLine} runs.</caption>
-          <thead>
-            <tr>
-              <th scope="col" class="rf-rownum">Row #</th>
-              {q.watch.map((w) => <th scope="col" key={w}><code>{w}</code></th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, r) => (
-              <tr key={r}>
-                <th scope="row" class="rf-rownum num">{r + 1}</th>
-                {row.map((val, c) => {
-                  const m = cellMark(r, c);
-                  const cls = ['rf-cell', m === true ? 'ok' : m === false ? 'bad' : ''].filter(Boolean).join(' ');
-                  return (
-                    <td key={c} class={cls}>
-                      <div class="rf-cell-inner">
-                        <input
-                          class="rf-cell-input"
-                          data-r={r} data-c={c}
-                          aria-label={`Row ${r + 1}, ${colLabel(c)}${m === true ? ', correct' : m === false ? ', not quite' : ''}`}
-                          value={val}
-                          readOnly={vis.inputLocked}
-                          ref={noAutocorrect} autocomplete="off" autocapitalize="off" spellcheck={false}
-                          onInput={(e) => setCell(r, c, e.currentTarget.value)}
-                          onKeyDown={onCellKey(r, c)}
-                        />
-                        {m !== null ? <Icon name={m ? 'check' : 'x'} size={14} class="rf-cell-icon" /> : null}
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>}
-
-      {!vis.inputLocked ? (
-        <div class="row rf-trace-actions">
-          <Button onClick={addRow} disabled={rows.length >= MAX_ROWS} data-add-row="">Add row</Button>
-          <Button variant="ghost" onClick={removeRow} disabled={rows.length <= 1}>Remove last row</Button>
-          <span class="rf-help num">{rows.length === 1 ? '1 row' : `${rows.length} rows`}</span>
+      {showGrid ? (
+        <div class="rf-field">
+          <div class="rf-trace-head">
+            <p class="rf-instr">
+              Add a row each time <span class="rf-line-ref">line {q.anchorLine}</span> finishes.
+            </p>
+            <InfoPopover label="How to write values" align="right">
+              <p class="rf-pop">
+                Write values the way Python shows them: strings in quotes like <code>'Perth'</code>, floats like <code>3.0</code>, lists like <code>[1, 2]</code>.
+              </p>
+            </InfoPopover>
+          </div>
+          <div class="rf-grid-card">
+          <div class="rf-grid-wrap">
+            <table class="rf-grid" style={gridStyle}>
+              <caption class="sr-only">Your trace table. One row each time line {q.anchorLine} runs.</caption>
+              <colgroup>
+                <col class="rf-grid-numcol" />
+                {q.watch.map((w) => <col key={w} />)}
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col" class="rf-grid-num"><span aria-hidden="true">#</span><span class="sr-only">Row</span></th>
+                  {q.watch.map((w) => <th scope="col" key={w}>{w}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, r) => (
+                  <tr key={r}>
+                    <th scope="row" class="rf-grid-num num">{r + 1}</th>
+                    {row.map((val, c) => {
+                      const m = cellMark(r, c);
+                      return (
+                        <td key={c} class={cx('rf-cell', m === true && 'ok', m === false && 'bad')}>
+                          <input
+                            class="rf-cell-input"
+                            data-r={r} data-c={c}
+                            aria-label={`Row ${r + 1}, ${q.watch[c]}${m === true ? ', correct' : m === false ? ', not quite' : ''}`}
+                            value={val}
+                            readOnly={vis.inputLocked}
+                            ref={noAutocorrect} autocomplete="off" autocapitalize="off" spellcheck={false}
+                            onInput={(e) => setCell(r, c, e.currentTarget.value)}
+                            onKeyDown={onCellKey(r, c)}
+                          />
+                          {m !== null ? <Icon name={m ? 'check' : 'x'} size={14} class="rf-cell-icon" /> : null}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {!vis.inputLocked ? (
+            <div class="rf-grid-tools">
+              <button type="button" class="rf-text-btn" onClick={addRow} disabled={rows.length >= MAX_ROWS} data-add-row=""><Glyph name="plus" /> Add row</button>
+              <button type="button" class="rf-text-btn" onClick={removeRow} disabled={rows.length <= 1}><Glyph name="minus" /> Remove row</button>
+              <span class="rf-note num">{rows.length === 1 ? '1 row' : `${rows.length} rows`}</span>
+            </div>
+          ) : null}
+          </div>
         </div>
       ) : null}
 
       {showAnswer && expectedRows ? <AnswerTable q={q} expected={expectedRows} rows={rows} cellOk={(fresh ?? checked?.result)?.cellOk ?? []} /> : null}
-
-      <CheckBar
-        vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
-        ready={ready} notReadyText="Fill in at least one cell first." missing={missing} submitted={submitted}
-        onCheck={check} status={status}
-      />
-    </div>
+    </ReadFrame>
   );
 }
 
@@ -172,16 +189,21 @@ function TraceBody(props: FormatProps<Q>) {
 function AnswerTable({ q, expected, rows, cellOk }: { q: Q; expected: string[][]; rows: string[][]; cellOk: boolean[][] }) {
   const n = Math.max(expected.length, rows.length);
   const hasInput = gridHasInput(rows);
+  const gridStyle = { '--cols': String(q.watch.length) } as JSX.CSSProperties;
   return (
-    <div class="rf-reveal">
-      <div class="rf-subhead">Answer: {expected.length === 1 ? '1 row' : `${expected.length} rows`}</div>
-      <div class="rf-table-wrap">
-        <table class="rf-trace-table answer">
+    <div class="rf-field">
+      <Label end={expected.length === 1 ? '1 row' : `${expected.length} rows`}>Answer</Label>
+      <div class="rf-grid-card rf-grid-wrap">
+        <table class="rf-grid rf-grid-answer" style={gridStyle}>
           <caption class="sr-only">Expected trace table</caption>
+          <colgroup>
+            <col class="rf-grid-numcol" />
+            {q.watch.map((w) => <col key={w} />)}
+          </colgroup>
           <thead>
             <tr>
-              <th scope="col" class="rf-rownum">Row #</th>
-              {q.watch.map((w) => <th scope="col" key={w}><code>{w}</code></th>)}
+              <th scope="col" class="rf-grid-num"><span aria-hidden="true">#</span><span class="sr-only">Row</span></th>
+              {q.watch.map((w) => <th scope="col" key={w}>{w}</th>)}
             </tr>
           </thead>
           <tbody>
@@ -192,28 +214,29 @@ function AnswerTable({ q, expected, rows, cellOk }: { q: Q; expected: string[][]
               if (!exp) {
                 return (
                   <tr key={r} class="extra">
-                    <th scope="row" class="rf-rownum num">{r + 1}</th>
+                    <th scope="row" class="rf-grid-num num">{r + 1}</th>
                     <td colSpan={q.watch.length}>
-                      <span class="rf-mark bad"><Icon name="x" size={14} /> Extra row: the table should end before this row{mineHas ? ` (you wrote ${mine.map((v) => v.trim() || '_').join(', ')})` : ''}</span>
+                      <span class="rf-mark bad"><Icon name="x" size={14} /> Extra row: the table ends before this{mineHas ? ` (you wrote ${mine.map((v) => v.trim() || '_').join(', ')})` : ''}</span>
                     </td>
                   </tr>
                 );
               }
+              const rowMissing = hasInput && !mine;
               return (
-                <tr key={r}>
-                  <th scope="row" class="rf-rownum num">
+                <tr key={r} class={cx(rowMissing && 'missing')}>
+                  <th scope="row" class="rf-grid-num num">
                     {r + 1}
-                    {hasInput && !mine ? <span class="rf-row-note">Missing row</span> : null}
+                    {rowMissing ? <span class="sr-only">, missing row</span> : null}
                   </th>
                   {q.watch.map((_, c) => {
                     const value = exp[c] ?? '';
                     const yours = mine?.[c]?.trim() ?? '';
+                    const wrong = hasInput && mine && cellOk[r]?.[c] !== true;
                     return (
                       <td key={c}>
                         <code class="rf-answer-val">{value}</code>
-                        {hasInput && mine && cellOk[r]?.[c] !== true ? (
-                          <span class="rf-you-wrote">{yours ? <>You wrote <code>{yours}</code></> : 'You left this blank'}</span>
-                        ) : null}
+                        {wrong ? <span class="rf-you-wrote">{yours ? <>you wrote <code>{yours}</code></> : 'you left this blank'}</span> : null}
+                        {rowMissing && c === 0 ? <span class="rf-you-wrote" aria-hidden="true">missing row</span> : null}
                       </td>
                     );
                   })}

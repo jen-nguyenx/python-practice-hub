@@ -64,6 +64,15 @@ describe('topicProgressAll: unlock chain', () => {
     expect(p['for-loops-range'].lockReason).toBe('Unlock Decisions first, then solve 5 questions there (2 must be coding questions).');
   });
 
+  it('correct answers given in a mid-sem or topic test do not count toward the minimum', () => {
+    const practice = topic1Solved(T0);
+    const asTests = practice.map((e) => (e.type === 'attempt' ? { ...e, mode: 'midsem' as const } : e));
+    const p = topicProgressAll([open('variables-expressions', T0 - MIN), ...asTests], index, settings);
+    expect(p['variables-expressions']).toMatchObject({ solved: 0, codeSolved: 0, minimumMet: false });
+    expect(p['if-elif-else'].state).toBe('locked');
+    expect(questionStats(asTests).get('t01-s1-q1')?.solved).toBe(false);
+  });
+
   it('opened + minimum met unlocks the next topic and completes the topic', () => {
     const events = [open('variables-expressions', T0 - MIN), ...topic1Solved(T0)];
     const p = topicProgressAll(events, index, settings);

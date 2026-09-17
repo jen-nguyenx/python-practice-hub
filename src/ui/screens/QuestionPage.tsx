@@ -1,11 +1,10 @@
-// Question page (#/q/:qid): the QuestionController. Loads the question, guards locked topics, renders the
-// format component, and owns hints, "Show answer", check limits, the result banner, navigation and event logging.
+// Question page (#/q/:qid): the QuestionController. Loads the question, guards locked topics, renders the focused
+// question bar and the format component in the layout for its family (code, Parsons, read), and owns hints,
+// "Reveal full answer", check limits, the result card, navigation and event logging.
 import type { ComponentChildren } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { signal } from '@preact/signals';
-import type { Signal } from '@preact/signals';
 import type { Format, MistakeId, TopicId } from '../../content/ids.ts';
-import { CODE_FORMATS } from '../../content/ids.ts';
+import { CODE_FORMATS, FORMAT_LABEL } from '../../content/ids.ts';
 import type { GeneratedQuestion, Question, Scenario, Topic } from '../../content/schema.ts';
 import { loadGenerated, loadTopic, questionsOf, topicIdOfQuestion } from '../../content/index.ts';
 import { QUESTION_BY_ID, QUESTION_INDEX } from '../../content/loadIndex.ts';
@@ -20,16 +19,19 @@ import { py, store } from '../../app/services.ts';
 import { CHECK_LIMIT, FORMAT_COMPONENTS } from '../formats/registry.ts';
 import { Button, LinkButton } from '../components/Button.tsx';
 import { Callout } from '../components/Callout.tsx';
-import { Chip, DiffChip, FormatChip } from '../components/Chip.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { Markdown } from '../components/Markdown.tsx';
-import { AnswerPanel } from '../workbench/AnswerPanel.tsx';
+import { AnswerBlock, RevealControl } from '../workbench/AnswerPanel.tsx';
 import { WorkbenchContext } from '../workbench/context.ts';
 import type { WorkbenchContextValue } from '../workbench/context.ts';
+import { ShellSession, examplesFromTests } from '../workbench/EditorCard.tsx';
 import { FlagButton } from '../workbench/FlagDialog.tsx';
-import { HintLadder } from '../workbench/HintLadder.tsx';
-import { runtimeStatusText } from '../workbench/plain.ts';
-import { ResultBanner } from '../workbench/ResultBanner.tsx';
+import type { HintState } from '../workbench/HintLadder.tsx';
+import { HintCallouts, HintsSection, ShowHintButton, hintTotal } from '../workbench/HintLadder.tsx';
+import { QuestionBar } from '../workbench/QuestionBar.tsx';
+import { ResultCard } from '../workbench/ResultBanner.tsx';
+import { RulesList } from '../workbench/RuleViolations.tsx';
+import { ScratchEditor } from '../workbench/ScratchEditor.tsx';
 import { isEditableTarget } from '../workbench/shortcuts.ts';
 import { compactResponse, flagsOf, hintGate } from '../workbench/hints.ts';
 import { backupDraft, takeDraftBackup } from '../workbench/unsaved.ts';
@@ -48,7 +50,7 @@ export interface LoadedQuestion {
   q: Question;
   topicId: TopicId;
   scenario: Scenario;
-  /** All questions in the topic, in order (for prev/next and the explorer). */
+  /** The whole topic (for prev/next and the progress dots). */
   topic: Topic;
   generated?: GeneratedQuestion;
   draft: unknown;
@@ -106,7 +108,7 @@ function QuestionLoader({ qid }: { qid: string }) {
   }
   if (state.status === 'missing') {
     return (
-      <div class="qp">
+      <div class="qp qp-message">
         <div class="empty-state">
           <p>This question is not available yet.</p>
           <p><a href={topicId ? href.topic(topicId) : href.landing()}>{topicId ? 'Back to the topic' : 'Back to topics'}</a></p>
@@ -116,7 +118,7 @@ function QuestionLoader({ qid }: { qid: string }) {
   }
   if (state.status === 'error') {
     return (
-      <div class="qp">
+      <div class="qp qp-message">
         <Callout tone="bad" title="The question could not be loaded">
           <p>{state.message}</p>
           <p><Button size="sm" onClick={() => location.reload()}>Reload the page</Button></p>
@@ -139,7 +141,7 @@ function LockGuard({ data }: { data: LoadedQuestion }) {
   const meta = TOPIC_BY_ID[data.topicId];
   if (progress?.state === 'locked') {
     return (
-      <div class="qp">
+      <div class="qp qp-message">
         <div class="qp-locked card">
           <Icon name="lock" size={20} />
           <div class="stack">
@@ -197,18 +199,31 @@ function safeAppend(e: Parameters<typeof store.append>[0]) {
   }
 }
 
-const FILE_EXT: Record<Format, string> = {
-  mcq: 'md', multi: 'md', predict: 'out', trace: 'table', twins: 'md', errorTranslator: 'md',
-  cloze: 'py', parsons: 'pz', fixBug: 'py', write: 'py', refactor: 'py', testWriter: 'py',
-};
+function safeStats(events: Parameters<typeof questionStats>[0]): Map<string, QuestionStats> {
+  try {
+    return questionStats(events);
+  } catch {
+    return new Map();
+  }
+}
+
+type Family = 'code' | 'parsons' | 'read';
+function familyOf(format: Format): Family {
+  if (format === 'parsons') return 'parsons';
+  return CODE_FORMATS.includes(format) ? 'code' : 'read';
+}
+
+/** Formats whose own component shows the answer inline, so the answer block skips the model code. */
+const HIDE_ANSWER_CODE: Format[] = ['fixBug', 'testWriter', 'parsons', 'refactor'];
+
+interface ShownResult { res: GradeResult; credit: number; hints: number; answerShown: boolean }
 
 // ---------------------------------------------------------------------------------------------------------------
 // The controller view (also used by the dev preview with inline questions)
 
 export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; modeOverride?: Mode }) {
   const { q, topicId, scenario, topic, generated } = data;
-  const settings = store.settings.value;
-  const layout = settings.layout === 'full' ? 'full' : 'simple';
+  const family = familyOf(q.format);
   const isCode = CODE_FORMATS.includes(q.format);
   const mode: Mode = modeOverride ?? (q.format === 'write' && q.mode === 'paper' ? 'paper' : 'practice');
   // Paper (exam-style) questions allow one submission, so the model answer opens after it.
@@ -221,24 +236,25 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   const next = index >= 0 && index < questions.length - 1 ? questions[index + 1] : undefined;
   const nextHref = next ? href.question(next.id) : href.topic(topicId);
 
+  const events = store.events.value;
+  const stats = useMemo(() => safeStats(events), [events]);
+
+  // State from earlier visits, read once per visit (this visit's own attempts do not change it). A shown answer is
+  // remembered: the question stays revealed (no credit, not solved) when the student comes back.
+  const [before] = useState(() => {
+    const s = safeStats(store.events.value).get(q.id);
+    return { solved: s?.solved ?? false, revealed: s?.revealed ?? false };
+  });
+
   const visibleMs = useVisibleClock();
   const [checkNo, setCheckNo] = useState(0);
   const [failed, setFailed] = useState(0);
   const [solved, setSolved] = useState(false);
-  const [revealed, setRevealed] = useState(false);
-  const [result, setResult] = useState<GradeResult | null>(null);
+  const [revealed, setRevealed] = useState(before.revealed);
+  const [shown, setShown] = useState<ShownResult | null>(null);
   const [hintTier, setHintTier] = useState<0 | 1 | 2 | 3>(0);
   const shownAt = useRef<number[]>([0, 0, 0, 0]);
   const checksAt = useRef<number[]>([0, 0, 0, 0]);
-  const cursor = useMemo(() => signal<{ line: number; col: number } | null>(null), []);
-  // Solved on an earlier visit (read once per visit, so this visit's own attempts do not change it).
-  const [solvedBefore] = useState(() => {
-    try {
-      return questionStats(store.events.value).get(q.id)?.solved ?? false;
-    } catch {
-      return false;
-    }
-  });
 
   // Latest values for callbacks that formats call after async work.
   const live = useRef({ checkNo, failed, revealed, hintTier, solved });
@@ -260,17 +276,18 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
       console.warn('Could not save draft', err);
     }
   };
+  const backupRecent = () => {
+    const d = lastDraft.current;
+    if (d && Date.now() - d.ts < 5000) backupDraft(q.id, d.value);
+  };
   useEffect(() => {
-    const onHide = () => {
-      const d = lastDraft.current;
-      if (d && Date.now() - d.ts < 5000) backupDraft(q.id, d.value);
-    };
-    window.addEventListener('pagehide', onHide);
-    return () => window.removeEventListener('pagehide', onHide);
+    window.addEventListener('pagehide', backupRecent);
+    return () => window.removeEventListener('pagehide', backupRecent);
   }, [q.id]);
 
   const reveal = () => {
     if (live.current.revealed) return;
+    live.current = { ...live.current, revealed: true };
     setRevealed(true);
     safeAppend({ type: 'reveal', qid: q.id, topicId });
   };
@@ -296,9 +313,12 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
       response: compactResponse(response), flags: flagsOf(response),
     });
     for (const m of mistakes) safeAppend({ type: 'mistake', qid: q.id, topicId, mistake: m.id, channel: m.channel });
-    setResult(res);
+    setShown({ res, credit, hints: cur.hintTier, answerShown: cur.revealed });
     if (res.correct) {
-      setSolved(true);
+      if (!cur.revealed) {
+        setSolved(true);
+        live.current = { ...live.current, solved: true };
+      }
     } else {
       const f = cur.failed + 1;
       setFailed(f);
@@ -307,18 +327,22 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
     }
   };
 
+  // Hints close for good once the question is solved or the answer is shown.
+  const hintsClosed = revealed ? 'The answer is shown, so hints are closed' : solved ? 'Solved, so hints are closed' : null;
   const gate = hintGate(hintTier, checkNo, visibleMs(), shownAt.current, checksAt.current);
-  useTicker(hintTier < 3 && !gate.available);
+  useTicker(hintTier < 3 && !gate.available && !hintsClosed);
   const showHint = () => {
-    const t = live.current.hintTier;
-    const g = hintGate(t, live.current.checkNo, visibleMs(), shownAt.current, checksAt.current);
-    if (!g.available || t >= 3) return;
+    const cur = live.current;
+    if (cur.revealed || cur.solved) return;
+    const t = cur.hintTier;
+    const g = hintGate(t, cur.checkNo, visibleMs(), shownAt.current, checksAt.current);
+    if (!g.available || t >= Math.min(3, q.hints.length)) return;
     const nt = (t + 1) as 1 | 2 | 3;
     const now = visibleMs();
     const dwellMs = Math.round(now - (t === 0 ? 0 : shownAt.current[t]));
     shownAt.current[nt] = now;
-    checksAt.current[nt] = live.current.checkNo;
-    live.current = { ...live.current, hintTier: nt };
+    checksAt.current[nt] = cur.checkNo;
+    live.current = { ...cur, hintTier: nt };
     setHintTier(nt);
     safeAppend({ type: 'hint', qid: q.id, topicId, tier: nt, dwellMs });
   };
@@ -361,180 +385,168 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
     checksLeft: Number.isFinite(limit) ? Math.max(0, limit - checkNo) : Infinity,
     revealed, locked: solved, onCheck, draft: data.draft, onDraft,
   };
-  const ctx: WorkbenchContextValue = useMemo(() => ({
-    layout, pageShowsAnswer: true, onCursor: (line: number, col: number) => { cursor.value = { line, col }; },
-  }), [layout]);
 
-  const hideAnswerCode = q.format === 'fixBug' || q.format === 'testWriter' || q.format === 'parsons' || q.format === 'refactor';
-  const header = (
-    <header class="qp-header">
-      <nav class="qp-crumbs" aria-label="Breadcrumb">
-        <a href={href.topic(topicId)}>{meta?.short ?? topicId}</a>
-        <span aria-hidden="true">›</span>
-        <span>{scenario.title}</span>
-        <span aria-hidden="true">›</span>
-        <span aria-current="page">Question {index + 1} of {questions.length}</span>
-      </nav>
-      <div class="qp-titlebar">
-        <h1 class="qp-title">{q.title}</h1>
-        <div class="qp-chips">
-          <DiffChip diff={q.diff} />
-          <FormatChip format={q.format} />
-          {mode === 'paper' ? <Chip tone="accent">Exam-style</Chip> : null}
-          {!q.core ? <Chip title="Extra practice: any solved question counts toward the topic">Extra</Chip> : null}
-          {solvedBefore ? <Chip tone="ok"><Icon name="check" size={12} /> Solved before</Chip> : null}
-        </div>
-        <span class="spacer" />
-        <nav class="qp-nav" aria-label="Question navigation">
-          {prev ? <LinkButton href={href.question(prev.id)} size="sm" variant="ghost"><Icon name="arrowLeft" size={14} /> Previous</LinkButton> : null}
-          {next ? <LinkButton href={href.question(next.id)} size="sm" variant="ghost">Next <Icon name="arrowRight" size={14} /></LinkButton> : <LinkButton href={href.topic(topicId)} size="sm" variant="ghost">Back to topic</LinkButton>}
-        </nav>
-      </div>
-      {scenario.story ? <div class="qp-story"><Markdown text={scenario.story} /></div> : null}
-    </header>
-  );
+  const h: HintState = { hints: q.hints, tier: hintTier, available: gate.available, unlockText: gate.text, onShow: showHint, closedReason: hintsClosed };
+  const total = hintTotal(h);
+  const freeReveal = failed >= 2 || (mode === 'paper' && checkNo > 0);
+  const revealControl = <RevealControl revealed={revealed} free={freeReveal} onReveal={reveal} />;
 
-  const banner = (
-    <ResultBanner
-      result={result}
+  const resultCard = (
+    <ResultCard
+      result={shown?.res ?? null}
+      credit={shown?.credit ?? 0}
+      hints={shown?.hints ?? 0}
+      answerShown={shown?.answerShown ?? false}
       marks={mode === 'paper' && q.format === 'write' ? q.marks : undefined}
       nextHref={nextHref}
       nextLabel={next ? 'Next question' : 'Back to topic'}
       checksLeft={Number.isFinite(limit) ? limit - checkNo : undefined}
-      revealed={revealed}
     />
   );
 
-  const support = (
-    <div class="qp-support">
-      <HintLadder hints={q.hints} tier={hintTier} nextAvailable={gate.available} unlockText={gate.text} onNext={showHint} />
-      <AnswerPanel
-        solution={q.solution}
-        selfExplain={q.selfExplain}
-        revealed={revealed}
-        freeReveal={failed >= 2 || (mode === 'paper' && checkNo > 0)}
-        onReveal={reveal}
-        onSelfExplain={(text) => safeAppend({ type: 'self_explain', qid: q.id, text: text.slice(0, 2000) })}
-        hideCode={hideAnswerCode}
-      />
-      <div class="qp-flag"><FlagButton qid={q.id} /></div>
+  const answer = revealed ? (
+    <AnswerBlock
+      solution={q.solution}
+      selfExplain={q.selfExplain}
+      onSelfExplain={(text) => safeAppend({ type: 'self_explain', qid: q.id, text: text.slice(0, 2000) })}
+      hideCode={HIDE_ANSWER_CODE.includes(q.format)}
+      earlier={before.revealed}
+    />
+  ) : null;
+
+  const hintsUsedText = total === 0 ? '' : `${hintTier} of ${total} hints used`;
+  const helpSlot = total > 0 || !revealed ? (
+    <div class="qp-bar-help">
+      <ShowHintButton h={h} numbered={false} />
+      {hintsUsedText ? <span class="qp-hint-count num">{hintsUsedText}</span> : null}
+      {revealControl}
+    </div>
+  ) : null;
+
+  const ctx: WorkbenchContextValue = {
+    layout: 'simple', pageShowsAnswer: true, fill: false, onQuestionPage: true,
+    resultSlot: family === 'read' ? undefined : resultCard,
+    helpSlot: family === 'parsons' ? helpSlot : undefined,
+  };
+
+  const eyebrow = (
+    <div class="qp-eyebrow-row">
+      <span class="eyebrow">Topic {meta?.num ?? ''} · {meta?.short ?? topicId}</span>
+      {q.core ? <span class="pill">Core</span> : null}
+      {mode === 'paper' ? <span class="pill">Exam-style</span> : null}
+      {before.solved ? <span class="pill ok"><Icon name="check" size={12} /> Solved before</span> : null}
     </div>
   );
+  const story = scenario.story ? <Markdown class="qp-story" text={scenario.story} /> : null;
+  const flag = <div class="qp-flag"><FlagButton qid={q.id} /></div>;
+  const examples = 'tests' in q ? examplesFromTests(q.tests) : [];
 
-  const prompt = (
-    <section class="qp-prompt" aria-label="Question">
-      <Markdown text={q.prompt} />
-    </section>
-  );
-
-  const body = isCode ? (
-    <div class="qp-split">
-      {prompt}
-      <div class="qp-work">
-        <Format {...formatProps} />
+  let body: ComponentChildren;
+  if (family === 'code') {
+    body = (
+      <div class="qp-page qp-code">
+        <section class="qp-brief" aria-labelledby="qp-title">
+          <div class="qp-brief-top">
+            {eyebrow}
+            <h1 class="qp-title" id="qp-title">{q.title}</h1>
+            {story}
+            <Markdown class="qp-prompt" text={q.prompt} />
+            {q.format === 'write' && q.rules?.length ? <RulesList rules={q.rules} /> : null}
+            {examples.length ? <ShellSession lines={examples} label="Example calls and results" /> : null}
+          </div>
+          <div class="qp-brief-bottom">
+            <HintsSection h={h} after={revealControl} />
+            {answer}
+            {flag}
+          </div>
+        </section>
+        <div class="qp-work"><Format {...formatProps} /></div>
       </div>
-      {support}
-    </div>
-  ) : (
-    <div class="qp-single">
-      {prompt}
-      <Format {...formatProps} />
-      {support}
-    </div>
-  );
-
-  const content = (
-    <WorkbenchContext.Provider value={ctx}>
-      {header}
-      {banner}
-      {body}
-    </WorkbenchContext.Provider>
-  );
-
-  if (layout === 'simple') {
-    return <div class={`qp qp-simple${isCode ? ' code' : ''}`}>{content}</div>;
+    );
+  } else if (family === 'parsons') {
+    body = (
+      <div class="qp-page qp-parsons">
+        <section class="qp-top" aria-labelledby="qp-title">
+          <div class="qp-top-text">
+            {eyebrow}
+            <h1 class="qp-title" id="qp-title">{q.title}</h1>
+            {story}
+            <Markdown class="qp-prompt" text={q.prompt} />
+            <HintCallouts hints={q.hints} tier={hintTier} />
+          </div>
+          {examples.length ? <ShellSession lines={examples} label="Example calls and results" /> : null}
+        </section>
+        <Format {...formatProps} />
+        {answer}
+        {flag}
+      </div>
+    );
+  } else {
+    body = (
+      <div class="qp-page qp-read">
+        <section class="qp-read-main" aria-labelledby="qp-title">
+          <div class="qp-read-meta">
+            <span class="eyebrow">Topic {meta?.num ?? ''} · {meta?.short ?? topicId}</span>
+            <span class="eyebrow num">Question {index + 1} of {questions.length}</span>
+          </div>
+          <div class="qp-segments" aria-hidden="true">
+            {questions.map((x, i) => {
+              const s = stats.get(x.id);
+              const done = !!s && (s.solved || s.revealed || s.attempts > 0);
+              return <span key={x.id} class={`qp-seg${done ? ' done' : ''}${i === index ? ' current' : ''}`} />;
+            })}
+          </div>
+          <div class="qp-chip-row">
+            <span class="format-chip"><span class="format-dot" aria-hidden="true" />{FORMAT_LABEL[q.format]}</span>
+            {q.core ? null : <span class="pill">Extra practice</span>}
+            {before.solved ? <span class="pill ok"><Icon name="check" size={12} /> Solved before</span> : null}
+          </div>
+          <h1 class="qp-title big" id="qp-title">{q.title}</h1>
+          {story}
+          <Markdown class="qp-prompt" text={q.prompt} />
+          <div class="qp-format"><Format {...formatProps} /></div>
+          {resultCard}
+          <div class="qp-help-row">
+            <ShowHintButton h={h} look="hint" numbered />
+            {revealControl}
+            <span class="spacer" />
+            {!solved && !revealed ? (
+              <a class="text-link" href={nextHref}>{next ? 'Skip for now' : 'Back to topic'}</a>
+            ) : null}
+          </div>
+          <HintCallouts hints={q.hints} tier={hintTier} />
+          {total > 0 && !hintsClosed ? (
+            <p class="qp-info">
+              <Icon name="bulb" size={14} />
+              {hintTier === 0
+                ? `${total} hints available. A hint lowers this question's score a little.`
+                : `${hintsUsedText}.${hintTier < total ? (gate.available ? ' The next one is ready.' : ` The next one unlocks ${gate.text}.`) : ''}`}
+            </p>
+          ) : null}
+          {answer}
+          {flag}
+        </section>
+        <aside class="qp-read-side" aria-label="Scratch editor">
+          <ScratchEditor q={q} topicId={topicId} />
+        </aside>
+      </div>
+    );
   }
 
-  const fileName = `${q.id}.${FILE_EXT[q.format]}`;
   return (
-    <div class={`qp qp-full${isCode ? ' code' : ''}`}>
-      <Explorer topic={topic} topicId={topicId} currentId={q.id} />
-      <div class="qp-main">
-        <div class="qp-filetabs" role="presentation">
-          <span class="qp-filetab active"><Icon name={isCode ? 'code' : 'file'} size={14} /> {fileName}</span>
-          <span class="qp-filepath faint">{meta?.short ?? topicId} / {scenario.title}</span>
-        </div>
-        <div class="qp-main-inner">{content}</div>
-        <StatusBar cursor={cursor} isCode={isCode} diff={q.diff} checkNo={checkNo} limit={limit} hintTier={hintTier} />
+    <WorkbenchContext.Provider value={ctx}>
+      <div class={`qp qp-${family}`}>
+        <QuestionBar
+          topicId={topicId}
+          topicShort={meta?.short ?? topicId}
+          questions={questions}
+          index={index}
+          stats={stats}
+          format={q.format}
+          onExit={backupRecent}
+        />
+        <div class="qp-main">{body}</div>
       </div>
-    </div>
-  );
-}
-
-function StatusBar({ cursor, isCode, diff, checkNo, limit, hintTier }: { cursor: Signal<{ line: number; col: number } | null>; isCode: boolean; diff: string; checkNo: number; limit: number; hintTier: number }) {
-  const status = py.status.value;
-  const c = cursor.value;
-  return (
-    <footer class="qp-statusbar" aria-label="Status">
-      <span class={`sb-item sb-py ${status.state}`} aria-live="polite"><span class="sb-dot" aria-hidden="true" />{runtimeStatusText(status)}</span>
-      {isCode ? <span class="sb-item num">{c ? `Ln ${c.line}, Col ${c.col}` : 'Ln -, Col -'}</span> : null}
-      {isCode ? <span class="sb-item">Spaces: 4</span> : null}
-      <span class="spacer" />
-      <span class="sb-item">{diff === 'easy' ? 'Easy' : diff === 'medium' ? 'Medium' : 'Hard'}</span>
-      <span class="sb-item num">Check {checkNo}{Number.isFinite(limit) ? ` of ${limit}` : ''}</span>
-      <span class="sb-item num">Hints {hintTier} of 3</span>
-      {isCode ? <span class="sb-item sb-kbd">Ctrl+M: Tab moves focus</span> : null}
-    </footer>
-  );
-}
-
-function statusOf(s: QuestionStats | undefined): { icon: 'check' | 'eye' | 'target' | null; text: string } {
-  if (!s) return { icon: null, text: 'New' };
-  if (s.solved) return { icon: 'check', text: 'Solved' };
-  if (s.revealed) return { icon: 'eye', text: 'Answer seen' };
-  if (s.attempts > 0) return { icon: 'target', text: 'Tried' };
-  return { icon: null, text: 'New' };
-}
-
-function Explorer({ topic, topicId, currentId }: { topic: Topic; topicId: TopicId; currentId: string }) {
-  const events = store.events.value;
-  const stats = useMemo(() => {
-    try {
-      return questionStats(events);
-    } catch {
-      return new Map<string, QuestionStats>();
-    }
-  }, [events]);
-  const meta = TOPIC_BY_ID[topicId];
-  const [openInitially] = useState(() => typeof window === 'undefined' || window.innerWidth >= 900);
-  const list: ComponentChildren = topic.scenarios.map((s) => (
-    <li key={s.id} class="ex-scenario">
-      <div class="ex-scenario-title">{s.title}</div>
-      <ul>
-        {s.questions.map((x) => {
-          const st = statusOf(stats.get(x.id));
-          const current = x.id === currentId;
-          return (
-            <li key={x.id}>
-              <a class={`ex-q${current ? ' current' : ''}`} href={href.question(x.id)} aria-current={current ? 'page' : undefined}>
-                <span class={`ex-status ${st.text.replace(/\s+/g, '-').toLowerCase()}`} title={st.text}>
-                  {st.icon ? <Icon name={st.icon} size={12} /> : <span class="ex-dot" aria-hidden="true" />}
-                  <span class="sr-only">{st.text}: </span>
-                </span>
-                <span class="ex-q-title">{x.title}</span>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </li>
-  ));
-  return (
-    <aside class="qp-explorer" aria-label="Questions in this topic">
-      <details class="ex-details" open={openInitially}>
-        <summary class="ex-head"><span class="label">Explorer</span> <span class="ex-topic">{meta?.short ?? topicId}</span></summary>
-        <ul class="ex-list">{list}</ul>
-      </details>
-    </aside>
+    </WorkbenchContext.Provider>
   );
 }

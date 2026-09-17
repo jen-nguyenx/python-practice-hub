@@ -11,8 +11,10 @@ import { CodeBlock } from '../../components/CodeBlock.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { Markdown } from '../../components/Markdown.tsx';
 import { DiffView } from '../../workbench/DiffView.tsx';
-import { isStarting } from '../../workbench/plain.ts';
-import { kbdRun, useRunShortcuts } from '../../workbench/shortcuts.ts';
+import { useWorkbench } from '../../workbench/context.ts';
+import { EditorCard } from '../../workbench/EditorCard.tsx';
+import { MOD, useRunShortcuts } from '../../workbench/shortcuts.ts';
+import { BusyLine } from './Workspace.tsx';
 import { asciiText, displayArgs, signatureOf } from './logic.ts';
 import './code.css';
 
@@ -33,6 +35,7 @@ export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
   const inFlight = useRef(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const status = py.status.value;
+  const wb = useWorkbench();
 
   const readOnly = revealed || locked || (testMode && checks > 0);
   const canCheck = !readOnly && !busy && checksLeft > 0 && args.trim().length > 0;
@@ -67,13 +70,14 @@ export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
   const r = pair?.result;
 
   return (
-    <div class="testwriter" ref={rootRef} data-run-scope>
-      <section class="tw-spec">
-        <h3 class="label">What the function should do</h3>
+    <div class="testwriter ct" ref={rootRef} data-run-scope>
+      <section class="tw-card">
+        <h2 class="tw-title">What the function should do</h2>
         <Markdown text={q.spec} />
-        <CodeBlock code={sig} label="Function signature" />
-      </section>
-      <p class="muted">One of two versions of <code>{q.fnName}</code> has a bug. Find arguments where the two versions give different results.</p>
+        <EditorCard file="signature.py" label="Function signature">
+          <pre class="tw-sig"><code>{sig}</code></pre>
+        </EditorCard>
+        <p class="muted">One of two versions of <code>{q.fnName}</code> has a bug. Find arguments where the two versions give different results.</p>
       <form
         class="tw-form"
         onSubmit={(e) => {
@@ -105,15 +109,18 @@ export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
           Wrap the arguments in brackets, separated by commas, for example <code>{q.argsExample}</code>. With one argument, keep the trailing comma: <code>(5,)</code> is a tuple, but <code>(5)</code> is just the number 5.
         </p>
         <div class="ct-toolbar">
-          <Button type="submit" variant="primary" disabled={!canCheck} kbd={kbdRun}>
-            <Icon name="check" size={14} /> {busy ? 'Checking…' : 'Check'}
-          </Button>
+          {!readOnly ? (
+            <Button type="submit" variant="primary" disabled={!canCheck} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Enter' : 'Control+Enter'}>
+              <Icon name="check" size={14} /> {busy ? 'Checking…' : testMode ? 'Submit answer' : 'Check'}
+            </Button>
+          ) : null}
           <span class="faint num" aria-live="polite">
             {testMode ? (checks ? 'Answer submitted' : 'One check in the test') : Number.isFinite(checksLeft) ? `${Math.max(0, checksLeft)} ${checksLeft === 1 ? 'check' : 'checks'} left` : ''}
           </span>
         </div>
       </form>
-      {busy ? <p class="term-status"><span class="term-dot" aria-hidden="true" />{isStarting(status) ? 'Python is starting (about 10 to 30 seconds on the first visit). Your arguments are tried as soon as it is ready.' : 'Running both versions…'}</p> : null}
+      </section>
+      {busy ? <BusyLine status={status} starting="about 10 to 30 seconds on the first visit" running="Running both versions…" /> : null}
       {failure ? <Callout tone="bad" title="Python is not available">{failure}</Callout> : null}
       <div aria-live="polite">
         {r && !busy && !r.validArgs ? (
@@ -141,6 +148,7 @@ export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
           </div>
         ) : null}
       </div>
+      {wb.resultSlot}
       {revealed ? (
         <section class="stack" aria-label="Answer">
           {q.solution.code ? (

@@ -1,28 +1,27 @@
 // Timed test runner shared by the topic test and the mid-semester practice test.
-// One question at a time, one check per question, answers saved silently, results and review at the end.
+// While running it takes the whole workspace (mainFill, so the frame hides its global bar): a focused test bar (title,
+// question dots + "Question N of M", countdown, Finish) over one scrolling column with the question in a white card.
+// One check per question, answers saved silently, results and review at the end.
 import type { ComponentChildren } from 'preact';
-import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'preact/hooks';
-import { CODE_FORMATS, FORMAT_LABEL } from '../../content/ids.ts';
-import { MISTAKES } from '../../content/mistakes.ts';
+import { useEffect, useLayoutEffect, useReducer, useRef, useState } from 'preact/hooks';
+import { CODE_FORMATS, FORMAT_LABEL, FORMAT_LADDER } from '../../content/ids.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
 import type { GradeResult } from '../../engine/types.ts';
 import { py, store } from '../../app/services.ts';
-import { href } from '../../app/router.ts';
 import { FORMAT_COMPONENTS } from '../formats/registry.ts';
-import { WorkbenchContext } from '../workbench/context.ts';
 import { Button } from '../components/Button.tsx';
-import { Callout } from '../components/Callout.tsx';
-import { Chip, DiffChip } from '../components/Chip.tsx';
-import { CodeBlock } from '../components/CodeBlock.tsx';
+import { Dialog } from '../components/Dialog.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { Markdown } from '../components/Markdown.tsx';
-import { formatDuration, plural } from '../report/format.ts';
+import { mainFill } from '../shell/uiState.ts';
+import { plural } from '../report/format.ts';
 import { useLeaveGuard } from './leaveGuard.ts';
 import { TimeLeft } from './TimeLeft.tsx';
 import type { TestProgress } from './progress.ts';
 import { clearProgress, writeProgress } from './progress.ts';
 import type { SavedAnswer, TestItem, TestSummary } from './summary.ts';
-import { buildTestEvents, summarizeTest, weakTopics } from './summary.ts';
+import { buildTestEvents, summarizeTest } from './summary.ts';
+import { TestResults } from './TestResults.tsx';
 import './testmode.css';
 
 export type { TestItem, TestSummary } from './summary.ts';
@@ -33,9 +32,9 @@ export interface TestRunnerProps {
   durationMin: number;
   mode: 'topic-test' | 'midsem';
   onFinish: (summary: TestSummary) => void;
-  /** Extra content shown under the score on the results view (for example the unlock message). */
+  /** One quiet line under the score on the results view (for example the unlock message or a best score). */
   resultExtra?: (summary: TestSummary) => ComponentChildren;
-  /** Buttons at the end of the results view. */
+  /** The results view's actions (one primary). */
   resultActions?: (summary: TestSummary) => ComponentChildren;
   /**
    * Save progress under this key (topic id, or "midsem") after every answer, flag, move and draft change,
@@ -59,6 +58,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
   const [timerAnnounce, setTimerAnnounce] = useState('');
   const [summary, setSummary] = useState<TestSummary | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [finishOpen, setFinishOpen] = useState(false);
 
   const startedAt = useRef(resume?.startedAt ?? Date.now());
   const answers = useRef(new Map<number, SavedAnswer>(resume?.answers ?? []));
@@ -70,26 +70,19 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
   const saveTimer = useRef<number | undefined>(undefined);
   const finishing = useRef(false);
   const warned = useRef({ five: false, one: false });
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const questionHeading = useRef<HTMLHeadingElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLElement>(null);
-
-  /** Focus the new question's heading and, if its card starts above the sticky bar, scroll so the card top is visible. */
-  const showQuestionTop = () => {
-    questionHeading.current?.focus({ preventScroll: true });
-    const card = cardRef.current;
-    if (!card) return;
-    const barBottom = barRef.current?.getBoundingClientRect().bottom ?? 0;
-    const top = card.getBoundingClientRect().top;
-    if (top < barBottom || top > window.innerHeight * 0.6) {
-      window.scrollTo({ top: Math.max(0, window.scrollY + top - barBottom - 12), behavior: 'auto' });
-    }
-  };
+  const scrollRef = useRef<HTMLDivElement>(null);
   const resultsHeading = useRef<HTMLHeadingElement>(null);
 
-  const running = phase === 'running';
-  useLeaveGuard(running && questions.length > 0, LEAVE_MESSAGE);
+  const running = phase === 'running' && questions.length > 0;
+  useLeaveGuard(running, LEAVE_MESSAGE);
+
+  // Full-height workspace while the test runs; the normal scrolling page comes back for results and on leaving.
+  useLayoutEffect(() => {
+    if (!running) return;
+    mainFill.value = true;
+    return () => { mainFill.value = false; };
+  }, [running]);
 
   useEffect(() => {
     if (questions.some((it) => CODE_FORMATS.includes(it.q.format))) py.warmUp();
@@ -144,7 +137,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
     window.clearTimeout(saveTimer.current);
     if (persistKey) clearProgress(mode, persistKey);
     addTimeOnCurrent();
-    if (dialogRef.current?.open) dialogRef.current.close();
+    setFinishOpen(false);
     const finishedAt = Date.now();
     const s = summarizeTest({
       kind: mode, title, items: questions, answers: answers.current, flagged: flagged.current, timeSpent: timeSpent.current,
@@ -187,11 +180,19 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
   }, [running, limitMs]);
 
   useEffect(() => {
-    if (phase === 'results') {
-      window.scrollTo(0, 0);
-      resultsHeading.current?.focus();
-    }
+    if (phase !== 'results') return;
+    // main scrolls (not the window) once the full-height workspace is gone.
+    requestAnimationFrame(() => {
+      document.getElementById('main')?.scrollTo(0, 0);
+      resultsHeading.current?.focus({ preventScroll: true });
+    });
   }, [phase]);
+
+  /** New question: both panes back to the top, focus on its heading. */
+  const showQuestionTop = () => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    questionHeading.current?.focus({ preventScroll: true });
+  };
 
   const goTo = (i: number, focus = true) => {
     if (i < 0 || i >= questions.length || i === currentRef.current) return;
@@ -232,335 +233,162 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
     if (next < 0) return;
     e.preventDefault();
     buttons[next].focus();
+    buttons[next].scrollIntoView({ block: 'nearest', inline: 'nearest' });
   };
 
   const requestFinish = () => {
     const unanswered = questions.length - answers.current.size;
-    if (unanswered > 0 || flagged.current.size > 0) dialogRef.current?.showModal();
+    if (unanswered > 0 || flagged.current.size > 0) setFinishOpen(true);
     else finish(false);
   };
 
   if (questions.length === 0) {
-    return <div class="empty-state">No questions to show.</div>;
+    return <div class="tr-empty">No questions to show.</div>;
   }
 
   if (phase === 'results' && summary) {
     return (
       <TestResults summary={summary} items={questions} answers={answers.current} drafts={drafts.current} mode={mode}
-        durationMin={durationMin} headingRef={resultsHeading} saveError={saveError} extra={resultExtra?.(summary)} actions={resultActions?.(summary)} />
+        headingRef={resultsHeading} saveError={saveError} extra={resultExtra?.(summary)} actions={resultActions?.(summary)} />
     );
   }
 
   const item = questions[current];
   const Comp = FORMAT_COMPONENTS[item.q.format];
+  const isCode = CODE_FORMATS.includes(item.q.format);
+  const isRead = FORMAT_LADDER[item.q.format] === 'read';
   const answered = answers.current.has(current);
   const isFlagged = flagged.current.has(current);
   const answeredCount = answers.current.size;
   const unanswered = questions.length - answeredCount;
+  const allAnswered = unanswered === 0;
   const topic = TOPIC_BY_ID[item.topicId];
+  const last = current === questions.length - 1;
+  const flaggedList = [...flagged.current].sort((a, b) => a - b).map((i) => i + 1);
+  const pips = item.q.diff === 'easy' ? 1 : item.q.diff === 'medium' ? 2 : 3;
 
   return (
-    <div class="tr">
-      <div class="tr-bar" ref={barRef}>
+    <div class="tr" data-kind={mode}>
+      <header class="tr-bar">
         <div class="tr-bar-title">
-          <span class="label">{mode === 'midsem' ? 'Mid-sem practice test' : 'Topic test'}</span>
-          <h1 class="tr-h1">{title}</h1>
+          <span class="tr-bar-kind">{mode === 'midsem' ? 'Practice test' : 'Topic test'}</span>
+          <span class="tr-bar-sep" aria-hidden="true" />
+          <h1>{title}</h1>
         </div>
-        <div class="tr-bar-stats">
-          <span class="tr-count num" aria-label={`${answeredCount} of ${questions.length} answered`}>
-            <Icon name="check" /> {answeredCount}/{questions.length} answered
-          </span>
-          <span class={`tr-timer num${lowTime ? ' low' : ''}`}>
+
+        <nav class="tr-nav" aria-label="Questions">
+          <p id="tr-nav-hint" class="sr-only">Arrow keys move between questions; Enter opens one.</p>
+          <ol class="tr-nav-list" onKeyDown={navKeys}>
+            {questions.map((it, i) => {
+              const a = answers.current.has(i);
+              const f = flagged.current.has(i);
+              const state = [a ? 'answered' : 'not answered', f ? 'flagged' : ''].filter(Boolean).join(', ');
+              return (
+                <li key={it.q.id}>
+                  <button type="button" class={`tr-nav-btn${i === current ? ' current' : ''}${a ? ' answered' : ''}${f ? ' flagged' : ''}`}
+                    tabIndex={i === current ? 0 : -1} aria-describedby="tr-nav-hint" title={`Question ${i + 1}: ${state}`}
+                    aria-current={i === current ? 'step' : undefined} aria-label={`Question ${i + 1}, ${state}`} onClick={() => goTo(i)} />
+                </li>
+              );
+            })}
+          </ol>
+          <span class="tr-nav-count" aria-hidden="true">Question <b>{current + 1}</b> of {questions.length}</span>
+        </nav>
+
+        <div class="tr-bar-end">
+          <span class={`tr-timer${lowTime ? ' low' : ''}`} title={lowTime ? 'Under 5 minutes left. The test finishes by itself at 0:00.' : 'Time left. The test finishes by itself at 0:00.'}>
             <Icon name={lowTime ? 'alert' : 'clock'} />
             <TimeLeft startedAt={startedAt.current} limitMs={limitMs} />
-            <span class="tr-timer-word">{lowTime ? 'left, nearly out of time' : 'left'}</span>
+            <span class="sr-only">left</span>
           </span>
-          <Button variant="primary" onClick={requestFinish}>Finish test</Button>
+          <Button variant={allAnswered ? 'primary' : 'secondary'} onClick={requestFinish}>Finish</Button>
         </div>
         <div class="sr-only" aria-live="assertive">{timerAnnounce}</div>
-      </div>
+      </header>
 
-      <nav class="tr-nav" aria-label="Questions">
-        <p id="tr-nav-hint" class="sr-only">Arrow keys move between question numbers; Enter opens one.</p>
-        <ol class="tr-nav-list" onKeyDown={navKeys}>
-          {questions.map((it, i) => {
-            const a = answers.current.has(i);
-            const f = flagged.current.has(i);
-            const state = [a ? 'answered' : 'not answered', f ? 'flagged for review' : ''].filter(Boolean).join(', ');
-            return (
-              <li key={it.q.id}>
-                <button type="button" class={`tr-nav-btn${i === current ? ' current' : ''}${a ? ' answered' : ''}${f ? ' flagged' : ''}`}
-                  tabIndex={i === current ? 0 : -1} aria-describedby="tr-nav-hint"
-                  aria-current={i === current ? 'step' : undefined} aria-label={`Question ${i + 1}, ${state}`} onClick={() => goTo(i)}>
-                  <span class="num">{i + 1}</span>
-                  {f ? <Icon name="flag" size={12} class="tr-nav-flag" /> : a ? <Icon name="check" size={12} class="tr-nav-check" /> : null}
-                </button>
-              </li>
-            );
-          })}
-        </ol>
-        <p class="tr-nav-legend faint">
-          <span><Icon name="check" size={12} /> answered</span>
-          <span><Icon name="flag" size={12} /> flagged</span>
-          <span>{plural(unanswered, 'question')} not answered</span>
-        </p>
-      </nav>
-
-      {lowTime ? (
-        <div class="tr-lowtime" role="status">
-          <Icon name="alert" /> Under 5 minutes left. The test finishes by itself at 0:00; saved answers count.
-        </div>
-      ) : null}
-
-      <section class="tr-q card" aria-labelledby="tr-q-heading" ref={cardRef}>
-        <header class="tr-q-head">
-          <div class="row tr-q-meta">
-            <span class="label num">Question {current + 1} of {questions.length}</span>
-            <span class="faint">·</span>
-            <span class="muted">{topic?.short ?? item.topicId}</span>
-            <Chip>{FORMAT_LABEL[item.q.format]}</Chip>
-            <DiffChip diff={item.q.diff} />
-          </div>
-          <h2 id="tr-q-heading" ref={questionHeading} tabIndex={-1}>{item.q.title}</h2>
-          {item.scenario ? (
-            <div class="tr-story">
-              <span class="label">{item.scenario.title}</span>
-              <Markdown text={item.scenario.story} />
+      <div class="tr-scroll" ref={scrollRef}>
+        <div class={`tr-body${isCode ? ' code' : ''}`}>
+          <section class="tr-card" aria-labelledby="tr-q-heading" data-qid={item.q.id}>
+            <div class="tr-meta">
+              <span class="tx-eyebrow">
+                Question {current + 1}{mode === 'midsem' && topic ? ` · ${topic.short}` : ''}
+              </span>
+              <span class={`tr-fmt${isRead ? '' : ' build'}`}>{FORMAT_LABEL[item.q.format]}</span>
+              <span class="tx-pips" title={`Difficulty: ${item.q.diff}`}>
+                {[1, 2, 3].map((n) => <i key={n} class={n <= pips ? 'on' : ''} aria-hidden="true" />)}
+                <span class="sr-only">Difficulty: {item.q.diff}</span>
+              </span>
+              <Button class="tr-flag" aria-pressed={isFlagged} onClick={() => toggleFlag(current)}>
+                <Icon name="flag" /> {isFlagged ? 'Flagged' : 'Flag for review'}
+              </Button>
             </div>
-          ) : null}
-          <Markdown text={item.q.prompt} class="tr-prompt" />
-        </header>
+            <h2 id="tr-q-heading" class="tr-title" ref={questionHeading} tabIndex={-1}>
+              <span class="sr-only">Question {current + 1} of {questions.length}: </span>{item.q.title}
+            </h2>
+            {item.scenario ? <div class="tr-story"><Markdown text={item.scenario.story} /></div> : null}
+            <Markdown text={item.q.prompt} class="tr-prompt" />
+            <div class="tr-answer-area" aria-label="Your answer" role="group">
+              <Comp
+                key={item.q.id}
+                q={item.q}
+                topicId={item.topicId}
+                generated={item.generated}
+                mode={mode}
+                checksLeft={1}
+                revealed={false}
+                locked={answered}
+                onCheck={onCheckFor(current)}
+                draft={drafts.current.get(current)}
+                onDraft={(d: unknown) => { drafts.current.set(current, d); scheduleSave(); }}
+              />
+            </div>
+          </section>
 
-        <div class="tr-q-body">
-          <Comp
-            key={item.q.id}
-            q={item.q}
-            topicId={item.topicId}
-            generated={item.generated}
-            mode={mode}
-            checksLeft={1}
-            revealed={false}
-            locked={answered}
-            onCheck={onCheckFor(current)}
-            draft={drafts.current.get(current)}
-            onDraft={(d: unknown) => { drafts.current.set(current, d); scheduleSave(); }}
-          />
-        </div>
-
-        <footer class="tr-q-foot">
-          <div class={`tr-saved${answered ? ' on' : ''}`} aria-live="polite">
-            {answered
-              ? <><Icon name="check" /> Locked in. You see how you did when the test ends.</>
-              : <><Icon name="info" /> One check for this question. Your answer is saved when you check or submit.</>}
-            <span class="sr-only">{announce}</span>
-          </div>
-          <div class="tr-q-actions">
-            <Button variant={isFlagged ? 'hint' : 'ghost'} aria-pressed={isFlagged} onClick={() => toggleFlag(current)}>
-              <Icon name="flag" /> {isFlagged ? 'Flagged for review' : 'Flag for review'}
-            </Button>
+          <div class="tr-foot">
+            <div class={`tr-saved${answered ? ' on' : ''}`} aria-live="polite">
+              {answered
+                ? <><Icon name="check" /><span>Answer saved</span></>
+                : <><span class="tr-saved-dot" aria-hidden="true" /><span>Not answered yet · one check</span></>}
+              <span class="sr-only">{announce}</span>
+            </div>
             <span class="spacer" />
-            <Button onClick={() => goTo(current - 1)} disabled={current === 0}><Icon name="arrowLeft" /> Previous</Button>
-            {current < questions.length - 1
-              ? <Button variant={answered ? 'primary' : 'secondary'} onClick={() => goTo(current + 1)}>Next <Icon name="arrowRight" /></Button>
-              : <Button variant="primary" onClick={requestFinish}>Finish test</Button>}
-          </div>
-        </footer>
-      </section>
-
-      <dialog ref={dialogRef} class="tr-dialog" aria-labelledby="tr-dialog-title">
-        <h2 id="tr-dialog-title">Finish the test?</h2>
-        <div class="stack">
-          {unanswered > 0 ? (
-            <p>{plural(unanswered, 'question')} {unanswered === 1 ? 'has' : 'have'} no saved answer and will score zero. Code you typed but did not check or submit is not marked.</p>
-          ) : <p>Every question has a saved answer.</p>}
-          {flagged.current.size > 0 ? <p>{plural(flagged.current.size, 'question')} flagged for review: {[...flagged.current].sort((a, b) => a - b).map((i) => i + 1).join(', ')}.</p> : null}
-          <p class="muted num">Time left: <TimeLeft startedAt={startedAt.current} limitMs={limitMs} /></p>
-        </div>
-        <div class="tr-dialog-actions">
-          <Button onClick={() => dialogRef.current?.close()}>Keep going</Button>
-          {unanswered > 0 ? (
-            <Button onClick={() => {
-              dialogRef.current?.close();
-              const next = questions.findIndex((_, i) => !answers.current.has(i));
-              if (next >= 0) goTo(next);
-            }}>Go to first unanswered</Button>
-          ) : null}
-          <Button variant="primary" onClick={() => finish(false)}>Finish and see results</Button>
-        </div>
-      </dialog>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------- results
-
-function TestResults({ summary, items, answers, drafts, mode, durationMin, headingRef, saveError, extra, actions }: {
-  summary: TestSummary;
-  items: readonly TestItem[];
-  answers: ReadonlyMap<number, SavedAnswer>;
-  drafts: ReadonlyMap<number, unknown>;
-  mode: 'topic-test' | 'midsem';
-  durationMin: number;
-  headingRef: { current: HTMLHeadingElement | null };
-  saveError: string | null;
-  extra?: ComponentChildren;
-  actions?: ComponentChildren;
-}) {
-  const [open, setOpen] = useState<Set<number>>(() => new Set());
-  const weak = useMemo(() => weakTopics(summary), [summary]);
-  const toggle = (i: number) => {
-    const next = new Set(open);
-    if (next.has(i)) next.delete(i); else next.add(i);
-    setOpen(next);
-  };
-  const allOpen = open.size === items.length;
-
-  return (
-    <div class="tr tr-results">
-      <section class="card tr-score" aria-labelledby="tr-results-heading">
-        <div class="tr-score-main">
-          <span class="label">{mode === 'midsem' ? 'Mid-sem practice test' : 'Topic test'} · results</span>
-          <h1 id="tr-results-heading" ref={headingRef} tabIndex={-1} class="tr-h1">{summary.title}</h1>
-          <div class="tr-score-figures" aria-live="polite">
-            <p class="tr-score-big num"><strong>{summary.correct}</strong><span class="muted"> of {summary.total} correct</span></p>
-            <p class="tr-score-pct num">{summary.percent}%</p>
-            {summary.passed
-              ? <Chip tone="ok"><Icon name="check" size={12} /> Passed</Chip>
-              : <Chip tone="bad"><Icon name="x" size={12} /> Not passed · {summary.passMark} of {summary.total} needed</Chip>}
+            <Button variant="ghost" onClick={() => goTo(current - 1)} disabled={current === 0}><Icon name="arrowLeft" /> Previous</Button>
+            {!last ? (
+              <Button variant={answered && !allAnswered ? 'primary' : 'secondary'} onClick={() => goTo(current + 1)}>Next <Icon name="arrowRight" /></Button>
+            ) : (
+              <Button variant={answered && !allAnswered ? 'primary' : 'secondary'} onClick={requestFinish}>Finish test</Button>
+            )}
           </div>
         </div>
-        <dl class="tr-score-facts num">
-          <div><dt>Time taken</dt><dd>{formatDuration(summary.durationMs)} <span class="muted">of {durationMin} min</span>{summary.timedOut ? <span class="muted"> · time ran out</span> : null}</dd></div>
-          <div><dt>Answered</dt><dd>{summary.answered} of {summary.total}</dd></div>
-          <div><dt>Pass mark</dt><dd>{summary.passMark} correct</dd></div>
-        </dl>
-      </section>
+      </div>
 
-      {saveError ? <Callout tone="bad" title="Results could not be saved">{saveError}. Your score is shown here but will not appear in your report.</Callout> : null}
-      {extra}
-
-      <section class="tr-section" aria-labelledby="tr-by-topic">
-        <h2 id="tr-by-topic">By topic</h2>
-        <div class="tr-table-wrap">
-          <table class="tr-table">
-            <caption class="sr-only">Correct answers per topic</caption>
-            <thead><tr><th scope="col">Topic</th><th scope="col" class="n">Correct</th><th scope="col" class="n">Score</th><th scope="col" class="bar-col"><span class="sr-only">Bar</span></th></tr></thead>
-            <tbody>
-              {summary.perTopic.map((t) => {
-                const p = t.total ? Math.round((t.correct / t.total) * 100) : 0;
-                return (
-                  <tr key={t.topicId}>
-                    <th scope="row"><a href={href.topic(t.topicId)}>{TOPIC_BY_ID[t.topicId]?.title ?? t.topicId}</a></th>
-                    <td class="n num">{t.correct} / {t.total}</td>
-                    <td class="n num">{p}%</td>
-                    <td class="bar-col"><span class="tr-bar-track" aria-hidden="true"><span class="tr-bar-fill" style={{ width: `${p}%` }} /></span></td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="tr-section" aria-labelledby="tr-practise">
-        <h2 id="tr-practise">Practise weak topics</h2>
-        {weak.length ? (
-          <ul class="tr-weak">
-            {weak.map((t) => (
-              <li key={t.topicId}>
-                <a href={href.topic(t.topicId)}>Practise {TOPIC_BY_ID[t.topicId]?.title ?? t.topicId}</a>
-                <span class="muted num"> · {t.correct} of {t.total} correct</span>
-              </li>
-            ))}
-          </ul>
-        ) : <p class="muted">Every topic in this test scored 70% or more. Try a longer test or add more topics.</p>}
-      </section>
-
-      <section class="tr-section" aria-labelledby="tr-review">
-        <div class="row">
-          <h2 id="tr-review">Question by question</h2>
-          <span class="spacer" />
-          <Button size="sm" variant="ghost" onClick={() => setOpen(allOpen ? new Set() : new Set(items.map((_, i) => i)))}>
-            {allOpen ? 'Close all' : 'Review all'}
-          </Button>
-        </div>
-        <ol class="tr-review-list">
-          {summary.outcomes.map((o) => {
-            const it = items[o.index];
-            const a = answers.get(o.index);
-            const isOpen = open.has(o.index);
-            const status = !o.answered ? 'Not answered' : o.correct ? 'Correct' : o.score > 0 ? `Partly right · ${Math.round(o.score * 100)}%` : 'Not correct';
-            const tone = !o.answered ? 'neutral' : o.correct ? 'ok' : 'bad';
-            return (
-              <li key={o.qid} class={`tr-review-item ${tone}`}>
-                <div class="tr-review-row">
-                  <span class="tr-review-n num">{o.index + 1}</span>
-                  <span class={`tr-review-status ${tone}`}>
-                    <Icon name={!o.answered ? 'info' : o.correct ? 'check' : 'x'} size={14} /> {status}
-                  </span>
-                  <span class="tr-review-title">{o.title}</span>
-                  <span class="tr-review-meta">
-                    <span class="muted">{TOPIC_BY_ID[o.topicId]?.short}</span>
-                    <Chip>{FORMAT_LABEL[o.format]}</Chip>
-                    <DiffChip diff={o.diff} />
-                    {o.flagged ? <Chip tone="hint"><Icon name="flag" size={11} /> flagged</Chip> : null}
-                    <span class="faint num">{o.timeMs >= 1000 ? formatDuration(o.timeMs) : ''}</span>
-                  </span>
-                  <Button size="sm" aria-expanded={isOpen} aria-controls={`tr-rev-${o.index}`} onClick={() => toggle(o.index)}>
-                    <Icon name={isOpen ? 'chevronDown' : 'chevronRight'} size={14} /> {isOpen ? 'Hide' : 'Review'}
-                  </Button>
-                </div>
-                {isOpen ? (
-                  <div class="tr-review-body" id={`tr-rev-${o.index}`}>
-                    <ReviewPanel item={it} answer={a} draft={a ? drafts.get(o.index) : undefined} mode={mode} />
-                  </div>
-                ) : null}
-              </li>
-            );
-          })}
-        </ol>
-      </section>
-
-      <div class="tr-end-actions">{actions}</div>
+      <Dialog
+        open={finishOpen}
+        onClose={() => setFinishOpen(false)}
+        title="Finish the test?"
+        size="sm"
+        class="tx-dialog"
+        initialFocus=".tx-finish-keep"
+        footer={
+          <>
+            <Button class="tx-finish-keep" variant="ghost" onClick={() => setFinishOpen(false)}>Keep going</Button>
+            {unanswered > 0 ? (
+              <Button onClick={() => {
+                setFinishOpen(false);
+                const next = questions.findIndex((_, i) => !answers.current.has(i));
+                if (next >= 0) goTo(next);
+              }}>Go to question {questions.findIndex((_, i) => !answers.current.has(i)) + 1}</Button>
+            ) : null}
+            <Button variant="primary" onClick={() => finish(false)}>Finish</Button>
+          </>
+        }
+      >
+        {unanswered > 0
+          ? <p>{plural(unanswered, 'question')} {unanswered === 1 ? 'has' : 'have'} no saved answer and will score zero. Code you did not submit is not marked.</p>
+          : <p>Every question has a saved answer.</p>}
+        {flaggedList.length ? <p class="muted">Flagged: {flaggedList.join(', ')}.</p> : null}
+        <p class="muted tx-mono"><TimeLeft startedAt={startedAt.current} limitMs={limitMs} /> left</p>
+      </Dialog>
     </div>
   );
 }
-
-const noop = () => {};
-/** The review panel shows the worked answer itself, so code formats should not repeat the model answer. */
-const REVIEW_CONTEXT = { layout: 'simple' as const, pageShowsAnswer: true };
-
-function ReviewPanel({ item, answer, draft, mode }: { item: TestItem; answer?: SavedAnswer; draft: unknown; mode: 'topic-test' | 'midsem' }) {
-  const Comp = FORMAT_COMPONENTS[item.q.format];
-  const mistakes = answer ? answer.result.mistakes.map((m) => m.id).filter((id, i, xs) => xs.indexOf(id) === i) : [];
-  return (
-    <div class="tr-review-panel">
-      {answer?.result.feedback ? <p class="muted">{answer.result.feedback}</p> : null}
-      {mistakes.length ? (
-        <div class="tr-review-mistakes">
-          <span class="label">What went wrong</span>
-          <ul>{mistakes.map((id) => <li key={id}>{MISTAKES[id]?.label ?? 'Another mistake'}</li>)}</ul>
-        </div>
-      ) : null}
-      <details class="tr-review-prompt">
-        <summary>Question</summary>
-        {item.scenario ? <div class="tr-story"><span class="label">{item.scenario.title}</span><Markdown text={item.scenario.story} /></div> : null}
-        <Markdown text={item.q.prompt} />
-      </details>
-      <div class="tr-review-comp">
-        <WorkbenchContext.Provider value={REVIEW_CONTEXT}>
-          <Comp q={item.q} topicId={item.topicId} generated={item.generated} mode={mode} checksLeft={0}
-            revealed={true} locked={true} onCheck={noop} draft={draft} onDraft={noop} />
-        </WorkbenchContext.Provider>
-      </div>
-      <div class="tr-solution">
-        <span class="label">Worked answer</span>
-        <Markdown text={item.q.solution.explanation} />
-        {/* Parsons already shows the correct order, which is the model answer. */}
-        {item.q.solution.code && item.q.format !== 'parsons' ? <CodeBlock code={item.q.solution.code} numbered label="Model answer" /> : null}
-      </div>
-      <p><a href={href.question(item.q.id)}>Practise this question with hints</a></p>
-    </div>
-  );
-}
-

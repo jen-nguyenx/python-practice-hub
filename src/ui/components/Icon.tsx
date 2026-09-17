@@ -37,6 +37,16 @@ const PATHS: Record<string, string> = {
   shield: 'M10 2l6.5 2.5v5c0 4-2.8 7-6.5 8.5-3.7-1.5-6.5-4.5-6.5-8.5v-5z M7 10l2 2 4-4',
   filter: 'M3 4h14l-5.5 6.5V16l-3 1.5v-7z',
   dot: 'M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+  // calm frame additions
+  folder: 'M3 4.5h5l2 2h7v9.5H3z',
+  search: 'M9 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M13.5 13.5L17.5 17.5',
+  circle: 'M10 16.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13z',
+  sidebar: 'M3 4h14v12H3z M8 4v12',
+  home: 'M3.5 9L10 3.5 16.5 9 M5.5 7.5V16.5h9V7.5',
+  chevronLeft: 'M12 5l-5 5 5 5',
+  chevronUp: 'M5 12l5-5 5 5',
+  arrowUpRight: 'M6 14L14 6 M7 6h7v7',
+  help: 'M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16z M7.8 7.6a2.3 2.3 0 0 1 4.4.9c0 1.5-2.2 2-2.2 3.2 M10 14.2v.3',
 };
 export type IconName = keyof typeof PATHS;
 

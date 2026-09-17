@@ -4,9 +4,9 @@ import type { FormatProps, GradeResult } from '../../../engine/types.ts';
 import type { QuestionOf } from '../../../content/schema.ts';
 import { gradeMulti } from '../../../engine/grade.ts';
 import { CodeBlock } from '../../components/CodeBlock.tsx';
-import { Markdown } from '../../components/Markdown.tsx';
 import { asStringArray, isRecord } from './logic.ts';
-import { CheckBar, Mark, OptionText, checkShortcut, useDraftState, visibility } from './shared.tsx';
+import type { OptionRowProps } from './shared.tsx';
+import { CheckBar, Label, Mark, OptionRow, OptionText, ReadFrame, useDraftState, visibility } from './shared.tsx';
 
 type Q = QuestionOf<'multi'>;
 interface MultiDraft { picks: string[] }
@@ -55,45 +55,50 @@ function MultiBody(props: FormatProps<Q>) {
   let status = null;
   if (!vis.testMode && checked && (vis.full || stillChecked)) {
     const r = checked.result;
-    status = <span class="rf-status-line"><Mark ok={r.correct} />{!r.correct && r.score > 0 ? <span class="muted"> Partly right.</span> : null}</span>;
+    status = <span><Mark ok={r.correct} />{!r.correct && r.score > 0 ? ' Partly right.' : null}</span>;
   }
 
   return (
-    <div class="rf rf-multi" onKeyDown={checkShortcut(check)}>
+    <ReadFrame
+      kind="multi" onCheck={check}
+      bar={
+        <CheckBar
+          vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
+          ready={ready} notReadyText="Tick at least one first" missing={false} submitted={submitted}
+          onCheck={check} status={status}
+        />
+      }
+    >
       {q.code ? <CodeBlock code={q.code} numbered label="Code for this question" /> : null}
       <fieldset class="rf-fieldset">
-        <legend class="rf-legend">Select all that apply</legend>
-        <div class="rf-options">
+        <Label as="legend">Select all that apply</Label>
+        <div class="rf-opts">
           {q.options.map((o) => {
-            const selected = picks.includes(o.id);
-            let mark = null;
-            let tone = '';
+            let tone: OptionRowProps['tone'] = null;
+            let mark: OptionRowProps['mark'] = null;
+            let open = false;
             if (markPicks) {
               const picked = markPicks.includes(o.id);
-              if (picked && o.correct) { mark = <Mark ok label="You picked it: correct" />; tone = 'ok'; }
-              else if (picked) { mark = <Mark ok={false} label="You picked it: should be left out" />; tone = 'bad'; }
-              else if (o.correct) { mark = <Mark ok={false} label="Missed: this one should be picked" />; tone = 'bad'; }
-              else { mark = <Mark ok label="Left out: correct" />; }
+              if (picked && o.correct) { tone = 'ok'; mark = { ok: true, label: 'Right pick' }; }
+              else if (picked) { tone = 'bad'; mark = { ok: false, label: 'Wrong pick' }; open = true; }
+              else if (o.correct) { tone = 'missed'; mark = { ok: false, label: 'Missed' }; open = true; }
+              else { mark = { ok: true, label: 'Left out', quiet: true }; }
             }
-            const cls = ['rf-option', selected ? 'selected' : '', vis.inputLocked ? 'locked' : '', tone].filter(Boolean).join(' ');
             return (
-              <div class={cls} key={o.id}>
-                <label class="rf-option-main">
-                  <input type="checkbox" value={o.id} checked={selected} disabled={vis.inputLocked} onChange={() => toggle(o.id)} />
-                  <span class="rf-option-body"><OptionText text={o.text} /></span>
-                </label>
-                {mark ? <div class="rf-option-mark">{mark}</div> : null}
-                {markPicks && o.why ? <div class="rf-why"><Markdown text={o.why} /></div> : null}
-              </div>
+              <OptionRow
+                key={o.id} type="checkbox" value={o.id}
+                checked={picks.includes(o.id)} disabled={vis.inputLocked}
+                onChange={() => toggle(o.id)}
+                tone={tone} mark={mark}
+                why={markPicks && open ? o.why : null}
+                whyToggle={markPicks && !open ? o.why : null}
+              >
+                <OptionText text={o.text} />
+              </OptionRow>
             );
           })}
         </div>
       </fieldset>
-      <CheckBar
-        vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
-        ready={ready} notReadyText="Tick at least one option first." missing={false} submitted={submitted}
-        onCheck={check} status={status}
-      />
-    </div>
+    </ReadFrame>
   );
 }

@@ -1,4 +1,4 @@
-// App shell: header, navigation, route switch. Owner: shell agent (may restyle; keep route wiring).
+// App: route switch inside the frame (AppShell: global top bar, main landmark, tour, shortcut sheet).
 import { route, href } from './router.ts';
 import { Landing } from '../ui/screens/Landing.tsx';
 import { TopicPage } from '../ui/screens/TopicPage.tsx';

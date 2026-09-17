@@ -9,10 +9,12 @@ export interface TopicFilters {
   skills: Ladder[];
   formats: Format[];
   unsolvedOnly: boolean;
+  /** Only the recommended-path ("core") questions. */
+  coreOnly: boolean;
   weakFirst: boolean;
 }
 
-export const DEFAULT_FILTERS: TopicFilters = { diff: 'all', skills: [], formats: [], unsolvedOnly: false, weakFirst: false };
+export const DEFAULT_FILTERS: TopicFilters = { diff: 'all', skills: [], formats: [], unsolvedOnly: false, coreOnly: false, weakFirst: false };
 
 const fKey = (id: string) => `pyladder:topic-filters:${id}`;
 const tKey = (id: string) => `pyladder:topic-tab:${id}`;
@@ -27,6 +29,7 @@ export function loadFilters(topicId: string): TopicFilters {
       skills: Array.isArray(v.skills) ? v.skills.filter((s): s is Ladder => s === 'read' || s === 'repair' || s === 'write') : [],
       formats: Array.isArray(v.formats) ? v.formats.filter((f): f is Format => typeof f === 'string') : [],
       unsolvedOnly: v.unsolvedOnly === true,
+      coreOnly: v.coreOnly === true,
       weakFirst: v.weakFirst === true,
     };
   } catch {
@@ -51,6 +54,12 @@ export function rememberTopicTab(topicId: string, tab: TopicTab) {
   try { sessionStorage.setItem(tKey(topicId), tab); } catch { /* storage blocked */ }
 }
 
+/** True when any filter hides questions (the "weak spots first" order does not hide anything). */
 export function isFiltered(f: TopicFilters) {
-  return f.diff !== 'all' || f.skills.length > 0 || f.formats.length > 0 || f.unsolvedOnly;
+  return f.diff !== 'all' || f.skills.length > 0 || f.formats.length > 0 || f.unsolvedOnly || f.coreOnly;
+}
+
+/** How many settings inside the Filters popover are on (difficulty lives outside it). */
+export function popoverFilterCount(f: TopicFilters) {
+  return f.skills.length + f.formats.length + (f.unsolvedOnly ? 1 : 0) + (f.coreOnly ? 1 : 0) + (f.weakFirst ? 1 : 0);
 }

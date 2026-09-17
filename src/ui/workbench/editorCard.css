@@ -1,0 +1,72 @@
+/* Dark editor card (both themes) and the shell-session example block. Owner: workbench. */
+.ed-card {
+  display: flex; flex-direction: column; min-width: 0; overflow: hidden;
+  background: var(--editor-bg); color: var(--editor-text);
+  border: 1px solid var(--editor-chrome); border-radius: var(--r-3);
+}
+.ed-tabs {
+  display: flex; align-items: stretch; justify-content: space-between; gap: var(--sp-3); min-height: 44px; min-width: 0;
+  background: var(--editor-chrome); border-bottom: 1px solid var(--editor-line);
+}
+.ed-tab {
+  display: inline-flex; align-items: center; padding: 0 var(--sp-4); margin-left: var(--sp-3);
+  font-family: var(--mono); font-size: var(--fs-13); color: var(--editor-text); background: var(--editor-bg);
+  box-shadow: inset 0 2px 0 var(--accent); white-space: nowrap;
+}
+.ed-tabs-right { display: flex; align-items: center; gap: var(--sp-3); padding-right: var(--sp-3); min-width: 0; }
+.ed-runtime {
+  font-family: var(--mono); font-size: var(--fs-12); color: var(--editor-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+}
+.ed-runtime.error { color: var(--bad); }
+.ed-body { position: relative; min-width: 0; background: var(--editor-bg); }
+.ed-body .code-editor .ce-frame { border: 0; border-radius: 0; outline: none; }
+.ed-body .code-editor .ce-frame:focus-within { outline: none; box-shadow: inset 2px 0 0 var(--accent); }
+.ed-body .ce-hint { display: none; }
+.ed-foot {
+  display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; min-width: 0;
+  padding: var(--sp-3) var(--sp-4); border-top: 1px solid var(--editor-line); background: var(--editor-bg);
+}
+.ed-kbd { margin-left: auto; font-family: var(--mono); font-size: var(--fs-12); color: var(--editor-muted); white-space: nowrap; }
+.ed-note { font-family: var(--mono); font-size: var(--fs-12); color: var(--editor-muted); }
+
+/* Buttons inside the dark card: primary keeps the rung; secondary is a quiet outline readable on the editor ground. */
+.ed-card .btn { height: 40px; }
+.ed-card .btn:not(.primary) { background: transparent; color: var(--editor-text); border-color: var(--editor-gutter); }
+.ed-card .btn:not(.primary):hover { background: var(--editor-chrome); border-color: var(--editor-muted); color: var(--editor-text); }
+.ed-card .btn:not(.primary):disabled:hover { background: transparent; border-color: var(--editor-gutter); }
+.ed-card .btn.sm { height: 32px; }
+.ed-card .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ed-card .btn.primary:disabled { opacity: 0.55; }
+
+/* OUTPUT area at the bottom of a card */
+.ed-output { border-top: 1px solid var(--editor-line); padding: var(--sp-3) var(--sp-4) var(--sp-4); background: var(--editor-chrome); min-width: 0; }
+.ed-output-label { font-family: var(--mono); font-size: var(--fs-12); letter-spacing: 0.08em; text-transform: uppercase; color: var(--editor-muted); margin-bottom: var(--sp-2); }
+.ed-output .terminal, .ed-output .term-body { gap: 6px; }
+.ed-output .term-out, .ed-output .term-tb {
+  padding: 0; border: 0; background: transparent; color: var(--editor-text); font-size: var(--fs-13); max-height: 260px; overflow: auto;
+}
+.ed-output .term-empty, .ed-output .term-status, .ed-output .term-done { color: var(--editor-muted); font-size: var(--fs-13); }
+.ed-output .term-error { background: transparent; border: 0; padding: 0; }
+.ed-output .term-error-head { color: var(--bad); }
+.ed-output .term-error .term-tb { color: var(--editor-text); }
+.ed-output .term-warn { color: var(--hint); }
+.ed-output .term-input { background: transparent; border: 1px solid var(--editor-gutter); }
+.ed-output .term-prompt, .ed-output .term-note { color: var(--editor-text); }
+.ed-output .term-input input { background: var(--editor-bg); color: var(--editor-text); border-color: var(--editor-gutter); }
+.ed-output .link-btn { color: var(--editor-text); }
+.ed-output .wb-icon-btn { color: var(--editor-muted); }
+
+/* Shell session example (light card context) */
+.shell {
+  margin: 0; padding: var(--sp-4) var(--sp-4); background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--r-2);
+  font-family: var(--mono); font-size: var(--fs-14); line-height: 1.7; color: var(--text); white-space: pre; overflow-x: auto;
+  font-variant-ligatures: none;
+}
+.shell code { font: inherit; background: none; padding: 0; }
+.shell-prompt { color: var(--text-muted); }
+
+@media (max-width: 600px) {
+  .ed-tabs { flex-wrap: wrap; }
+  .ed-tabs-right { padding: var(--sp-2) var(--sp-3); }
+  .ed-kbd { display: none; }
+}

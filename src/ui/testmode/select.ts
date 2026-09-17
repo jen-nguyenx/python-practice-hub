@@ -104,8 +104,13 @@ function topicDiffRank(d: Diff): number {
  * Levels are tried across all slots before falling back, so a fallback never steals a question another slot needs:
  * 0 exact format (no paper), 1 same rung (no paper), 2 any question (no paper), 3 anything including paper-mode write.
  * The most constrained slot fills first at each level. Within a level: medium/hard before easy, then format preference.
+ *
+ * `avoid` (usually the questions of the last attempt, whose answers were just shown) is used only when nothing else
+ * fits: a fresh question on the right rung beats a repeated one, but a repeat still beats breaking the read/repair/write mix.
  */
-export function selectTopicTest<T extends Candidate>(pool: readonly T[], rng: Rng = Math.random, slots: readonly Slot[] = TOPIC_TEST_SLOTS): T[] {
+export function selectTopicTest<T extends Candidate>(
+  pool: readonly T[], rng: Rng = Math.random, slots: readonly Slot[] = TOPIC_TEST_SLOTS, avoid: ReadonlySet<string> = new Set(),
+): T[] {
   const shuffled = shuffle(pool, rng);
   const used = new Set<string>();
   const picks: (T | undefined)[] = slots.map(() => undefined);
@@ -121,17 +126,23 @@ export function selectTopicTest<T extends Candidate>(pool: readonly T[], rng: Rn
     return topicDiffRank(c.diff) * 100 + (fi < 0 ? 50 : fi);
   };
 
-  for (let level = 0; level <= 3; level++) {
+  const hasAvoid = shuffled.some((c) => avoid.has(c.id));
+  const passes: { level: number; fresh: boolean }[] = hasAvoid
+    ? [[0, true], [1, true], [0, false], [1, false], [2, true], [3, true], [2, false], [3, false]].map(([level, fresh]) => ({ level: level as number, fresh: fresh as boolean }))
+    : [0, 1, 2, 3].map((level) => ({ level, fresh: false }));
+
+  for (const { level, fresh } of passes) {
     const open = slots.map((_, i) => i).filter((i) => !picks[i]);
     if (open.length === 0) break;
-    const countFor = (i: number) => shuffled.filter((c) => !used.has(c.id) && fits(slots[i], c, level)).length;
+    const allowed = (c: T) => !used.has(c.id) && !(fresh && avoid.has(c.id));
+    const countFor = (i: number) => shuffled.filter((c) => allowed(c) && fits(slots[i], c, level)).length;
     // Most constrained first (stable on slot order).
     const order = open.map((i) => ({ i, n: countFor(i) })).sort((a, b) => a.n - b.n || a.i - b.i);
     for (const { i } of order) {
       let best: T | undefined;
       let bestRank = Infinity;
       for (const c of shuffled) {
-        if (used.has(c.id) || !fits(slots[i], c, level)) continue;
+        if (!allowed(c) || !fits(slots[i], c, level)) continue;
         const r = rank(slots[i], c);
         if (r < bestRank) { best = c; bestRank = r; }
       }

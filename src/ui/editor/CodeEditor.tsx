@@ -11,9 +11,9 @@ import './editor.css';
 
 export type { CodeEditorProps, EditorMarker } from './types.ts';
 
-const PAD = 8;
+const PAD = 16;
 export function lineHeightFor(fontSize: number) {
-  return Math.round(fontSize * 1.6);
+  return Math.round(fontSize * 1.65);
 }
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
@@ -190,6 +190,7 @@ function MonacoEditor(props: CodeEditorProps & { onFail: () => void }) {
   );
 }
 
+/** The editor is dark in both app themes; the two Monaco themes only differ in the editor ground (see tokens). */
 function themeName(t: 'light' | 'dark') {
   return t === 'dark' ? 'pyladder-dark' : 'pyladder-light';
 }
@@ -204,7 +205,7 @@ function baseOptions(fontSize: number, plain: boolean, readOnly: boolean): Monac
     renderWhitespace: 'boundary',
     minimap: { enabled: false },
     bracketPairColorization: { enabled: !plain },
-    guides: { indentation: true, bracketPairs: false },
+    guides: { indentation: true, bracketPairs: false, highlightActiveIndentation: false },
     matchBrackets: plain ? 'never' : 'always',
     fontFamily: '"JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace',
     fontLigatures: false,
@@ -224,6 +225,7 @@ function baseOptions(fontSize: number, plain: boolean, readOnly: boolean): Monac
     lightbulb: { enabled: 'off' as MonacoApi.editor.ShowLightbulbIconMode },
     stickyScroll: { enabled: false },
     padding: { top: PAD, bottom: PAD },
+    lineDecorationsWidth: 12,
     scrollbar: { alwaysConsumeMouseWheel: false, verticalScrollbarSize: 10, horizontalScrollbarSize: 10 },
     overviewRulerLanes: 0,
     hideCursorInOverviewRuler: true,

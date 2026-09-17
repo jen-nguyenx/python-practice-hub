@@ -1,4 +1,5 @@
-// Parsons puzzle: move lines from "Lines" into "Your program", order them and (when it matters) indent them.
+// Parsons puzzle: move blocks from the Blocks tray into "Your program", order them and (when it matters) indent
+// them. The page supplies the hint controls for the bottom bar and the result card (context slots).
 // Pointer: click moves a line between columns, drag reorders or moves. Keyboard: see the help line.
 import { useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { MistakeId } from '../../../content/ids.ts';
@@ -12,12 +13,13 @@ import { Callout } from '../../components/Callout.tsx';
 import { CodeBlock } from '../../components/CodeBlock.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import { tokenize } from '../../components/highlight.ts';
+import { useWorkbench } from '../../workbench/context.ts';
 import { ExplainError } from '../../workbench/ExplainError.tsx';
-import { isStarting } from '../../workbench/plain.ts';
 import { runTestsLogged } from '../../workbench/runner.ts';
-import { kbdRun, useRunShortcuts } from '../../workbench/shortcuts.ts';
-import { TestsTable } from '../../workbench/TestsTable.tsx';
+import { MOD, useRunShortcuts } from '../../workbench/shortcuts.ts';
+import { ResultsCard, TestRows, TestsStatusChip } from '../../workbench/TestsTable.tsx';
 import { stableShuffle } from './logic.ts';
+import { BusyLine } from './Workspace.tsx';
 import './code.css';
 
 interface Item { id: string; text: string; indent: number; distractor: boolean; mistake?: MistakeId }
@@ -75,6 +77,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
   const poolRef = useRef<HTMLUListElement>(null);
   const progRef = useRef<HTMLUListElement>(null);
   const status = py.status.value;
+  const wb = useWorkbench();
 
   const readOnly = revealed || locked || (testMode && checks > 0);
   const placedIds = new Set(placed.map((p) => p.id));
@@ -108,7 +111,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
     const item = byId.get(id);
     if (!item || readOnly) return;
     save(placed.filter((p) => p.id !== id));
-    setAnnounce(`Moved "${item.text}" back to the lines.`);
+    setAnnounce(`Moved "${item.text}" back to the blocks.`);
   };
 
   const moveWithin = (from: number, to: number) => {
@@ -188,7 +191,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
   };
 
   // ---------- pointer drag ----------
-  const INDENT_PX = 24;
+  const INDENT_PX = 32;
   const computeDrop = (x: number, y: number, d: DragState) => {
     const lists: [ListId, HTMLUListElement | null][] = [['prog', progRef.current], ['pool', poolRef.current]];
     for (const [list, el] of lists) {
@@ -204,7 +207,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
       let indent = 0;
       if (list === 'prog') {
         const item = byId.get(d.id)!;
-        if (q.indentMatters) indent = Math.max(0, Math.min(MAX_INDENT, Math.round((x - d.grabX - r.left - 8) / INDENT_PX)));
+        if (q.indentMatters) indent = Math.max(0, Math.min(MAX_INDENT, Math.round((x - d.grabX - r.left - 12) / INDENT_PX)));
         else indent = item.indent;
       }
       return { list, index, indent };
@@ -290,7 +293,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
         aria-selected={focused}
         tabIndex={focused || (index === 0 && focus.list !== list) ? 0 : -1}
         class={`pz-item${dragging ? ' dragging' : ''}${readOnly ? ' readonly' : ''}`}
-        style={list === 'prog' ? { paddingLeft: `calc(${indent} * ${INDENT_PX}px + 8px)` } : undefined}
+        style={list === 'prog' ? { marginLeft: `${indent * INDENT_PX}px` } : undefined}
         aria-label={`${it.text}${list === 'prog' ? `, line ${index + 1}${q.indentMatters ? `, indent ${indent}` : ''}` : ''}`}
         onFocus={() => setFocus({ list, index })}
         onKeyDown={(e) => onItemKey(e as unknown as KeyboardEvent, list, index, it.id)}
@@ -309,7 +312,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
       >
         {list === 'prog' && q.indentMatters && indent > 0 ? (
           <span class="pz-guides" aria-hidden="true">
-            {Array.from({ length: indent }, (_, g) => <span key={g} class="pz-guide" style={{ left: `calc(${g} * ${INDENT_PX}px + 8px)` }} />)}
+            {Array.from({ length: indent }, (_, g) => <span key={g} class="pz-guide" style={{ left: `${-(indent - g) * INDENT_PX + 12}px` }} />)}
           </span>
         ) : null}
         <span class="pz-grip" aria-hidden="true"><Icon name="grip" size={14} /></span>
@@ -335,62 +338,92 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
 
   const draggedItem = drag?.active ? byId.get(drag.id) : null;
   const hideResult = testMode && !revealed;
+  const shownResult = res && !hideResult && !busy ? res.result : null;
+  const checksNote = testMode
+    ? (checks ? 'Answer submitted' : 'One check in the test')
+    : Number.isFinite(checksLeft) ? `${Math.max(0, checksLeft)} ${checksLeft === 1 ? 'check' : 'checks'} left` : '';
 
   return (
     <div class="parsons" ref={rootRef} data-run-scope>
-      <p class="muted pz-help">
-        Click a line to move it between the columns, or drag it into place.
-        {' '}Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> choose a line, <kbd>Enter</kbd> moves it across, <kbd>Alt</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd> reorders
-        {q.indentMatters ? <>, <kbd>Tab</kbd>/<kbd>Shift</kbd>+<kbd>Tab</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) indents; <kbd>Esc</kbd> then <kbd>Tab</kbd> leaves the list</> : null}.
-        {q.distractors.length ? ' Not every line is needed.' : ''}
+      <p class="sr-only" id={`pz-keys-${q.id}`}>
+        Arrow up and down choose a block, Enter moves it between the blocks and your program, Alt with arrow up or down reorders
+        {q.indentMatters ? ', Tab and Shift Tab or arrow left and right change the indent, Escape then Tab leaves the list' : ''}.
       </p>
       <div class="pz-board">
-        <section class="pz-col" aria-labelledby={`pz-pool-${q.id}`}>
-          <h3 class="label" id={`pz-pool-${q.id}`}>Lines</h3>
-          <ul ref={poolRef} class="pz-list pool" role="listbox" aria-labelledby={`pz-pool-${q.id}`}>
+        <section class="pz-tray" aria-labelledby={`pz-pool-${q.id}`}>
+          <div class="pz-head">
+            <h2 class="pz-title" id={`pz-pool-${q.id}`}>Blocks</h2>
+            <span class="pz-meta">{pool.length} left</span>
+          </div>
+          <ul ref={poolRef} class="pz-list pool" role="listbox" aria-labelledby={`pz-pool-${q.id}`} aria-describedby={`pz-keys-${q.id}`}>
             {pool.map((it, i) => [dropLine('pool', i), renderItem(it, 'pool', i, 0)])}
             {dropLine('pool', pool.length)}
-            {pool.length === 0 ? <li class="pz-empty">All lines are in your program.</li> : null}
+            {pool.length === 0 ? <li class="pz-empty">Every block is in your program.</li> : null}
           </ul>
+          <p class="pz-foot">
+            Click or drag a block into your program. Click it again to send it back.
+            {q.distractors.length && !readOnly ? ' Not every block is needed.' : ''}
+          </p>
         </section>
-        <section class="pz-col" aria-labelledby={`pz-prog-${q.id}`}>
-          <h3 class="label" id={`pz-prog-${q.id}`}>Your program</h3>
-          <ul ref={progRef} class="pz-list prog" role="listbox" aria-labelledby={`pz-prog-${q.id}`}>
+        <section class="pz-prog" aria-labelledby={`pz-prog-${q.id}`}>
+          <div class="pz-head">
+            <h2 class="pz-title" id={`pz-prog-${q.id}`}>Your program</h2>
+            <span class="pz-meta">{q.indentMatters ? '1 indent = 4 spaces' : 'Indentation is given'}</span>
+          </div>
+          <ul ref={progRef} class="pz-list prog" role="listbox" aria-labelledby={`pz-prog-${q.id}`} aria-describedby={`pz-keys-${q.id}`}>
             {placed.map((p, i) => [dropLine('prog', i), renderItem(byId.get(p.id)!, 'prog', i, p.indent)])}
             {dropLine('prog', placed.length)}
-            {placed.length === 0 ? <li class="pz-empty">Move lines here to build the program.</li> : null}
+            {!readOnly && pool.length > 0 ? (
+              <li class={`pz-slot${placed.length === 0 ? ' first' : ''}`} aria-hidden="true">
+                {placed.length === 0 ? 'Drop the first block here' : 'Drop the next block here'}
+              </li>
+            ) : null}
           </ul>
         </section>
       </div>
       {draggedItem && drag ? (
         <div class="pz-ghost" aria-hidden="true" style={{ transform: `translate(${drag.x - drag.grabX}px, ${drag.y - drag.grabY}px)`, width: `${drag.width}px` }}>
+          <span class="pz-grip"><Icon name="grip" size={14} /></span>
           <code class="pz-text"><CodeLine text={draggedItem.text} /></code>
         </div>
       ) : null}
       <span class="sr-only" aria-live="polite">{announce}</span>
       {removedNote && !revealed ? (
-        <Callout tone="hint" title="One line removed">
-          After two checks, one line that is not needed has been taken out: <code>{removedNote}</code>
+        <Callout tone="neutral" title="One block removed">
+          After two checks, one block that is not needed has been taken out: <code>{removedNote}</code>
         </Callout>
       ) : null}
-      <div class="ct-toolbar">
-        <Button variant="primary" onClick={check} disabled={!canCheck} kbd={kbdRun}>
-          <Icon name="check" size={14} /> {busy ? 'Checking…' : 'Check'}
-        </Button>
-        <span class="faint num" aria-live="polite">
-          {testMode ? (checks ? 'Answer submitted' : 'One check in the test') : Number.isFinite(checksLeft) ? `${Math.max(0, checksLeft)} ${checksLeft === 1 ? 'check' : 'checks'} left` : ''}
-        </span>
-        <span class="spacer" />
-        {!readOnly && placed.length ? <Button size="sm" variant="ghost" onClick={() => save([])}><Icon name="refresh" size={14} /> Start again</Button> : null}
-      </div>
-      {busy ? <p class="term-status"><span class="term-dot" aria-hidden="true" />{isStarting(status) ? 'Python is starting (about 10 to 30 seconds on the first visit). Your program is checked as soon as it is ready.' : 'Running the tests…'}</p> : null}
+      {busy ? <BusyLine status={status} starting="about 10 to 30 seconds on the first visit" running="Running the tests…" /> : null}
       {failure ? <Callout tone="bad" title="Python is not available">{failure}</Callout> : null}
       {res && hideResult ? <Callout tone="info" title="Answer submitted">Results appear when the test ends.</Callout> : null}
-      {res && !hideResult && !busy ? (
-        <div class="stack">
-          <TestsTable result={res.result} tests={q.tests} revealed={revealed} title="All tests" />
-          {res.result.compileError ? <ExplainError error={res.result.compileError} code={res.code} /> : null}
+      {wb.resultSlot}
+      <div class="pz-bar" role="group" aria-label="Puzzle actions">
+        <div class="pz-bar-left">{wb.helpSlot}</div>
+        <div class="pz-bar-right">
+          {!readOnly && placed.length ? <Button variant="ghost" onClick={() => save([])}><Icon name="refresh" size={14} /> Start again</Button> : null}
+          {!readOnly ? <span class="pz-attempt num" aria-live="polite">Attempt {checks + 1}{checksNote ? ` · ${checksNote}` : ''}</span> : null}
+          {!readOnly ? (
+            <Button variant="primary" size="lg" onClick={check} disabled={!canCheck} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Enter' : 'Control+Enter'}>
+              {busy ? 'Checking…' : testMode ? 'Submit answer' : 'Check order'}
+            </Button>
+          ) : null}
         </div>
+      </div>
+      {shownResult ? (
+        <ResultsCard
+          label="Test results"
+          tabs={[{
+            id: 'tests', label: 'Tests', content: (
+              <div class="ct-stack">
+                <TestRows tests={q.tests} result={shownResult} revealed={revealed} />
+                {shownResult.compileError ? <ExplainError error={shownResult.compileError} code={res!.code} /> : null}
+              </div>
+            ),
+          }]}
+          active="tests"
+          onTab={() => undefined}
+          status={<TestsStatusChip result={shownResult} />}
+        />
       ) : null}
       {revealed ? (
         <div class="stack">

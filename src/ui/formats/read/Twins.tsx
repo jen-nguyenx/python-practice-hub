@@ -4,8 +4,9 @@ import type { FormatProps, GradeResult } from '../../../engine/types.ts';
 import type { QuestionOf } from '../../../content/schema.ts';
 import { gradeTwins, normalizeOutput } from '../../../engine/grade.ts';
 import { CodeBlock } from '../../components/CodeBlock.tsx';
+import { Icon } from '../../components/Icon.tsx';
 import { differingLines, isRecord, linesPhrase, normalizeForDisplay } from './logic.ts';
-import { CheckBar, Mark, MissingData, OutputBlock, checkShortcut, useDraftState, visibility, noAutocorrect } from './shared.tsx';
+import { Ask, CheckBar, Choice, Label, Mark, MissingData, OutputBlock, ReadFrame, TerminalInput, useDraftState, visibility } from './shared.tsx';
 
 type Q = QuestionOf<'twins'>;
 interface TwinsDraft { differs: boolean | null; outLeft: string; outRight: string; /** Step 1 was already checked once. */ differsChecked?: boolean }
@@ -85,91 +86,85 @@ function TwinsBody(props: FormatProps<Q>) {
   }
 
   const showAnswer = vis.full && vis.marks && twins !== null;
-  const yesNo = (value: boolean, label: string) => {
-    const selected = draft.differs === value;
-    const isRight = twins ? twins.differs === value : false;
-    const markThis = selected && mDiffers !== null;
-    const tone = markThis ? (mDiffers ? 'ok' : 'bad') : showAnswer && isRight ? 'ok' : '';
-    const cls = ['rf-option', 'rf-yesno', selected ? 'selected' : '', differsLocked ? 'locked' : '', tone].filter(Boolean).join(' ');
-    return (
-      <div class={cls}>
-        <label class="rf-option-main">
-          <input type="radio" name={name} checked={selected} disabled={differsLocked} onChange={() => set({ differs: value })} />
-          <span class="rf-option-body"><span class="rf-option-prose">{label}</span></span>
-        </label>
-        {markThis ? <div class="rf-option-mark"><Mark ok={!!mDiffers} label={mDiffers ? 'Your answer: correct' : 'Your answer: not quite'} /></div>
-          : showAnswer && isRight ? <div class="rf-option-mark"><Mark ok label="Correct answer" /></div> : null}
-      </div>
-    );
+  // Segment marks: the student's pick gets its result; once the answer is out the right one gets a tick.
+  const segOk = (value: boolean): boolean | null => {
+    if (draft.differs === value && mDiffers !== null) return mDiffers;
+    if (showAnswer && twins && twins.differs === value) return true;
+    return null;
   };
+  const lockNoteId = `${name}-lock`;
+  const outHelpId = `${name}-out-help`;
 
   return (
-    <div class="rf rf-twins" onKeyDown={checkShortcut(check)}>
-      <div class="rf-twins-grid">
+    <ReadFrame
+      kind="twins" onCheck={check}
+      bar={
+        <CheckBar
+          vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
+          ready={ready} notReadyText={draft.differs === null ? 'Answer same or different first' : 'Type what A and B print first'} missing={missing} submitted={submitted}
+          onCheck={check} status={status}
+        />
+      }
+    >
+      <div class="rf-pair">
         <Snippet id="A" code={q.left} lines={diff.left} />
         <Snippet id="B" code={q.right} lines={diff.right} />
       </div>
       {missing ? <MissingData /> : null}
 
-      <fieldset class="rf-fieldset">
-        <legend class="rf-legend">Step 1. Do A and B print the same thing?</legend>
-        <div class="rf-options rf-yesno-row">
-          {yesNo(false, 'Yes, the same')}
-          {yesNo(true, 'No, they differ')}
+      <fieldset class="rf-fieldset rf-same">
+        <Ask mark={mDiffers}>Do A and B print the same thing?</Ask>
+        <div class="rf-same-row">
+          <Choice
+            name={name} label="Do A and B print the same thing?" disabled={differsLocked}
+            value={draft.differs === null ? null : draft.differs ? 'differ' : 'same'}
+            onChange={(v) => set({ differs: v === 'differ' })}
+            describedBy={differsLocked && !vis.inputLocked ? lockNoteId : undefined}
+            options={[
+              { value: 'same', label: 'Yes, the same', ok: segOk(false) },
+              { value: 'differ', label: 'No, they differ', ok: segOk(true) },
+            ]}
+          />
+          {differsLocked && !vis.inputLocked ? (
+            <span class="rf-note" id={lockNoteId}><Icon name="lock" size={12} /> Locked after the first check</span>
+          ) : null}
         </div>
-        {differsLocked && !vis.inputLocked ? <p class="rf-help">Step 1 can only be checked once, so your answer stays as it is.</p> : null}
       </fieldset>
 
       <fieldset class="rf-fieldset">
-        <legend class="rf-legend">Step 2. What does each one print?</legend>
-        <p class="rf-help">Type exactly what is printed, one line per print.</p>
-        <div class="rf-twins-grid">
-          <OutField id={`${name}-a`} label="A prints" value={draft.outLeft} mark={mLeft} readOnly={vis.inputLocked}
+        <Ask>What does each one print?</Ask>
+        <p class="sr-only" id={outHelpId}>Type exactly what is printed, one line per print.</p>
+        <div class="rf-pair">
+          <OutField id={`${name}-a`} label="A prints" value={draft.outLeft} mark={mLeft} readOnly={vis.inputLocked} describedBy={outHelpId}
             onInput={(v) => set({ outLeft: v })} expected={showAnswer && twins ? normalizeForDisplay(twins.outLeft) : null} />
-          <OutField id={`${name}-b`} label="B prints" value={draft.outRight} mark={mRight} readOnly={vis.inputLocked}
+          <OutField id={`${name}-b`} label="B prints" value={draft.outRight} mark={mRight} readOnly={vis.inputLocked} describedBy={outHelpId}
             onInput={(v) => set({ outRight: v })} expected={showAnswer && twins ? normalizeForDisplay(twins.outRight) : null} />
         </div>
       </fieldset>
-
-      <CheckBar
-        vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
-        ready={ready} notReadyText={draft.differs === null ? 'Answer step 1 first.' : 'Type what A and B print first.'} missing={missing} submitted={submitted}
-        onCheck={check} status={status}
-      />
-    </div>
+    </ReadFrame>
   );
 }
 
 function Snippet({ id, code, lines }: { id: string; code: string; lines: number[] }) {
   return (
     <figure class="rf-snippet">
-      <figcaption class="rf-snippet-head">
-        <span class="rf-snippet-id" aria-hidden="true">{id}</span>
-        <span class="sr-only">Snippet {id}</span>
-        {lines.length ? <span class="rf-help">Differs on {linesPhrase(lines)}</span> : null}
+      <figcaption class="rf-label">
+        <span class="rf-label-text">{id}</span>
+        <span class="sr-only">Snippet {id}{lines.length ? `, differs on ${linesPhrase(lines)}` : ''}</span>
       </figcaption>
-      <CodeBlock code={code} numbered highlightLines={lines} class="rf-diff-code" label={`Snippet ${id}`} />
+      <CodeBlock code={code} numbered highlightLines={lines} class="rf-hl-code" label={`Snippet ${id}`} />
     </figure>
   );
 }
 
-function OutField(p: { id: string; label: string; value: string; mark: boolean | null; readOnly: boolean; onInput: (v: string) => void; expected: string | null }) {
+function OutField(p: { id: string; label: string; value: string; mark: boolean | null; readOnly: boolean; describedBy: string; onInput: (v: string) => void; expected: string | null }) {
   return (
-    <div class="rf-field">
-      <label class="rf-subhead" for={p.id}>{p.label}</label>
-      <textarea
-        id={p.id}
-        class={['rf-textarea', p.mark === true ? 'ok' : p.mark === false ? 'bad' : ''].filter(Boolean).join(' ')}
-        rows={Math.max(3, p.value.split('\n').length + 1)}
-        value={p.value}
-        readOnly={p.readOnly}
-        ref={noAutocorrect} autocomplete="off" autocapitalize="off" spellcheck={false} wrap="off"
-        onInput={(e) => p.onInput(e.currentTarget.value)}
-      />
-      {p.mark !== null ? <div class="rf-field-mark"><Mark ok={p.mark} /></div> : null}
+    <div class="rf-field rf-out">
+      <Label as="label" htmlFor={p.id} end={p.mark !== null ? <Mark ok={p.mark} /> : undefined}>{p.label}</Label>
+      <TerminalInput id={p.id} value={p.value} readOnly={p.readOnly} mark={p.mark} minRows={2} describedBy={p.describedBy} onInput={p.onInput} />
       {p.expected !== null ? (
-        <div class="rf-reveal">
-          <div class="rf-subhead">Expected</div>
+        <div class="rf-field rf-expected">
+          <Label>Expected</Label>
           <OutputBlock text={p.expected} label={`${p.label}: expected output`} />
         </div>
       ) : null}

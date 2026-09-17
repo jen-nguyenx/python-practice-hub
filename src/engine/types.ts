@@ -68,7 +68,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  theme: 'system', layout: 'simple', editorFontSize: 14, unlockAll: false,
+  theme: 'system', layout: 'full', editorFontSize: 14, unlockAll: false,
   reducedMotion: 'system', singleKeyShortcuts: true, seenTour: false, lastExportTs: null,
 };
 

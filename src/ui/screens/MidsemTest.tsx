@@ -6,10 +6,10 @@ import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
 import { store } from '../../app/services.ts';
 import { href } from '../../app/router.ts';
 import { Button, LinkButton } from '../components/Button.tsx';
-import { Callout } from '../components/Callout.tsx';
-import { Chip } from '../components/Chip.tsx';
 import { Icon } from '../components/Icon.tsx';
-import { Segmented } from '../report/Segmented.tsx';
+import { Segmented } from '../components/Segmented.tsx';
+import { Switch } from '../components/Switch.tsx';
+import { ConfirmDialog } from '../testmode/ConfirmDialog.tsx';
 import { formatDateTime, formatDuration, plural } from '../report/format.ts';
 import { TestRunner } from '../testmode/TestRunner.tsx';
 import type { PoolEntry } from '../testmode/pool.ts';
@@ -58,6 +58,7 @@ export function MidsemTest() {
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 2 ** 31));
   const [running, setRunning] = useState<{ items: PoolEntry[]; minutes: number; runId: number; resume?: TestProgress } | null>(null);
   const [saved, setSaved] = useState<TestProgress | null>(() => readProgress('midsem', PROGRESS_KEY));
+  const [confirmNew, setConfirmNew] = useState(false);
   const events = store.events.value;
 
   useEffect(() => {
@@ -89,7 +90,7 @@ export function MidsemTest() {
     return (
       <TestRunner
         key={running.runId}
-        title={`Mid-sem practice · ${plural(n, 'question')}, ${running.minutes} min`}
+        title={`Mid-semester practice · ${plural(n, 'question')}`}
         questions={running.items.map((p) => p.item)}
         durationMin={running.minutes}
         persistKey={PROGRESS_KEY}
@@ -99,7 +100,7 @@ export function MidsemTest() {
         resultExtra={(s) => {
           const prev = bestResult(history.filter((h) => h.ts < s.finishedAt));
           return (
-            <p class="muted num">
+            <p>
               {prev ? (s.percent > prev.percent
                 ? <>New best score. Your previous best was {prev.percent}%. </>
                 : <>Your best before this test: {prev.percent}% ({prev.score} of {prev.total}). </>) : null}
@@ -132,18 +133,23 @@ export function MidsemTest() {
 
   const start = () => {
     if (!canStart) return;
-    if (saved && !window.confirm('Start a new test? The test you have in progress will be discarded.')) return;
+    if (saved) { setConfirmNew(true); return; }
+    begin();
+  };
+  const begin = () => {
+    setConfirmNew(false);
     clearProgress('midsem', PROGRESS_KEY);
     setSaved(null);
     setRunning({ items: selection, minutes: setup.minutes, runId: seed });
   };
+  const isDefault = setup.topicIds.length === DEFAULT_TOPICS.length && DEFAULT_TOPICS.every((t) => setup.topicIds.includes(t));
 
   return (
-    <div class="tm">
-      <header class="tm-head">
-        <span class="label">Revision</span>
+    <div class="tx-page ms">
+      <header class="tx-head">
+        <span class="tx-eyebrow">Tests</span>
         <h1>Mid-semester practice test</h1>
-        <p class="muted">A timed, mixed test across the topics you choose. One check per question, no hints, and a full review at the end.</p>
+        <p>A timed mix of questions from the topics you choose, with one check each and a full review at the end.</p>
       </header>
 
       {saved ? (
@@ -152,100 +158,118 @@ export function MidsemTest() {
           onDiscard={() => { clearProgress('midsem', PROGRESS_KEY); setSaved(null); }} />
       ) : null}
 
-      <Callout tone="neutral">
-        <p><strong>Practice test built from PyLadder questions, not the official test.</strong> Older CITS1401 mid-semester tests were multiple choice. Check LMS for this semester's format; turn coding questions off to practise reading-only questions.</p>
-      </Callout>
-
-      <section class="card tm-card" aria-labelledby="ms-setup">
+      <section class="tx-card" aria-labelledby="ms-setup">
         <h2 id="ms-setup" class="sr-only">Set up your test</h2>
 
-        <fieldset class="tm-topics">
-          <legend class="label">Topics</legend>
-          <div class="tm-quick">
-            <Button size="sm" onClick={() => setSetup({ topicIds: DEFAULT_TOPICS })}>Mid-sem topics (1 to {DEFAULT_TOPICS.length})</Button>
-            <Button size="sm" onClick={() => setSetup({ topicIds: TOPICS.map((t) => t.id) })}>All 13 topics</Button>
-            <Button size="sm" variant="ghost" onClick={() => setSetup({ topicIds: [] })}>Clear</Button>
+        <fieldset class="ms-topics">
+          <div class="ms-topics-head">
+            <legend>Topics</legend>
+            <span class="tx-mono">{setup.topicIds.length} of {TOPICS.length} chosen</span>
+            <div class="ms-quick">
+              <Button size="sm" variant="ghost" aria-pressed={isDefault} onClick={() => setSetup({ topicIds: DEFAULT_TOPICS })}>Mid-sem topics</Button>
+              <Button size="sm" variant="ghost" onClick={() => setSetup({ topicIds: TOPICS.map((t) => t.id) })}>All</Button>
+              <Button size="sm" variant="ghost" onClick={() => setSetup({ topicIds: [] })}>Clear</Button>
+            </div>
           </div>
-          <div class="tm-topic-grid">
+          <ul class="ms-grid">
             {TOPICS.map((t) => {
               const on = setup.topicIds.includes(t.id);
               const n = eligibleByTopic.get(t.id);
               return (
-                <label key={t.id} class={`tm-topic${on ? ' on' : ''}${n === 0 ? ' empty' : ''}`}>
-                  <input type="checkbox" checked={on} onChange={() => toggleTopic(t.id)} />
-                  <span><span class="tm-topic-num">{t.num}</span>{t.short}</span>
-                  <span class="tm-topic-count">{pool === null ? '' : n === 0 ? 'none yet' : plural(n ?? 0, 'question')}</span>
-                </label>
+                <li key={t.id}>
+                  <label class={`ms-topic${on ? ' on' : ''}${n === 0 && !on ? ' empty' : ''}`}>
+                    <span class="ms-num" aria-hidden="true">{Number(t.num)}</span>
+                    <span class="ms-topic-text">
+                      <span class="ms-topic-name">{t.short}</span>
+                      <span class="ms-topic-count">{pool === null ? '…' : n === 0 ? 'no questions yet' : plural(n ?? 0, 'question')}</span>
+                    </span>
+                    <input type="checkbox" checked={on} onChange={() => toggleTopic(t.id)} aria-label={`Topic ${Number(t.num)}: ${t.title}`} />
+                  </label>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </fieldset>
 
-        <div class="tm-options">
-          <Segmented name="ms-count" label="Questions" showLabel value={setup.count}
-            options={MIDSEM_COUNTS.map((c) => ({ value: c as number, label: String(c) }))} onChange={(count) => setSetup({ count })} />
-          <Segmented name="ms-time" label="Time" showLabel value={setup.minutes}
-            options={MIDSEM_MINUTES.map((m) => ({ value: m as number, label: `${m} min` }))} onChange={(minutes) => setSetup({ minutes })} />
-          <label class="tm-toggle">
-            <input type="checkbox" checked={setup.includeCoding} onChange={(e) => setSetup({ includeCoding: (e.currentTarget as HTMLInputElement).checked })} />
-            <span class="tm-toggle-text">
-              <span>Include coding questions</span>
-              <span class="muted">Fill in the blank, Parsons, fix the bug and write code. Off: reading questions only, no Python needed.</span>
+        <div class="ms-options">
+          <div class="ms-field">
+            <span id="ms-count-l" class="ms-field-label">Questions</span>
+            <Segmented labelledBy="ms-count-l" value={String(setup.count)}
+              options={MIDSEM_COUNTS.map((c) => ({ value: String(c), label: String(c) }))} onChange={(v) => setSetup({ count: Number(v) })} />
+          </div>
+          <div class="ms-field">
+            <span id="ms-time-l" class="ms-field-label">Time</span>
+            <Segmented labelledBy="ms-time-l" value={String(setup.minutes)}
+              options={MIDSEM_MINUTES.map((m) => ({ value: String(m), label: `${m} min` }))} onChange={(v) => setSetup({ minutes: Number(v) })} />
+          </div>
+          <div class="ms-switch">
+            <Switch checked={setup.includeCoding} onChange={(includeCoding) => setSetup({ includeCoding })} label="Include coding questions" describedBy="ms-coding-sub" />
+            <span id="ms-coding-sub" class="ms-switch-sub">
+              {setup.includeCoding
+                ? 'Fill in the blank, Parsons, fix the bug and write code run real Python in your browser.'
+                : 'Reading questions only: multiple choice, predict the output, trace and spot the difference.'}
             </span>
-          </label>
+          </div>
         </div>
 
-        <div class="tm-summary-line" aria-live="polite">
-          {pool === null ? <span role="status">Loading questions…</span> : setup.topicIds.length === 0 ? <span>Choose at least one topic.</span> : selection.length === 0 ? (
-            <span>No questions are ready in the chosen topics yet{setup.includeCoding ? '' : ' without coding'}. Try more topics{setup.includeCoding ? '' : ' or include coding questions'}.</span>
-          ) : (
-            <>
-              <span><strong>{selection.length}</strong> questions: {rungCounts.map((x) => `${x.n} ${RUNG_WORDS[x.r]}`).join(', ')}</span>
-              <span>Expected working time about <strong>{est} min</strong> for your <strong>{setup.minutes} min</strong></span>
-            </>
-          )}
-        </div>
-        {shortBy > 0 && selection.length > 0 ? (
-          <Callout tone="info">Only {plural(selection.length, 'question')} match these choices, so the test has {selection.length} instead of {setup.count}.</Callout>
-        ) : null}
-        {selection.length > 0 && est > setup.minutes * 1.2 ? (
-          <Callout tone="hint">These questions usually take about {est} minutes. Choose more time or fewer questions, or keep it as practice under pressure.</Callout>
-        ) : null}
-
-        <div class="tm-actions">
-          <Button variant="primary" size="lg" onClick={start} disabled={!canStart}>
-            Start test <Icon name="arrowRight" />
-          </Button>
-          {canStart ? <Button variant="ghost" onClick={() => setSeed(Math.floor(Math.random() * 2 ** 31))}><Icon name="refresh" /> Pick different questions</Button> : null}
+        <div class="ms-summary">
+          <p class="ms-summary-line" aria-live="polite">
+            {pool === null ? <span role="status">Loading questions…</span> : setup.topicIds.length === 0 ? <span>Choose at least one topic.</span> : selection.length === 0 ? (
+              <span>No questions are ready in these topics{setup.includeCoding ? '' : ' without coding'}. Try more topics{setup.includeCoding ? '' : ' or include coding questions'}.</span>
+            ) : (
+              <span><b>{selection.length}</b> questions · {rungCounts.map((x) => `${x.n} ${RUNG_WORDS[x.r]}`).join(', ')} · usually about <b>{est} min</b></span>
+            )}
+          </p>
+          {shortBy > 0 && selection.length > 0 ? (
+            <p class="ms-warn"><Icon name="info" /> Only {plural(selection.length, 'question')} match these choices, so the test has {selection.length} instead of {setup.count}.</p>
+          ) : null}
+          {selection.length > 0 && est > setup.minutes * 1.2 ? (
+            <p class="ms-warn"><Icon name="clock" /> These usually take about {est} minutes. Choose more time or fewer questions, or keep it as practice under pressure.</p>
+          ) : null}
+          <p class="ms-honest">
+            <Icon name="info" />
+            <span>Built from PyLadder questions, so it is practice, not the official test. Check LMS for this semester's format; older CITS1401 mid-semester tests were multiple choice.</span>
+          </p>
+          <div class="tx-actions">
+            <Button variant="primary" size="lg" onClick={start} disabled={!canStart}>
+              Start test <Icon name="arrowRight" />
+            </Button>
+            {canStart ? <Button variant="ghost" onClick={() => setSeed(Math.floor(Math.random() * 2 ** 31))}><Icon name="refresh" /> Pick different questions</Button> : null}
+          </div>
         </div>
       </section>
 
-      <section class="tm-section" aria-labelledby="ms-history">
-        <div class="row">
-          <h2 id="ms-history">Previous practice tests</h2>
-          {best ? (
-            <span class="tm-best num"><Icon name="target" /> Best: {best.percent}% ({best.score} of {best.total})</span>
-          ) : null}
+      <section class="tx-card" aria-labelledby="ms-history">
+        <div class="tx-card-head">
+          <h2 id="ms-history">Past attempts</h2>
+          {best ? <span class="tx-best"><Icon name="target" size={14} /> Best {best.percent}% · {best.score} of {best.total}</span> : null}
         </div>
         {history.length === 0 ? (
-          <p class="muted">No practice tests yet. Your scores appear here after you finish one.</p>
+          <p class="tx-muted">No practice tests yet. Your scores appear here after you finish one.</p>
         ) : (
-          <ul class="tm-history">
-            {history.map((h) => (
-              <li key={h.ts}>
-                <span class="num">{formatDateTime(h.ts)}</span>
-                <span class="num">
-                  <strong>{h.score} / {h.total}</strong> <span class="muted">· {h.percent}%</span>
-                  {best && h.ts === best.ts ? <> <Chip tone="accent">best</Chip></> : null}
-                </span>
-                <span class="tm-history-topics muted">
-                  {topicList(h.topicIds)} · {formatDuration(h.durationMs)}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <div class="tx-table-wrap">
+            <table class="tx-table">
+              <thead><tr><th scope="col">Date</th><th scope="col">Score</th><th scope="col">Topics</th><th scope="col">Time</th></tr></thead>
+              <tbody>
+                {history.slice(0, 8).map((h) => (
+                  <tr key={h.ts}>
+                    <td class="dim">{formatDateTime(h.ts)}</td>
+                    <td class="num"><b>{h.score}/{h.total}</b> <span class="dim">· {h.percent}%</span>{best && h.ts === best.ts ? <span class="tx-best-tag">Best</span> : null}</td>
+                    <td class="wide dim">{topicList(h.topicIds)}</td>
+                    <td class="num dim">{formatDuration(h.durationMs)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
+        {history.length > 8 ? <p class="tx-muted">Showing your latest 8 of {history.length} attempts.</p> : null}
       </section>
+
+      <ConfirmDialog open={confirmNew} title="Start a new test?" confirmLabel="Start new test" cancelLabel="Keep my test"
+        onCancel={() => setConfirmNew(false)} onConfirm={begin}>
+        <p>The test you have in progress will be discarded and its saved answers deleted.</p>
+      </ConfirmDialog>
     </div>
   );
 }

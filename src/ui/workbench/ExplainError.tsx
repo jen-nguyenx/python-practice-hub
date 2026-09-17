@@ -9,7 +9,7 @@ import './workbench.css';
 
 export function ExplainError({ error, code }: { error: PyError | null | undefined; code?: string }) {
   if (!error) {
-    return <p class="problems-empty"><Icon name="check" size={14} /> No errors to explain. When your code crashes, the explanation appears here.</p>;
+    return <p class="problems-empty"><Icon name="check" size={14} /> No errors to explain</p>;
   }
   if (error.type === 'TimeoutError') {
     return (
@@ -47,7 +47,6 @@ export function ExplainError({ error, code }: { error: PyError | null | undefine
           <Markdown text={ex.fix} />
         </section>
       ) : null}
-      <p class="explain-foot">Thonny and other Python versions may word this message slightly differently.</p>
     </div>
   );
 }

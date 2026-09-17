@@ -7,7 +7,11 @@ import { CodeBlock } from '../../components/CodeBlock.tsx';
 import { Icon } from '../../components/Icon.tsx';
 import type { OutputDiffRow, Segment } from './logic.ts';
 import { buildPredictChoices, isRecord, normalizeForDisplay, outputDiff } from './logic.ts';
-import { CheckBar, Mark, MissingData, OutputBlock, checkShortcut, useDraftState, useNumberKeys, useSingleKeysOn, visibility, noAutocorrect } from './shared.tsx';
+import type { OptionRowProps } from './shared.tsx';
+import {
+  CheckBar, Label, Mark, MissingData, OptionRow, OutputBlock, ReadFrame, TerminalInput,
+  useDraftState, useNumberKeys, useSingleKeysOn, visibility,
+} from './shared.tsx';
 
 type Q = QuestionOf<'predict'>;
 interface PredictDraft { text: string; choice: string | null }
@@ -68,12 +72,23 @@ function PredictBody(props: FormatProps<Q>) {
   let status = null;
   if (!vis.testMode && checked && judged === checked) status = <Mark ok={judgedOk} />;
 
+  const inputId = `predict-${q.id}`;
+
   return (
-    <div class="rf rf-predict" ref={rootRef} onKeyDown={checkShortcut(check)}>
+    <ReadFrame
+      kind="predict" rootRef={rootRef} onCheck={check}
+      bar={
+        <CheckBar
+          vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
+          ready={ready} notReadyText={q.choice ? 'Pick an output first' : 'Type your prediction first'} missing={missing} submitted={submitted}
+          onCheck={check} status={status}
+        />
+      }
+    >
       <CodeBlock code={q.code} numbered label="Program" />
       {q.stdin && q.stdin.length ? (
         <p class="rf-stdin">
-          <span class="muted">Input typed:</span>{' '}
+          <span class="rf-label-text">Input typed</span>
           {q.stdin.map((s, i) => <code key={i} class="rf-stdin-item">{s}</code>)}
         </p>
       ) : null}
@@ -81,99 +96,95 @@ function PredictBody(props: FormatProps<Q>) {
 
       {q.choice ? (
         <fieldset class="rf-fieldset">
-          <legend class="rf-legend">Which output does this program print?</legend>
-          <div class="rf-options">
+          <legend class="sr-only">Which output does this program print?</legend>
+          <div class="rf-opts">
             {choices.map((c, i) => {
-              const selected = draft.choice === c.text;
               const isCorrect = c.text === expected;
               const isJudged = judged !== null && judged.answer === c.text;
-              let mark = null;
-              let tone = '';
-              if (isJudged) { mark = <Mark ok={judgedOk} label={judgedOk ? 'Your answer: correct' : 'Your answer: not quite'} />; tone = judgedOk ? 'ok' : 'bad'; }
-              else if (vis.full && vis.marks && isCorrect) { mark = <Mark ok label="Correct answer" />; tone = 'ok'; }
-              const cls = ['rf-option', selected ? 'selected' : '', vis.inputLocked ? 'locked' : '', tone].filter(Boolean).join(' ');
+              let tone: OptionRowProps['tone'] = null;
+              let mark: OptionRowProps['mark'] = null;
+              if (isJudged) { tone = judgedOk ? 'ok' : 'bad'; mark = { ok: judgedOk, label: judgedOk ? 'Correct' : 'Not this one' }; }
+              else if (vis.full && vis.marks && isCorrect) { tone = 'answer'; mark = { ok: true, label: 'Correct answer' }; }
               return (
-                <div class={cls} key={c.key}>
-                  <label class="rf-option-main">
-                    <input
-                      type="radio" name={`predict-${q.id}`} data-key={c.key} value={c.key} checked={selected} disabled={vis.inputLocked}
-                      onChange={() => pickChoice(c.text)}
-                      onKeyDown={(e) => { if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) { e.preventDefault(); check(); } }}
-                    />
-                    {keysOn && !vis.inputLocked && i < 5 ? <span class="rf-option-key" aria-hidden="true">{i + 1}</span> : null}
-                    <span class="rf-option-body"><OutputBlock text={c.text} /></span>
-                  </label>
-                  {mark ? <div class="rf-option-mark">{mark}</div> : null}
-                </div>
+                <OptionRow
+                  key={c.key} type="radio" name={`predict-${q.id}`} value={c.key} dataKey={c.key}
+                  checked={draft.choice === c.text} disabled={vis.inputLocked}
+                  onChange={() => pickChoice(c.text)} onEnter={check}
+                  keyHint={keysOn && !vis.inputLocked && i < 5 ? i + 1 : null}
+                  tone={tone} mark={mark}
+                >
+                  <OutputBlock text={c.text} bare />
+                </OptionRow>
               );
             })}
           </div>
         </fieldset>
       ) : (
         <div class="rf-field">
-          <label class="rf-legend" for={`predict-${q.id}`}>What does this program print?</label>
-          <p class="rf-help" id={`predict-${q.id}-help`}>Type exactly what is printed, one line per print.</p>
-          <textarea
-            id={`predict-${q.id}`}
-            class={['rf-textarea', judged ? (judgedOk ? 'ok' : 'bad') : ''].filter(Boolean).join(' ')}
-            aria-describedby={`predict-${q.id}-help`}
-            rows={Math.max(4, draft.text.split('\n').length + 1)}
-            value={draft.text}
-            readOnly={vis.inputLocked}
-            ref={noAutocorrect} autocomplete="off" autocapitalize="off" spellcheck={false}
-            wrap="off"
-            onInput={(e) => setDraft({ ...draft, text: e.currentTarget.value })}
+          <Label as="label" htmlFor={inputId} end={judged ? <Mark ok={judgedOk} /> : 'One line per print'}>Your output</Label>
+          <TerminalInput
+            id={inputId} value={draft.text} readOnly={vis.inputLocked} mark={judged ? judgedOk : null}
+            onInput={(v) => setDraft({ ...draft, text: v })}
           />
-          {judged && !status ? <div class="rf-field-mark"><Mark ok={judgedOk} label={judgedOk ? 'Your answer: correct' : 'Your answer: not quite'} /></div> : null}
         </div>
       )}
 
       {vis.full && vis.marks && expected !== null && !q.choice ? (
-        <div class="rf-reveal">
-          <div class="rf-subhead">Expected output</div>
-          <OutputBlock text={expected} label="Expected output" />
+        <div class="rf-field">
+          <Label end={showDiff ? 'Spaces count' : undefined}>Expected output</Label>
+          {showDiff && diffRows ? <Compared rows={diffRows} /> : <OutputBlock text={expected} label="Expected output" />}
         </div>
       ) : null}
-      {showDiff && diffRows ? <OutputDiff rows={diffRows} /> : null}
-
-      <CheckBar
-        vis={vis} revealed={props.revealed} locked={props.locked} checksLeft={props.checksLeft}
-        ready={ready} notReadyText={q.choice ? 'Pick an output first.' : 'Type your prediction first.'} missing={missing} submitted={submitted}
-        onCheck={check} status={status}
-      />
-    </div>
+    </ReadFrame>
   );
 }
 
-function Segs({ segs }: { segs: Segment[] }) {
-  if (segs.length === 0) return <span class="rf-diff-empty">(empty line)</span>;
-  return <>{segs.map((s, i) => (s.diff ? <mark key={i} class="rf-diff-hl">{s.text}</mark> : <span key={i}>{s.text}</span>))}</>;
+function Segs({ segs, tone }: { segs: Segment[]; tone: 'ok' | 'bad' }) {
+  if (segs.length === 0) return <span class="rf-cmp-empty">(empty line)</span>;
+  return <>{segs.map((s, i) => (s.diff ? <mark key={i} class={`rf-cmp-hl ${tone}`}>{s.text}</mark> : <span key={i}>{s.text}</span>))}</>;
 }
 
-function OutputDiff({ rows }: { rows: OutputDiffRow[] }) {
+/** The expected output, line by line, with the student's differing lines shown in place. */
+function Compared({ rows }: { rows: OutputDiffRow[] }) {
   return (
-    <div class="rf-reveal">
-      <div class="rf-subhead">Your answer compared with the expected output</div>
-      <div class="rf-diff" role="list">
-        {rows.map((r, i) => {
-          if (r.kind === 'same') {
-            return <div key={i} class="rf-diff-row same" role="listitem"><span class="rf-diff-tag"><Icon name="check" size={12} /> Same</span><code class="rf-diff-text">{r.text || ' '}</code></div>;
-          }
-          if (r.kind === 'missing') {
-            return <div key={i} class="rf-diff-row exp" role="listitem"><span class="rf-diff-tag">Missing</span><code class="rf-diff-text">{r.expected || '(empty line)'}</code></div>;
-          }
-          if (r.kind === 'extra') {
-            return <div key={i} class="rf-diff-row you" role="listitem"><span class="rf-diff-tag"><Icon name="x" size={12} /> Extra</span><code class="rf-diff-text">{r.yours || '(empty line)'}</code></div>;
-          }
+    <div class="rf-output rf-cmp" role="list" aria-label="Expected output compared with your answer">
+      {rows.map((r, i) => {
+        if (r.kind === 'same') {
+          return <div key={i} class="rf-cmp-row" role="listitem"><span class="rf-cmp-gut" /><code class="rf-cmp-text">{r.text || ' '}</code><span class="sr-only">Same</span></div>;
+        }
+        if (r.kind === 'missing') {
           return (
-            <div key={i} class="rf-diff-pair" role="listitem">
-              <div class="rf-diff-row exp"><span class="rf-diff-tag">Expected</span><code class="rf-diff-text"><Segs segs={r.expected} /></code></div>
-              <div class="rf-diff-row you"><span class="rf-diff-tag"><Icon name="x" size={12} /> You typed</span><code class="rf-diff-text"><Segs segs={r.yours} /></code></div>
+            <div key={i} class="rf-cmp-row" role="listitem">
+              <span class="rf-cmp-gut bad"><Icon name="x" size={12} /></span>
+              <code class="rf-cmp-text">{r.expected || '(empty line)'}</code>
+              <span class="rf-cmp-tag bad">missing</span>
             </div>
           );
-        })}
-      </div>
-      <p class="rf-help">Spaces count. Highlighted characters are where the lines differ.</p>
+        }
+        if (r.kind === 'extra') {
+          return (
+            <div key={i} class="rf-cmp-row you" role="listitem">
+              <span class="rf-cmp-gut bad"><Icon name="x" size={12} /></span>
+              <code class="rf-cmp-text">{r.yours || '(empty line)'}</code>
+              <span class="rf-cmp-tag bad">extra line you typed</span>
+            </div>
+          );
+        }
+        return (
+          <div key={i} class="rf-cmp-pair" role="listitem">
+            <div class="rf-cmp-row">
+              <span class="rf-cmp-gut" />
+              <code class="rf-cmp-text"><Segs segs={r.expected} tone="ok" /></code>
+              <span class="rf-cmp-tag">expected</span>
+            </div>
+            <div class="rf-cmp-row you">
+              <span class="rf-cmp-gut bad"><Icon name="x" size={12} /></span>
+              <code class="rf-cmp-text"><Segs segs={r.yours} tone="bad" /></code>
+              <span class="rf-cmp-tag bad">you typed</span>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

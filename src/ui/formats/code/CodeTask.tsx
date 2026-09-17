@@ -1,5 +1,6 @@
-// Shared workspace for editor-based code formats (write, fixBug, refactor):
-// editor + Run / Submit toolbar + tabbed panel (Tests, Output, Input, Problems, Explain).
+// Shared workspace for editor-based code formats (write, fixBug, refactor): a dark editor card (file tab, runtime
+// label, Monaco, bottom bar with Run tests / Submit / Reset code) and a white Tests card below it with quiet tabs
+// for Output, Input, Files, Problems and Explain when they have something to show.
 import type { ComponentChildren } from 'preact';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { RuleId } from '../../../content/ids.ts';
@@ -14,18 +15,20 @@ import { Icon } from '../../components/Icon.tsx';
 import { CodeEditor } from '../../editor/CodeEditor.tsx';
 import { useWorkbench } from '../../workbench/context.ts';
 import { useConfirm } from '../../workbench/Dialog.tsx';
+import { EditorCard } from '../../workbench/EditorCard.tsx';
 import { ExplainError } from '../../workbench/ExplainError.tsx';
 import { openInPlayground } from '../../workbench/openInPlayground.ts';
-import { PanelTabs } from '../../workbench/PanelTabs.tsx';
-import type { PanelTab } from '../../workbench/PanelTabs.tsx';
-import { isStarting, markersFrom, runtimeStatusText, warningFlags } from '../../workbench/plain.ts';
+import { markersFrom, warningFlags } from '../../workbench/plain.ts';
 import { ProblemsList } from '../../workbench/ProblemsList.tsx';
 import { RuleViolations, RulesList } from '../../workbench/RuleViolations.tsx';
 import { firstTestsError, runTestsLogged, useProgramRunner } from '../../workbench/runner.ts';
-import { kbdRun, kbdSubmit, useRunShortcuts } from '../../workbench/shortcuts.ts';
+import { MOD, useRunShortcuts } from '../../workbench/shortcuts.ts';
 import { Terminal } from '../../workbench/Terminal.tsx';
-import { TestsTable } from '../../workbench/TestsTable.tsx';
+import type { CardTab } from '../../workbench/TestsTable.tsx';
+import { ResultsCard, TestRows, TestsStatusChip, allPassed } from '../../workbench/TestsTable.tsx';
+import { IconButton } from '../../workbench/Tip.tsx';
 import { draftCode, stdinLines } from './logic.ts';
+import { BusyLine } from './Workspace.tsx';
 import './code.css';
 
 export interface CodeTaskConfig {
@@ -40,17 +43,15 @@ export interface CodeTaskConfig {
   marks?: number;
   editorLabel: string;
   grade: (result: TestsResult, code: string) => GradeResult;
-  /** Extra line under the toolbar (badges, counters). */
+  /** Short status in the editor's bottom bar (e.g. lines changed). */
   status?: (s: { code: string; graded: GradeResult | null }) => ComponentChildren;
-  /** Shown after a submit (e.g. which idiom is still missing). */
+  /** Shown above the test results after a submit (e.g. which idiom is still missing). */
   afterSubmit?: (s: { result: TestsResult; graded: GradeResult; code: string }) => ComponentChildren;
-  /** Shown when the answer is revealed (e.g. a diff of buggy vs fixed). */
+  /** Shown under the tests when the answer is revealed (e.g. a diff). */
   revealedView?: (code: string) => ComponentChildren;
 }
 
 const EMPTY_FLAGS: AstFinding[] = [];
-
-type Tab = 'tests' | 'output' | 'input' | 'files' | 'problems' | 'explain';
 
 export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTaskConfig }) {
   const { q, mode, revealed, locked, topicId } = fp;
@@ -61,7 +62,7 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   const ctx = { qid: q.id, topicId };
 
   const [code, setCode] = useState(() => draftCode(fp.draft) ?? cfg.initialCode);
-  const [tab, setTab] = useState<Tab>('tests');
+  const [tab, setTab] = useState('tests');
   const [busy, setBusy] = useState<null | 'run' | 'submit'>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const [runRes, setRunRes] = useState<TestsResult | null>(null);
@@ -77,6 +78,7 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   const status = py.status.value;
 
   const visibleTests = useMemo(() => cfg.tests.filter((t) => !t.hidden), [cfg.tests]);
+  const hiddenCount = cfg.tests.length - visibleTests.length;
   /** Data files the visible tests use (hidden tests' files stay hidden until the answer is revealed). */
   const dataFiles = useMemo(() => {
     const seen = new Map<string, string>();
@@ -144,6 +146,7 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     inFlight.current = true;
     setBusy('submit');
     setFailure(null);
+    setTab('tests');
     const { result, failure: f } = await runTestsLogged({ code, tests: cfg.tests, kind: cfg.kind, fnName: cfg.fnName, rules: cfg.rules }, ctx, false);
     inFlight.current = false;
     setBusy(null);
@@ -153,7 +156,6 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     setSub({ result, graded, code });
     setLast('submit');
     setSubmits((n) => n + 1);
-    setTab('tests');
     fp.onCheck(graded, { code, flags: result.flags.map((x) => x.flag) });
   };
 
@@ -164,10 +166,9 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     if (ok) change(cfg.initialCode);
   };
 
-  // What the panel shows.
+  // What the card shows.
   const hideSubmitResult = testMode && !revealed;
   const testsResult: TestsResult | null = last === 'submit' && sub && !hideSubmitResult ? sub.result : last === 'run' ? runRes : sub && !hideSubmitResult ? sub.result : runRes;
-  const testsTitle = testsResult && testsResult === sub?.result ? 'All tests' : 'Visible tests';
   const programErr = last === 'program' ? program.state.result?.error : undefined;
   const explainable = explainableError(testsResult, programErr, revealed);
   const syntaxError = analysis?.syntaxError ?? testsResult?.compileError ?? null;
@@ -178,42 +179,40 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     [paper, sub, syntaxError, explainable, flags],
   );
   const problemTotal = (syntaxError ? 1 : 0) + (paper ? 0 : warningFlags(flags).length);
+  const visiblePass = !!runRes && allPassed(runRes);
+  const graded = sub?.graded ?? null;
+  const solvedHere = locked || !!graded?.correct;
 
-  const tabs: PanelTab[] = [];
-  if (wb.layout === 'full' && !paper) {
-    tabs.push({ id: 'problems', label: 'Problems', badge: problemTotal || null, tone: syntaxError ? 'bad' : 'hint', content: (
-      <div class="stack">
-        <ProblemsList syntaxError={syntaxError} flags={flags} />
-        <RuleViolations violations={violations} />
-      </div>
-    ) });
-  }
+  const tabs: CardTab[] = [];
   tabs.push({
     id: 'tests', label: 'Tests',
-    badge: testsResult && !testsResult.compileError && !testsResult.topLevelError && !testsResult.missingFunction ? `${testsResult.passed}/${testsResult.total}` : testsResult ? '!' : null,
-    tone: testsResult ? (testsResult.total > 0 && testsResult.passed === testsResult.total ? 'ok' : 'bad') : undefined,
     content: (
-      <div class="stack">
+      <div class="ct-stack">
         {failure ? <Callout tone="bad" title="Python is not available">{failure} <Button size="sm" onClick={() => py.restart('retry')}>Retry</Button></Callout> : null}
-        {busy ? <p class="term-status"><span class="term-dot" aria-hidden="true" />{isStarting(status) ? 'Python is starting (about 10 to 30 seconds on the first visit). The tests run as soon as it is ready.' : busy === 'submit' ? 'Running all tests…' : 'Running the visible tests…'}</p> : null}
-        {hideSubmitResult && sub ? <Callout tone="info" title="Answer submitted">Results appear when the test ends.</Callout> : null}
-        {testsResult && !busy ? (
-          <>
-            {violations.length && wb.layout !== 'full' ? <RuleViolations violations={violations} /> : null}
-            <TestsTable result={testsResult} tests={cfg.tests} revealed={revealed} title={testsTitle} onExplain={explainable ? () => setTab('explain') : undefined} />
-            {sub && testsResult === sub.result && cfg.afterSubmit ? cfg.afterSubmit(sub) : null}
-          </>
+        {busy ? <BusyLine status={status} starting="the first start takes 10 to 30 s" running={busy === 'submit' ? 'Running all tests…' : 'Running the visible tests…'} /> : null}
+        {hideSubmitResult && sub ? <p class="muted">Answer submitted · results appear when the test ends</p> : null}
+        {testsResult && !busy && violations.length ? <RuleViolations violations={violations} /> : null}
+        {sub && testsResult === sub.result && !busy && cfg.afterSubmit ? cfg.afterSubmit(sub) : null}
+        {!busy ? (
+          <TestRows
+            tests={hideSubmitResult ? visibleTests : cfg.tests}
+            result={testsResult}
+            revealed={revealed}
+            onExplain={explainable ? () => setTab('explain') : undefined}
+          />
         ) : null}
-        {!testsResult && !busy && !(hideSubmitResult && sub) ? <TestsPreview tests={visibleTests} total={cfg.tests.length} paper={paper} program={cfg.kind === 'program'} /> : null}
+        {paper && !sub ? <p class="ct-note">{cfg.tests.length} tests mark your answer when you submit.</p> : null}
+        {cfg.kind === 'program' && !paper ? (
+          <div><button type="button" class="link-btn" onClick={runVisible} disabled={!canRun}><Icon name="play" size={12} /> Run the visible tests</button></div>
+        ) : null}
       </div>
     ),
   });
-  if (!paper) {
+  if (!paper && (cfg.kind === 'program' || (last === 'run' && runRes?.outcomes.some((o) => o.stdout && !o.hidden)))) {
     tabs.push({
-      id: 'output', label: 'Output',
-      badge: programErr ? '!' : null, tone: 'bad',
+      id: 'output', label: 'Output', badge: programErr ? '!' : null,
       content: cfg.kind === 'program' ? (
-        <Terminal state={program.state} onInput={program.answer} onClear={program.clear} onExplain={() => setTab('explain')} emptyText="Press Run program to see what your program prints." />
+        <Terminal state={program.state} onInput={program.answer} onClear={program.clear} onExplain={() => setTab('explain')} emptyText="Press Run to see what your program prints." />
       ) : (
         <PrintedOutput result={last === 'run' ? runRes : null} />
       ),
@@ -222,64 +221,91 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   if (cfg.kind === 'program' && !paper) {
     tabs.push({ id: 'input', label: 'Input', badge: stdinLines(stdinText).length || null, content: (
       <div class="stdin-box">
-        <label for={`stdin-${q.id}`}><strong>Input lines for Run program</strong></label>
-        <textarea id={`stdin-${q.id}`} value={stdinText} spellcheck={false} onInput={(e) => setStdinText(e.currentTarget.value)} placeholder={'One line per input() call, e.g.\n42\nPerth'} />
-        <p>Each line answers one <code>input()</code> call, in order. If your program asks for more, the Output tab asks you to type it.</p>
+        <label for={`stdin-${q.id}`}>Lines for <code>input()</code>, one per call</label>
+        <textarea id={`stdin-${q.id}`} value={stdinText} spellcheck={false} onInput={(e) => setStdinText(e.currentTarget.value)} placeholder={'42\nPerth'} />
       </div>
     ) });
   }
   if (dataFiles.length) {
     tabs.push({ id: 'files', label: 'Files', badge: dataFiles.length, content: <DataFiles files={dataFiles} /> });
   }
-  if (!paper || sub) {
-    tabs.push({ id: 'explain', label: 'Explain', badge: explainable ? '!' : null, tone: 'bad', content: <ExplainError error={explainable} code={code} /> });
+  if (!paper && (problemTotal > 0 || violations.length > 0)) {
+    tabs.push({ id: 'problems', label: 'Problems', badge: problemTotal + violations.length, content: (
+      <div class="ct-stack">
+        <ProblemsList syntaxError={syntaxError} flags={flags} />
+        <RuleViolations violations={violations} />
+      </div>
+    ) });
   }
+  if ((!paper || sub) && explainable) {
+    tabs.push({ id: 'explain', label: 'Explain', content: <ExplainError error={explainable} code={code} /> });
+  }
+  const activeTab = tabs.some((t) => t.id === tab) ? tab : 'tests';
 
-  const graded = sub?.graded ?? null;
-  const runLabel = cfg.kind === 'program' ? 'Run program' : 'Run';
+  const runLabel = cfg.kind === 'program' ? 'Run' : 'Run tests';
+  const submitPrimary = visiblePass && !solvedHere && !revealed;
+  const footer = paper ? (
+    <>
+      <Button variant="primary" onClick={submit} disabled={!canSubmit}>
+        {busy === 'submit' ? 'Checking…' : 'Submit answer'}
+      </Button>
+      <span class="ed-note">{cfg.marks ? `${cfg.marks} marks · ` : ''}one submission</span>
+      {cfg.status ? <span class="ct-status">{cfg.status({ code, graded })}</span> : null}
+      <span class="ed-kbd" aria-hidden="true">{MOD} + Shift + Enter</span>
+    </>
+  ) : (
+    <>
+      <Button variant={submitPrimary || solvedHere || revealed ? 'secondary' : 'primary'} onClick={run} disabled={!canRun} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Enter' : 'Control+Enter'}>
+        <Icon name="play" size={12} /> {busy === 'run' ? 'Running…' : runLabel}
+      </Button>
+      <Button variant={submitPrimary ? 'primary' : 'secondary'} onClick={submit} disabled={!canSubmit} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Shift+Enter' : 'Control+Shift+Enter'}>
+        {busy === 'submit' ? 'Checking…' : testMode ? 'Submit answer' : 'Submit'}
+      </Button>
+      {!testMode && !readOnly ? <Button onClick={reset} disabled={code === cfg.initialCode}>Reset code</Button> : null}
+      {cfg.status ? <span class="ct-status">{cfg.status({ code, graded })}</span> : null}
+      <span class="ed-kbd" title={`${MOD}+Enter runs · ${MOD}+Shift+Enter submits · Esc then Tab leaves the editor`}>
+        {MOD} + Enter
+      </span>
+      {!testMode ? <IconButton icon="terminal" size="sm" label="Open in Playground" align="end" class="ed-icon" onClick={() => openInPlayground(code, `${q.id}.py`)} /> : null}
+    </>
+  );
+
+  const editor = (
+    <CodeEditor
+      value={code}
+      onChange={change}
+      readOnly={readOnly}
+      plain={paper}
+      markers={markers}
+      onRun={paper ? undefined : run}
+      onSubmit={submit}
+      onCursor={wb.onCursor}
+      ariaLabel={`${cfg.editorLabel}. Press Escape then Tab to leave the editor.`}
+      hideHint
+      minHeight={paper ? 360 : 320}
+      maxHeight={640}
+    />
+  );
+
+  const idleText = paper || testMode
+    ? `${cfg.tests.length} ${cfg.tests.length === 1 ? 'test' : 'tests'}`
+    : `${visibleTests.length} visible${hiddenCount ? ` · ${hiddenCount} hidden` : ''}`;
 
   return (
-    <div class={`code-task${paper ? ' paper' : ''}`} ref={rootRef} data-run-scope>
+    <div class={`ct${paper ? ' paper' : ''}`} ref={rootRef} data-run-scope>
       {confirmEl}
-      {cfg.rules?.length ? <RulesList rules={cfg.rules} /> : null}
-      <div class="ct-toolbar" role="toolbar" aria-label="Code actions">
-        {paper ? (
-          <span class="ct-marks"><Icon name="file" size={14} /> {cfg.marks ? `Worth ${cfg.marks} marks` : 'Exam-style'} · one submission, no Run</span>
-        ) : (
-          <>
-            <Button onClick={run} disabled={!canRun} kbd={kbdRun}>
-              <Icon name="play" size={14} /> {busy === 'run' ? 'Running…' : runLabel}
-            </Button>
-            {cfg.kind === 'program' ? (
-              <Button onClick={runVisible} disabled={!canRun}>Run tests</Button>
-            ) : null}
-          </>
-        )}
-        <Button variant="primary" onClick={submit} disabled={!canSubmit} kbd={kbdSubmit}>
-          <Icon name="check" size={14} /> {busy === 'submit' ? 'Checking…' : paper ? 'Submit answer' : 'Submit'}
-        </Button>
-        <span class="spacer" />
-        {!testMode && !readOnly ? <Button size="sm" variant="ghost" onClick={reset} disabled={code === cfg.initialCode}><Icon name="refresh" size={14} /> {cfg.resetLabel}</Button> : null}
-        {!testMode && !paper ? <Button size="sm" variant="ghost" onClick={() => openInPlayground(code, `${q.id}.py`)}><Icon name="terminal" size={14} /> Playground</Button> : null}
-      </div>
-      {cfg.status ? <div class="ct-status">{cfg.status({ code, graded })}</div> : null}
-      {!paper && status.state !== 'ready' && status.state !== 'running' ? (
-        <p class="ct-runtime" aria-live="polite">{runtimeStatusText(status)}{isStarting(status) ? '. You can start typing now.' : ''}</p>
-      ) : null}
-      <CodeEditor
-        value={code}
-        onChange={change}
-        readOnly={readOnly}
-        plain={paper}
-        markers={markers}
-        onRun={paper ? undefined : run}
-        onSubmit={submit}
-        onCursor={wb.onCursor}
-        ariaLabel={cfg.editorLabel}
-        minHeight={paper ? 280 : 200}
-        maxHeight={620}
+      {cfg.rules?.length && !wb.onQuestionPage ? <RulesList rules={cfg.rules} /> : null}
+      <EditorCard file={cfg.kind === 'function' ? 'solution.py' : 'main.py'} label="Code editor" footer={footer}>
+        {editor}
+      </EditorCard>
+      {wb.resultSlot}
+      <ResultsCard
+        label="Results"
+        tabs={tabs}
+        active={activeTab}
+        onTab={setTab}
+        status={<TestsStatusChip result={hideSubmitResult ? null : testsResult} busy={!!busy} idleText={idleText} />}
       />
-      {wb.layout !== 'full' && !paper && problemTotal > 0 ? <ProblemsList syntaxError={syntaxError} flags={flags} compact /> : null}
       {revealed && cfg.revealedView ? cfg.revealedView(code) : null}
       {revealed && !wb.pageShowsAnswer && q.solution.code ? (
         <div class="stack">
@@ -287,7 +313,6 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
           <CodeBlock code={q.solution.code} numbered />
         </div>
       ) : null}
-      <PanelTabs label="Results" tabs={tabs} active={tabs.some((t) => t.id === tab) ? tab : 'tests'} onChange={(id) => setTab(id as Tab)} class="ct-panel" />
     </div>
   );
 }
@@ -300,47 +325,13 @@ function explainableError(r: TestsResult | null, programErr: PyError | undefined
   return o?.error ?? null;
 }
 
-function TestsPreview({ tests, total, paper, program }: { tests: Test[]; total: number; paper: boolean; program: boolean }) {
-  const hidden = total - tests.length;
-  return (
-    <div class="tests-preview">
-      <p class="muted">
-        {paper
-          ? `Your answer is marked by ${total} tests when you submit.`
-          : `Run checks your code against the ${tests.length} visible ${tests.length === 1 ? 'test' : 'tests'}. Submit runs all ${total}${hidden ? `, including ${hidden} hidden` : ''}.`}
-      </p>
-      {tests.length && !paper ? (
-        <div class="tests-scroll">
-          <table class="tests-table">
-            <thead><tr><th scope="col">Test</th><th scope="col">Expected</th></tr></thead>
-            <tbody>
-              {tests.map((t) => (
-                <tr key={t.id}>
-                  <td data-label="Test">
-                    <div class="tt-cell">
-                      {t.setup ? <pre class="tt-code tt-setup">{t.setup}</pre> : null}
-                      {t.call ? <pre class="tt-code">{t.call}</pre> : <div>{t.label}</div>}
-                      {program && t.stdin?.length ? <div class="tt-sub">Input: <code>{t.stdin.join(' ⏎ ')}</code></div> : null}
-                    </div>
-                  </td>
-                  <td data-label="Expected"><div class="tt-cell"><pre class="tt-code">{t.expect ?? t.expectStdout ?? ''}</pre></div></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
 function DataFiles({ files }: { files: { name: string; content: string }[] }) {
   return (
-    <div class="stack">
-      <p class="muted">The visible tests create these files before calling your code. Open them by name, exactly as given.</p>
+    <div class="ct-stack">
+      <p class="muted">Tests create these files first · open them by name</p>
       {files.map((f) => (
         <details key={f.name} class="data-file" open={files.length === 1}>
-          <summary><code>{f.name}</code> <span class="faint">· {lineCount(f.content)} {lineCount(f.content) === 1 ? 'line' : 'lines'}</span></summary>
+          <summary><code>{f.name}</code> <span class="faint">{lineCount(f.content)} {lineCount(f.content) === 1 ? 'line' : 'lines'}</span></summary>
           <pre class="term-out data-file-body">{f.content}</pre>
         </details>
       ))}
@@ -356,9 +347,9 @@ function lineCount(text: string) {
 function PrintedOutput({ result }: { result: TestsResult | null }) {
   if (!result) return <p class="term-empty">Anything your code prints during Run appears here.</p>;
   const printed = result.outcomes.filter((o) => o.stdout && !o.hidden);
-  if (!printed.length) return <p class="term-empty">Your code did not print anything during the visible tests.</p>;
+  if (!printed.length) return <p class="term-empty">Nothing was printed during the visible tests.</p>;
   return (
-    <div class="stack">
+    <div class="ct-stack">
       {printed.map((o) => (
         <div key={o.id}>
           <div class="label">{o.label}</div>

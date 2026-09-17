@@ -1,4 +1,4 @@
-// App frame: skip link, sticky header, storage warning, main landmark, first-run tour and the shortcut sheet.
+// App frame: skip link, the 64px global top bar (hidden on question pages and running tests), storage warning, main landmark, first-run tour and the shortcut sheet.
 // Also applies theme and motion settings to <html>, warms up Python once, and binds "?" to the shortcut sheet.
 import type { ComponentChildren } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
@@ -11,8 +11,14 @@ import { Tour } from './Tour.tsx';
 import { applyTheme } from './ThemeToggle.tsx';
 import { isEditableTarget } from './format.ts';
 import { storeReady } from './storeReady.ts';
-import { shortcutSheetOpen, tourOpen } from './uiState.ts';
+import { mainFill, shortcutSheetOpen, tourOpen } from './uiState.ts';
 import '../../styles/shell.css';
+
+/** Routes whose screen fills the workspace height and manages its own scrolling (see docs/build/DESIGN.md "Frame"). */
+export const FILL_ROUTES: Route['name'][] = ['playground'];
+
+/** Routes that render their own focused bar instead of the global top bar. */
+export const BARLESS_ROUTES: Route['name'][] = ['question'];
 
 /** Routes where a tour popping up would get in the way (timed tests). */
 const NO_TOUR_ROUTES: Route['name'][] = ['topic-test', 'midsem'];
@@ -65,6 +71,9 @@ export function AppShell({ route, children }: { route: Route; children: Componen
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  const fill = FILL_ROUTES.includes(route.name) || mainFill.value;
+  const showBar = !BARLESS_ROUTES.includes(route.name) && !mainFill.value;
+
   const skipToMain = (e: MouseEvent) => {
     // Hash routing: a plain "#main" link would change the route, so move focus instead.
     e.preventDefault();
@@ -77,9 +86,9 @@ export function AppShell({ route, children }: { route: Route; children: Componen
   return (
     <div class="app">
       <a class="skip-link" href="#main" onClick={skipToMain}>Skip to main content</a>
-      <Header route={route} />
+      {showBar ? <Header route={route} /> : null}
       <StorageBanner />
-      <main ref={mainRef} class="app-main" id="main" tabIndex={-1} data-route={route.name}>
+      <main ref={mainRef} class="app-main" id="main" tabIndex={-1} data-route={route.name} data-fill={fill ? '' : undefined}>
         {children}
       </main>
       <ShortcutSheet />

@@ -1,69 +1,73 @@
-// Header pill showing the Python runtime state. Visible text updates every second while loading;
-// the polite live region only announces state changes, not every tick.
+// Python runtime state in the top bar: a small dot and "Python ready".
+// Visible text updates every second while loading; one polite live region announces state changes only.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { py } from '../../app/services.ts';
 import type { RuntimeStatus } from '../../runtime/protocol.ts';
+import { Tooltip } from '../components/Tooltip.tsx';
 
 function shortVersion(v: string) {
   const m = /(\d+)\.(\d+)/.exec(v);
   return m ? `${m[1]}.${m[2]}` : v;
 }
 
-type Tone = 'loading' | 'ok' | 'busy' | 'bad';
+export type RuntimeTone = 'loading' | 'ok' | 'busy' | 'bad';
 
-function describe(s: RuntimeStatus, secs: number): { tone: Tone; text: string; short: string; announce: string; title: string } {
+export function describeRuntime(s: RuntimeStatus, secs: number): { tone: RuntimeTone; text: string; version: string; announce: string; title: string } {
   switch (s.state) {
     case 'idle':
-      return { tone: 'loading', text: 'Starting Python...', short: 'Python...', announce: 'Python is starting', title: 'Python loads in the background. Read questions work straight away.' };
+      return { tone: 'loading', text: 'Starting Python', version: 'Python', announce: 'Python is starting', title: 'Python loads in the background. Reading questions work straight away.' };
     case 'loading':
-      return { tone: 'loading', text: `Starting Python... ${secs} s`, short: `Python ${secs} s`, announce: 'Python is starting', title: `${s.stage || 'Loading'}. Read questions work while Python starts.` };
+      return { tone: 'loading', text: secs > 0 ? `Starting Python ${secs} s` : 'Starting Python', version: 'Python', announce: 'Python is starting', title: `${s.stage || 'Loading'}. Reading questions work while Python starts.` };
     case 'ready':
-      return { tone: 'ok', text: `Python ${shortVersion(s.python)} ready`, short: `Python ${shortVersion(s.python)}`, announce: `Python ${shortVersion(s.python)} is ready`, title: `Python ${s.python} is ready` };
+      return { tone: 'ok', text: 'Python ready', version: `Python ${shortVersion(s.python)}`, announce: `Python ${shortVersion(s.python)} is ready`, title: `Python ${s.python} is running in your browser` };
     case 'running':
-      return { tone: 'busy', text: 'Running', short: 'Running', announce: `Python ${shortVersion(s.python)} is ready`, title: `Python ${s.python} is running your code` };
+      return { tone: 'busy', text: 'Running', version: `Python ${shortVersion(s.python)}`, announce: `Python ${shortVersion(s.python)} is ready`, title: `Python ${s.python} is running your code` };
     case 'restarting':
-      return { tone: 'loading', text: 'Restarting Python', short: 'Restarting', announce: 'Python is restarting', title: s.reason || 'Restarting Python' };
+      return { tone: 'loading', text: 'Restarting Python', version: 'Python', announce: 'Python is restarting', title: s.reason || 'Restarting Python' };
     case 'error':
-      return { tone: 'bad', text: 'Python failed to load', short: 'Python failed', announce: 'Python failed to load', title: s.message || 'Python failed to load' };
+      return { tone: 'bad', text: 'Python failed to load', version: 'Python failed', announce: 'Python failed to load', title: s.message || 'Python failed to load' };
   }
 }
 
-export function RuntimePill() {
+/** Seconds since loading started, re-rendering once a second while loading. */
+function useRuntime() {
   const s = py.status.value;
   const startedAt = useRef<number | null>(null);
   const [, setTick] = useState(0);
-
   const loading = s.state === 'loading';
   if (loading && startedAt.current === null) startedAt.current = Date.now() - (s.elapsedMs || 0);
   if (!loading) startedAt.current = null;
-
   useEffect(() => {
     if (!loading) return;
     const t = setInterval(() => setTick((n) => n + 1), 1000);
     return () => clearInterval(t);
   }, [loading]);
-
   let secs = 0;
   if (s.state === 'loading') {
     const local = startedAt.current !== null ? Date.now() - startedAt.current : 0;
     secs = Math.max(0, Math.round(Math.max(s.elapsedMs || 0, local) / 1000));
   }
-  const d = describe(s, secs);
+  return { s, d: describeRuntime(s, secs) };
+}
 
-  const retry = () => {
-    py.restart('Retry after load failure');
-    py.warmUp();
-  };
+function retry() {
+  py.restart('Retry after load failure');
+  py.warmUp();
+}
 
+/** Dot + state text, a live region, and Retry on failure. */
+export function RuntimePill() {
+  const { s, d } = useRuntime();
   return (
-    <div class={`rt-pill ${d.tone}`} title={d.title}>
-      <span class="rt-dot" aria-hidden="true" />
-      <span class="rt-text rt-long" aria-hidden="true">{d.text}</span>
-      <span class="rt-text rt-short" aria-hidden="true">{d.short}</span>
+    <div class={`rt rt-${d.tone}`}>
+      <Tooltip content={d.title} side="bottom" align="end" decorative>
+        <span class="rt-main">
+          <span class="rt-dot" aria-hidden="true" />
+          <span class="rt-text" aria-hidden="true">{d.text}</span>
+        </span>
+      </Tooltip>
       <span class="sr-only" aria-live="polite">{d.announce}</span>
-      {s.state === 'error' ? (
-        <button type="button" class="rt-retry" onClick={retry}>Retry</button>
-      ) : null}
+      {s.state === 'error' ? <button type="button" class="rt-retry" onClick={retry}>Retry</button> : null}
     </div>
   );
 }

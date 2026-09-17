@@ -1,45 +1,67 @@
-// Result of the latest check: plain score, feedback, and Next question.
+// Result feedback card after a check: ok-tint "Correct" / bad-tint "Not quite", one sentence of feedback (Markdown,
+// never raw backticks), the score that was actually saved (after hints, none once the answer was shown), and
+// "Next question" (primary when correct).
 import type { GradeResult } from '../../engine/types.ts';
 import { LinkButton } from '../components/Button.tsx';
 import { Icon } from '../components/Icon.tsx';
+import { Markdown } from '../components/Markdown.tsx';
 import './workbench.css';
 
-export interface ResultBannerProps {
+export interface ResultCardProps {
   result: GradeResult | null;
-  /** Paper questions: show marks earned out of this total. */
+  /** Credited score saved with the attempt (score x hint multiplier, 0 when the answer was shown). */
+  credit: number;
+  /** Hint tier used before the check. */
+  hints: number;
+  /** The answer had been shown before this check. */
+  answerShown: boolean;
+  /** Paper questions: marks out of this total. */
   marks?: number;
   nextHref?: string;
   nextLabel?: string;
   checksLeft?: number;
-  revealed?: boolean;
 }
 
 export function marksEarned(score: number, marks: number) {
   return Math.round(score * marks);
 }
 
-export function ResultBanner({ result, marks, nextHref, nextLabel = 'Next question', checksLeft, revealed }: ResultBannerProps) {
+export function scoreText({ result, credit, hints, answerShown, marks }: Pick<ResultCardProps, 'result' | 'credit' | 'hints' | 'answerShown' | 'marks'>): string {
+  if (!result) return '';
+  if (answerShown) return 'No score: the answer was shown';
+  const hintText = hints > 0 ? ` with ${hints} ${hints === 1 ? 'hint' : 'hints'}` : '';
+  if (marks) return `${marksEarned(credit, marks)} of ${marks} marks${hintText}`;
+  if (!result.correct && result.score === 0) return '';
+  return `Score ${Math.round(credit * 100)}%${hintText}`;
+}
+
+export function ResultCard(p: ResultCardProps) {
+  const { result } = p;
+  const finite = p.checksLeft !== undefined && Number.isFinite(p.checksLeft);
+  const outOfChecks = !!result && !result.correct && finite && p.checksLeft! <= 0;
+  const tone = !result ? '' : result.correct ? 'ok' : 'bad';
+  const word = !result ? '' : result.correct ? 'Correct' : result.score > 0 ? 'Partly right' : 'Not quite';
+  const score = scoreText(p);
+  const left = !!result && !result.correct && !p.answerShown && finite && p.checksLeft! > 0
+    ? `${p.checksLeft} ${p.checksLeft === 1 ? 'check' : 'checks'} left` : '';
+  const showNext = !!result && !!p.nextHref && (result.correct || p.answerShown || outOfChecks);
+  const fallback = result?.correct ? 'Nice work.' : outOfChecks ? 'No checks left, so the answer is shown below.' : 'Look at what differs and try again.';
   return (
     <div class="result-live" aria-live="polite" aria-atomic="true">
       {result ? (
-        <div class={`result-banner ${result.correct ? 'ok' : result.score > 0 ? 'part' : 'bad'}`}>
-          <span class="result-icon" aria-hidden="true"><Icon name={result.correct ? 'check' : result.score > 0 ? 'target' : 'x'} size={18} /></span>
+        <div class={`result-card ${tone}`}>
+          <span class="result-icon" aria-hidden="true"><Icon name={result.correct ? 'check' : 'x'} size={18} /></span>
           <div class="result-text">
-            <strong class="result-title">
-              {result.correct ? 'Correct' : result.score > 0 ? 'Partly right' : 'Not yet'}
-              <span class="result-score num">
-                {marks ? ` · ${marksEarned(result.score, marks)} of ${marks} marks` : ` · score ${Math.round(result.score * 100)}%`}
-              </span>
-            </strong>
-            {result.feedback ? <span class="result-feedback">{result.feedback}</span> : null}
-            {!result.correct && !revealed && checksLeft !== undefined && Number.isFinite(checksLeft) ? (
-              <span class="result-feedback muted">{checksLeft <= 0 ? 'No checks left. The answer is shown below.' : `${checksLeft} ${checksLeft === 1 ? 'check' : 'checks'} left.`}</span>
-            ) : null}
+            <div class="result-head">
+              <strong class="result-word">{word}</strong>
+              {score ? <span class="result-score">{score}</span> : null}
+              {left ? <span class="result-left">{left}</span> : null}
+            </div>
+            <Markdown class="result-feedback" text={result.feedback?.trim() ? result.feedback : fallback} />
           </div>
-          <span class="spacer" />
-          {nextHref ? (
-            <LinkButton href={nextHref} variant={result.correct ? 'primary' : 'secondary'} size="sm">
-              {nextLabel} <Icon name="arrowRight" size={14} />
+          {showNext ? (
+            <LinkButton href={p.nextHref!} variant={result.correct ? 'primary' : 'secondary'} class="result-next">
+              {p.nextLabel ?? 'Next question'} <Icon name="arrowRight" size={16} />
             </LinkButton>
           ) : null}
         </div>

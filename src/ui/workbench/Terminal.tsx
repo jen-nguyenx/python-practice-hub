@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { py } from '../../app/services.ts';
 import { Button } from '../components/Button.tsx';
 import { Icon } from '../components/Icon.tsx';
+import { IconButton } from './Tip.tsx';
 import type { PyError } from '../../runtime/protocol.ts';
 import type { ProgramRunState } from './runner.ts';
 import { errorOneLine, isStarting } from './plain.ts';
@@ -35,15 +36,16 @@ export function Terminal({ state, onInput, onClear, emptyText, replayNote = true
   const err = result?.error;
   return (
     <div class="terminal" role="region" aria-label="Program output">
-      <div class="term-toolbar">
-        <span class="spacer" />
-        {onClear ? <Button size="sm" variant="ghost" onClick={onClear} disabled={!result && !failure}>Clear output</Button> : null}
-      </div>
+      {onClear && (result || failure) ? (
+        <div class="term-toolbar">
+          <IconButton icon="trash" size="sm" label="Clear output" side="bottom" align="end" onClick={onClear} />
+        </div>
+      ) : null}
       <div class="term-body" aria-live="polite">
         {running ? (
           <p class="term-status">
             <span class="term-dot" aria-hidden="true" />
-            {isStarting(status) ? 'Python is starting (about 10 to 30 seconds on the first visit). Your code will run as soon as it is ready.' : 'Running…'}
+            {isStarting(status) ? 'Starting Python · the first start takes 10 to 30 s' : 'Running…'}
           </p>
         ) : null}
         {failure ? (
@@ -79,7 +81,7 @@ export function Terminal({ state, onInput, onClear, emptyText, replayNote = true
                   aria-describedby={replayNote ? 'term-input-note' : undefined}
                 />
                 <Button size="sm" type="submit">Enter</Button>
-                {replayNote ? <p id="term-input-note" class="term-note">Your program is waiting for input. Typing a line replays the program from the top.</p> : null}
+                {replayNote ? <p id="term-input-note" class="term-note">Waiting for input · Enter replays the program from the top</p> : null}
               </form>
             ) : null}
             {err ? (
@@ -88,7 +90,7 @@ export function Terminal({ state, onInput, onClear, emptyText, replayNote = true
                   <Icon name="alert" />
                   <strong>{errorHeading(err)}</strong>
                   {onExplain && err.type !== 'TimeoutError' && err.type !== 'OutputLimit' ? (
-                    <Button size="sm" variant="ghost" onClick={onExplain}>Explain this error</Button>
+                    <button type="button" class="link-btn" onClick={onExplain}>Explain this error</button>
                   ) : null}
                 </div>
                 {err.type === 'TimeoutError' || err.type === 'OutputLimit' ? <p>{err.message}</p> : null}

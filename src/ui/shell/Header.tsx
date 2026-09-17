@@ -1,31 +1,34 @@
-// Sticky app header: logo, main navigation (menu button under 760px), runtime pill, shortcuts and theme toggle.
+// Global 64px top bar: logo mark + "PyLadder" + "CITS1401 practice", right-aligned navigation
+// (Topics · Playground · Tests · Reports · Settings), runtime status and a quiet theme toggle.
+// Under 860px the navigation collapses behind a menu button. Hidden on question pages and running tests.
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { href } from '../../app/router.ts';
 import type { Route } from '../../app/router.ts';
-import { store } from '../../app/services.ts';
 import { Icon } from '../components/Icon.tsx';
+import { LogoMark } from './LogoMark.tsx';
 import { RuntimePill } from './RuntimePill.tsx';
 import { ThemeToggle } from './ThemeToggle.tsx';
-import { shortcutSheetOpen } from './uiState.ts';
 
-type NavKey = 'topics' | 'playground' | 'midsem' | 'report' | 'settings';
+type NavKey = 'topics' | 'playground' | 'tests' | 'report' | 'settings';
 
 const NAV: { key: NavKey; label: string; href: string }[] = [
   { key: 'topics', label: 'Topics', href: href.landing() },
   { key: 'playground', label: 'Playground', href: href.playground() },
-  { key: 'midsem', label: 'Mid-sem test', href: href.midsem() },
-  { key: 'report', label: 'Report', href: href.report() },
+  { key: 'tests', label: 'Tests', href: href.midsem() },
+  { key: 'report', label: 'Reports', href: href.report() },
   { key: 'settings', label: 'Settings', href: href.settings() },
 ];
 
 /** aria-current value for a nav item: "page" on the exact page, "true" when inside that section. */
-function currentFor(key: NavKey, r: Route): 'page' | 'true' | undefined {
+export function currentFor(key: NavKey, r: Route): 'page' | 'true' | undefined {
   switch (key) {
     case 'topics':
       if (r.name === 'landing') return 'page';
-      return r.name === 'topic' || r.name === 'question' || r.name === 'topic-test' ? 'true' : undefined;
+      return r.name === 'topic' || r.name === 'question' ? 'true' : undefined;
     case 'playground': return r.name === 'playground' ? 'page' : undefined;
-    case 'midsem': return r.name === 'midsem' ? 'page' : undefined;
+    case 'tests':
+      if (r.name === 'midsem') return 'page';
+      return r.name === 'topic-test' ? 'true' : undefined;
     case 'report':
       if (r.name !== 'report') return undefined;
       return r.topicId ? 'true' : 'page';
@@ -37,7 +40,6 @@ export function Header({ route }: { route: Route }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuBtn = useRef<HTMLButtonElement>(null);
   const navRef = useRef<HTMLElement>(null);
-  const singleKey = store.settings.value.singleKeyShortcuts;
 
   // Close the mobile menu on navigation.
   useEffect(() => { setMenuOpen(false); }, [route]);
@@ -58,26 +60,13 @@ export function Header({ route }: { route: Route }) {
   }, [menuOpen]);
 
   return (
-    <header class="app-header">
-      <button
-        ref={menuBtn}
-        type="button"
-        class="icon-btn hdr-menu-btn"
-        aria-expanded={menuOpen}
-        aria-controls="app-nav"
-        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
-        <Icon name={menuOpen ? 'x' : 'menu'} />
-      </button>
-      <a class="app-logo" href={href.landing()} aria-label="PyLadder home">
-        <svg class="app-logo-mark" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-          <rect x="0.75" y="0.75" width="18.5" height="18.5" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" />
-          <path d="M6.5 4.5v11M13.5 4.5v11M6.5 8h7M6.5 12h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-        </svg>
-        <span class="app-logo-text">Py<span>Ladder</span></span>
+    <header class="topbar">
+      <a class="brand" href={href.landing()} aria-label="PyLadder home">
+        <LogoMark />
+        <span class="brand-name">PyLadder</span>
+        <span class="brand-unit">CITS1401 practice</span>
       </a>
-      <nav ref={navRef} id="app-nav" class={`app-nav${menuOpen ? ' open' : ''}`} aria-label="Main">
+      <nav ref={navRef} id="app-nav" class={`topnav${menuOpen ? ' open' : ''}`} aria-label="Main">
         {NAV.map((n) => {
           const cur = currentFor(n.key, route);
           return (
@@ -87,18 +76,20 @@ export function Header({ route }: { route: Route }) {
           );
         })}
       </nav>
-      <div class="hdr-right">
+      <div class="topbar-tools">
         <RuntimePill />
-        <button
-          type="button"
-          class="icon-btn hdr-keys"
-          aria-label="Keyboard shortcuts"
-          title={singleKey ? 'Keyboard shortcuts (?)' : 'Keyboard shortcuts'}
-          onClick={() => { shortcutSheetOpen.value = true; }}
-        >
-          <Icon name="keyboard" />
-        </button>
         <ThemeToggle />
+        <button
+          ref={menuBtn}
+          type="button"
+          class="icon-btn topbar-menu"
+          aria-expanded={menuOpen}
+          aria-controls="app-nav"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <Icon name={menuOpen ? 'x' : 'menu'} size={18} />
+        </button>
       </div>
     </header>
   );

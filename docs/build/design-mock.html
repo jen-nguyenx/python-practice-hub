@@ -1,0 +1,308 @@
+<title>PyLadder Calm Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* This page deliberately commits to one dark presentation ground; each mock carries its own fixed palette. */
+*{box-sizing:border-box}
+html,body{margin:0;background:#06080b;color:#c9d1db;font-family:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif}
+body{padding-inline:20px;padding-block:40px 80px}
+.page{max-width:1240px;margin:0 auto;display:grid;gap:56px}
+.intro{display:grid;gap:10px;max-width:70ch}
+.intro .eyebrow{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a94a3}
+.intro h1{margin:0;font-size:30px;font-weight:600;letter-spacing:-.02em;color:#e6eaf0}
+.intro p{margin:0;font-size:15px;line-height:1.6;color:#9aa4b2}
+.intro ul{margin:6px 0 0;padding-left:1.1em;display:grid;gap:4px;font-size:14px;color:#9aa4b2}
+figure{margin:0;display:grid;gap:12px}
+figcaption{font-size:14px;color:#9aa4b2;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+figcaption b{color:#e6eaf0;font-weight:600}
+.frame-wrap{overflow-x:auto;border-radius:12px}
+
+/* ---------- palettes ---------- */
+.dk{--bg:#0b0e13;--panel:#10141b;--surface:#141922;--surface2:#1a202b;--surface3:#232b37;--border:#1f2631;--border2:#2c3542;--control:#5b6677;--text:#e6eaf0;--muted:#9aa4b2;--faint:#8a94a3;--accent:#ffd43b;--onaccent:#0b0e13;--accentsoft:rgba(255,212,59,.12);--accentline:rgba(255,212,59,.45);--blue:#6cb6ff;--bluesoft:rgba(108,182,255,.14);--hint:#56d4dd;--hintsoft:rgba(86,212,221,.12);--ok:#3fb950;--bad:#ff6a61;--easy:#2fcca6;--medium:#f2b845;--hard:#ff7b72;--inset:#07090d;--edline:#121720;--k:#569cd6;--s:#ce9178;--n:#b5cea8;--c:#7fa56b;--f:#dcdcaa;--b:#4ec9b0;--gut:#4b5563}
+.lt{--bg:#f7f8fa;--panel:#eff2f6;--surface:#ffffff;--surface2:#f3f5f8;--surface3:#e6eaf0;--border:#e1e5eb;--border2:#cdd3db;--control:#7e8896;--text:#1b1f24;--muted:#545d68;--faint:#5d6671;--accent:#f5c400;--onaccent:#1b1f24;--accentsoft:rgba(245,196,0,.16);--accentline:rgba(160,120,0,.45);--blue:#0b62c7;--bluesoft:rgba(11,98,199,.10);--hint:#0a7278;--hintsoft:rgba(10,114,120,.10);--ok:#176f31;--bad:#c9252d;--easy:#0a735b;--medium:#8f5f00;--hard:#bf3a2b;--inset:#eef1f5;--edline:#f3f5f8;--k:#0b50a8;--s:#a31515;--n:#0b6b43;--c:#5a6e4a;--f:#74501c;--b:#1f6f7a;--gut:#9aa3ad}
+
+/* ---------- app frame ---------- */
+.app{width:1200px;height:760px;background:var(--bg);color:var(--text);display:grid;grid-template-rows:48px 1fr 28px;border:1px solid #1c222c;border-radius:12px;overflow:hidden;font-size:15px}
+.lt.app{border-color:#2a303a}
+.titlebar{display:flex;align-items:center;gap:16px;padding:0 16px 0 0;background:var(--panel);border-bottom:1px solid var(--border)}
+.mark{width:48px;height:48px;display:grid;place-items:center;border-right:1px solid var(--border)}
+.mark svg{display:block}
+.crumb{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.crumb b{color:var(--text);font-weight:500}
+.crumb i{font-style:normal;color:var(--faint)}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.search{display:flex;align-items:center;gap:10px;height:30px;width:260px;padding:0 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border);color:var(--faint);font-size:13px}
+.search kbd{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint)}
+.rt{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.iconbtn{width:30px;height:30px;display:grid;place-items:center;border-radius:6px;color:var(--muted)}
+
+.body{display:grid;grid-template-columns:48px 1fr;min-height:0}
+.activity{background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:6px}
+.act{width:48px;height:42px;display:grid;place-items:center;color:var(--faint);position:relative}
+.act.on{color:var(--text)}
+.act.on::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:2px;border-radius:2px;background:var(--accent)}
+.act.spacer{flex:1;height:auto}
+.main{min-width:0;min-height:0;overflow:hidden}
+.status{display:flex;align-items:center;gap:20px;padding:0 16px;background:var(--panel);border-top:1px solid var(--border);font-size:12px;color:var(--faint);font-family:"JetBrains Mono",monospace}
+.status .grow{flex:1}
+
+/* ---------- home ---------- */
+.home{height:100%;overflow:hidden;padding:44px 64px;display:grid;align-content:start;gap:40px;max-width:1152px}
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.hero{display:grid;grid-template-columns:1.6fr 1fr;gap:20px}
+.continue{background:var(--surface);border:1px solid var(--accentline);border-radius:10px;padding:24px 26px;display:grid;gap:18px;align-content:start}
+.continue h2{margin:0;font-size:24px;font-weight:600;letter-spacing:-.015em}
+.continue .meta{font-size:14px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 18px;border-radius:7px;font-size:14px;font-weight:600;border:1px solid transparent;white-space:nowrap}
+.btn.primary{background:var(--accent);color:var(--onaccent)}
+.btn.secondary{background:transparent;border-color:var(--control);color:var(--text);font-weight:500}
+.btn.ghost{background:transparent;color:var(--muted);font-weight:500;padding:0 10px}
+.btn kbd{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:500;opacity:.7}
+.side-card{background:transparent;border:1px solid var(--border);border-radius:10px;padding:24px 26px;display:grid;gap:14px;align-content:start}
+.side-card h3{margin:0;font-size:17px;font-weight:600}
+.side-card p{margin:0;font-size:14px;color:var(--muted);line-height:1.5}
+.today{display:flex;gap:28px;font-size:14px;color:var(--muted)}
+.today b{font-family:"JetBrains Mono",monospace;font-weight:500;color:var(--text);font-size:15px;margin-right:6px}
+.ladder-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+.ladder-head span{font-size:13px;color:var(--faint)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tile{background:var(--surface);border-radius:9px;padding:16px 18px;display:grid;gap:12px;border:1px solid transparent}
+.tile.cur{border-color:var(--accentline)}
+.tile.lock{background:transparent;border-color:var(--border);color:var(--faint)}
+.tile-top{display:flex;justify-content:space-between;align-items:center;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--faint)}
+.tile-name{font-size:15px;font-weight:600}
+.tile.lock .tile-name{font-weight:500;color:var(--muted)}
+.bar{height:4px;border-radius:2px;background:var(--surface3);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:2px}
+.tile.cur .bar i{background:var(--accent)}
+.tile-foot{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--faint)}
+.band{grid-column:1/-1;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding-top:12px}
+
+/* ---------- question ---------- */
+.q{height:100%;display:grid;grid-template-rows:auto 1fr;min-height:0}
+.qhead{display:flex;align-items:center;gap:16px;padding:18px 28px;border-bottom:1px solid var(--border)}
+.qhead h2{margin:0;font-size:22px;font-weight:600;letter-spacing:-.015em}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)}
+.pill i{width:7px;height:7px;border-radius:50%;display:block}
+.fmt{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--faint)}
+.qnav{margin-left:auto;display:flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--muted)}
+.split{display:grid;grid-template-columns:42% 1fr;min-height:0}
+.desc{padding:32px 36px;overflow:hidden;display:grid;align-content:start;gap:22px;border-right:1px solid var(--border)}
+.story{font-size:14px;color:var(--muted);line-height:1.6;margin:0}
+.prompt{font-size:17px;line-height:1.6;margin:0}
+.prompt code,.inline{font-family:"JetBrains Mono",monospace;font-size:14px;background:var(--surface2);padding:1px 6px;border-radius:4px}
+.example{font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.7;background:var(--inset);border-radius:8px;padding:14px 16px;color:var(--muted)}
+.example b{color:var(--text);font-weight:500}
+.help{display:flex;gap:6px;padding-top:6px}
+.btn.hint{background:transparent;color:var(--hint);border-color:transparent;padding:0 12px;height:36px;font-weight:500}
+.work{display:grid;grid-template-rows:1fr auto 38px;min-height:0;background:var(--surface)}
+.lt .work{background:#fff}
+.editor{font-family:"JetBrains Mono",monospace;font-size:14px;line-height:1.85;padding:20px 0;overflow:hidden;background:var(--bg)}
+.lt .editor{background:#fff}
+.ln{display:grid;grid-template-columns:56px 1fr;white-space:pre}
+.ln > span:first-child{color:var(--gut);text-align:right;padding-right:22px}
+.ln.cur{background:var(--edline)}
+.caret{display:inline-block;width:2px;height:17px;background:var(--accent);vertical-align:-3px}
+.lt .caret{background:#1b1f24}
+.k{color:var(--k)}.s{color:var(--s)}.n{color:var(--n)}.c{color:var(--c);font-style:italic}.f{color:var(--f)}.b{color:var(--b)}
+.actions{display:flex;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--border);background:var(--panel)}
+.lt .actions{background:var(--surface2)}
+.actions .grow{flex:1}
+.panelbar{display:flex;align-items:center;gap:22px;padding:0 20px;border-top:1px solid var(--border);font-size:13px;color:var(--faint);background:var(--panel)}
+.lt .panelbar{background:var(--surface2)}
+.panelbar .count{font-family:"JetBrains Mono",monospace;font-size:12px}
+.panelbar .grow{flex:1}
+
+.duo{display:grid;grid-template-columns:1fr;gap:12px}
+.note{font-size:13px;color:#8a94a3}
+@media (max-width:1280px){ .frame-wrap{padding-bottom:6px} }
+</style>
+
+<div class="page">
+  <header class="intro">
+    <span class="eyebrow">PyLadder · redesign proposal · calm workspace</span>
+    <h1>Same IDE feel, a lot less on screen</h1>
+    <p>This is a static mockup, not the app. It shows how the home screen and a coding question would look after decluttering. Scroll sideways inside a frame on a small screen.</p>
+    <ul>
+      <li>Home shows three things: Continue, the mid-sem test, and your topic ladder.</li>
+      <li>Tiles show a name and a progress bar. Lock reasons move into a tooltip.</li>
+      <li>A question shows only the prompt, the editor and one yellow button until you need more.</li>
+      <li>Hints sit behind one button. The Tests and Output panel stays folded until there is something to show.</li>
+    </ul>
+  </header>
+
+  <!-- ================= HOME, DARK ================= -->
+  <figure>
+    <figcaption><b>Home</b> dark · 1200 × 760</figcaption>
+    <div class="frame-wrap">
+      <div class="app dk" role="img" aria-label="Mockup of the redesigned home screen in dark mode with a Continue card, a mid-semester test card, and a grid of topic tiles">
+        <div class="titlebar">
+          <div class="mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="1" width="20" height="20" rx="5" fill="#ffd43b"/><path d="M7 5v12M15 5v12M7 9h8M7 13h8" stroke="#0b0e13" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="crumb"><b>PyLadder</b></div>
+          <div class="tb-right">
+            <div class="search"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>Go to question or topic<kbd>⌘K</kbd></div>
+            <div class="rt"><span class="dot"></span>Python ready</div>
+            <div class="iconbtn"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 12.5A7 7 0 0 1 7.5 4a7 7 0 1 0 8.5 8.5z"/></svg></div>
+          </div>
+        </div>
+        <div class="body">
+          <nav class="activity">
+            <div class="act on"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h5l2 2h7v10H3z"/></svg></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 6l-4 4 4 4M13 6l4 4-4 4"/></svg></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7.5"/><path d="M10 6v4l3 2"/></svg></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17h14M6 14V9M10 14V5M14 14v-3"/></svg></div>
+            <div class="act spacer"></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="2.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.3 4.3l1.8 1.8M13.9 13.9l1.8 1.8M4.3 15.7l1.8-1.8M13.9 6.1l1.8-1.8"/></svg></div>
+          </nav>
+          <div class="main">
+            <div class="home">
+              <div style="display:grid;gap:10px">
+                <span class="eyebrow">CITS1401 · Week 8 · exams in 38 days</span>
+                <div class="today"><span><b>12</b>questions today</span><span><b>24</b>minutes</span><span><b>2</b>new mistakes</span></div>
+              </div>
+              <div class="hero">
+                <div class="continue">
+                  <span class="eyebrow" style="color:var(--accent)">Continue</span>
+                  <h2>For loops · Stair count</h2>
+                  <div class="meta"><span>Write code</span><span>·</span><span>Medium</span><span>·</span><span>Question 4 of 13</span></div>
+                  <div><span class="btn primary">Continue <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10h12M11 5l5 5-5 5"/></svg></span></div>
+                </div>
+                <div class="side-card">
+                  <h3>Mid-sem practice test</h3>
+                  <p>20 questions from topics 1 to 7, timed, no hints.</p>
+                  <div><span class="btn secondary">Start test</span></div>
+                </div>
+              </div>
+              <div>
+                <div class="ladder-head"><span class="eyebrow">Your ladder</span><span>3 of 13 open</span></div>
+                <div class="tiles">
+                  <div class="tile"><div class="tile-top"><span>01</span><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#3fb950" stroke-width="2"><path d="M4 10.5l4 4 8-9"/></svg></div><div class="tile-name">Variables</div><div class="bar"><i style="width:83%"></i></div><div class="tile-foot"><span>10/12</span><span>done</span></div></div>
+                  <div class="tile"><div class="tile-top"><span>02</span><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#3fb950" stroke-width="2"><path d="M4 10.5l4 4 8-9"/></svg></div><div class="tile-name">Decisions</div><div class="bar"><i style="width:58%"></i></div><div class="tile-foot"><span>7/12</span><span>done</span></div></div>
+                  <div class="tile cur"><div class="tile-top"><span>03</span><span style="width:7px;height:7px;border-radius:50%;background:#ffd43b;display:block"></span></div><div class="tile-name">For loops</div><div class="bar"><i style="width:23%"></i></div><div class="tile-foot"><span>3/13</span><span>min 6</span></div></div>
+                  <div class="tile lock"><div class="tile-top"><span>04</span><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 10V7a5 5 0 0 1 10 0v3M4 10h12v8H4z"/></svg></div><div class="tile-name">Functions</div><div class="bar"></div><div class="tile-foot"><span>0/12</span><span></span></div></div>
+                  <div class="tile lock"><div class="tile-top"><span>05</span><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 10V7a5 5 0 0 1 10 0v3M4 10h12v8H4z"/></svg></div><div class="tile-name">Strings</div><div class="bar"></div><div class="tile-foot"><span>0/12</span><span></span></div></div>
+                  <div class="tile lock"><div class="tile-top"><span>06</span><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 10V7a5 5 0 0 1 10 0v3M4 10h12v8H4z"/></svg></div><div class="tile-name">Lists</div><div class="bar"></div><div class="tile-foot"><span>0/13</span><span></span></div></div>
+                  <div class="tile lock"><div class="tile-top"><span>07</span><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 10V7a5 5 0 0 1 10 0v3M4 10h12v8H4z"/></svg></div><div class="tile-name">While loops</div><div class="bar"></div><div class="tile-foot"><span>0/13</span><span></span></div></div>
+                  <div class="tile lock"><div class="tile-top"><span>08</span><svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 10V7a5 5 0 0 1 10 0v3M4 10h12v8H4z"/></svg></div><div class="tile-name">Dictionaries</div><div class="bar"></div><div class="tile-foot"><span>0/12</span><span></span></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span style="display:flex;gap:7px;align-items:center"><span class="dot"></span>Python 3.14</span><span class="grow"></span><span>Week 8 · exams in 38 days</span></div>
+      </div>
+    </div>
+    <p class="note">Topics 9 to 13 continue below the fold under a "Projects and final exam" label.</p>
+  </figure>
+
+  <!-- ================= QUESTION, DARK ================= -->
+  <figure>
+    <figcaption><b>Coding question</b> dark · before the first Run</figcaption>
+    <div class="frame-wrap">
+      <div class="app dk" role="img" aria-label="Mockup of a coding question in dark mode with the prompt on the left and a code editor with a yellow Run button on the right">
+        <div class="titlebar">
+          <div class="mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="1" width="20" height="20" rx="5" fill="#ffd43b"/><path d="M7 5v12M15 5v12M7 9h8M7 13h8" stroke="#0b0e13" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="crumb"><span>For loops</span><i>/</i><span>Jacob's Ladder</span><i>/</i><b>Stair count</b></div>
+          <div class="tb-right">
+            <div class="search"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>Go to question or topic<kbd>⌘K</kbd></div>
+            <div class="rt"><span class="dot"></span>Python ready</div>
+          </div>
+        </div>
+        <div class="body">
+          <nav class="activity">
+            <div class="act on"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h5l2 2h7v10H3z"/></svg></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 6l-4 4 4 4M13 6l4 4-4 4"/></svg></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7.5"/><path d="M10 6v4l3 2"/></svg></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17h14M6 14V9M10 14V5M14 14v-3"/></svg></div>
+            <div class="act spacer"></div>
+          </nav>
+          <div class="main">
+            <div class="q">
+              <div class="qhead">
+                <h2>Stair count</h2>
+                <span class="pill"><i style="background:#f2b845"></i>Medium</span>
+                <span class="fmt">write code</span>
+                <div class="qnav"><span class="iconbtn"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5l-5 5 5 5"/></svg></span>4 / 13<span class="iconbtn"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 5l5 5-5 5"/></svg></span></div>
+              </div>
+              <div class="split">
+                <div class="desc">
+                  <p class="story">Jacob's Ladder in Kings Park has 242 steps. A training app adds up the effort of each set.</p>
+                  <p class="prompt">Write <code>sum_of_squares(n)</code> that returns 1² + 2² + … + n² using a <code>for</code> loop. Return <code>0</code> when <code>n</code> is 0.</p>
+                  <div class="example"><b>sum_of_squares(3)</b>  →  14<br><b>sum_of_squares(1)</b>  →  1</div>
+                  <div class="help"><span class="btn hint"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 14h6M8 17h4M10 2a5 5 0 0 0-3 9c.6.5 1 1.2 1 2h4c0-.8.4-1.5 1-2a5 5 0 0 0-3-9z"/></svg>Need a hint?</span><span class="btn ghost">Show answer</span></div>
+                </div>
+                <div class="work">
+                  <div class="editor">
+                    <div class="ln"><span>1</span><span><span class="k">def</span> <span class="f">sum_of_squares</span>(n):</span></div>
+                    <div class="ln"><span>2</span><span>    total = <span class="n">0</span></span></div>
+                    <div class="ln"><span>3</span><span>    <span class="k">for</span> k <span class="k">in</span> <span class="b">range</span>(<span class="n">1</span>, n + <span class="n">1</span>):</span></div>
+                    <div class="ln cur"><span>4</span><span>        total += k ** <span class="n">2</span><span class="caret"></span></span></div>
+                    <div class="ln"><span>5</span><span>    <span class="k">return</span> total</span></div>
+                  </div>
+                  <div class="actions"><span class="btn primary"><svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3l12 7-12 7z"/></svg>Run <kbd>⌘↵</kbd></span><span class="btn secondary">Submit <kbd>⌘⇧↵</kbd></span><span class="grow"></span><span class="iconbtn" title="Reset"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 10a6 6 0 1 1-2-4.5M16 3v4h-4"/></svg></span></div>
+                  <div class="panelbar"><span>Tests <span class="count">2 visible · 3 hidden</span></span><span>Output</span><span class="grow"></span><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12l5-5 5 5"/></svg></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span style="display:flex;gap:7px;align-items:center"><span class="dot"></span>Python 3.14</span><span class="grow"></span><span>Ln 4, Col 26</span><span>Week 8 · exams in 38 days</span></div>
+      </div>
+    </div>
+  </figure>
+
+  <!-- ================= QUESTION, LIGHT ================= -->
+  <figure>
+    <figcaption><b>Multiple choice</b> light · after picking an option</figcaption>
+    <div class="frame-wrap">
+      <div class="app lt" role="img" aria-label="Mockup of a multiple choice question in light mode with the prompt on the left and four answer rows on the right">
+        <div class="titlebar">
+          <div class="mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="1" y="1" width="20" height="20" rx="5" fill="#f5c400"/><path d="M7 5v12M15 5v12M7 9h8M7 13h8" stroke="#1b1f24" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="crumb"><span>Variables</span><i>/</i><span>Rottnest ferry</span><i>/</i><b>Family fare</b></div>
+          <div class="tb-right">
+            <div class="search"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>Go to question or topic<kbd>⌘K</kbd></div>
+            <div class="rt"><span class="dot"></span>Python ready</div>
+          </div>
+        </div>
+        <div class="body">
+          <nav class="activity">
+            <div class="act on"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h5l2 2h7v10H3z"/></svg></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 6l-4 4 4 4M13 6l4 4-4 4"/></svg></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7.5"/><path d="M10 6v4l3 2"/></svg></div>
+            <div class="act"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17h14M6 14V9M10 14V5M14 14v-3"/></svg></div>
+            <div class="act spacer"></div>
+          </nav>
+          <div class="main">
+            <div class="q">
+              <div class="qhead">
+                <h2>Family fare</h2>
+                <span class="pill"><i style="background:#0a735b"></i>Easy</span>
+                <span class="fmt">multiple choice</span>
+                <div class="qnav">2 / 12</div>
+              </div>
+              <div class="split">
+                <div class="desc">
+                  <p class="story">The Rottnest ferry app stores every fare in dollars.</p>
+                  <p class="prompt">An adult return costs $75 and children pay half. For 2 adults and 3 children, which line sets <code>total</code> to <code>262.5</code>?</p>
+                  <div class="help"><span class="btn hint"><svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 14h6M8 17h4M10 2a5 5 0 0 0-3 9c.6.5 1 1.2 1 2h4c0-.8.4-1.5 1-2a5 5 0 0 0-3-9z"/></svg>Need a hint?</span></div>
+                </div>
+                <div class="work" style="grid-template-rows:1fr auto">
+                  <div style="padding:40px 44px;display:grid;gap:10px;align-content:start;background:#fff">
+                    <div style="display:flex;align-items:center;gap:16px;min-height:52px;padding:0 18px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px"><span style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--control)"></span>total = (2 + 3) * 75 / 2<span style="margin-left:auto;font-size:11px;color:var(--faint)">1</span></div>
+                    <div style="display:flex;align-items:center;gap:16px;min-height:52px;padding:0 18px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px"><span style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--control)"></span>total = 2 * 75 + 3 * 75 // 2<span style="margin-left:auto;font-size:11px;color:var(--faint)">2</span></div>
+                    <div style="display:flex;align-items:center;gap:16px;min-height:52px;padding:0 18px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px;background:var(--bluesoft);box-shadow:inset 2px 0 0 var(--blue)"><span style="width:18px;height:18px;border-radius:50%;border:5px solid var(--blue)"></span>total = 2 * 75 + 3 * 75 / 2<span style="margin-left:auto;font-size:11px;color:var(--faint)">3</span></div>
+                    <div style="display:flex;align-items:center;gap:16px;min-height:52px;padding:0 18px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px"><span style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--control)"></span>total = 2 * 75 + 3 * 75 % 2<span style="margin-left:auto;font-size:11px;color:var(--faint)">4</span></div>
+                  </div>
+                  <div class="actions"><span class="btn primary">Check <kbd>⌘↵</kbd></span><span class="grow"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="status"><span style="display:flex;gap:7px;align-items:center"><span class="dot"></span>Python 3.14</span><span class="grow"></span><span>Week 8 · exams in 38 days</span></div>
+      </div>
+    </div>
+  </figure>
+</div>

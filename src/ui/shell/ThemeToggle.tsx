@@ -1,11 +1,8 @@
-// Cycles System -> Light -> Dark. The html data-theme attribute is applied by AppShell from settings.theme.
+// Top bar theme toggle: switches between dark and light from whatever is showing now.
+// "System" stays available in Settings. The html data-theme attribute is applied by AppShell from settings.theme.
 import { store } from '../../app/services.ts';
 import type { Settings } from '../../engine/types.ts';
-import { Icon } from '../components/Icon.tsx';
-
-const NEXT: Record<Settings['theme'], Settings['theme']> = { system: 'light', light: 'dark', dark: 'system' };
-const NAME: Record<Settings['theme'], string> = { system: 'System', light: 'Light', dark: 'Dark' };
-const ICON = { system: 'monitor', light: 'sun', dark: 'moon' } as const;
+import { IconButton } from '../components/Button.tsx';
 
 export function applyTheme(theme: Settings['theme']) {
   const root = document.documentElement;
@@ -15,22 +12,20 @@ export function applyTheme(theme: Settings['theme']) {
   document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', theme === 'system' ? 'light dark' : theme);
 }
 
+/** The theme actually on screen, resolving "system" through prefers-color-scheme. */
+export function effectiveTheme(theme: Settings['theme']): 'light' | 'dark' {
+  if (theme === 'light' || theme === 'dark') return theme;
+  return typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+export function toggleTheme() {
+  const next = effectiveTheme(store.settings.value.theme) === 'dark' ? 'light' : 'dark';
+  store.updateSettings({ theme: next });
+  applyTheme(next);
+}
+
 export function ThemeToggle() {
-  const theme = store.settings.value.theme;
-  const next = NEXT[theme] ?? 'system';
-  const label = `Theme: ${NAME[theme] ?? 'System'}. Switch to ${NAME[next]}.`;
-  return (
-    <button
-      type="button"
-      class="icon-btn hdr-theme"
-      aria-label={label}
-      title={label}
-      onClick={() => {
-        store.updateSettings({ theme: next });
-        applyTheme(next);
-      }}
-    >
-      <Icon name={ICON[theme] ?? 'monitor'} />
-    </button>
-  );
+  const now = effectiveTheme(store.settings.value.theme);
+  const label = now === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+  return <IconButton icon={now === 'dark' ? 'moon' : 'sun'} label={label} tooltip="bottom" class="tb-theme" onClick={toggleTheme} />;
 }

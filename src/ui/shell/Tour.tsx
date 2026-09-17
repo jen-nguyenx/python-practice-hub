@@ -5,6 +5,7 @@ import { TOPICS } from '../../content/topics.ts';
 import { Dialog } from '../components/Dialog.tsx';
 import { Icon } from '../components/Icon.tsx';
 import type { IconName } from '../components/Icon.tsx';
+import { LogoMark } from './LogoMark.tsx';
 import { tourOpen } from './uiState.ts';
 
 const first = TOPICS[0];
@@ -70,7 +71,7 @@ export function Tour() {
       dismissOnBackdrop={false}
       showClose={false}
       title={<span class="tour-title"><Icon name={s.icon} size={18} /> {s.title}</span>}
-      description={`Welcome to PyLadder · Step ${step + 1} of ${STEPS.length}`}
+      description={<span class="tour-brand"><LogoMark size={20} /> Welcome to PyLadder · Step {step + 1} of {STEPS.length}</span>}
       initialFocus=".tour-primary"
       class="tour"
       footer={

@@ -19,6 +19,9 @@ export const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(
 export const MOD = isMac ? '⌘' : 'Ctrl';
 export const kbdRun = `${MOD}+Enter`;
 export const kbdSubmit = `${MOD}+Shift+Enter`;
+/** Compact key hints shown inside buttons ("⌘↵", "Ctrl ↵"). */
+export const kbdRunShort = isMac ? '⌘↵' : 'Ctrl ↵';
+export const kbdSubmitShort = isMac ? '⌘⇧↵' : 'Ctrl ⇧↵';
 
 /**
  * Cmd/Ctrl+Enter and Cmd/Ctrl+Shift+Enter anywhere on the page. Events Monaco already handled

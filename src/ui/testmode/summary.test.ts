@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Question } from '../../content/schema.ts';
 import type { AppEvent } from '../../engine/types.ts';
 import type { SavedAnswer, TestItem } from './summary.ts';
-import { bestResult, buildTestEvents, compactResponse, passMarkFor, summarizeTest, testHistory, weakTopics } from './summary.ts';
+import { bestResult, buildTestEvents, compactResponse, passMarkFor, strongNextStep, summarizeTest, testHistory, weakTopics } from './summary.ts';
 
 function q(id: string, format: Question['format'], diff: Question['diff'] = 'medium'): Question {
   return {
@@ -61,6 +61,22 @@ describe('summarizeTest', () => {
 
   it('weak topics are below 70%, weakest first', () => {
     expect(weakTopics(summary()).map((t) => t.topicId)).toEqual(['for-loops-range', 'strings']);
+  });
+
+  it('suggests a bigger test only for a strong mid-sem result that was not already the biggest', () => {
+    const allRight = new Map<number, SavedAnswer>(items.map((_, i) => [i, { result: { correct: true, score: 1, mistakes: [] }, response: null, timeMs: 1000 }]));
+    const strong = (kind: 'topic-test' | 'midsem') => summarizeTest({
+      kind, title: 'T', items, answers: allRight, flagged: new Set(), timeSpent: [0, 0, 0, 0, 0],
+      durationMs: 1000, limitMs: 900000, timedOut: false, finishedAt: 1000,
+    });
+    // Weak topics exist: the Practise links are the next step.
+    expect(strongNextStep(summary('midsem'), { maxCount: 30, midsemTopics: 7 })).toBeNull();
+    // A topic test never suggests adding topics.
+    expect(strongNextStep(strong('topic-test'), { maxCount: 30, midsemTopics: 7 })).toBeNull();
+    expect(strongNextStep(strong('midsem'), { maxCount: 30, midsemTopics: 7 })).toMatch(/more questions or more topics/);
+    expect(strongNextStep(strong('midsem'), { maxCount: 5, midsemTopics: 7 })).toMatch(/more topics\.$/);
+    expect(strongNextStep(strong('midsem'), { maxCount: 30, midsemTopics: 2 })).toMatch(/more questions\.$/);
+    expect(strongNextStep(strong('midsem'), { maxCount: 5, midsemTopics: 2 })).toBeNull();
   });
 });
 

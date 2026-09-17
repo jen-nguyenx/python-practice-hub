@@ -5,12 +5,11 @@ import { CODE_FORMATS, TOPIC_IDS } from '../../content/ids.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
 import { QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { topicProgressAll } from '../../engine/progress.ts';
+import type { TopicProgress } from '../../engine/progress.ts';
 import { store } from '../../app/services.ts';
 import { href } from '../../app/router.ts';
 import { markTopicOpened } from '../../app/session.ts';
 import { Button, LinkButton } from '../components/Button.tsx';
-import { Callout } from '../components/Callout.tsx';
-import { Chip } from '../components/Chip.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { formatDate, formatDuration, plural } from '../report/format.ts';
 import { TestRunner } from '../testmode/TestRunner.tsx';
@@ -22,6 +21,9 @@ import { testHistory } from '../testmode/summary.ts';
 import type { TestProgress } from '../testmode/progress.ts';
 import { clearProgress, readProgress } from '../testmode/progress.ts';
 import { ResumeCard } from '../testmode/ResumeCard.tsx';
+import { ConfirmDialog } from '../testmode/ConfirmDialog.tsx';
+import { unlockingTopic } from '../testmode/lock.ts';
+import { storeReady } from '../shell/storeReady.ts';
 import '../testmode/testmode.css';
 
 export function TopicTest({ topicId }: { topicId: string }) {
@@ -36,7 +38,10 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
   const [resume, setResume] = useState<TestProgress | undefined>(undefined);
   const [saved, setSaved] = useState<TestProgress | null>(() => (meta ? readProgress('topic-test', meta.id) : null));
   const [runId, setRunId] = useState(0);
+  const [confirmNew, setConfirmNew] = useState(false);
   const events = store.events.value;
+  const settings = store.settings.value;
+  const ready = storeReady.value;
 
   useEffect(() => {
     if (!meta) return;
@@ -46,21 +51,14 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
   }, [topicId]);
 
   const history = useMemo(() => (meta ? testHistory(events, 'topic-test', meta.id) : []), [events, meta]);
-  const settings = store.settings.value;
-  const lockReason = useMemo(() => {
-    if (!meta) return null;
-    try {
-      const p = topicProgressAll(events, QUESTION_INDEX, settings)[meta.id];
-      return p && p.state === 'locked' ? (p.lockReason ?? '') : null;
-    } catch {
-      return null;
-    }
-  }, [events, settings, meta]);
+  const progress = useMemo<Partial<Record<TopicId, TopicProgress>>>(() => {
+    try { return topicProgressAll(events, QUESTION_INDEX, settings); } catch { return {}; }
+  }, [events, settings]);
 
   if (!meta || !(TOPIC_IDS as readonly string[]).includes(topicId)) {
     return (
-      <div class="tm tm-narrow">
-        <div class="empty-state">There is no topic called "{topicId}". <a href={href.landing()}>Back to topics</a></div>
+      <div class="tx-page tt-page">
+        <section class="tx-card"><p>There is no topic called "{topicId}". <a href={href.landing()}>Back to topics</a></p></section>
       </div>
     );
   }
@@ -69,6 +67,7 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
   const size = pool ? Math.min(TOPIC_TEST_SIZE, pool.length) : TOPIC_TEST_SIZE;
   const passMark = topicTestPassMark(size);
   const passedBefore = history.find((h) => h.passed);
+  const locked = progress[meta.id]?.state === 'locked';
 
   if (picked) {
     return (
@@ -82,42 +81,75 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
         mode="topic-test"
         onFinish={() => {}}
         resultExtra={(s: TestSummary) => <TopicTestOutcome summary={s} topicId={meta.id} next={next?.id ?? null} />}
-        resultActions={() => (
-          <>
-            <Button variant="primary" onClick={() => { setSaved(readProgress('topic-test', meta.id)); setPicked(null); setResume(undefined); setRunId(runId + 1); }}>Take the test again</Button>
-            <LinkButton href={href.topic(meta.id)}>Back to {meta.short}</LinkButton>
-            <LinkButton href={href.report(meta.id)} variant="ghost">Topic report</LinkButton>
-          </>
-        )}
+        resultActions={(s: TestSummary) => {
+          const back = () => { setSaved(readProgress('topic-test', meta.id)); setPicked(null); setResume(undefined); setRunId(runId + 1); };
+          return s.passed ? (
+            <>
+              {next ? <LinkButton href={href.topic(next.id)} variant="primary">Go to {next.short} <Icon name="arrowRight" /></LinkButton> : null}
+              <Button variant={next ? 'secondary' : 'primary'} onClick={back}>Back to test page</Button>
+            </>
+          ) : (
+            <>
+              <LinkButton href={href.topic(meta.id)} variant="primary">Practise {meta.short} <Icon name="arrowRight" /></LinkButton>
+              <Button onClick={back}>Back to test page</Button>
+            </>
+          );
+        }}
       />
     );
   }
 
-  const start = () => {
+  const crumbs = (
+    <nav class="tx-crumbs" aria-label="Breadcrumb">
+      <a href={href.landing()}>Topics</a> <Icon name="chevronRight" size={12} /> <a href={href.topic(meta.id)}>{meta.short}</a> <Icon name="chevronRight" size={12} /> <span aria-current="page">Topic test</span>
+    </nav>
+  );
+
+  // A locked topic's test cannot be taken: passing it would unlock the next topic while this one stayed locked.
+  if (locked && ready) {
+    const opener = unlockingTopic(progress, meta.id);
+    const reason = progress[meta.id]?.lockReason;
+    return (
+      <div class="tx-page tt-page">
+        {crumbs}
+        <section class="tx-card tt-card tt-lock" aria-labelledby="tt-h">
+          <span class="tt-lock-icon" aria-hidden="true"><Icon name="lock" size={20} /></span>
+          <span class="tx-eyebrow">Topic {Number(meta.num)} · test</span>
+          <h1 id="tt-h">{meta.title} is locked</h1>
+          <p class="tt-lede">The topic test opens once {meta.short} is unlocked, so you are tested on a topic you can practise.</p>
+          {reason ? <p class="tt-lock-reason">{reason}</p> : null}
+          <div class="tx-actions">
+            {opener
+              ? <LinkButton href={href.topic(opener.id)} variant="primary">Go to {opener.short} <Icon name="arrowRight" /></LinkButton>
+              : <LinkButton href={href.landing()} variant="primary">Back to topics</LinkButton>}
+            <LinkButton href={href.topic(meta.id)} variant="ghost">Read the {meta.short} cheat sheet</LinkButton>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  const begin = () => {
     if (!pool || pool.length === 0) return;
-    if (saved && !window.confirm('Start a new test? The test you have in progress will be discarded.')) return;
+    setConfirmNew(false);
     markTopicOpened(meta.id as TopicId);
     clearProgress('topic-test', meta.id);
     setSaved(null);
     setResume(undefined);
-    setPicked(selectTopicTest(pool));
+    // A retake prefers questions that were not in the last attempt, whose answers were just shown.
+    const avoid = new Set(history[0]?.qids ?? []);
+    setPicked(selectTopicTest(pool, Math.random, undefined, avoid));
+  };
+  const start = () => {
+    if (!pool || pool.length === 0) return;
+    if (saved) setConfirmNew(true);
+    else begin();
   };
   const hasCode = pool?.some((p) => CODE_FORMATS.includes(p.format)) ?? true;
 
   return (
-    <div class="tm tm-narrow">
-      <nav class="tm-crumbs muted" aria-label="Breadcrumb">
-        <a href={href.landing()}>Topics</a> <span aria-hidden="true">›</span> <a href={href.topic(meta.id)}>{meta.short}</a> <span aria-hidden="true">›</span> Topic test
-      </nav>
-      <header class="tm-head">
-        <span class="label">Topic {meta.num} · test</span>
-        <h1>Topic test: {meta.title}</h1>
-        <p class="muted">
-          {next
-            ? <>Pass this test and <strong>{next.title}</strong> unlocks straight away, even if you have not finished the practice questions here.</>
-            : <>This is the last topic. Passing marks {meta.short} as done.</>}
-        </p>
-      </header>
+    <div class="tx-page tt-page">
+      {crumbs}
 
       {saved ? (
         <ResumeCard progress={saved} pool={pool}
@@ -125,66 +157,82 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
           onDiscard={() => { clearProgress('topic-test', meta.id); setSaved(null); }} />
       ) : null}
 
-      <section class="card tm-card" aria-labelledby="tt-how">
-        <h2 id="tt-how" class="sr-only">How the test works</h2>
-        <ul class="tm-facts">
-          <li><span class="label">Questions</span><strong>{size}</strong></li>
-          <li><span class="label">Time</span><strong>{TOPIC_TEST_MINUTES} minutes</strong></li>
-          <li><span class="label">To pass</span><strong>{passMark} of {size} correct</strong></li>
-          <li><span class="label">Hints</span><strong>None</strong></li>
-        </ul>
-        <ul class="tm-rules">
-          <li>Two reading questions, one fix or complete, and two coding questions, at medium or hard level where possible.</li>
-          <li>Each question gets <strong>one</strong> check or submit. Your answer is saved, and you see how you did at the end.</li>
-          <li>No hints and no Show answer during the test. Every answer is explained afterwards.</li>
-          <li>Move between questions freely and flag any you want to come back to.</li>
-          <li>The test finishes by itself when the timer reaches 0:00. If you leave or reload the page, your saved answers are kept and you can carry on here, but the timer keeps running.</li>
+      <section class="tx-card tt-card" aria-labelledby="tt-h">
+        <span class="tx-eyebrow">Topic {Number(meta.num)} · test</span>
+        <h1 id="tt-h">{meta.title}</h1>
+        <p class="tt-lede">
+          {next
+            ? <>Pass to unlock <strong>{next.title}</strong> straight away, even if you have not finished the practice questions.</>
+            : <>This is the last topic. Passing marks {meta.short} as done.</>}
+        </p>
+        <ul class="tt-facts">
+          <li><b>{size}</b><span>questions</span></li>
+          <li><b>{TOPIC_TEST_MINUTES}</b><span>minutes</span></li>
+          <li><b>{passMark}/{size}</b><span>correct to pass</span></li>
         </ul>
 
-        {pool === null ? <p class="muted" role="status">Loading questions…</p> : null}
+        <details class="tt-how">
+          <summary><Icon name="chevronRight" size={14} /> How the test works</summary>
+          <ul>
+            <li>Reading, fix or complete, and coding questions, at medium or hard level where possible.</li>
+            <li>Each question gets one check. Your answer is saved and marked at the end.</li>
+            <li>No hints during the test. Every answer is explained afterwards.</li>
+            <li>Move between questions freely and flag any to come back to.</li>
+            <li>The test finishes by itself at 0:00. If you leave, your answers are kept, but the timer keeps running.</li>
+          </ul>
+        </details>
+
+        {pool === null ? <p class="tt-note" role="status">Loading questions…</p> : null}
         {pool !== null && pool.length === 0 ? (
-          <Callout tone="neutral" title="No questions yet">Questions for {meta.short} are still being written, so this test is not available yet.</Callout>
+          <p class="tt-note"><Icon name="info" /> Questions for {meta.short} are still being written, so this test is not available yet.</p>
         ) : null}
         {pool !== null && pool.length > 0 && pool.length < TOPIC_TEST_SIZE ? (
-          <Callout tone="info" title="Shorter test">Only {plural(pool.length, 'question')} {pool.length === 1 ? 'is' : 'are'} ready in {meta.short}, so this test has {pool.length}. You need {passMark} correct to pass.</Callout>
+          <p class="tt-note"><Icon name="info" /> Only {plural(pool.length, 'question')} {pool.length === 1 ? 'is' : 'are'} ready in {meta.short}, so this test is shorter.</p>
         ) : null}
         {pool !== null && pool.length > 0 && hasCode ? (
-          <p class="muted"><Icon name="terminal" /> Coding questions run your code with Python in the browser. It loads in the background and can take a few seconds the first time.</p>
-        ) : null}
-        {lockReason !== null && !passedBefore ? (
-          <Callout tone="neutral" title="This topic is not unlocked yet">
-            <p>You can still take the test for revision.{next ? ` Passing it unlocks ${next.title}.` : ''}{lockReason ? ` To open the practice questions: ${lockReason}` : ''}</p>
-          </Callout>
+          <p class="tt-note"><Icon name="terminal" /> Coding questions run Python in your browser. It can take a few seconds to load the first time.</p>
         ) : null}
         {passedBefore ? (
-          <Callout tone="ok" title="Already passed">You passed this test on {formatDate(passedBefore.ts)} ({passedBefore.score} of {passedBefore.total}). You can take it again for practice.</Callout>
+          <p class="tt-note ok"><Icon name="check" /> <span>You passed on {formatDate(passedBefore.ts)} ({passedBefore.score} of {passedBefore.total}). Take it again any time for practice.</span></p>
         ) : null}
 
-        <div class="tm-actions">
+        <div class="tx-actions">
           <Button variant="primary" size="lg" onClick={start} disabled={!pool || pool.length === 0}>
-            Start the {TOPIC_TEST_MINUTES}-minute test <Icon name="arrowRight" />
+            Start test <Icon name="arrowRight" />
           </Button>
           <LinkButton href={href.topic(meta.id)} variant="ghost">Practise {meta.short} first</LinkButton>
         </div>
       </section>
 
       {history.length ? (
-        <section class="tm-section" aria-labelledby="tt-history">
-          <h2 id="tt-history">Your attempts</h2>
-          <ul class="tm-history">
-            {history.map((h) => (
-              <li key={h.ts}>
-                <span class="num">{formatDate(h.ts)}</span>
-                <span class="num"><strong>{h.score} / {h.total}</strong> <span class="muted">· {h.percent}%</span></span>
-                <span class="tm-history-topics">
-                  {h.passed ? <Chip tone="ok"><Icon name="check" size={11} /> Passed</Chip> : <Chip tone="bad"><Icon name="x" size={11} /> Not passed</Chip>}
-                  <span class="muted num"> · {formatDuration(h.durationMs)}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
+        <section class="tx-card" aria-labelledby="tt-history">
+          <div class="tx-card-head"><h2 id="tt-history">Past attempts</h2></div>
+          <div class="tx-table-wrap">
+            <table class="tx-table">
+              <thead><tr><th scope="col">Date</th><th scope="col">Score</th><th scope="col">Result</th><th scope="col">Time</th></tr></thead>
+              <tbody>
+                {history.map((h) => (
+                  <tr key={h.ts}>
+                    <td class="dim">{formatDate(h.ts)}</td>
+                    <td class="num"><b>{h.score}/{h.total}</b></td>
+                    <td class="wide">
+                      {h.passed
+                        ? <span class="tx-pass ok sm"><Icon name="check" size={12} /> Passed</span>
+                        : <span class="tx-pass bad sm"><Icon name="x" size={12} /> Not passed</span>}
+                    </td>
+                    <td class="num dim">{formatDuration(h.durationMs)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       ) : null}
+
+      <ConfirmDialog open={confirmNew} title="Start a new test?" confirmLabel="Start new test" cancelLabel="Keep my test"
+        onCancel={() => setConfirmNew(false)} onConfirm={begin}>
+        <p>The test you have in progress will be discarded and its saved answers deleted.</p>
+      </ConfirmDialog>
     </div>
   );
 }
@@ -194,19 +242,10 @@ function TopicTestOutcome({ summary, topicId, next }: { summary: TestSummary; to
   const nextMeta = next ? TOPIC_BY_ID[next] : null;
   if (summary.passed) {
     return (
-      <Callout tone="ok" title={`Passed: ${summary.correct} of ${summary.total}`}>
-        {nextMeta ? (
-          <>
-            <p>{nextMeta.title} is now unlocked.</p>
-            <p><LinkButton href={href.topic(nextMeta.id)} variant="primary">Go to {nextMeta.short} <Icon name="arrowRight" /></LinkButton></p>
-          </>
-        ) : <p>{meta.short} is marked as done.</p>}
-      </Callout>
+      <p class="ok"><Icon name="unlock" /> {nextMeta ? `${nextMeta.title} is now unlocked.` : `${meta.short} is marked as done.`}</p>
     );
   }
   return (
-    <Callout tone="info" title={`Not passed this time: ${summary.correct} of ${summary.total}`}>
-      <p>You need {summary.passMark} of {summary.total} to pass. Review the questions below, practise {meta.short}, then try again.</p>
-    </Callout>
+    <p>You need {summary.passMark} of {summary.total} to pass. Review the questions below and practise {meta.short}; your next try picks different questions where it can.</p>
   );
 }

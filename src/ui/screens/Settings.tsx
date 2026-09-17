@@ -13,8 +13,8 @@ import { shortcutSheetOpen, tourOpen } from '../shell/uiState.ts';
 import '../shell/settings/settings.css';
 
 const ACCENT_OPTIONS: { id: SettingsT['accent']; label: string }[] = [
-  { id: 'mono', label: 'Mono' },
   { id: 'blue-gold', label: 'Blue + Gold' },
+  { id: 'mono', label: 'Mono' },
   { id: 'navy-coral', label: 'Navy + Coral' },
   { id: 'ink-tangerine', label: 'Ink + Tangerine' },
 ];

@@ -73,7 +73,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  theme: 'system', accent: 'mono', layout: 'full', editorFontSize: 14, unlockAll: false,
+  theme: 'system', accent: 'blue-gold', layout: 'full', editorFontSize: 14, unlockAll: false,
   reducedMotion: 'system', singleKeyShortcuts: true, seenTour: false, lastExportTs: null,
 };
 

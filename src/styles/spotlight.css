@@ -1,0 +1,52 @@
+/* Cursor spotlight: a travelling rim (adapted from Jen's landing page).
+   A 2px ring traces the surface's own edge, brightest where the pointer is.
+   Colour follows the student's accent preset: the second accent (--accent-2) glows at the pointer and
+   fades out through the first accent (--accent), e.g. gold core into blue. Mono gives a plain ink/white rim.
+   The ring is drawn with a mask (content-box excluded) instead of a z-index:-1 layer, so it works
+   on any background and cannot escape into an ancestor stacking context.
+   Selector list must match SPOTLIGHT_SELECTOR in src/ui/effects/spotlight.ts. */
+:root {
+  --spot-core: var(--accent-2);
+  --spot-edge: var(--accent);
+}
+
+:is(.tile:not(.is-locked), .hc, .ms-tile, .rf-opt:not(.locked), .rp-stat, .accent-opt) { position: relative; }
+
+:is(.tile:not(.is-locked), .hc, .ms-tile, .rf-opt:not(.locked), .rp-stat, .accent-opt)::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+  background: radial-gradient(var(--spot-r, 220px) circle at var(--mx, 50%) var(--my, 50%),
+    var(--spot-core) 0%,
+    var(--spot-core) 12%,
+    var(--spot-edge) 38%,
+    color-mix(in srgb, var(--spot-edge) 45%, transparent) 62%,
+    color-mix(in srgb, var(--spot-edge) 12%, transparent) 80%,
+    transparent 92%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+:is(.tile:not(.is-locked), .hc, .ms-tile, .rf-opt:not(.locked), .rp-stat, .accent-opt):hover::after { opacity: 1; }
+
+/* Falloff sized to each surface, so mid-surface hovers still light the nearest edge. */
+.hc { --spot-r: 420px; }
+.rf-opt { --spot-r: 320px; }
+.ms-tile, .accent-opt { --spot-r: 140px; }
+
+/* Press settles down 1px (the only movement), as on the landing page. */
+:is(.tile:not(.is-locked), .ms-tile, .accent-opt):active { transform: translateY(1px); }
+
+@media (hover: none) {
+  :is(.tile, .hc, .ms-tile, .rf-opt, .rp-stat, .accent-opt)::after { content: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.tile, .ms-tile, .accent-opt):active { transform: none; }
+}
+:root[data-motion="reduce"] :is(.tile, .ms-tile, .accent-opt):active { transform: none; }

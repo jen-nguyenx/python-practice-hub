@@ -330,11 +330,22 @@ function addRuleViolations(result: TestsResult, ms: MistakeSet) {
   for (const v of result.ruleViolations ?? []) ms.add(RULE_MISTAKE[v.rule], 'static');
 }
 
+/** Detections that explain every failing test on their own; when present, per-test tags would misattribute the cause. */
+const ROOT_CAUSE_DETECTIONS = new Set<string>(['print_vs_return', 'forgot_to_call', 'return_type_wrong', 'missing_function', 'top_level_code']);
+
 function addOutcomeMistakes(result: TestsResult, ms: MistakeSet) {
-  for (const o of result.outcomes ?? []) {
-    for (const d of o.detections ?? []) ms.add(d, 'test');
+  const outcomes = result.outcomes ?? [];
+  // A test's tag names the mistake that test was designed to expose. Only trust it when the code otherwise works
+  // (at least one test passes) and no root-cause detection already explains the failures.
+  const rootCause = outcomes.some((o) => (o.detections ?? []).some((d) => ROOT_CAUSE_DETECTIONS.has(d)));
+  const trustTags = (result.passed ?? 0) > 0 && !rootCause;
+  for (const o of outcomes) {
+    for (const d of o.detections ?? []) {
+      if (d === o.tag && !trustTags) continue;
+      ms.add(d, 'test');
+    }
     if (!o.pass && !o.notRun) {
-      ms.add(o.tag, 'test');
+      if (trustTags) ms.add(o.tag, 'test');
       for (const m of o.error?.mistakes ?? []) ms.add(m, 'runtime');
     }
   }
@@ -420,13 +431,14 @@ export function gradeTestWriter(q: TestWriterQuestion, pair: PairResult): GradeR
       feedback: `That is not a valid argument tuple${detail}. Write it like ${q.argsExample}, with a comma after a single argument.`,
     };
   }
+  const outcome = (r: string) => (/^raises\b/.test(r) ? r : `returns ${r}`);
   if (pair.differs) {
     return {
       correct: true, score: 1, mistakes: [],
-      feedback: `Found it: the correct version gives ${pair.refResult} but the buggy one gives ${pair.bugResult}.`,
+      feedback: `Found it: the correct version ${outcome(pair.refResult)} but the buggy one ${outcome(pair.bugResult)}.`,
     };
   }
-  return { correct: false, score: 0, mistakes: [], feedback: `Both versions give ${pair.refResult} for these arguments. Try a different input, such as an edge case.` };
+  return { correct: false, score: 0, mistakes: [], feedback: `Both versions ${outcome(pair.refResult).replace(/^returns/, 'return').replace(/^raises/, 'raise')} for these arguments. Try a different input, such as an edge case.` };
 }
 
 // ---------------------------------------------------------------------------------------------

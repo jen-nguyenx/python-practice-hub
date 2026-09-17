@@ -61,7 +61,8 @@ export async function createHarness(opts: { hashSeed?: string } = {}): Promise<H
     py,
     runProgram: (code, stdin = [], files = [], budgetMs = 2000) => call('run_program', code, j(stdin), j(files), budgetMs),
     runTests: (code, tests, kind, fnName, rules = [], budgetMsPerTest = 1000, timing = false) =>
-      call('run_tests', code, j(tests), kind, fnName ?? null, j(rules), budgetMsPerTest, timing),
+      // undefined, not null: JS null reaches Python as pyodide.ffi.jsnull instead of None.
+      call('run_tests', code, j(tests), kind, fnName ?? undefined, j(rules), budgetMsPerTest, timing),
     analyze: (code) => call('analyze', code),
     pair: (reference, buggy, fnName, argsRepr) => call('pair', reference, buggy, fnName, argsRepr),
     trace: (code, watch, anchorLine, stdin = []) => call('trace', code, j(watch), anchorLine, j(stdin)),

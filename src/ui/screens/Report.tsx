@@ -44,9 +44,12 @@ export function Report({ topicId }: { topicId?: string }) {
 /** Print with the light palette and every collapsed section open, then put things back. */
 function usePrintMode() {
   useEffect(() => {
+    let printing = false;
     let prevTheme: string | null = null;
     let opened: HTMLDetailsElement[] = [];
     const before = () => {
+      if (printing) return;
+      printing = true;
       const root = document.documentElement;
       prevTheme = root.getAttribute('data-theme');
       root.setAttribute('data-theme', 'light');
@@ -54,6 +57,8 @@ function usePrintMode() {
       for (const d of opened) d.open = true;
     };
     const after = () => {
+      if (!printing) return;
+      printing = false;
       const root = document.documentElement;
       if (prevTheme === null) root.removeAttribute('data-theme');
       else root.setAttribute('data-theme', prevTheme);

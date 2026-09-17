@@ -8,11 +8,17 @@ export function runtimeStatusText(s: RuntimeStatus): string {
   switch (s.state) {
     case 'idle': return 'Python not started';
     case 'loading': return `Python is starting · ${Math.max(0, Math.round(s.elapsedMs / 1000))} s`;
-    case 'ready': return `${s.python} · ready`;
-    case 'running': return `${s.python} · running`;
+    case 'ready': return `${pythonName(s.python)} · ready`;
+    case 'running': return `${pythonName(s.python)} · running`;
     case 'restarting': return 'Restarting Python';
     case 'error': return 'Python could not start';
   }
+}
+
+/** "3.14.2 (main, ...)" -> "Python 3.14.2". */
+export function pythonName(version: string): string {
+  const v = /\d+\.\d+(\.\d+)?/.exec(version ?? '')?.[0];
+  return v ? `Python ${v}` : 'Python';
 }
 
 export function isStarting(s: RuntimeStatus) {

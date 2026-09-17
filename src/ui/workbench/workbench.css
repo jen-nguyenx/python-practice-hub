@@ -58,11 +58,12 @@
 .tests-scroll { overflow-x: auto; min-width: 0; }
 .tests-table { width: 100%; border-collapse: collapse; font-size: var(--fs-13); }
 .tests-table th { text-align: left; font-weight: 600; font-size: var(--fs-12); color: var(--text-muted); padding: 6px 8px; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+.tt-cell { min-width: 0; }
 .tests-table td { vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--border); min-width: 0; }
 .tests-table tr.pass td:first-child { border-left: 3px solid var(--ok); }
 .tests-table tr.fail td:first-child { border-left: 3px solid var(--bad); }
 .tests-table tr.fail td { background: var(--bad-fill); }
-.tt-code { margin: 0; font-family: var(--mono); font-size: var(--fs-12); white-space: pre-wrap; word-break: break-word; }
+.tt-code { margin: 0; font-family: var(--mono); font-size: var(--fs-12); white-space: pre-wrap; overflow-wrap: break-word; }
 .tt-setup { color: var(--text-muted); }
 .tt-err { color: var(--bad); }
 .tt-sub { margin-top: 2px; font-size: var(--fs-12); color: var(--text-muted); }
@@ -152,13 +153,9 @@
 .result-feedback { font-size: var(--fs-13); color: var(--text); }
 .result-feedback.muted { color: var(--text-muted); }
 
-/* ---------- dialogs ---------- */
-.wb-dialog { border: 1px solid var(--border); border-radius: var(--r-3); padding: 0; background: var(--surface); color: var(--text); box-shadow: var(--shadow-overlay); width: min(480px, calc(100vw - 32px)); }
-.wb-dialog::backdrop { background: rgba(10, 13, 18, 0.45); }
-.wb-dialog-body { display: grid; gap: 12px; padding: 16px 18px; }
-.wb-dialog-title { font-size: var(--fs-16); }
-.wb-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
-.wb-dialog input[type="text"], .wb-dialog textarea { width: 100%; padding: 6px 8px; border: 1px solid var(--border-control); border-radius: var(--r-1); background: var(--surface); }
+/* ---------- dialogs (shared .dlg styles; these only add form bits) ---------- */
+.wb-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-top: var(--sp-3); }
+.wb-dialog input[type="text"], .wb-dialog textarea { width: 100%; padding: 6px 8px; border: 1px solid var(--border-control); border-radius: var(--r-1); background: var(--surface); color: var(--text); }
 .flag-reasons { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; }
 .flag-reasons legend { font-weight: 600; margin-bottom: 4px; }
 .flag-reason { display: flex; align-items: center; gap: 8px; font-size: var(--fs-13); }
@@ -179,3 +176,9 @@
 .diff-row.del .diff-mark { color: var(--bad); }
 .diff-row.add .diff-mark { color: var(--ok); }
 .diff-text { white-space: pre; }
+.term-out, .term-tb, .tt-code, .explain-msg, .diff-body, .term-input input { font-variant-ligatures: none; }
+.answer > .btn { margin-left: 0; }
+.qp-flag .btn { margin-left: -8px; }
+
+/* Code never uses ligatures on workbench pages: students must see == != // and >= exactly as typed. */
+.qp :is(code, pre, kbd, samp, .code-block), .pg :is(code, pre, kbd, samp, .code-block) { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }

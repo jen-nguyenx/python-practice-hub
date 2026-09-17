@@ -246,7 +246,7 @@ export function DataSection() {
         initialFocus="#reset-confirm"
         footer={
           <>
-            <button type="button" class="btn" onClick={() => setResetOpen(false)} disabled={resetting}>Keep my data</button>
+            <button type="button" class="btn" onClick={() => setResetOpen(false)} disabled={resetting}>Cancel</button>
             <button type="button" class="btn danger" onClick={doReset} disabled={resetText !== 'RESET' || resetting}>
               {resetting ? 'Deleting...' : 'Delete everything'}
             </button>

@@ -1,6 +1,6 @@
 // Parsons puzzle: move lines from "Lines" into "Your program", order them and (when it matters) indent them.
 // Pointer: click moves a line between columns, drag reorders or moves. Keyboard: see the help line.
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { MistakeId } from '../../../content/ids.ts';
 import type { FormatProps } from '../../../engine/types.ts';
 import type { QuestionOf } from '../../../content/schema.ts';
@@ -17,6 +17,7 @@ import { isStarting } from '../../workbench/plain.ts';
 import { runTestsLogged } from '../../workbench/runner.ts';
 import { kbdRun, useRunShortcuts } from '../../workbench/shortcuts.ts';
 import { TestsTable } from '../../workbench/TestsTable.tsx';
+import { stableShuffle } from './logic.ts';
 import './code.css';
 
 interface Item { id: string; text: string; indent: number; distractor: boolean; mistake?: MistakeId }
@@ -25,37 +26,6 @@ interface Draft { placed: Placed[]; removed: string[] }
 type ListId = 'pool' | 'prog';
 
 const MAX_INDENT = 4;
-
-function hashString(s: string) {
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
-
-function mulberry32(seed: number) {
-  let a = seed;
-  return () => {
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-/** Stable per-question shuffle that never shows the solution order. */
-export function stableShuffle<T>(items: T[], seedText: string): T[] {
-  const out = items.slice();
-  const rnd = mulberry32(hashString(seedText));
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(rnd() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  if (out.length > 1 && out.every((x, i) => x === items[i])) out.push(out.shift()!);
-  return out;
-}
 
 function readDraft(d: unknown, ids: Set<string>): Draft | null {
   if (!d || typeof d !== 'object') return null;
@@ -99,6 +69,8 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
   const [drag, setDrag] = useState<DragState | null>(null);
   const [dropAt, setDropAt] = useState<{ list: ListId; index: number; indent: number } | null>(null);
   const escArmed = useRef(false);
+  const inFlight = useRef(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const suppressClick = useRef(false);
   const poolRef = useRef<HTMLUListElement>(null);
   const progRef = useRef<HTMLUListElement>(null);
@@ -160,9 +132,10 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
     setAnnounce(`Indent level ${indent}.`);
   };
 
-  // Keep keyboard focus on the right element after state changes.
+  // Keep keyboard focus on the right element after state changes. A layout effect runs right after each DOM
+  // commit, so quick key presses cannot focus an element that the next render removes.
   const focusNext = useRef<{ list: ListId; index: number } | null>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const f = focusNext.current;
     if (!f) return;
     focusNext.current = null;
@@ -274,13 +247,15 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
 
   // ---------- check ----------
   const check = async () => {
-    if (!canCheck) return;
+    if (!canCheck || inFlight.current) return;
+    inFlight.current = true;
     const lines = placed.map((p) => ({ text: byId.get(p.id)!.text, indent: p.indent }));
     const code = assembleParsons(lines);
     const usedDistractors = placed.map((p) => byId.get(p.id)!).filter((it) => it.distractor && it.mistake).map((it) => it.mistake!) as MistakeId[];
     setBusy(true);
     setFailure(null);
     const { result, failure: f } = await runTestsLogged({ code, tests: q.tests, kind: 'function', fnName: q.fnName }, { qid: q.id, topicId }, false);
+    inFlight.current = false;
     setBusy(false);
     setFailure(f);
     if (!result) return;
@@ -302,7 +277,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
       }
     }
   };
-  useRunShortcuts({ onRun: check });
+  useRunShortcuts({ onRun: check }, true, rootRef);
 
   const renderItem = (it: Item, list: ListId, index: number, indent: number) => {
     const focused = focus.list === list && focus.index === index;
@@ -327,6 +302,9 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
           if (suppressClick.current || readOnly) return;
           if (list === 'pool') addToProgram(it.id);
           else removeFromProgram(it.id);
+          // The clicked element moves to the other list; keep focus in this list for the next pick.
+          focusNext.current = { list, index };
+          setFocus({ list, index });
         }}
       >
         {list === 'prog' && q.indentMatters && indent > 0 ? (
@@ -359,7 +337,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
   const hideResult = testMode && !revealed;
 
   return (
-    <div class="parsons">
+    <div class="parsons" ref={rootRef} data-run-scope>
       <p class="muted pz-help">
         Click a line to move it between the columns, or drag it into place.
         {' '}Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> choose a line, <kbd>Enter</kbd> moves it across, <kbd>Alt</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd> reorders

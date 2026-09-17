@@ -1,5 +1,5 @@
 // Break the code: the student types an argument tuple; the correct and the secretly buggy versions both run on it.
-import { useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import type { FormatProps } from '../../../engine/types.ts';
 import type { QuestionOf } from '../../../content/schema.ts';
 import type { PairResult } from '../../../runtime/protocol.ts';
@@ -13,21 +13,13 @@ import { Markdown } from '../../components/Markdown.tsx';
 import { DiffView } from '../../workbench/DiffView.tsx';
 import { isStarting } from '../../workbench/plain.ts';
 import { kbdRun, useRunShortcuts } from '../../workbench/shortcuts.ts';
+import { asciiText, displayArgs, signatureOf } from './logic.ts';
 import './code.css';
-
-export function signatureOf(code: string, fnName: string): string {
-  const line = code.split('\n').find((l) => new RegExp(`^\\s*def\\s+${fnName}\\s*\\(`).test(l));
-  return line ? line.trim().replace(/:\s*$/, '') : `def ${fnName}(...)`;
-}
 
 function draftArgs(d: unknown): string {
   if (typeof d === 'string') return d;
   if (d && typeof d === 'object' && typeof (d as { args?: unknown }).args === 'string') return (d as { args: string }).args;
   return '';
-}
-
-function asciiArgs(s: string) {
-  return s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-');
 }
 
 export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
@@ -38,6 +30,8 @@ export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
   const [failure, setFailure] = useState<string | null>(null);
   const [pair, setPair] = useState<{ args: string; result: PairResult } | null>(null);
   const [checks, setChecks] = useState(0);
+  const inFlight = useRef(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const status = py.status.value;
 
   const readOnly = revealed || locked || (testMode && checks > 0);
@@ -45,18 +39,21 @@ export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
   const sig = signatureOf(q.reference, q.fnName);
 
   const check = async () => {
-    if (!canCheck) return;
-    const argsRepr = asciiArgs(args.trim());
+    if (!canCheck || inFlight.current) return;
+    inFlight.current = true;
+    const argsRepr = asciiText(args.trim());
     setBusy(true);
     setFailure(null);
     let result: PairResult;
     try {
       result = await py.pair({ reference: q.reference, buggy: q.buggy, fnName: q.fnName, argsRepr });
     } catch (err) {
+      inFlight.current = false;
       setBusy(false);
       setFailure(err instanceof Error ? err.message : String(err));
       return;
     }
+    inFlight.current = false;
     setBusy(false);
     setPair({ args: argsRepr, result });
     // Arguments Python cannot read do not use up a check.
@@ -64,13 +61,13 @@ export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
     setChecks((n) => n + 1);
     props.onCheck(gradeTestWriter(q, result), { args: argsRepr, differs: result.differs });
   };
-  useRunShortcuts({ onRun: check });
+  useRunShortcuts({ onRun: check }, true, rootRef);
 
   const hideResult = testMode && !revealed;
   const r = pair?.result;
 
   return (
-    <div class="testwriter">
+    <div class="testwriter" ref={rootRef} data-run-scope>
       <section class="tw-spec">
         <h3 class="label">What the function should do</h3>
         <Markdown text={q.spec} />
@@ -121,7 +118,7 @@ export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
       <div aria-live="polite">
         {r && !busy && !r.validArgs ? (
           <Callout tone="bad" title="Python could not read those arguments">
-            {r.parseError ? <code>{r.parseError}</code> : null} Use a tuple of plain values, for example <code>{q.argsExample}</code>. This did not use up a check.
+            {r.parseError ? r.parseError : <>Use a tuple of plain values, for example <code>{q.argsExample}</code>.</>} This did not use up a check.
           </Callout>
         ) : null}
         {r && !busy && r.validArgs && hideResult ? <Callout tone="info" title="Answer submitted">Results appear when the test ends.</Callout> : null}
@@ -158,11 +155,4 @@ export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
       ) : null}
     </div>
   );
-}
-
-function displayArgs(args: string) {
-  const t = args.trim();
-  // "(5,)" -> "(5)", "([1, 2],)" -> "([1, 2])" for a call-like display; other tuples show as typed.
-  if (/^\(.*,\s*\)$/.test(t)) return t.replace(/,\s*\)$/, ')');
-  return t.startsWith('(') ? t : `(${t})`;
 }

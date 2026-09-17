@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import type { Diff, Format, TopicId } from '../../content/ids.ts';
 import { FORMAT_LADDER, OFFLINE_FORMATS } from '../../content/ids.ts';
 import type { Candidate } from './select.ts';
+import type { GeneratedQuestion, Question } from '../../content/schema.ts';
 import {
-  estimatedMinutes, midsemEligible, seededRng, selectMidsem, selectTopicTest, topicTestPassMark, waterFill,
+  estimatedMinutes, isGradable, midsemEligible, seededRng, selectMidsem, selectTopicTest, topicTestPassMark, waterFill,
 } from './select.ts';
 
 let n = 0;
@@ -181,9 +182,46 @@ describe('selectMidsem', () => {
   });
 });
 
+describe('isGradable', () => {
+  const q = (format: Format, extra: Record<string, unknown> = {}) => ({ id: 'x', format, ...extra }) as unknown as Question;
+  it('needs the generated field each read grader uses', () => {
+    expect(isGradable(q('predict'), undefined)).toBe(false);
+    expect(isGradable(q('predict'), {} as GeneratedQuestion)).toBe(false);
+    expect(isGradable(q('predict'), { stdout: '' })).toBe(true);
+    expect(isGradable(q('trace'), { traceRows: [] })).toBe(true);
+    expect(isGradable(q('trace'), { stdout: '1' })).toBe(false);
+    expect(isGradable(q('twins'), { twins: { outLeft: '', outRight: '', differs: false } })).toBe(true);
+    expect(isGradable(q('errorTranslator'), { error: { type: 'E', message: 'm', line: 1 } })).toBe(true);
+    expect(isGradable(q('errorTranslator'), undefined)).toBe(false);
+  });
+  it('choice questions need a correct option; code formats need nothing generated', () => {
+    expect(isGradable(q('mcq', { options: [{ id: 'a', correct: true }] }), undefined)).toBe(true);
+    expect(isGradable(q('mcq', { options: [{ id: 'a' }] }), undefined)).toBe(false);
+    expect(isGradable(q('multi', { options: [] }), undefined)).toBe(false);
+    expect(isGradable(q('write'), undefined)).toBe(true);
+    expect(isGradable(q('parsons'), undefined)).toBe(true);
+  });
+});
+
 describe('estimatedMinutes', () => {
   it('rounds the sum of expected seconds up to minutes', () => {
     expect(estimatedMinutes([c('strings', 'mcq', 'easy', false, 90), c('strings', 'mcq', 'easy', false, 40)])).toBe(3);
     expect(estimatedMinutes([])).toBe(0);
+  });
+});
+
+describe('selectMidsem difficulty across cells', () => {
+  it('fills a rung from a topic that has a medium question before one that only has hard ones', () => {
+    // Two write slots and two topics' worth of writes: one medium must be used before a second hard one.
+    const pool: Candidate[] = [
+      c('strings', 'mcq', 'medium'), c('strings', 'write', 'hard'), c('strings', 'write', 'hard'),
+      c('lists-tuples', 'mcq', 'medium'), c('lists-tuples', 'write', 'medium'),
+    ];
+    for (let seed = 1; seed <= 10; seed++) {
+      const picks = selectMidsem(pool, { topicIds: ['strings', 'lists-tuples'], count: 3, includeCoding: true }, seededRng(seed));
+      const writes = picks.filter((p) => p.format === 'write');
+      expect(writes.length).toBeGreaterThanOrEqual(1);
+      expect(writes.some((w) => w.diff === 'medium')).toBe(true);
+    }
   });
 });

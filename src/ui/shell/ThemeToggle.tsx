@@ -11,6 +11,8 @@ export function applyTheme(theme: Settings['theme']) {
   const root = document.documentElement;
   if (theme === 'light' || theme === 'dark') root.setAttribute('data-theme', theme);
   else root.removeAttribute('data-theme');
+  // Keeps the browser's own UI (scrollbars, form controls before CSS loads) in step with the theme.
+  document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', theme === 'system' ? 'light dark' : theme);
 }
 
 export function ThemeToggle() {

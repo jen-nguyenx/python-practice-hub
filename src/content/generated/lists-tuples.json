@@ -1,0 +1,43 @@
+{
+  "t06-s1-q2": {
+    "mutantOutputs": [
+      "Ava 4\n['Kai', 'Noor', 'Liam']\n",
+      "Sofia 4\n['Kai', 'Noor']\n",
+      "Ava 4\n['Sofia', 'Noor']\n"
+    ],
+    "stdout": "Ava 4\n['Kai', 'Noor']\n"
+  },
+  "t06-s1-q3": {
+    "mutantOutputs": [
+      "['Aroha', 'Ben']\n['Aroha', 'Ben', 'Chloe', 'Manager']\n",
+      "['Aroha', 'Ben', 'Chloe', 'Manager']\n['Aroha', 'Ben', 'Chloe', 'Manager']\n"
+    ],
+    "stdout": "['Aroha', 'Ben', 'Chloe']\n['Aroha', 'Ben', 'Chloe', 'Manager']\n"
+  },
+  "t06-s2-q2": {
+    "traceRows": [
+      [
+        "[0, 4, 12]",
+        "16",
+        "[16]"
+      ],
+      [
+        "[3, 0, 0]",
+        "3",
+        "[16, 3]"
+      ],
+      [
+        "[7, 1, 9]",
+        "17",
+        "[16, 3, 17]"
+      ]
+    ]
+  },
+  "t06-s3-q1": {
+    "twins": {
+      "differs": true,
+      "outLeft": "[58, 72, 91]\n[72, 58, 91]\n",
+      "outRight": "None\n[58, 72, 91]\n"
+    }
+  }
+}

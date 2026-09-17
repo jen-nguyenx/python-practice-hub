@@ -58,7 +58,7 @@ export function ShortcutSheet() {
                     <tr key={i} class={off ? 'is-off' : undefined}>
                       <td class="sc-action">{r.action}</td>
                       <td><Keys row={r} /></td>
-                      <td class="sc-where">{off ? 'Off (single-key shortcuts)' : r.where}</td>
+                      <td class="sc-where">{off ? 'Off' : r.where}</td>
                     </tr>
                   );
                 })}

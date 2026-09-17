@@ -126,3 +126,10 @@
   .rt-short { display: inline; }
   .app-header .hdr-keys { display: none; }
 }
+@media (max-width: 640px) {
+  .sc-table, .sc-table tbody, .sc-table td { display: block; }
+  .sc-table tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px var(--sp-2); padding: var(--sp-2) 0; border-bottom: 1px solid var(--border); }
+  .sc-table tbody tr:last-child { border-bottom: 0; }
+  .sc-table td, .sc-table td + td { padding: 0; border: 0; }
+  .sc-action { grid-column: 1 / -1; width: auto; }
+}

@@ -77,9 +77,13 @@ function ProgressBlock({ meta, p, prevLocked }: { meta: TopicMeta; p: TopicProgr
     <section class="tp-progress" aria-label="Progress in this topic">
       <div class="tp-progress-top">
         <StateLabel state={p.state} testedOut={p.testedOut} />
-        <span class="tp-progress-count num">
-          <span class="mono">{p.solved}</span> of <span class="mono">{total}</span> solved · <span class="mono">{p.codeSolved}</span> coding
-        </span>
+        {total > 0 ? (
+          <span class="tp-progress-count num">
+            <span class="mono">{p.solved}</span> of <span class="mono">{total}</span> solved · <span class="mono">{p.codeSolved}</span> coding
+          </span>
+        ) : (
+          <span class="tp-progress-count">No questions yet</span>
+        )}
         <span class="spacer" />
         <span class="tp-progress-min">{minimumText(p.minimum)}</span>
       </div>
@@ -95,6 +99,16 @@ function ProgressBlock({ meta, p, prevLocked }: { meta: TopicMeta; p: TopicProgr
       ) : null}
       {explain}
     </section>
+  );
+}
+
+/** Full label, swapped for a shorter one on narrow screens so all four tabs fit (CSS only, one name at a time). */
+function ShortLabel({ long, short }: { long: string; short: string }) {
+  return (
+    <>
+      <span class="tl-long">{long}</span>
+      <span class="tl-short">{short}</span>
+    </>
   );
 }
 
@@ -164,8 +178,8 @@ export function TopicPage({ topicId }: { topicId: string }) {
   const tabs = [
     { id: 'questions' as const, label: 'Questions', badge: questions.length || undefined },
     { id: 'cheatsheet' as const, label: 'Cheat sheet' },
-    { id: 'example' as const, label: 'Worked example' },
-    { id: 'mistakes' as const, label: 'Common mistakes', badge: topic?.commonMistakes.length || undefined },
+    { id: 'example' as const, label: <ShortLabel long="Worked example" short="Example" /> },
+    { id: 'mistakes' as const, label: <ShortLabel long="Common mistakes" short="Mistakes" />, badge: topic?.commonMistakes.length || undefined },
   ];
   const idBase = `topic-${meta.id}`;
 

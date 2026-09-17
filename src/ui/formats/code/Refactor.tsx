@@ -30,7 +30,7 @@ export function Refactor(props: FormatProps<QuestionOf<'refactor'>>) {
   return (
     <div class="stack">
       {goal.length ? (
-        <p class="refactor-goal"><strong>Goal:</strong> keep every test passing, and <Markdown class="inline-md" text={goal.join('; ')} /></p>
+        <div class="refactor-goal"><strong>Goal:</strong> keep every test passing, and <Markdown class="inline-md" text={goal.join('; ')} /></div>
       ) : null}
       <CodeTask
         fp={props as FormatProps<Question>}

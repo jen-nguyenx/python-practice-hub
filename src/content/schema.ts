@@ -13,7 +13,7 @@ export interface QuestionBase {
   id: string;
   format: Format;
   diff: Diff;
-  /** Core questions count toward progress and the topic minimum. */
+  /** Core questions are the recommended path. Any solved question (core or not) counts toward the topic minimum. */
   core: boolean;
   title: string;
   prompt: Md;

@@ -21,7 +21,8 @@ export interface Store {
   /** All events in insertion order. Updates on append. */
   events: ReadonlySignal<readonly AppEvent[]>;
   settings: ReadonlySignal<Settings>;
-  sessionId: string;
+  /** Current session id. A getter: it changes after 30 idle minutes, so read it each time instead of keeping a copy. */
+  readonly sessionId: string;
   append(e: NewEvent): AppEvent;
   updateSettings(patch: Partial<Settings>): void;
   getSnapshot(qid: string): Promise<Snapshot | undefined>;

@@ -1,0 +1,68 @@
+{
+  "t03-s1-q2": {
+    "traceRows": [
+      [
+        "1",
+        "2"
+      ],
+      [
+        "2",
+        "6"
+      ],
+      [
+        "3",
+        "12"
+      ],
+      [
+        "4",
+        "20"
+      ]
+    ]
+  },
+  "t03-s2-q1": {
+    "mutantOutputs": [
+      "20 min\n15 min\n10 min\n5 min\n0 min\nTrain arriving\n",
+      "20 min\nTrain arriving\n15 min\nTrain arriving\n10 min\nTrain arriving\n5 min\nTrain arriving\n"
+    ],
+    "stdout": "20 min\n15 min\n10 min\n5 min\nTrain arriving\n"
+  },
+  "t03-s2-q2": {
+    "mutantOutputs": [
+      "Check carriage 1\nCheck carriage 4\nCheck carriage 5\n",
+      "Check carriage 1\nCheck carriage 4\nCheck carriage 3\nCheck carriage 4\nCheck carriage 5\nCheck carriage 6\n"
+    ],
+    "stdout": "Check carriage 1\nCheck carriage 4\nCheck carriage 3\nCheck carriage 4\nCheck carriage 5\n"
+  },
+  "t03-s3-q2": {
+    "mutantOutputs": [
+      "Warm day 33\nWarm day 35\nWarm day 37\nWarm day 39\nHot days: 3\n",
+      "Warm day 33\nHot days: 4\n",
+      "Hot days: 0\nWarm day 33\nHot days: 0\nHot days: 1\nHot days: 2\nHot days: 3\n"
+    ],
+    "stdout": "Warm day 33\nHot days: 3\n"
+  },
+  "t03-s4-q1": {
+    "traceRows": [
+      [
+        "3",
+        "1",
+        "2"
+      ],
+      [
+        "4",
+        "2",
+        "3"
+      ],
+      [
+        "5",
+        "3",
+        "5"
+      ],
+      [
+        "6",
+        "5",
+        "8"
+      ]
+    ]
+  }
+}

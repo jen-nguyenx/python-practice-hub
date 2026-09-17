@@ -18,11 +18,15 @@ import {
   estimatedMinutes, MIDSEM_COUNTS, MIDSEM_MINUTES, MIDSEM_PASS_PERCENT, midsemEligible, seededRng, selectMidsem,
 } from '../testmode/select.ts';
 import { bestResult, testHistory } from '../testmode/summary.ts';
+import type { TestProgress } from '../testmode/progress.ts';
+import { clearProgress, readProgress } from '../testmode/progress.ts';
+import { ResumeCard } from '../testmode/ResumeCard.tsx';
 import '../testmode/testmode.css';
 
 interface Setup { topicIds: TopicId[]; count: number; minutes: number; includeCoding: boolean }
 
 const SETUP_KEY = 'pyladder:midsem-setup';
+const PROGRESS_KEY = 'midsem';
 const DEFAULT_TOPICS: TopicId[] = TOPICS.filter((t) => t.midsem).map((t) => t.id);
 const DEFAULT_SETUP: Setup = { topicIds: DEFAULT_TOPICS, count: 15, minutes: 30, includeCoding: true };
 
@@ -52,7 +56,8 @@ export function MidsemTest() {
   const [setup, setSetupState] = useState<Setup>(loadSetup);
   const [pool, setPool] = useState<PoolEntry[] | null>(null);
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 2 ** 31));
-  const [running, setRunning] = useState<{ items: PoolEntry[]; minutes: number; runId: number } | null>(null);
+  const [running, setRunning] = useState<{ items: PoolEntry[]; minutes: number; runId: number; resume?: TestProgress } | null>(null);
+  const [saved, setSaved] = useState<TestProgress | null>(() => readProgress('midsem', PROGRESS_KEY));
   const events = store.events.value;
 
   useEffect(() => {
@@ -87,6 +92,8 @@ export function MidsemTest() {
         title={`Mid-sem practice · ${plural(n, 'question')}, ${running.minutes} min`}
         questions={running.items.map((p) => p.item)}
         durationMin={running.minutes}
+        persistKey={PROGRESS_KEY}
+        resume={running.resume}
         mode="midsem"
         onFinish={() => setSeed(Math.floor(Math.random() * 2 ** 31))}
         resultExtra={(s) => {
@@ -102,7 +109,7 @@ export function MidsemTest() {
         }}
         resultActions={() => (
           <>
-            <Button variant="primary" onClick={() => setRunning(null)}>New practice test</Button>
+            <Button variant="primary" onClick={() => { setSaved(readProgress('midsem', PROGRESS_KEY)); setRunning(null); }}>New practice test</Button>
             <LinkButton href={href.report()}>See your report</LinkButton>
           </>
         )}
@@ -125,6 +132,9 @@ export function MidsemTest() {
 
   const start = () => {
     if (!canStart) return;
+    if (saved && !window.confirm('Start a new test? The test you have in progress will be discarded.')) return;
+    clearProgress('midsem', PROGRESS_KEY);
+    setSaved(null);
     setRunning({ items: selection, minutes: setup.minutes, runId: seed });
   };
 
@@ -136,8 +146,14 @@ export function MidsemTest() {
         <p class="muted">A timed, mixed test across the topics you choose. One check per question, no hints, and a full review at the end.</p>
       </header>
 
+      {saved ? (
+        <ResumeCard progress={saved} pool={pool}
+          onResume={(items) => { setSaved(null); setRunning({ items, minutes: saved.durationMin, runId: saved.startedAt, resume: saved }); }}
+          onDiscard={() => { clearProgress('midsem', PROGRESS_KEY); setSaved(null); }} />
+      ) : null}
+
       <Callout tone="neutral">
-        <p><strong>Practice test built from PyLadder questions, not the official test.</strong> Past CITS1401 mid-semester tests have been multiple choice; check LMS for this semester's format, and turn coding questions off to practise that style.</p>
+        <p><strong>Practice test built from PyLadder questions, not the official test.</strong> Older CITS1401 mid-semester tests were multiple choice. Check LMS for this semester's format; turn coding questions off to practise reading-only questions.</p>
       </Callout>
 
       <section class="card tm-card" aria-labelledby="ms-setup">

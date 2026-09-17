@@ -15,6 +15,7 @@ import { isStarting } from '../../workbench/plain.ts';
 import { firstTestsError, runTestsLogged } from '../../workbench/runner.ts';
 import { kbdRun, useRunShortcuts } from '../../workbench/shortcuts.ts';
 import { TestsTable } from '../../workbench/TestsTable.tsx';
+import { asciiText } from './logic.ts';
 import './code.css';
 
 const MARK = /⟦(\d+)⟧/g;
@@ -31,11 +32,6 @@ function draftAnswers(draft: unknown): Answers {
   return {};
 }
 
-/** Normalise smart quotes and dashes that phones and some keyboards insert. */
-function asciiFill(s: string) {
-  return s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-');
-}
-
 export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
   const { q, revealed, locked, mode, checksLeft, topicId } = props;
   const testMode = mode === 'topic-test' || mode === 'midsem';
@@ -46,6 +42,8 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
   const [checks, setChecks] = useState(0);
   const [showExplain, setShowExplain] = useState(false);
   const inputs = useRef<Record<string, HTMLInputElement | null>>({});
+  const inFlight = useRef(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const status = py.status.value;
 
   const blanksById = useMemo(() => new Map(q.blanks.map((b) => [b.id, b])), [q.blanks]);
@@ -61,14 +59,16 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
   };
 
   const check = async () => {
-    if (!canCheck) return;
+    if (!canCheck || inFlight.current) return;
+    inFlight.current = true;
     const filled: Answers = {};
-    for (const id of order) filled[id] = asciiFill(answers[id] ?? '');
+    for (const id of order) filled[id] = asciiText(answers[id] ?? '');
     const code = fillCloze(q, filled);
     setBusy(true);
     setFailure(null);
     setShowExplain(false);
     const { result, failure: f } = await runTestsLogged({ code, tests: q.tests, kind: 'function', fnName: q.fnName }, { qid: q.id, topicId }, false);
+    inFlight.current = false;
     setBusy(false);
     setFailure(f);
     if (!result) return;
@@ -78,7 +78,7 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
     props.onCheck(graded, { answers: filled, code, flags: result.flags.map((x) => x.flag) });
   };
 
-  useRunShortcuts({ onRun: check });
+  useRunShortcuts({ onRun: check }, true, rootRef);
 
   // Render the template: tokenise with placeholders so string/keyword colours survive around blanks.
   const withPh = q.template.replace(MARK, (_m, id: string) => PH(id));
@@ -102,13 +102,13 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
     const accept = blank?.accept ?? [];
     const width = Math.max(3, ...accept.map((a) => a.length), (answers[id] ?? '').length) + 1;
     const n = order.indexOf(id) + 1;
-    const value = revealed ? (answers[id] && accept.includes(asciiFill(answers[id]).trim()) ? answers[id] : accept[0] ?? '') : answers[id] ?? '';
+    const value = revealed ? (answers[id] && accept.includes(asciiText(answers[id]).trim()) ? answers[id] : accept[0] ?? '') : answers[id] ?? '';
     return (
       <input
         key={`blank-${id}`}
         ref={(el) => { inputs.current[id] = el; }}
         class={`cloze-input${revealed ? ' revealed' : ''}`}
-        style={{ width: `${width}ch` }}
+        style={{ width: `calc(${width}ch + 12px)` }}
         value={value}
         readOnly={readOnly}
         aria-label={`Blank ${n} of ${order.length}`}
@@ -133,7 +133,7 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
   const hideResult = testMode && !revealed;
 
   return (
-    <div class="cloze">
+    <div class="cloze" ref={rootRef} data-run-scope>
       <p class="muted cloze-help">Type into each gap. Press Enter to move to the next gap; Enter on the last gap checks your answer.</p>
       <pre class="code-block cloze-code" aria-label="Code with gaps to fill"><code>{parts}</code></pre>
       <div class="ct-toolbar">

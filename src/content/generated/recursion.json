@@ -1,0 +1,73 @@
+{
+  "t13-s1-q2": {
+    "mutantOutputs": [
+      "3\n2\n1\nSkyworks\ndone\n",
+      "3\n2\n1\nSkyworks\n"
+    ],
+    "stdout": "3\n2\n1\nSkyworks\nNone\n"
+  },
+  "t13-s1-q3": {
+    "traceRows": [
+      [
+        "4",
+        "16"
+      ],
+      [
+        "3",
+        "9"
+      ],
+      [
+        "2",
+        "4"
+      ],
+      [
+        "1",
+        "1"
+      ]
+    ]
+  },
+  "t13-s2-q1": {
+    "error": {
+      "line": 2,
+      "message": "maximum recursion depth exceeded",
+      "type": "RecursionError"
+    },
+    "stdout": "Checking card...\n"
+  },
+  "t13-s3-q1": {
+    "mutantOutputs": [
+      "go\na 1\na 2\na 3\n3\n",
+      "go\na 1\nw 2\nu 3\n0\n"
+    ],
+    "stdout": "go\na 1\nw 2\nu 3\n3\n"
+  },
+  "t13-s4-q1": {
+    "traceRows": [
+      [
+        "5",
+        "0",
+        "5"
+      ],
+      [
+        "2",
+        "5",
+        "7"
+      ],
+      [
+        "1",
+        "0",
+        "1"
+      ],
+      [
+        "7",
+        "1",
+        "8"
+      ],
+      [
+        "3",
+        "8",
+        "11"
+      ]
+    ]
+  }
+}

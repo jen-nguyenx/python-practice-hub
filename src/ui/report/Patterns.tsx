@@ -15,19 +15,23 @@ function Card({ card, row }: { card: PatternCard; row: PatternRow }) {
   const topic = TOPIC_BY_ID[card.topicId];
   return (
     <article class="card rp-pcard" aria-labelledby={`rp-p-${card.id}`}>
-      <header class="rp-pcard-head">
-        <h4 id={`rp-p-${card.id}`}>{card.title}</h4>
-        {row.status === 'recommended' ? <Chip tone="accent"><Icon name="target" size={11} /> Recommended</Chip>
-          : row.status === 'using' ? <Chip tone="ok"><Icon name="check" size={11} /> Already using</Chip>
-          : <Chip><Icon name="lock" size={11} /> Later</Chip>}
-      </header>
-      {row.status === 'recommended' && row.triggerCount > 0 ? (
-        <p class="faint num">Related mistakes came up {row.triggerCount === 1 ? 'once' : `${row.triggerCount} times`} in your answers.</p>
-      ) : null}
-      {row.status === 'later' && topic ? <p class="faint">Comes up in {topic.title}.</p> : null}
-      <Markdown text={card.why} />
-      <BadGood bad={card.bad} good={card.good} />
-      {card.reference ? <p class="rp-pref faint"><Icon name="book" size={12} /> {card.reference}</p> : null}
+      <div class="rp-pcard-inner">
+        <div class="rp-pcard-text">
+          <header class="rp-pcard-head">
+            <h4 id={`rp-p-${card.id}`}>{card.title}</h4>
+            {row.status === 'recommended' ? <Chip tone="accent"><Icon name="target" size={11} /> Recommended</Chip>
+              : row.status === 'using' ? <Chip tone="ok"><Icon name="check" size={11} /> Already using</Chip>
+              : <Chip><Icon name="lock" size={11} /> Later</Chip>}
+          </header>
+          {row.status === 'recommended' && row.triggerCount > 0 ? (
+            <p class="faint num">Related mistakes came up {row.triggerCount === 1 ? 'once' : `${row.triggerCount} times`} in your answers.</p>
+          ) : null}
+          {row.status === 'later' && topic ? <p class="faint">Comes up in {topic.title}.</p> : null}
+          <Markdown text={card.why} />
+          {card.reference ? <p class="rp-pref faint"><Icon name="book" size={12} /> {card.reference}</p> : null}
+        </div>
+        <BadGood bad={card.bad} good={card.good} />
+      </div>
     </article>
   );
 }

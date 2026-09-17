@@ -1,5 +1,5 @@
 // Sticky app header: logo, main navigation (menu button under 760px), runtime pill, shortcuts and theme toggle.
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { href } from '../../app/router.ts';
 import type { Route } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
@@ -42,7 +42,7 @@ export function Header({ route }: { route: Route }) {
   // Close the mobile menu on navigation.
   useEffect(() => { setMenuOpen(false); }, [route]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { setMenuOpen(false); menuBtn.current?.focus(); }

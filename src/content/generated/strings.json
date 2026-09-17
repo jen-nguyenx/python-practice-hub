@@ -1,0 +1,40 @@
+{
+  "t05-s1-q1": {
+    "mutantOutputs": [
+      "cits 1401 2\n",
+      "cits1 1401 11\n",
+      "cits 1401 S1\n"
+    ],
+    "stdout": "cits 1401 11\n"
+  },
+  "t05-s2-q1": {
+    "error": {
+      "line": 4,
+      "message": "string index out of range",
+      "type": "IndexError"
+    },
+    "stdout": ""
+  },
+  "t05-s3-q1": {
+    "mutantOutputs": [
+      "14\n1875\n192\n",
+      "13\n192\n192\n"
+    ],
+    "stdout": "13\n1875\n192\n"
+  },
+  "t05-s3-q2": {
+    "twins": {
+      "differs": true,
+      "outLeft": "4\n",
+      "outRight": "5\n"
+    }
+  },
+  "t05-s4-q1": {
+    "mutantOutputs": [
+      "neveroddoreven\nTrue\nTrue\neve reveN\n",
+      "neveroddoreven\nTrue\nTrue\neve reven\n",
+      "neveroddoreven\nTrue\nFalse\neven reveN\n"
+    ],
+    "stdout": "neveroddoreven\nTrue\nFalse\neve reveN\n"
+  }
+}

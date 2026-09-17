@@ -1,0 +1,25 @@
+{
+  "t04-s1-q2": {
+    "mutantOutputs": [
+      "30\n30\n",
+      "10\n10\n"
+    ],
+    "stdout": "10\n30\n"
+  },
+  "t04-s2-q1": {
+    "mutantOutputs": [
+      "Project 14.0\n38.0\n14.0\n",
+      "8.0\n14.0\nProject 14.0\n30.0\n38.0\nNone\n",
+      "Project 14\n38\nNone\n"
+    ],
+    "stdout": "Project 14.0\n38.0\nNone\n"
+  },
+  "t04-s3-q2": {
+    "error": {
+      "line": 9,
+      "message": "name 'total' is not defined",
+      "type": "NameError"
+    },
+    "stdout": ""
+  }
+}

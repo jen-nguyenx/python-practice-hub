@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { TopicId } from '../../content/ids.ts';
 import { CODE_FORMATS, TOPIC_IDS } from '../../content/ids.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
+import { QUESTION_INDEX } from '../../content/loadIndex.ts';
+import { topicProgressAll } from '../../engine/progress.ts';
 import { store } from '../../app/services.ts';
 import { href } from '../../app/router.ts';
 import { markTopicOpened } from '../../app/session.ts';
@@ -17,6 +19,9 @@ import { loadPool } from '../testmode/pool.ts';
 import { selectTopicTest, TOPIC_TEST_MINUTES, TOPIC_TEST_SIZE, topicTestPassMark } from '../testmode/select.ts';
 import type { TestSummary } from '../testmode/summary.ts';
 import { testHistory } from '../testmode/summary.ts';
+import type { TestProgress } from '../testmode/progress.ts';
+import { clearProgress, readProgress } from '../testmode/progress.ts';
+import { ResumeCard } from '../testmode/ResumeCard.tsx';
 import '../testmode/testmode.css';
 
 export function TopicTest({ topicId }: { topicId: string }) {
@@ -28,6 +33,8 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
   const meta = TOPIC_BY_ID[topicId];
   const [pool, setPool] = useState<PoolEntry[] | null>(null);
   const [picked, setPicked] = useState<PoolEntry[] | null>(null);
+  const [resume, setResume] = useState<TestProgress | undefined>(undefined);
+  const [saved, setSaved] = useState<TestProgress | null>(() => (meta ? readProgress('topic-test', meta.id) : null));
   const [runId, setRunId] = useState(0);
   const events = store.events.value;
 
@@ -39,6 +46,16 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
   }, [topicId]);
 
   const history = useMemo(() => (meta ? testHistory(events, 'topic-test', meta.id) : []), [events, meta]);
+  const settings = store.settings.value;
+  const lockReason = useMemo(() => {
+    if (!meta) return null;
+    try {
+      const p = topicProgressAll(events, QUESTION_INDEX, settings)[meta.id];
+      return p && p.state === 'locked' ? (p.lockReason ?? '') : null;
+    } catch {
+      return null;
+    }
+  }, [events, settings, meta]);
 
   if (!meta || !(TOPIC_IDS as readonly string[]).includes(topicId)) {
     return (
@@ -59,13 +76,15 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
         key={runId}
         title={`${meta.title}`}
         questions={picked.map((p) => p.item)}
-        durationMin={TOPIC_TEST_MINUTES}
+        durationMin={resume?.durationMin ?? TOPIC_TEST_MINUTES}
+        persistKey={meta.id}
+        resume={resume}
         mode="topic-test"
         onFinish={() => {}}
         resultExtra={(s: TestSummary) => <TopicTestOutcome summary={s} topicId={meta.id} next={next?.id ?? null} />}
         resultActions={() => (
           <>
-            <Button variant="primary" onClick={() => { setPicked(null); setRunId(runId + 1); }}>Take the test again</Button>
+            <Button variant="primary" onClick={() => { setSaved(readProgress('topic-test', meta.id)); setPicked(null); setResume(undefined); setRunId(runId + 1); }}>Take the test again</Button>
             <LinkButton href={href.topic(meta.id)}>Back to {meta.short}</LinkButton>
             <LinkButton href={href.report(meta.id)} variant="ghost">Topic report</LinkButton>
           </>
@@ -76,7 +95,11 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
 
   const start = () => {
     if (!pool || pool.length === 0) return;
+    if (saved && !window.confirm('Start a new test? The test you have in progress will be discarded.')) return;
     markTopicOpened(meta.id as TopicId);
+    clearProgress('topic-test', meta.id);
+    setSaved(null);
+    setResume(undefined);
     setPicked(selectTopicTest(pool));
   };
   const hasCode = pool?.some((p) => CODE_FORMATS.includes(p.format)) ?? true;
@@ -96,6 +119,12 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
         </p>
       </header>
 
+      {saved ? (
+        <ResumeCard progress={saved} pool={pool}
+          onResume={(items) => { setSaved(null); setResume(saved); setRunId(saved.startedAt); setPicked(items); }}
+          onDiscard={() => { clearProgress('topic-test', meta.id); setSaved(null); }} />
+      ) : null}
+
       <section class="card tm-card" aria-labelledby="tt-how">
         <h2 id="tt-how" class="sr-only">How the test works</h2>
         <ul class="tm-facts">
@@ -109,7 +138,7 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
           <li>Each question gets <strong>one</strong> check or submit. Your answer is saved, and you see how you did at the end.</li>
           <li>No hints and no Show answer during the test. Every answer is explained afterwards.</li>
           <li>Move between questions freely and flag any you want to come back to.</li>
-          <li>The test finishes by itself when the timer reaches 0:00. Leaving the page ends it without saving.</li>
+          <li>The test finishes by itself when the timer reaches 0:00. If you leave or reload the page, your saved answers are kept and you can carry on here, but the timer keeps running.</li>
         </ul>
 
         {pool === null ? <p class="muted" role="status">Loading questions…</p> : null}
@@ -121,6 +150,11 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
         ) : null}
         {pool !== null && pool.length > 0 && hasCode ? (
           <p class="muted"><Icon name="terminal" /> Coding questions run your code with Python in the browser. It loads in the background and can take a few seconds the first time.</p>
+        ) : null}
+        {lockReason !== null && !passedBefore ? (
+          <Callout tone="neutral" title="This topic is not unlocked yet">
+            <p>You can still take the test for revision.{next ? ` Passing it unlocks ${next.title}.` : ''}{lockReason ? ` To open the practice questions: ${lockReason}` : ''}</p>
+          </Callout>
         ) : null}
         {passedBefore ? (
           <Callout tone="ok" title="Already passed">You passed this test on {formatDate(passedBefore.ts)} ({passedBefore.score} of {passedBefore.total}). You can take it again for practice.</Callout>

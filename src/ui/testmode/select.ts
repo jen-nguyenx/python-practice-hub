@@ -46,10 +46,20 @@ export function isPaper(q: Question): boolean {
   return q.format === 'write' && q.mode === 'paper';
 }
 
-/** A question can go into a test only if it can be graded: read formats that need generated data must have it. */
+/**
+ * A question can go into a test only if it can be graded: read formats that need generated data must have the
+ * field their grader reads (stale generated data is skipped), choice formats need a correct option.
+ */
 export function isGradable(q: Question, generated: GeneratedQuestion | undefined): boolean {
-  if (NEEDS_GENERATED.includes(q.format)) return generated !== undefined;
-  return true;
+  switch (q.format) {
+    case 'predict': return typeof generated?.stdout === 'string';
+    case 'trace': return Array.isArray(generated?.traceRows);
+    case 'twins': return !!generated?.twins;
+    case 'errorTranslator': return !!generated?.error;
+    case 'mcq':
+    case 'multi': return Array.isArray(q.options) && q.options.some((o) => o.correct);
+    default: return !NEEDS_GENERATED.includes(q.format);
+  }
 }
 
 export function toCandidate(q: Question, topicId: TopicId): Candidate {
@@ -214,8 +224,10 @@ export function selectMidsem<T extends Candidate>(pool: readonly T[], opts: Mids
         const rDef = rungTargets[ri] - rungCount[ri];
         const bothOpen = (tDef > 0 ? 1 : 0) + (rDef > 0 ? 1 : 0);
         const relative = (topicTargets[ti] ? tDef / topicTargets[ti] : -1) + (rungTargets[ri] ? rDef / rungTargets[ri] : -1);
-        // Higher is better: both deficits open, larger relative deficit, scarcer cell first (so it is not starved later).
-        const key = [bothOpen, relative, -avail.length];
+        const bestDiff = Math.min(...avail.map(midsemDiffRank));
+        // Higher is better: both deficits open, larger relative deficit, a medium question available,
+        // then the scarcer cell first (so it is not starved later).
+        const key = [bothOpen, relative, -bestDiff, -avail.length];
         if (!best || compareKeys(key, best.key) > 0) best = { ti, ri, key };
       }
     }

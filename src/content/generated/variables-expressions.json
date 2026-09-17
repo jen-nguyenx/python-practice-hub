@@ -1,0 +1,32 @@
+{
+  "t01-s1-q1": {
+    "mutantOutputs": [
+      "1.75 h 45 min\n1.75\n",
+      "1 h 45 min\n1\n"
+    ],
+    "stdout": "1 h 45 min\n1.75\n"
+  },
+  "t01-s2-q1": {
+    "mutantOutputs": [
+      "40\n40\n320\n",
+      "2020\n40\n23\n"
+    ],
+    "stdout": "2020\n40\n320\n"
+  },
+  "t01-s3-q2": {
+    "traceRows": [
+      [
+        "'Tariq'",
+        "'Tariq'",
+        "2.0"
+      ]
+    ]
+  },
+  "t01-s4-q2": {
+    "mutantOutputs": [
+      "2 2 2\n0.30000000000000004 0.3\nPaid: $0.30\n",
+      "2.75 2 3\n0.3 0.3\nPaid: $0.30\n"
+    ],
+    "stdout": "2.75 2 3\n0.30000000000000004 0.3\nPaid: $0.30\n"
+  }
+}

@@ -1,4 +1,5 @@
 // Segmented control with radio-group semantics: one tab stop, arrow keys move and select.
+// Classes are prefixed "segm" because src/ui/report/segmented.css styles the global .seg / .seg-opt names.
 import type { ComponentChildren } from 'preact';
 import { useRef } from 'preact/hooks';
 import './controls.css';
@@ -40,20 +41,20 @@ export function Segmented<T extends string>({ value, options, onChange, label, l
   };
 
   return (
-    <div ref={ref} class={`seg${size === 'sm' ? ' sm' : ''}${cls ? ' ' + cls : ''}`} role="radiogroup" aria-label={label} aria-labelledby={labelledBy} onKeyDown={onKeyDown}>
+    <div ref={ref} class={`segm${size === 'sm' ? ' segm-sm' : ''}${cls ? ' ' + cls : ''}`} role="radiogroup" aria-label={label} aria-labelledby={labelledBy} onKeyDown={onKeyDown}>
       {options.map((o, i) => (
         <button
           key={o.value}
           type="button"
           role="radio"
-          class="seg-opt"
+          class="segm-opt"
           aria-checked={i === idx}
           tabIndex={i === idx ? 0 : -1}
           title={o.title}
           onClick={() => onChange(o.value)}
         >
           {o.label}
-          {o.count !== undefined ? <span class="seg-count">{o.count}</span> : null}
+          {o.count !== undefined ? <span class="segm-count">{o.count}</span> : null}
         </button>
       ))}
     </div>

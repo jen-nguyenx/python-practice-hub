@@ -77,43 +77,51 @@ export function TestsTable({ result, tests, revealed, title, onExplain }: TestsT
                 return (
                   <tr key={o.id} class={o.notRun ? 'notrun' : o.pass ? 'pass' : 'fail'}>
                     <td data-label="Test">
-                      {hide ? (
-                        <div class="tt-hidden">
-                          <span class="chip">Hidden</span> {o.label}
-                        </div>
-                      ) : (
-                        <>
-                          {t?.setup ? <pre class="tt-code tt-setup">{t.setup}</pre> : null}
-                          {t?.call ? <pre class="tt-code">{t.call}</pre> : <div>{o.label}</div>}
-                          {t?.stdin?.length ? <div class="tt-sub">Input: <code>{t.stdin.join(' ⏎ ')}</code></div> : null}
-                          {t?.files?.length ? <div class="tt-sub">Files: {t.files.map((f) => f.name).join(', ')}</div> : null}
-                          {t?.call && o.hidden ? <div class="tt-sub">Hidden test: {o.label}</div> : null}
-                        </>
-                      )}
-                      {tagLabel ? <div class="tt-sub">Checks for: {tagLabel}</div> : null}
+                      <div class="tt-cell">
+                        {hide ? (
+                          <div class="tt-hidden">
+                            <span class="chip">Hidden</span> {o.label}
+                          </div>
+                        ) : (
+                          <>
+                            {t?.setup ? <pre class="tt-code tt-setup">{t.setup}</pre> : null}
+                            {t?.call ? <pre class="tt-code">{t.call}</pre> : <div>{o.label}</div>}
+                            {t?.stdin?.length ? <div class="tt-sub">Input: <code>{t.stdin.join(' ⏎ ')}</code></div> : null}
+                            {t?.files?.length ? <div class="tt-sub">Files: {t.files.map((f) => f.name).join(', ')}</div> : null}
+                            {t?.call && o.hidden ? <div class="tt-sub">Hidden test: {o.label}</div> : null}
+                          </>
+                        )}
+                        {tagLabel ? <div class="tt-sub">Checks for: {tagLabel}</div> : null}
+                      </div>
                     </td>
-                    <td data-label="Expected">{hide ? <span class="faint">Hidden</span> : <pre class="tt-code">{o.expected ?? t?.expect ?? t?.expectStdout ?? ''}</pre>}</td>
+                    <td data-label="Expected">
+                      <div class="tt-cell">{hide ? <span class="faint">Hidden</span> : <pre class="tt-code">{o.expected ?? t?.expect ?? t?.expectStdout ?? ''}</pre>}</div>
+                    </td>
                     <td data-label="Got">
-                      {hide ? (
-                        <span class="faint">Hidden</span>
-                      ) : o.notRun ? (
-                        <span class="faint">Not run</span>
-                      ) : (
-                        <>
-                          <pre class={`tt-code${o.error || o.timedOut ? ' tt-err' : ''}`}>{gotText(o, program)}</pre>
-                          {!program && o.stdout && !o.error ? <div class="tt-sub">Printed: <code>{o.stdout.trimEnd()}</code></div> : null}
-                        </>
-                      )}
-                      {detections.length ? <div class="tt-sub tt-likely">Likely cause: {detections.join('; ')}</div> : null}
+                      <div class="tt-cell">
+                        {hide ? (
+                          <span class="faint">Hidden</span>
+                        ) : o.notRun ? (
+                          <span class="faint">Not run</span>
+                        ) : (
+                          <>
+                            <pre class={`tt-code${o.error || o.timedOut ? ' tt-err' : ''}`}>{gotText(o, program)}</pre>
+                            {!program && o.stdout && !o.error ? <div class="tt-sub">Printed: <code>{o.stdout.trimEnd()}</code></div> : null}
+                          </>
+                        )}
+                        {detections.length ? <div class="tt-sub tt-likely">Likely cause: {detections.join('; ')}</div> : null}
+                      </div>
                     </td>
                     <td data-label="Result" class="tt-result">
-                      {o.notRun ? (
-                        <span class="tt-badge notrun">Not run</span>
-                      ) : o.pass ? (
-                        <span class="tt-badge pass"><Icon name="check" size={14} /> Pass</span>
-                      ) : (
-                        <span class="tt-badge fail"><Icon name="x" size={14} /> Fail</span>
-                      )}
+                      <div class="tt-cell">
+                        {o.notRun ? (
+                          <span class="tt-badge notrun">Not run</span>
+                        ) : o.pass ? (
+                          <span class="tt-badge pass"><Icon name="check" size={14} /> Pass</span>
+                        ) : (
+                          <span class="tt-badge fail"><Icon name="x" size={14} /> Fail</span>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );

@@ -7,7 +7,13 @@
 .ct-runtime { font-size: var(--fs-12); color: var(--text-muted); }
 .ct-marks { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-13); color: var(--text-muted); }
 .ct-panel .panel-body { max-height: 460px; }
+@media (max-width: 899px) { .ct-panel .panel-body { max-height: none; } }
 .tests-preview { display: grid; gap: 8px; }
+.data-file summary { cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 2px 0; list-style: none; }
+.data-file summary::-webkit-details-marker { display: none; }
+.data-file summary::before { content: "\25B8"; color: var(--text-faint); }
+.data-file[open] > summary::before { content: "\25BE"; }
+.data-file-body { margin-top: 6px; max-height: 320px; overflow: auto; white-space: pre; }
 .inline-md, .inline-md p { display: inline; }
 .refactor-goal { font-size: var(--fs-13); }
 .refactor-gaps { margin: 0; padding-left: 1.2em; display: grid; gap: 2px; }
@@ -35,9 +41,9 @@
 .pz-help { font-size: var(--fs-13); line-height: 1.8; }
 .pz-help kbd { font-size: 10px; }
 .pz-board { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--sp-3); align-items: start; }
-.pz-col { display: grid; gap: 6px; min-width: 0; }
+.pz-col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; }
 .pz-list {
-  list-style: none; margin: 0; padding: 6px; display: flex; flex-direction: column; gap: 4px; min-height: 120px;
+  list-style: none; margin: 0; padding: 6px; display: flex; flex-direction: column; gap: 4px; min-height: 120px; min-width: 0;
   border: 1px dashed var(--border-strong); border-radius: var(--r-2); background: var(--surface-2);
 }
 .pz-list.prog { background: var(--editor-bg); border-style: solid; border-color: var(--border); min-height: 180px; }
@@ -52,7 +58,7 @@
 .pz-item.dragging { opacity: 0.35; }
 .pz-item.readonly { cursor: default; }
 .pz-grip { display: inline-flex; color: var(--text-faint); touch-action: none; padding: 4px 2px; }
-.pz-text { flex: 1; min-width: 0; font-size: var(--fs-13); white-space: pre; overflow-x: auto; }
+.pz-text { flex: 1; min-width: 0; font-size: var(--fs-13); white-space: pre-wrap; overflow-wrap: anywhere; }
 .pz-guides { position: absolute; inset: 0; pointer-events: none; }
 .pz-guide { position: absolute; top: 4px; bottom: 4px; width: 1px; background: var(--border); }
 .pz-indent-btns { display: inline-flex; gap: 2px; flex: none; }
@@ -88,3 +94,6 @@
 .tw-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
 .tw-side { display: grid; gap: 4px; min-width: 0; }
 .tw-side.differs .term-out { border-color: var(--bad-line); background: var(--bad-fill); }
+
+/* Code never uses ligatures (students must see // and != as typed). */
+.cloze-code, .cloze-input, .pz-text, .tw-input, .tw-call { font-variant-ligatures: none; }

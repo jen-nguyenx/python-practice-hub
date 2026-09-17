@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { py } from '../../app/services.ts';
 import { Button } from '../components/Button.tsx';
 import { Icon } from '../components/Icon.tsx';
+import type { PyError } from '../../runtime/protocol.ts';
 import type { ProgramRunState } from './runner.ts';
 import { errorOneLine, isStarting } from './plain.ts';
 import './workbench.css';
@@ -35,7 +36,6 @@ export function Terminal({ state, onInput, onClear, emptyText, replayNote = true
   return (
     <div class="terminal" role="region" aria-label="Program output">
       <div class="term-toolbar">
-        <span class="label">Output</span>
         <span class="spacer" />
         {onClear ? <Button size="sm" variant="ghost" onClick={onClear} disabled={!result && !failure}>Clear output</Button> : null}
       </div>
@@ -86,11 +86,12 @@ export function Terminal({ state, onInput, onClear, emptyText, replayNote = true
               <div class="term-error">
                 <div class="term-error-head">
                   <Icon name="alert" />
-                  <strong>{err.line ? `Error on line ${err.line}` : 'Error'}</strong>
+                  <strong>{errorHeading(err)}</strong>
                   {onExplain && err.type !== 'TimeoutError' && err.type !== 'OutputLimit' ? (
                     <Button size="sm" variant="ghost" onClick={onExplain}>Explain this error</Button>
                   ) : null}
                 </div>
+                {err.type === 'TimeoutError' || err.type === 'OutputLimit' ? <p>{err.message}</p> : null}
                 <pre class="term-tb">{err.traceback?.trim() ? err.traceback.trim() : errorOneLine(err)}</pre>
               </div>
             ) : null}
@@ -105,4 +106,11 @@ export function Terminal({ state, onInput, onClear, emptyText, replayNote = true
       </div>
     </div>
   );
+}
+
+function errorHeading(err: PyError): string {
+  const where = err.line ? ` (line ${err.line})` : '';
+  if (err.type === 'TimeoutError') return `Stopped: the program ran too long${where}`;
+  if (err.type === 'OutputLimit') return `Stopped: too much output${where}`;
+  return err.line ? `Error on line ${err.line}` : 'Error';
 }

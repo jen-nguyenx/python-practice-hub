@@ -38,7 +38,7 @@ export function ProblemsList({ syntaxError, flags, compact }: ProblemsListProps)
           <li key={`${f.flag}-${f.line}-${i}`} class="problem warning">
             <span class="problem-icon"><Icon name="alert" size={14} label="Warning" /></span>
             <span class="problem-line">Line {f.line}</span>
-            <span class="problem-text"><Markdown text={FLAG_TEXT[f.flag] ?? ''} /></span>
+            <div class="problem-text"><Markdown text={FLAG_TEXT[f.flag] ?? ''} /></div>
           </li>
         ))}
       </ul>

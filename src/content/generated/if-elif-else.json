@@ -1,0 +1,24 @@
+{
+  "t02-s1-q2": {
+    "mutantOutputs": [
+      "P\nD\nN\nChecked 74\n",
+      "D\nChecked 74\n",
+      "P\n"
+    ],
+    "stdout": "P\nChecked 74\n"
+  },
+  "t02-s2-q2": {
+    "twins": {
+      "differs": true,
+      "outLeft": "Heat warning\nExtreme heat warning\nForecast done\n",
+      "outRight": "Heat warning\nForecast done\n"
+    }
+  },
+  "t02-s3-q2": {
+    "mutantOutputs": [
+      "True\nFalse\nTrue\nSea breeze\n",
+      "False\nTrue\nTrue\nSea breeze\n"
+    ],
+    "stdout": "False\nFalse\nTrue\nSea breeze\n"
+  }
+}

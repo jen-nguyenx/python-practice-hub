@@ -35,12 +35,18 @@ DEFAULT_TEST_BUDGET_MS = 1000
 TEST_SEED = 1401
 MAX_GOT_REPR = 4000
 _perf = time.perf_counter
-_FUNCTION_TYPES = (types.FunctionType, types.BuiltinFunctionType, types.MethodType, types.LambdaType)
+_FUNCTION_TYPES = (types.FunctionType, types.BuiltinFunctionType, types.MethodType, types.LambdaType,
+                   types.MethodDescriptorType, types.WrapperDescriptorType, types.MethodWrapperType)
+# repr prefixes of function and method objects: printing or concatenating one means a call is missing its ().
+_UNCALLED_REPRS = ('<function ', '<bound method ', '<built-in function ', '<built-in method ', "<method '",
+                   '<method-wrapper ', "<slot wrapper '")
 
 
 # ---------------- argument helpers ----------------
 
 def _plain(x):
+    if x is not None and type(x).__name__ == 'JsNull':  # JS null arrives as pyodide.ffi.jsnull, not None
+        return None
     if x is not None and hasattr(x, 'to_py'):
         try:
             x = x.to_py()
@@ -241,6 +247,10 @@ def _printed_expected(stdout, expected):
     return False
 
 
+def _shows_uncalled(text):
+    return isinstance(text, str) and any(p in text for p in _UNCALLED_REPRS)
+
+
 def _base_outcome(t):
     o = {
         'id': str(t.get('id', '')),
@@ -348,6 +358,8 @@ def _run_one_test_inner(sb, code_obj, t, kind, budget, whiles, o):
         o['pass'] = normalize_stdout(stdout) == normalize_stdout(t.get('expectStdout'))
         if not o['pass'] and o.get('tag'):
             _add(o, o['tag'])
+        if not o['pass'] and _shows_uncalled(stdout) and not _shows_uncalled(o['expected']):
+            _add(o, 'forgot_to_call')
         if kind == 'project' and sb.input_called:
             _add(o, 'input_called')
         return o
@@ -394,7 +406,8 @@ def _run_one_test_inner(sb, code_obj, t, kind, budget, whiles, o):
             _add(o, o['tag'])
         if got is None and expected is not None and _printed_expected(stdout, expected):
             _add(o, 'print_vs_return')
-        if '<function ' in stdout or '<bound method ' in stdout or isinstance(got, _FUNCTION_TYPES):
+        if (isinstance(got, _FUNCTION_TYPES) or _shows_uncalled(stdout)
+                or (_shows_uncalled(o['got']) and not _shows_uncalled(o['expected']))):
             _add(o, 'forgot_to_call')
         if got is not None and return_type_wrong(got, expected, tol):
             _add(o, 'return_type_wrong')
@@ -486,7 +499,9 @@ def _parse_args(args_repr):
     except (ValueError, SyntaxError, TypeError, MemoryError, RecursionError) as e:
         raise ValueError('%s (%s)' % (_TUPLE_HELP, str(e).split('\n')[0] or type(e).__name__)) from None
     if not isinstance(value, tuple):
-        raise ValueError('That is a %s, not a tuple. %s' % (type(value).__name__, _TUPLE_HELP))
+        kind = type(value).__name__
+        article = 'an' if kind[:1] in ('a', 'e', 'i', 'o', 'u') else 'a'
+        raise ValueError('That is %s %s, not a tuple. %s' % (article, kind, _TUPLE_HELP))
     return value
 
 

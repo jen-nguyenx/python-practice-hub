@@ -61,7 +61,8 @@ export function ladderGaps(ladder: ReportData['ladder'], limit = 4): LadderGap[]
     const lo = vals.reduce((a, b) => (b.p < a.p ? b : a));
     if (hi.p - lo.p < LADDER_GAP_POINTS) continue;
     const name = TOPIC_BY_ID[row.topicId]?.title ?? row.topicId;
-    const text = `In ${name}, ${RUNG_DOING[hi.r]} goes well (${Math.round(hi.p)}%) but ${RUNG_DOING[lo.r]} lands at ${Math.round(lo.p)}%. ${RUNG_NEXT[lo.r]}`;
+    const how = hi.p >= 80 ? 'goes well' : 'is stronger';
+    const text = `In ${name}, ${RUNG_DOING[hi.r]} ${how} (${Math.round(hi.p)}%) but ${RUNG_DOING[lo.r]} lands at ${Math.round(lo.p)}%. ${RUNG_NEXT[lo.r]}`;
     gaps.push({ topicId: row.topicId, strong: hi.r, weak: lo.r, strongPct: hi.p, weakPct: lo.p, text });
   }
   return gaps.sort((a, b) => (b.strongPct - b.weakPct) - (a.strongPct - a.weakPct)).slice(0, limit);
@@ -78,7 +79,7 @@ export function behaviourNotes(b: ReportData['behaviour']): { key: keyof ReportD
     out.push({ key: 'stuckNoHint', text: `You stayed stuck on ${q(b.stuckNoHint)} for a long time without opening a hint; Hint 1 only nudges, so it is worth a look after a few minutes.` });
   }
   if (b.hintSkims > 0) {
-    out.push({ key: 'hintSkims', text: `You checked again within seconds of opening a hint ${b.hintSkims === 1 ? 'once' : `${b.hintSkims} times`}; give each hint a moment to sink in first.` });
+    out.push({ key: 'hintSkims', text: `You opened the next hint within a couple of seconds of the last one ${b.hintSkims === 1 ? 'once' : `${b.hintSkims} times`}; reading each hint properly often means you need fewer of them.` });
   }
   if (b.revealedWithoutExplain > 0) {
     out.push({ key: 'revealedWithoutExplain', text: `You revealed ${b.revealedWithoutExplain === 1 ? '1 answer' : `${b.revealedWithoutExplain} answers`} without writing why; a one-line explanation helps it stick.` });

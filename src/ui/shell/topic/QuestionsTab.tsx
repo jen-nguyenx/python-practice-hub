@@ -47,7 +47,7 @@ function QuestionRow({ row, stats, locked }: { row: Row; stats: Map<string, Ques
         {row.weak.length ? <span class="q-weak">Practises: {row.weak.map((m) => m.label).join(', ')}</span> : null}
       </span>
       <span class="q-meta">
-        {q.core ? <span class="q-core" title="Counts toward this topic's minimum">Core</span> : null}
+        {q.core ? <span class="q-core" title="Core question: part of the recommended path through this topic">Core</span> : null}
         <DiffChip diff={q.diff} />
         <StatusTag status={status} />
       </span>
@@ -213,7 +213,7 @@ export function QuestionsTab({ topic, stats, filters, onFilters, locked, recent 
           <button type="button" class="btn ghost sm" onClick={() => onFilters({ ...DEFAULT_FILTERS, weakFirst: filters.weakFirst })}>Clear filters</button>
         ) : null}
         <span class="spacer" />
-        <span class="filter-hint">Core questions count toward the minimum.</span>
+        <span class="filter-hint">Core marks the recommended path. Every question you solve counts toward the minimum.</span>
       </div>
       {locked ? (
         <p class="locked-note"><Icon name="lock" size={14} /> Questions open when this topic unlocks. You can still read them below.</p>

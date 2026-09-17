@@ -1,0 +1,25 @@
+{
+  "t11-s1-q1": {
+    "mutantOutputs": [
+      "15.5\n11.0\n",
+      "15.5\n20.0\n15.5\n"
+    ],
+    "stdout": "20.0\n15.5\n"
+  },
+  "t11-s1-q2": {
+    "error": {
+      "line": 5,
+      "message": "cannot access local variable 'taps' where it is not associated with a value",
+      "type": "UnboundLocalError"
+    },
+    "stdout": "Tap on at Elizabeth Quay Bus Station\n"
+  },
+  "t11-s2-q1": {
+    "mutantOutputs": [
+      "[45, 20]\n[30]\n[15]\n",
+      "[45, 20]\n[45, 20, 30]\n[15]\n",
+      "[45, 20, 30]\n[45, 20, 30]\n[45, 20, 30, 15]\n"
+    ],
+    "stdout": "[45, 20, 30]\n[45, 20, 30]\n[15]\n"
+  }
+}

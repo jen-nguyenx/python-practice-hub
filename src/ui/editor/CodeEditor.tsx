@@ -42,6 +42,8 @@ function MonacoEditor(props: CodeEditorProps & { onFail: () => void }) {
   const modRef = useRef<MonacoModule | null>(null);
   const editorRef = useRef<MonacoApi.editor.IStandaloneCodeEditor | null>(null);
   const suppress = useRef(false);
+  /** Values sent through onChange that the parent has not rendered back yet. */
+  const emitted = useRef<string[]>([]);
   const escArmed = useRef(false);
   const [ready, setReady] = useState(false);
   const [contentHeight, setContentHeight] = useState(() => value.split('\n').length * lh + PAD * 2);
@@ -84,7 +86,11 @@ function MonacoEditor(props: CodeEditorProps & { onFail: () => void }) {
         });
         editor.onDidChangeModelContent(() => {
           if (suppress.current || !model) return;
-          propsRef.current.onChange?.(model.getValue());
+          const v = model.getValue();
+          const recent = emitted.current;
+          recent.push(v);
+          if (recent.length > 50) recent.splice(0, recent.length - 50);
+          propsRef.current.onChange?.(v);
         });
         editor.onDidContentSizeChange((e) => setContentHeight(e.contentHeight));
         editor.onDidChangeCursorPosition((e) => propsRef.current.onCursor?.(e.position.lineNumber, e.position.column));
@@ -120,11 +126,24 @@ function MonacoEditor(props: CodeEditorProps & { onFail: () => void }) {
     };
   }, []);
 
-  // External value changes (reset, restore) without losing undo history.
-  useEffect(() => {
+  // External value changes (reset, restore) without losing undo history. A layout effect, so it runs before the
+  // next key press; `emitted` also ignores props that are just an older echo of what the student typed, which
+  // would otherwise overwrite newer text and move the cursor when typing fast.
+  useLayoutEffect(() => {
     const editor = editorRef.current;
     const model = editor?.getModel();
-    if (!editor || !model || model.getValue() === value) return;
+    const recent = emitted.current;
+    if (!editor || !model) return;
+    if (model.getValue() === value) {
+      recent.length = 0;
+      return;
+    }
+    const echo = recent.lastIndexOf(value);
+    if (echo >= 0) {
+      recent.splice(0, echo + 1);
+      return;
+    }
+    recent.length = 0;
     suppress.current = true;
     model.pushStackElement();
     model.pushEditOperations([], [{ range: model.getFullModelRange(), text: value }], () => null);

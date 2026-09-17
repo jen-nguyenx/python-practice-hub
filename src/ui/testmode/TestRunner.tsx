@@ -1,7 +1,7 @@
 // Timed test runner shared by the topic test and the mid-semester practice test.
 // One question at a time, one check per question, answers saved silently, results and review at the end.
 import type { ComponentChildren } from 'preact';
-import { useEffect, useMemo, useReducer, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'preact/hooks';
 import { CODE_FORMATS, FORMAT_LABEL } from '../../content/ids.ts';
 import { MISTAKES } from '../../content/mistakes.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
@@ -16,8 +16,11 @@ import { Chip, DiffChip } from '../components/Chip.tsx';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { Markdown } from '../components/Markdown.tsx';
-import { formatClock, formatDuration, plural } from '../report/format.ts';
+import { formatDuration, plural } from '../report/format.ts';
 import { useLeaveGuard } from './leaveGuard.ts';
+import { TimeLeft } from './TimeLeft.tsx';
+import type { TestProgress } from './progress.ts';
+import { clearProgress, writeProgress } from './progress.ts';
 import type { SavedAnswer, TestItem, TestSummary } from './summary.ts';
 import { buildTestEvents, summarizeTest, weakTopics } from './summary.ts';
 import './testmode.css';
@@ -34,33 +37,55 @@ export interface TestRunnerProps {
   resultExtra?: (summary: TestSummary) => ComponentChildren;
   /** Buttons at the end of the results view. */
   resultActions?: (summary: TestSummary) => ComponentChildren;
+  /**
+   * Save progress under this key (topic id, or "midsem") after every answer, flag, move and draft change,
+   * so the test can be resumed after a reload or a discarded tab. Cleared when the test finishes.
+   */
+  persistKey?: string;
+  /** Saved progress to continue from. `questions` must be the items for `resume.qids`, in order. */
+  resume?: TestProgress;
 }
 
 const WARN_MS = 5 * 60 * 1000;
-const LEAVE_MESSAGE = 'Leave the test? Your answers in this test will not be saved.';
+const LEAVE_MESSAGE = 'Leave the test? The timer keeps running. Your saved answers are kept, and you can carry on from the test page until time is up.';
 
-export function TestRunner({ title, questions, durationMin, mode, onFinish, resultExtra, resultActions }: TestRunnerProps) {
+export function TestRunner({ title, questions, durationMin, mode, onFinish, resultExtra, resultActions, persistKey, resume }: TestRunnerProps) {
   const limitMs = Math.max(1, durationMin) * 60 * 1000;
   const [, rerender] = useReducer((x: number) => x + 1, 0);
   const [phase, setPhase] = useState<'running' | 'results'>('running');
-  const [current, setCurrent] = useState(0);
-  const [now, setNow] = useState(() => Date.now());
+  const [current, setCurrent] = useState(() => resume?.current ?? 0);
+  const [lowTime, setLowTime] = useState(false);
   const [announce, setAnnounce] = useState('');
   const [timerAnnounce, setTimerAnnounce] = useState('');
   const [summary, setSummary] = useState<TestSummary | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  const startedAt = useRef(Date.now());
-  const answers = useRef(new Map<number, SavedAnswer>());
-  const drafts = useRef(new Map<number, unknown>());
-  const flagged = useRef(new Set<number>());
-  const timeSpent = useRef<number[]>(questions.map(() => 0));
+  const startedAt = useRef(resume?.startedAt ?? Date.now());
+  const answers = useRef(new Map<number, SavedAnswer>(resume?.answers ?? []));
+  const drafts = useRef(new Map<number, unknown>(resume?.drafts ?? []));
+  const flagged = useRef(new Set<number>(resume?.flagged ?? []));
+  const timeSpent = useRef<number[]>(questions.map((_, i) => resume?.timeSpent[i] ?? 0));
   const enteredAt = useRef(Date.now());
-  const currentRef = useRef(0);
+  const currentRef = useRef(resume?.current ?? 0);
+  const saveTimer = useRef<number | undefined>(undefined);
   const finishing = useRef(false);
   const warned = useRef({ five: false, one: false });
   const dialogRef = useRef<HTMLDialogElement>(null);
   const questionHeading = useRef<HTMLHeadingElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLElement>(null);
+
+  /** Focus the new question's heading and, if its card starts above the sticky bar, scroll so the card top is visible. */
+  const showQuestionTop = () => {
+    questionHeading.current?.focus({ preventScroll: true });
+    const card = cardRef.current;
+    if (!card) return;
+    const barBottom = barRef.current?.getBoundingClientRect().bottom ?? 0;
+    const top = card.getBoundingClientRect().top;
+    if (top < barBottom || top > window.innerHeight * 0.6) {
+      window.scrollTo({ top: Math.max(0, window.scrollY + top - barBottom - 12), behavior: 'auto' });
+    }
+  };
   const resultsHeading = useRef<HTMLHeadingElement>(null);
 
   const running = phase === 'running';
@@ -69,6 +94,43 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
   useEffect(() => {
     if (questions.some((it) => CODE_FORMATS.includes(it.q.format))) py.warmUp();
   }, []);
+
+  // ---- saved progress ----
+  const saveProgress = () => {
+    window.clearTimeout(saveTimer.current);
+    saveTimer.current = undefined;
+    if (!persistKey || finishing.current) return;
+    const spent = timeSpent.current.slice();
+    spent[currentRef.current] += Date.now() - enteredAt.current;
+    writeProgress({
+      v: 1, kind: mode, key: persistKey, title, qids: questions.map((it) => it.q.id), durationMin,
+      startedAt: startedAt.current, savedAt: Date.now(), current: currentRef.current,
+      answers: [...answers.current.entries()], flagged: [...flagged.current], timeSpent: spent,
+      drafts: [...drafts.current.entries()],
+    });
+  };
+  const saveRef = useRef(saveProgress);
+  saveRef.current = saveProgress;
+  const scheduleSave = () => {
+    if (!persistKey || saveTimer.current !== undefined) return;
+    saveTimer.current = window.setTimeout(() => saveRef.current(), 1000);
+  };
+
+  // Layout effect: registered before paint, so even a test left straight after it starts is saved on unmount.
+  useLayoutEffect(() => {
+    if (!persistKey) return;
+    saveRef.current();
+    const onHide = () => { if (document.visibilityState === 'hidden') saveRef.current(); };
+    const onPageHide = () => saveRef.current();
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('pagehide', onPageHide);
+    return () => {
+      document.removeEventListener('visibilitychange', onHide);
+      window.removeEventListener('pagehide', onPageHide);
+      // Leaving inside the app keeps the progress (the guard says so). No-op once the test has finished.
+      saveRef.current();
+    };
+  }, [persistKey]);
 
   const addTimeOnCurrent = () => {
     const t = Date.now();
@@ -79,6 +141,8 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
   const finish = (timedOut: boolean) => {
     if (finishing.current) return;
     finishing.current = true;
+    window.clearTimeout(saveTimer.current);
+    if (persistKey) clearProgress(mode, persistKey);
     addTimeOnCurrent();
     if (dialogRef.current?.open) dialogRef.current.close();
     const finishedAt = Date.now();
@@ -97,23 +161,28 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
   const finishRef = useRef(finish);
   finishRef.current = finish;
 
-  // Countdown: warn at 5 minutes and 1 minute, finish at 0.
+  // Countdown: warn at 5 minutes and 1 minute, finish at 0. The runner only re-renders when a warning fires;
+  // the visible clocks tick on their own (TimeLeft) so the question and its editor are not re-rendered every tick.
   useEffect(() => {
     if (!running) return;
-    const id = window.setInterval(() => {
-      const t = Date.now();
-      setNow(t);
-      const left = limitMs - (t - startedAt.current);
+    const tick = () => {
+      const left = limitMs - (Date.now() - startedAt.current);
       if (left <= 0) {
         finishRef.current(true);
-      } else if (left <= 60000 && !warned.current.one && limitMs > 60000) {
+        return;
+      }
+      if (left <= WARN_MS && !warned.current.five) {
+        warned.current.five = true;
+        setLowTime(true);
+        if (limitMs > WARN_MS) setTimerAnnounce('5 minutes left. Unanswered questions score zero.');
+      }
+      if (left <= 60000 && !warned.current.one && limitMs > 60000) {
         warned.current.one = true;
         setTimerAnnounce('1 minute left.');
-      } else if (left <= WARN_MS && !warned.current.five && limitMs > WARN_MS) {
-        warned.current.five = true;
-        setTimerAnnounce('5 minutes left. Unanswered questions score zero.');
       }
-    }, 500);
+    };
+    tick();
+    const id = window.setInterval(tick, 500);
     return () => window.clearInterval(id);
   }, [running, limitMs]);
 
@@ -130,7 +199,8 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
     currentRef.current = i;
     setCurrent(i);
     setAnnounce('');
-    if (focus) requestAnimationFrame(() => questionHeading.current?.focus());
+    saveProgress();
+    if (focus) requestAnimationFrame(showQuestionTop);
   };
 
   const onCheckFor = (i: number) => (result: GradeResult, response: unknown) => {
@@ -138,13 +208,30 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
     const extra = currentRef.current === i ? Date.now() - enteredAt.current : 0;
     answers.current.set(i, { result, response, timeMs: timeSpent.current[i] + extra });
     setAnnounce(`Answer saved for question ${i + 1}.`);
+    saveProgress();
     rerender(0);
   };
 
   const toggleFlag = (i: number) => {
     if (flagged.current.has(i)) flagged.current.delete(i);
     else flagged.current.add(i);
+    saveProgress();
     rerender(0);
+  };
+
+  /** Roving focus in the question number list, so Tab moves past it in one step. */
+  const navKeys = (e: KeyboardEvent) => {
+    const buttons = Array.from((e.currentTarget as HTMLElement).querySelectorAll<HTMLButtonElement>('.tr-nav-btn'));
+    const at = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    if (at < 0) return;
+    let next = -1;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = Math.min(buttons.length - 1, at + 1);
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = Math.max(0, at - 1);
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = buttons.length - 1;
+    if (next < 0) return;
+    e.preventDefault();
+    buttons[next].focus();
   };
 
   const requestFinish = () => {
@@ -164,8 +251,6 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
     );
   }
 
-  const left = Math.max(0, limitMs - (now - startedAt.current));
-  const lowTime = left <= WARN_MS;
   const item = questions[current];
   const Comp = FORMAT_COMPONENTS[item.q.format];
   const answered = answers.current.has(current);
@@ -176,7 +261,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
 
   return (
     <div class="tr">
-      <div class="tr-bar">
+      <div class="tr-bar" ref={barRef}>
         <div class="tr-bar-title">
           <span class="label">{mode === 'midsem' ? 'Mid-sem practice test' : 'Topic test'}</span>
           <h1 class="tr-h1">{title}</h1>
@@ -185,9 +270,9 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
           <span class="tr-count num" aria-label={`${answeredCount} of ${questions.length} answered`}>
             <Icon name="check" /> {answeredCount}/{questions.length} answered
           </span>
-          <span class={`tr-timer num${lowTime ? ' low' : ''}`} role="timer" aria-label={`Time left ${formatClock(left)}`}>
+          <span class={`tr-timer num${lowTime ? ' low' : ''}`}>
             <Icon name={lowTime ? 'alert' : 'clock'} />
-            <span>{formatClock(left)}</span>
+            <TimeLeft startedAt={startedAt.current} limitMs={limitMs} />
             <span class="tr-timer-word">{lowTime ? 'left, nearly out of time' : 'left'}</span>
           </span>
           <Button variant="primary" onClick={requestFinish}>Finish test</Button>
@@ -196,7 +281,8 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
       </div>
 
       <nav class="tr-nav" aria-label="Questions">
-        <ol class="tr-nav-list">
+        <p id="tr-nav-hint" class="sr-only">Arrow keys move between question numbers; Enter opens one.</p>
+        <ol class="tr-nav-list" onKeyDown={navKeys}>
           {questions.map((it, i) => {
             const a = answers.current.has(i);
             const f = flagged.current.has(i);
@@ -204,6 +290,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
             return (
               <li key={it.q.id}>
                 <button type="button" class={`tr-nav-btn${i === current ? ' current' : ''}${a ? ' answered' : ''}${f ? ' flagged' : ''}`}
+                  tabIndex={i === current ? 0 : -1} aria-describedby="tr-nav-hint"
                   aria-current={i === current ? 'step' : undefined} aria-label={`Question ${i + 1}, ${state}`} onClick={() => goTo(i)}>
                   <span class="num">{i + 1}</span>
                   {f ? <Icon name="flag" size={12} class="tr-nav-flag" /> : a ? <Icon name="check" size={12} class="tr-nav-check" /> : null}
@@ -225,7 +312,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
         </div>
       ) : null}
 
-      <section class="tr-q card" aria-labelledby="tr-q-heading">
+      <section class="tr-q card" aria-labelledby="tr-q-heading" ref={cardRef}>
         <header class="tr-q-head">
           <div class="row tr-q-meta">
             <span class="label num">Question {current + 1} of {questions.length}</span>
@@ -235,6 +322,12 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
             <DiffChip diff={item.q.diff} />
           </div>
           <h2 id="tr-q-heading" ref={questionHeading} tabIndex={-1}>{item.q.title}</h2>
+          {item.scenario ? (
+            <div class="tr-story">
+              <span class="label">{item.scenario.title}</span>
+              <Markdown text={item.scenario.story} />
+            </div>
+          ) : null}
           <Markdown text={item.q.prompt} class="tr-prompt" />
         </header>
 
@@ -250,14 +343,14 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
             locked={answered}
             onCheck={onCheckFor(current)}
             draft={drafts.current.get(current)}
-            onDraft={(d: unknown) => { drafts.current.set(current, d); }}
+            onDraft={(d: unknown) => { drafts.current.set(current, d); scheduleSave(); }}
           />
         </div>
 
         <footer class="tr-q-foot">
           <div class={`tr-saved${answered ? ' on' : ''}`} aria-live="polite">
             {answered
-              ? <><Icon name="check" /> Answer saved. You see how you did when the test ends.</>
+              ? <><Icon name="check" /> Locked in. You see how you did when the test ends.</>
               : <><Icon name="info" /> One check for this question. Your answer is saved when you check or submit.</>}
             <span class="sr-only">{announce}</span>
           </div>
@@ -281,7 +374,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
             <p>{plural(unanswered, 'question')} {unanswered === 1 ? 'has' : 'have'} no saved answer and will score zero. Code you typed but did not check or submit is not marked.</p>
           ) : <p>Every question has a saved answer.</p>}
           {flagged.current.size > 0 ? <p>{plural(flagged.current.size, 'question')} flagged for review: {[...flagged.current].sort((a, b) => a - b).map((i) => i + 1).join(', ')}.</p> : null}
-          <p class="muted num">Time left: {formatClock(left)}</p>
+          <p class="muted num">Time left: <TimeLeft startedAt={startedAt.current} limitMs={limitMs} /></p>
         </div>
         <div class="tr-dialog-actions">
           <Button onClick={() => dialogRef.current?.close()}>Keep going</Button>
@@ -419,7 +512,7 @@ function TestResults({ summary, items, answers, drafts, mode, durationMin, headi
                 </div>
                 {isOpen ? (
                   <div class="tr-review-body" id={`tr-rev-${o.index}`}>
-                    <ReviewPanel item={it} answer={a} draft={drafts.get(o.index)} mode={mode} />
+                    <ReviewPanel item={it} answer={a} draft={a ? drafts.get(o.index) : undefined} mode={mode} />
                   </div>
                 ) : null}
               </li>
@@ -451,6 +544,7 @@ function ReviewPanel({ item, answer, draft, mode }: { item: TestItem; answer?: S
       ) : null}
       <details class="tr-review-prompt">
         <summary>Question</summary>
+        {item.scenario ? <div class="tr-story"><span class="label">{item.scenario.title}</span><Markdown text={item.scenario.story} /></div> : null}
         <Markdown text={item.q.prompt} />
       </details>
       <div class="tr-review-comp">
@@ -462,7 +556,8 @@ function ReviewPanel({ item, answer, draft, mode }: { item: TestItem; answer?: S
       <div class="tr-solution">
         <span class="label">Worked answer</span>
         <Markdown text={item.q.solution.explanation} />
-        {item.q.solution.code ? <CodeBlock code={item.q.solution.code} numbered label="Model answer" /> : null}
+        {/* Parsons already shows the correct order, which is the model answer. */}
+        {item.q.solution.code && item.q.format !== 'parsons' ? <CodeBlock code={item.q.solution.code} numbered label="Model answer" /> : null}
       </div>
       <p><a href={href.question(item.q.id)}>Practise this question with hints</a></p>
     </div>

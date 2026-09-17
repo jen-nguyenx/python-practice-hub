@@ -49,7 +49,8 @@ export function useProgramRunner(ctx: RunContext) {
   const exec = useCallback(async (code: string, stdin: string[], typed: string[], files?: VirtualFile[]) => {
     const my = ++token.current;
     last.current = { code, stdin, files };
-    setState((s) => ({ ...s, running: true, typed, failure: null }));
+    // A fresh Run clears the old output; a replay for typed input keeps it on screen to avoid flicker.
+    setState((s) => ({ ...s, running: true, typed, failure: null, result: typed.length ? s.result : null }));
     const t0 = performance.now();
     let result: RunResult;
     let failure: string | null = null;

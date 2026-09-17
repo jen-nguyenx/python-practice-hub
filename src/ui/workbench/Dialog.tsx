@@ -1,38 +1,15 @@
-// Modal dialog built on <dialog> (native focus handling and Esc to close).
+// Workbench dialogs on top of the shared <Dialog> (native <dialog>: focus trap, Esc, focus return).
 import type { ComponentChildren, JSX } from 'preact';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { useCallback, useRef, useState } from 'preact/hooks';
 import { Button } from '../components/Button.tsx';
+import { Dialog as BaseDialog } from '../components/Dialog.tsx';
 import './workbench.css';
 
-export function Dialog({ open, title, onClose, children, labelledBy }: { open: boolean; title: string; onClose: () => void; children: ComponentChildren; labelledBy?: string }) {
-  const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const d = ref.current;
-    if (!d) return;
-    if (open && !d.open) {
-      try {
-        d.showModal();
-      } catch {
-        d.setAttribute('open', '');
-      }
-    } else if (!open && d.open) d.close();
-  }, [open]);
-  const id = labelledBy ?? `dlg-${title.replace(/\W+/g, '-').toLowerCase()}`;
+export function Dialog({ open, title, onClose, children, initialFocus }: { open: boolean; title: string; onClose: () => void; children: ComponentChildren; initialFocus?: string }) {
   return (
-    <dialog
-      ref={ref}
-      class="wb-dialog"
-      aria-labelledby={id}
-      onClose={() => { if (open) onClose(); }}
-      onCancel={(e) => { e.preventDefault(); onClose(); }}
-    >
-      {open ? (
-        <div class="wb-dialog-body">
-          <h2 id={id} class="wb-dialog-title">{title}</h2>
-          {children}
-        </div>
-      ) : null}
-    </dialog>
+    <BaseDialog open={open} title={title} onClose={onClose} size="sm" class="wb-dialog" initialFocus={initialFocus}>
+      {children}
+    </BaseDialog>
   );
 }
 
@@ -40,13 +17,22 @@ export interface ConfirmOptions { title: string; body: string; confirmLabel: str
 
 export function ConfirmDialog({ options, onResult }: { options: ConfirmOptions | null; onResult: (ok: boolean) => void }) {
   return (
-    <Dialog open={!!options} title={options?.title ?? 'Confirm'} onClose={() => onResult(false)}>
+    <BaseDialog
+      open={!!options}
+      title={options?.title ?? 'Confirm'}
+      onClose={() => onResult(false)}
+      size="sm"
+      class="wb-dialog"
+      initialFocus=".wb-confirm-ok"
+      footer={
+        <>
+          <Button onClick={() => onResult(false)}>{options?.cancelLabel ?? 'Cancel'}</Button>
+          <Button class="wb-confirm-ok" variant={options?.danger ? 'danger' : 'primary'} onClick={() => onResult(true)}>{options?.confirmLabel}</Button>
+        </>
+      }
+    >
       <p>{options?.body}</p>
-      <div class="wb-dialog-actions">
-        <Button onClick={() => onResult(false)}>{options?.cancelLabel ?? 'Cancel'}</Button>
-        <Button variant={options?.danger ? 'danger' : 'primary'} onClick={() => onResult(true)} autoFocus>{options?.confirmLabel}</Button>
-      </div>
-    </Dialog>
+    </BaseDialog>
   );
 }
 

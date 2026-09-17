@@ -11,6 +11,8 @@ export interface TestItem {
   q: Question;
   topicId: TopicId;
   generated?: GeneratedQuestion;
+  /** The scenario the question belongs to; prompts can refer to its story. */
+  scenario?: { title: string; story: string };
 }
 
 export interface SavedAnswer {

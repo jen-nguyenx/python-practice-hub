@@ -245,13 +245,25 @@ describe('gradeFromTests', () => {
       outcome({ id: 'v2', label: 'one day', pass: true }),
       outcome({ id: 'h1', label: 'empty list', hidden: true, tag: 'index_out_of_range', pass: false,
         error: { type: 'IndexError', message: 'list index out of range', traceback: '', mistakes: ['index_out_of_range'] } }),
-      outcome({ id: 'h2', label: 'all below zero', hidden: true, tag: 'accumulator_init', pass: true, detections: ['print_vs_return'] }),
+      outcome({ id: 'h2', label: 'all below zero', hidden: true, tag: 'accumulator_init', pass: true }),
     ]));
     expect(r.correct).toBe(false);
     expect(r.score).toBe(0.75);
     expect(r.feedback).toBe('3 of 4 tests passed. Failing: empty list.');
-    expect(ids(r)).toEqual(['index_out_of_range', 'print_vs_return']);
+    expect(ids(r)).toEqual(['index_out_of_range']);
     expect(r.mistakes.find((m) => m.id === 'index_out_of_range')?.channel).toBe('test');
+  });
+  it('tags are not trusted when nothing passes or a root cause explains the failures', () => {
+    const none = gradeFromTests(writeQ, tests([
+      outcome({ id: 'v1', label: 'three days', pass: false }),
+      outcome({ id: 'h2', label: 'all below zero', hidden: true, tag: 'accumulator_init', pass: false, detections: ['accumulator_init'] }),
+    ]));
+    expect(ids(none)).toEqual([]);
+    const printed = gradeFromTests(writeQ, tests([
+      outcome({ id: 'v1', label: 'three days', pass: true }),
+      outcome({ id: 'h2', label: 'all below zero', hidden: true, tag: 'accumulator_init', pass: false, detections: ['accumulator_init', 'print_vs_return'] }),
+    ]));
+    expect(ids(printed)).toEqual(['print_vs_return']);
   });
   it('compile error scores 0 and logs error mistakes', () => {
     const r = gradeFromTests(writeQ, tests([], {

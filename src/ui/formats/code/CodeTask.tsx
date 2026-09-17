@@ -25,6 +25,7 @@ import { firstTestsError, runTestsLogged, useProgramRunner } from '../../workben
 import { kbdRun, kbdSubmit, useRunShortcuts } from '../../workbench/shortcuts.ts';
 import { Terminal } from '../../workbench/Terminal.tsx';
 import { TestsTable } from '../../workbench/TestsTable.tsx';
+import { draftCode, stdinLines } from './logic.ts';
 import './code.css';
 
 export interface CodeTaskConfig {
@@ -49,13 +50,7 @@ export interface CodeTaskConfig {
 
 const EMPTY_FLAGS: AstFinding[] = [];
 
-type Tab = 'tests' | 'output' | 'input' | 'problems' | 'explain';
-
-export function draftCode(draft: unknown): string | null {
-  if (typeof draft === 'string') return draft;
-  if (draft && typeof draft === 'object' && typeof (draft as { code?: unknown }).code === 'string') return (draft as { code: string }).code;
-  return null;
-}
+type Tab = 'tests' | 'output' | 'input' | 'files' | 'problems' | 'explain';
 
 export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTaskConfig }) {
   const { q, mode, revealed, locked, topicId } = fp;
@@ -76,10 +71,18 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   const [stdinText, setStdinText] = useState('');
   const [analysis, setAnalysis] = useState<{ syntaxError?: PyError; flags: AstFinding[] } | null>(null);
   const [confirmEl, confirm] = useConfirm();
+  const inFlight = useRef(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const program = useProgramRunner(ctx);
   const status = py.status.value;
 
   const visibleTests = useMemo(() => cfg.tests.filter((t) => !t.hidden), [cfg.tests]);
+  /** Data files the visible tests use (hidden tests' files stay hidden until the answer is revealed). */
+  const dataFiles = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const t of revealed ? cfg.tests : visibleTests) for (const f of t.files ?? []) if (!seen.has(f.name)) seen.set(f.name, f.content);
+    return [...seen].map(([name, content]) => ({ name, content }));
+  }, [cfg.tests, visibleTests, revealed]);
   const readOnly = locked || revealed || (oneShot && submits > 0);
   const canSubmit = !readOnly && busy === null && code.trim().length > 0;
   const canRun = !paper && busy === null && code.trim().length > 0;
@@ -105,18 +108,20 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     if (cfg.kind === 'program') {
       setLast('program');
       setTab('output');
-      await program.run(code, stdinLines(stdinText), cfg.tests.find((t) => t.files?.length)?.files);
+      await program.run(code, stdinLines(stdinText), visibleTests.find((t) => t.files?.length)?.files);
       return;
     }
     await runVisible();
   };
 
   const runVisible = async () => {
-    if (!canRun) return;
+    if (!canRun || inFlight.current) return;
+    inFlight.current = true;
     setBusy('run');
     setFailure(null);
     setTab('tests');
     const { result, failure: f } = await runTestsLogged({ code, tests: visibleTests, kind: cfg.kind, fnName: cfg.fnName, rules: cfg.rules }, ctx, true);
+    inFlight.current = false;
     setBusy(null);
     setFailure(f);
     if (result) {
@@ -126,7 +131,7 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   };
 
   const submit = async () => {
-    if (!canSubmit) return;
+    if (!canSubmit || inFlight.current) return;
     if (oneShot) {
       const ok = await confirm({
         title: paper ? 'Submit your answer?' : 'Submit this answer?',
@@ -135,9 +140,12 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
       });
       if (!ok) return;
     }
+    if (inFlight.current) return;
+    inFlight.current = true;
     setBusy('submit');
     setFailure(null);
     const { result, failure: f } = await runTestsLogged({ code, tests: cfg.tests, kind: cfg.kind, fnName: cfg.fnName, rules: cfg.rules }, ctx, false);
+    inFlight.current = false;
     setBusy(null);
     setFailure(f);
     if (!result) return;
@@ -149,7 +157,7 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     fp.onCheck(graded, { code, flags: result.flags.map((x) => x.flag) });
   };
 
-  useRunShortcuts({ onRun: paper ? undefined : run, onSubmit: submit });
+  useRunShortcuts({ onRun: paper ? undefined : run, onSubmit: submit }, true, rootRef);
 
   const reset = async () => {
     const ok = await confirm({ title: cfg.resetLabel + '?', body: 'Your code for this question will be replaced. You can undo with Ctrl+Z (Cmd+Z on a Mac).', confirmLabel: cfg.resetLabel, danger: true });
@@ -220,6 +228,9 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
       </div>
     ) });
   }
+  if (dataFiles.length) {
+    tabs.push({ id: 'files', label: 'Files', badge: dataFiles.length, content: <DataFiles files={dataFiles} /> });
+  }
   if (!paper || sub) {
     tabs.push({ id: 'explain', label: 'Explain', badge: explainable ? '!' : null, tone: 'bad', content: <ExplainError error={explainable} code={code} /> });
   }
@@ -228,7 +239,7 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   const runLabel = cfg.kind === 'program' ? 'Run program' : 'Run';
 
   return (
-    <div class={`code-task${paper ? ' paper' : ''}`}>
+    <div class={`code-task${paper ? ' paper' : ''}`} ref={rootRef} data-run-scope>
       {confirmEl}
       {cfg.rules?.length ? <RulesList rules={cfg.rules} /> : null}
       <div class="ct-toolbar" role="toolbar" aria-label="Code actions">
@@ -281,13 +292,6 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   );
 }
 
-function stdinLines(text: string): string[] {
-  if (!text) return [];
-  const lines = text.replace(/\r\n/g, '\n').split('\n');
-  if (lines[lines.length - 1] === '') lines.pop();
-  return lines;
-}
-
 function explainableError(r: TestsResult | null, programErr: PyError | undefined, revealed: boolean): PyError | null {
   if (programErr) return programErr;
   if (!r) return null;
@@ -313,11 +317,13 @@ function TestsPreview({ tests, total, paper, program }: { tests: Test[]; total: 
               {tests.map((t) => (
                 <tr key={t.id}>
                   <td data-label="Test">
-                    {t.setup ? <pre class="tt-code tt-setup">{t.setup}</pre> : null}
-                    {t.call ? <pre class="tt-code">{t.call}</pre> : <div>{t.label}</div>}
-                    {program && t.stdin?.length ? <div class="tt-sub">Input: <code>{t.stdin.join(' ⏎ ')}</code></div> : null}
+                    <div class="tt-cell">
+                      {t.setup ? <pre class="tt-code tt-setup">{t.setup}</pre> : null}
+                      {t.call ? <pre class="tt-code">{t.call}</pre> : <div>{t.label}</div>}
+                      {program && t.stdin?.length ? <div class="tt-sub">Input: <code>{t.stdin.join(' ⏎ ')}</code></div> : null}
+                    </div>
                   </td>
-                  <td data-label="Expected"><pre class="tt-code">{t.expect ?? t.expectStdout ?? ''}</pre></td>
+                  <td data-label="Expected"><div class="tt-cell"><pre class="tt-code">{t.expect ?? t.expectStdout ?? ''}</pre></div></td>
                 </tr>
               ))}
             </tbody>
@@ -326,6 +332,25 @@ function TestsPreview({ tests, total, paper, program }: { tests: Test[]; total: 
       ) : null}
     </div>
   );
+}
+
+function DataFiles({ files }: { files: { name: string; content: string }[] }) {
+  return (
+    <div class="stack">
+      <p class="muted">The visible tests create these files before calling your code. Open them by name, exactly as given.</p>
+      {files.map((f) => (
+        <details key={f.name} class="data-file" open={files.length === 1}>
+          <summary><code>{f.name}</code> <span class="faint">· {lineCount(f.content)} {lineCount(f.content) === 1 ? 'line' : 'lines'}</span></summary>
+          <pre class="term-out data-file-body">{f.content}</pre>
+        </details>
+      ))}
+    </div>
+  );
+}
+
+function lineCount(text: string) {
+  if (!text) return 0;
+  return text.replace(/\n$/, '').split('\n').length;
 }
 
 function PrintedOutput({ result }: { result: TestsResult | null }) {

@@ -12,7 +12,7 @@ h3 { font-size: var(--fs-16); }
 p { margin: 0; }
 a { color: var(--accent); text-underline-offset: 2px; }
 button, input, select, textarea { font: inherit; color: inherit; }
-code, kbd, pre, .mono { font-family: var(--mono); }
+code, kbd, pre, .mono { font-family: var(--mono); font-variant-ligatures: none; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 ::selection { background: var(--editor-selection); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }

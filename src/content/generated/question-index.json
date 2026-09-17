@@ -1,1 +1,3297 @@
-[]
+[
+  {
+    "concepts": [
+      "floor-division",
+      "modulo",
+      "true-division"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "predict",
+    "qid": "t01-s1-q1",
+    "scenarioId": "t01-s1",
+    "title": "Hours and minutes",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "precedence",
+      "operators"
+    ],
+    "core": false,
+    "detects": [
+      "int_vs_float_division"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "mcq",
+    "qid": "t01-s1-q2",
+    "scenarioId": "t01-s1",
+    "title": "Family fare",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "floor-division",
+      "modulo",
+      "f-strings"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division",
+      "str_int_concat",
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "cloze",
+    "qid": "t01-s1-q3",
+    "scenarioId": "t01-s1",
+    "title": "Trip length on the departure board",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "types",
+      "type-conversion",
+      "string-operators"
+    ],
+    "core": true,
+    "detects": [
+      "input_without_int",
+      "str_int_concat"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "predict",
+    "qid": "t01-s2-q1",
+    "scenarioId": "t01-s2",
+    "title": "Text that looks like a number",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "type-conversion",
+      "string-concat"
+    ],
+    "core": true,
+    "detects": [
+      "int_of_float_string",
+      "str_int_concat"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "multi",
+    "qid": "t01-s2-q2",
+    "scenarioId": "t01-s2",
+    "title": "Which conversions crash?",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "type-conversion",
+      "f-strings"
+    ],
+    "core": true,
+    "detects": [
+      "int_of_float_string"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "fixBug",
+    "qid": "t01-s2-q3",
+    "scenarioId": "t01-s2",
+    "title": "Top-ups with cents",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "naming",
+      "snake-case"
+    ],
+    "core": false,
+    "detects": [
+      "style_naming",
+      "shadow_builtin",
+      "syntax_other"
+    ],
+    "diff": "easy",
+    "expectedSec": 60,
+    "format": "mcq",
+    "qid": "t01-s3-q1",
+    "scenarioId": "t01-s3",
+    "title": "Name that variable",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "assignment",
+      "swap",
+      "floor-division"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "trace",
+    "qid": "t01-s3-q2",
+    "scenarioId": "t01-s3",
+    "title": "Overtaking on the last lap",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "input",
+      "type-conversion",
+      "floor-division",
+      "modulo",
+      "round",
+      "f-strings"
+    ],
+    "core": true,
+    "detects": [
+      "input_without_int",
+      "int_of_float_string",
+      "int_vs_float_division",
+      "str_int_concat"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "program",
+    "qid": "t01-s3-q3",
+    "scenarioId": "t01-s3",
+    "title": "Pace per kilometre",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "floor-division",
+      "precedence",
+      "types"
+    ],
+    "core": false,
+    "detects": [
+      "int_vs_float_division"
+    ],
+    "diff": "easy",
+    "expectedSec": 60,
+    "format": "mcq",
+    "qid": "t01-s4-q1",
+    "scenarioId": "t01-s4",
+    "title": "Charging for full hours",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "true-division",
+      "round",
+      "float-precision",
+      "f-strings"
+    ],
+    "core": false,
+    "detects": [
+      "int_vs_float_division",
+      "float_equality"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "predict",
+    "qid": "t01-s4-q2",
+    "scenarioId": "t01-s4",
+    "title": "Receipt rounding",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "floor-division",
+      "ceiling-division",
+      "return-value"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division",
+      "print_vs_return",
+      "import_used"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "write",
+    "kind": "function",
+    "qid": "t01-s4-q3",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t01-s4",
+    "title": "Pay per started hour",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "comparison",
+      "chained-comparison",
+      "boolean"
+    ],
+    "core": true,
+    "detects": [
+      "or_with_literal"
+    ],
+    "diff": "easy",
+    "expectedSec": 75,
+    "format": "mcq",
+    "qid": "t02-s1-q1",
+    "scenarioId": "t02-s1",
+    "title": "Which condition means CR?",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "elif",
+      "branch-order"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if",
+      "indent_error"
+    ],
+    "diff": "easy",
+    "expectedSec": 75,
+    "format": "predict",
+    "qid": "t02-s1-q2",
+    "scenarioId": "t02-s1",
+    "title": "Grades in the wrong order",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "elif",
+      "chained-comparison",
+      "boundary",
+      "return"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if",
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "write",
+    "kind": "function",
+    "qid": "t02-s1-q3",
+    "scenarioId": "t02-s1",
+    "title": "Write uwa_grade(mark)",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "if-syntax",
+      "comparison"
+    ],
+    "core": false,
+    "detects": [
+      "missing_colon",
+      "assign_vs_compare",
+      "compare_to_true"
+    ],
+    "diff": "easy",
+    "expectedSec": 100,
+    "format": "multi",
+    "qid": "t02-s2-q1",
+    "scenarioId": "t02-s2",
+    "title": "Which snippets will not run?",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "elif",
+      "separate-ifs"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "twins",
+    "qid": "t02-s2-q2",
+    "scenarioId": "t02-s2",
+    "title": "Two ifs or if and elif?",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "elif",
+      "boolean",
+      "indentation"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if",
+      "assign_vs_compare",
+      "indent_error"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "parsons",
+    "qid": "t02-s2-q3",
+    "scenarioId": "t02-s2",
+    "title": "Build heat_alert",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "boolean",
+      "truthiness",
+      "in"
+    ],
+    "core": true,
+    "detects": [
+      "or_with_literal",
+      "elif_vs_if"
+    ],
+    "diff": "medium",
+    "expectedSec": 120,
+    "format": "mcq",
+    "qid": "t02-s3-q1",
+    "scenarioId": "t02-s3",
+    "title": "Red or black?",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "comparison",
+      "string-comparison",
+      "in",
+      "conversion"
+    ],
+    "core": false,
+    "detects": [
+      "case_sensitive_compare",
+      "input_without_int"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "predict",
+    "qid": "t02-s3-q2",
+    "scenarioId": "t02-s3",
+    "title": "Text that looks like numbers",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "elif",
+      "boolean",
+      "boundary"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "fixBug",
+    "qid": "t02-s3-q3",
+    "scenarioId": "t02-s3",
+    "title": "Fix swim_flag",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "comparison",
+      "is-vs-equals"
+    ],
+    "core": false,
+    "detects": [
+      "is_vs_equals"
+    ],
+    "diff": "easy",
+    "expectedSec": 45,
+    "format": "mcq",
+    "qid": "t02-s4-q1",
+    "scenarioId": "t02-s4",
+    "title": "is or ==?",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "boolean",
+      "nested-if",
+      "return-boolean"
+    ],
+    "core": false,
+    "detects": [
+      "compare_to_true"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "refactor",
+    "qid": "t02-s4-q2",
+    "scenarioId": "t02-s4",
+    "title": "Flatten can_tag_on",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "elif",
+      "boolean",
+      "chained-comparison",
+      "guard",
+      "boundary"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if",
+      "or_with_literal",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t02-s4-q3",
+    "scenarioId": "t02-s4",
+    "title": "Write trip_fare",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "range",
+      "range-step"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "multi",
+    "qid": "t03-s1-q1",
+    "scenarioId": "t03-s1",
+    "title": "Even training days",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "accumulator",
+      "trace"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "accumulator_init"
+    ],
+    "diff": "easy",
+    "expectedSec": 100,
+    "format": "trace",
+    "qid": "t03-s1-q2",
+    "scenarioId": "t03-s1",
+    "title": "Build-up week",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "accumulator",
+      "function-body"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "accumulator_init",
+      "early_return_in_loop"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "parsons",
+    "qid": "t03-s1-q3",
+    "scenarioId": "t03-s1",
+    "title": "Total steps for the plan",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "negative-step"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "indent_error"
+    ],
+    "diff": "easy",
+    "expectedSec": 75,
+    "format": "predict",
+    "qid": "t03-s2-q1",
+    "scenarioId": "t03-s2",
+    "title": "Countdown board",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "loop-variable"
+    ],
+    "core": false,
+    "detects": [
+      "modify_loop_var",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "predict",
+    "qid": "t03-s2-q2",
+    "scenarioId": "t03-s2",
+    "title": "Skipping carriages",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "range-step",
+      "counter"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "accumulator_init"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "cloze",
+    "qid": "t03-s2-q3",
+    "scenarioId": "t03-s2",
+    "title": "How many trains?",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "accumulator",
+      "counter",
+      "loop-if"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init"
+    ],
+    "diff": "easy",
+    "expectedSec": 60,
+    "format": "mcq",
+    "qid": "t03-s3-q1",
+    "scenarioId": "t03-s3",
+    "title": "Where does the counter start?",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range-step",
+      "loop-if",
+      "counter",
+      "elif"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if",
+      "off_by_one_range",
+      "indent_error"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "predict",
+    "qid": "t03-s3-q2",
+    "scenarioId": "t03-s3",
+    "title": "Rising forecast",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "accumulator",
+      "input",
+      "average"
+    ],
+    "core": false,
+    "detects": [
+      "accumulator_init",
+      "int_of_float_string"
+    ],
+    "diff": "medium",
+    "expectedSec": 200,
+    "format": "parsons",
+    "qid": "t03-s3-q3",
+    "scenarioId": "t03-s3",
+    "title": "Average maximum",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "loop-if",
+      "counter",
+      "input",
+      "streak"
+    ],
+    "core": false,
+    "detects": [
+      "accumulator_init",
+      "off_by_one_range",
+      "int_of_float_string",
+      "indent_error"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "program",
+    "qid": "t03-s3-q4",
+    "scenarioId": "t03-s3",
+    "title": "Hot streak",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "fibonacci",
+      "simultaneous-assignment",
+      "trace",
+      "range"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "trace",
+    "qid": "t03-s4-q1",
+    "scenarioId": "t03-s4",
+    "title": "Pairs month by month",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "fibonacci",
+      "early-return",
+      "loop-if",
+      "search"
+    ],
+    "core": false,
+    "detects": [
+      "early_return_in_loop",
+      "off_by_one_range"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "fixBug",
+    "qid": "t03-s4-q2",
+    "scenarioId": "t03-s4",
+    "title": "First month over the target",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "fibonacci",
+      "loop-if",
+      "accumulator",
+      "modulo"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "off_by_one_range",
+      "early_return_in_loop",
+      "print_vs_return",
+      "shadow_builtin"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t03-s4-q3",
+    "scenarioId": "t03-s4",
+    "title": "Filtered Fibonacci sum",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "return",
+      "print-vs-return",
+      "none"
+    ],
+    "core": true,
+    "detects": [
+      "print_vs_return"
+    ],
+    "diff": "easy",
+    "expectedSec": 60,
+    "format": "mcq",
+    "qid": "t04-s1-q1",
+    "scenarioId": "t04-s1",
+    "title": "Printed, but not returned",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "parameters",
+      "local-variables",
+      "return"
+    ],
+    "core": true,
+    "detects": [
+      "scope_confusion"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "predict",
+    "qid": "t04-s1-q2",
+    "scenarioId": "t04-s1",
+    "title": "Topping up a card",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "return",
+      "print-vs-return",
+      "helper-functions"
+    ],
+    "core": true,
+    "detects": [
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "fixBug",
+    "qid": "t04-s1-q3",
+    "scenarioId": "t04-s1",
+    "title": "The fare that crashes the planner",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "return",
+      "print-vs-return",
+      "none",
+      "helper-functions"
+    ],
+    "core": true,
+    "detects": [
+      "print_vs_return",
+      "int_vs_float_division"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "predict",
+    "qid": "t04-s2-q1",
+    "scenarioId": "t04-s2",
+    "title": "Points, printed and returned",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "return",
+      "helper-functions",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "print_vs_return",
+      "forgot_to_call"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "cloze",
+    "qid": "t04-s2-q2",
+    "scenarioId": "t04-s2",
+    "title": "Fill in the marks helpers",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "return",
+      "helper-functions",
+      "elif",
+      "return-string"
+    ],
+    "core": true,
+    "detects": [
+      "print_vs_return",
+      "elif_vs_if",
+      "forgot_to_call"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "write",
+    "kind": "function",
+    "qid": "t04-s2-q3",
+    "scenarioId": "t04-s2",
+    "title": "Grade from three marks",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "arguments",
+      "calling-functions",
+      "return"
+    ],
+    "core": false,
+    "detects": [
+      "scope_confusion",
+      "print_vs_return",
+      "forgot_to_call"
+    ],
+    "diff": "easy",
+    "expectedSec": 60,
+    "format": "mcq",
+    "qid": "t04-s3-q1",
+    "scenarioId": "t04-s3",
+    "title": "Calling the density function",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "local-variables",
+      "return",
+      "name-error"
+    ],
+    "core": true,
+    "detects": [
+      "scope_confusion",
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "errorTranslator",
+    "qid": "t04-s3-q2",
+    "scenarioId": "t04-s3",
+    "title": "Where did total go?",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "helper-functions",
+      "return-in-loop",
+      "for-range",
+      "edge-cases"
+    ],
+    "core": true,
+    "detects": [
+      "early_return_in_loop",
+      "off_by_one_range",
+      "print_vs_return",
+      "forgot_to_call"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t04-s3-q3",
+    "scenarioId": "t04-s3",
+    "title": "Years until the colony recovers",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "helper-functions",
+      "accumulator",
+      "return",
+      "floor-division"
+    ],
+    "core": false,
+    "detects": [
+      "accumulator_init",
+      "int_vs_float_division",
+      "early_return_in_loop"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "parsons",
+    "qid": "t04-s4-q1",
+    "scenarioId": "t04-s4",
+    "title": "How many ways to pick the team",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "return-boolean",
+      "helper-functions",
+      "refactor"
+    ],
+    "core": false,
+    "detects": [
+      "compare_to_true",
+      "or_with_literal"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "refactor",
+    "qid": "t04-s4-q2",
+    "scenarioId": "t04-s4",
+    "title": "Return the condition itself",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "helper-functions",
+      "return-string",
+      "floor-division",
+      "modulo",
+      "f-strings"
+    ],
+    "core": false,
+    "detects": [
+      "int_vs_float_division",
+      "zero_division",
+      "str_int_concat",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t04-s4-q3",
+    "scenarioId": "t04-s4",
+    "title": "Scorecard line",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "indexing",
+      "slicing",
+      "methods"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "str_int_concat"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "predict",
+    "qid": "t05-s1-q1",
+    "scenarioId": "t05-s1",
+    "title": "Slicing a unit code",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "immutability",
+      "methods"
+    ],
+    "core": true,
+    "detects": [
+      "string_immutability",
+      "none_from_inplace"
+    ],
+    "diff": "easy",
+    "expectedSec": 75,
+    "format": "mcq",
+    "qid": "t05-s1-q2",
+    "scenarioId": "t05-s1",
+    "title": "Did strip() change the code?",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "slicing",
+      "methods",
+      "validation"
+    ],
+    "core": true,
+    "detects": [
+      "string_immutability",
+      "off_by_one_range",
+      "forgot_to_call"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "write",
+    "kind": "function",
+    "qid": "t05-s1-q3",
+    "scenarioId": "t05-s1",
+    "title": "Clean a typed unit code",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "indexing",
+      "range-len",
+      "index-error"
+    ],
+    "core": true,
+    "detects": [
+      "index_out_of_range",
+      "off_by_one_range",
+      "string_immutability"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "errorTranslator",
+    "qid": "t05-s2-q1",
+    "scenarioId": "t05-s2",
+    "title": "Checking a PIN for repeated digits",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "slicing",
+      "string-repetition",
+      "len"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range"
+    ],
+    "diff": "easy",
+    "expectedSec": 100,
+    "format": "cloze",
+    "qid": "t05-s2-q2",
+    "scenarioId": "t05-s2",
+    "title": "Hide the card number on a receipt",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "methods",
+      "slicing",
+      "string-building",
+      "validation"
+    ],
+    "core": false,
+    "detects": [
+      "string_immutability",
+      "off_by_one_range",
+      "forgot_to_call"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "qid": "t05-s2-q3",
+    "scenarioId": "t05-s2",
+    "title": "Format a typed card number",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "find",
+      "slicing",
+      "str-vs-int"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "str_int_concat"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "predict",
+    "qid": "t05-s3-q1",
+    "scenarioId": "t05-s3",
+    "title": "Reading a score with find",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "loop-over-string",
+      "in",
+      "case"
+    ],
+    "core": false,
+    "detects": [
+      "case_sensitive_compare"
+    ],
+    "diff": "medium",
+    "expectedSec": 140,
+    "format": "twins",
+    "qid": "t05-s3-q2",
+    "scenarioId": "t05-s3",
+    "title": "Counting vowels in the ground name",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "string-building",
+      "accumulator",
+      "split"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "fixBug",
+    "qid": "t05-s3-q3",
+    "scenarioId": "t05-s3",
+    "title": "Team acronyms for the big screen",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "palindrome",
+      "slicing",
+      "methods"
+    ],
+    "core": false,
+    "detects": [
+      "case_sensitive_compare",
+      "string_immutability",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 200,
+    "format": "predict",
+    "qid": "t05-s4-q1",
+    "scenarioId": "t05-s4",
+    "title": "Is the clue a palindrome?",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "ord-chr",
+      "loop-over-string",
+      "string-building",
+      "modulo"
+    ],
+    "core": false,
+    "detects": [
+      "case_sensitive_compare",
+      "str_int_concat",
+      "accumulator_init"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t05-s4-q3",
+    "scenarioId": "t05-s4",
+    "title": "Shift the letters of a clue",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "string-building",
+      "loop-over-string",
+      "methods",
+      "case",
+      "return-in-loop"
+    ],
+    "core": true,
+    "detects": [
+      "case_sensitive_compare",
+      "early_return_in_loop",
+      "string_immutability",
+      "accumulator_init"
+    ],
+    "diff": "hard",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t05-s4-q4",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t05-s4",
+    "title": "Anagram lock (exam style)",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "aliasing",
+      "list-copy",
+      "append"
+    ],
+    "core": true,
+    "detects": [
+      "aliasing_copy",
+      "syntax_other"
+    ],
+    "diff": "easy",
+    "expectedSec": 75,
+    "format": "mcq",
+    "qid": "t06-s1-q1",
+    "scenarioId": "t06-s1",
+    "title": "Backup of the booked seats",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "list-methods",
+      "indexing",
+      "slicing"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range"
+    ],
+    "diff": "easy",
+    "expectedSec": 100,
+    "format": "predict",
+    "qid": "t06-s1-q2",
+    "scenarioId": "t06-s1",
+    "title": "Gate 3 queue",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "aliasing",
+      "list-parameters",
+      "append",
+      "list-concatenation"
+    ],
+    "core": false,
+    "detects": [
+      "mutated_input",
+      "aliasing_copy"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "predict",
+    "qid": "t06-s1-q3",
+    "scenarioId": "t06-s1",
+    "title": "Adding to the kiosk roster",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "aliasing",
+      "list-copy",
+      "remove",
+      "list-of-tuples"
+    ],
+    "core": true,
+    "detects": [
+      "aliasing_copy",
+      "mutate_while_iterating",
+      "mutated_input"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "fixBug",
+    "qid": "t06-s1-q4",
+    "scenarioId": "t06-s1",
+    "title": "Bays still on sale",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "tuple",
+      "unpacking",
+      "immutability"
+    ],
+    "core": true,
+    "detects": [
+      "tuple_immutability",
+      "index_out_of_range"
+    ],
+    "diff": "easy",
+    "expectedSec": 75,
+    "format": "mcq",
+    "qid": "t06-s2-q1",
+    "scenarioId": "t06-s2",
+    "title": "Which line crashes?",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "nested-list",
+      "nested-loop",
+      "accumulator",
+      "append"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 200,
+    "format": "trace",
+    "qid": "t06-s2-q2",
+    "scenarioId": "t06-s2",
+    "title": "Rain gauge totals",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "tuple-return",
+      "min-max",
+      "accumulator",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "index_out_of_range",
+      "accumulator_init",
+      "return_type_wrong",
+      "zero_division"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "write",
+    "kind": "function",
+    "qid": "t06-s2-q3",
+    "scenarioId": "t06-s2",
+    "title": "Weekly summary as a tuple",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "sort",
+      "sorted",
+      "none-return"
+    ],
+    "core": true,
+    "detects": [
+      "none_from_inplace",
+      "mutated_input"
+    ],
+    "diff": "easy",
+    "expectedSec": 100,
+    "format": "twins",
+    "qid": "t06-s3-q1",
+    "scenarioId": "t06-s3",
+    "title": "sort() or sorted()?",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "list-of-tuples",
+      "unpacking",
+      "append",
+      "sort"
+    ],
+    "core": true,
+    "detects": [
+      "none_from_inplace",
+      "off_by_one_range",
+      "mutated_input"
+    ],
+    "diff": "medium",
+    "expectedSec": 200,
+    "format": "parsons",
+    "qid": "t06-s3-q2",
+    "scenarioId": "t06-s3",
+    "title": "Who passed, A to Z",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "nested-list",
+      "nested-loop",
+      "indexing",
+      "tuple"
+    ],
+    "core": false,
+    "detects": [
+      "index_out_of_range",
+      "off_by_one_range",
+      "mutated_input",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t06-s3-q3",
+    "scenarioId": "t06-s3",
+    "title": "Two free desks side by side",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "unpacking",
+      "list-of-tuples",
+      "for-each",
+      "tuple-return"
+    ],
+    "core": false,
+    "detects": [
+      "early_return_in_loop",
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "refactor",
+    "qid": "t06-s4-q1",
+    "scenarioId": "t06-s4",
+    "title": "Top scorer without the indexes",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "sort-key",
+      "tie-break",
+      "sorted",
+      "list-of-tuples"
+    ],
+    "core": true,
+    "detects": [
+      "sort_tiebreak",
+      "mutated_input",
+      "none_from_inplace",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "write",
+    "kind": "function",
+    "qid": "t06-s4-q2",
+    "scenarioId": "t06-s4",
+    "title": "Fantasy league table with tie-breaks",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "list-of-tuples",
+      "run-length",
+      "accumulator",
+      "tuple"
+    ],
+    "core": false,
+    "detects": [
+      "index_out_of_range",
+      "off_by_one_range",
+      "return_type_wrong",
+      "accumulator_init"
+    ],
+    "diff": "hard",
+    "expectedSec": 720,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t06-s4-q3",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t06-s4",
+    "title": "Streaks in a bowling spell (exam style)",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "while",
+      "digits",
+      "binary",
+      "floor-division",
+      "modulo"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division",
+      "off_by_one_range",
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 210,
+    "format": "trace",
+    "qid": "t07-s1-q1",
+    "scenarioId": "t07-s1",
+    "title": "A gate number in binary",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "digits",
+      "modulo",
+      "floor-division",
+      "accumulator"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division",
+      "infinite_while"
+    ],
+    "diff": "easy",
+    "expectedSec": 100,
+    "format": "cloze",
+    "qid": "t07-s1-q2",
+    "scenarioId": "t07-s1",
+    "title": "Digit sum",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "digits",
+      "modulo",
+      "floor-division",
+      "accumulator",
+      "boolean"
+    ],
+    "core": false,
+    "detects": [
+      "int_vs_float_division",
+      "off_by_one_range",
+      "infinite_while",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t07-s1-q3",
+    "scenarioId": "t07-s1",
+    "title": "Luhn check for bank cards",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "series",
+      "tolerance",
+      "float"
+    ],
+    "core": true,
+    "detects": [
+      "float_equality"
+    ],
+    "diff": "easy",
+    "expectedSec": 75,
+    "format": "mcq",
+    "qid": "t07-s2-q1",
+    "scenarioId": "t07-s2",
+    "title": "When should a series stop?",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "series",
+      "tolerance",
+      "accumulator"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division",
+      "accumulator_init",
+      "off_by_one_range"
+    ],
+    "diff": "easy",
+    "expectedSec": 100,
+    "format": "predict",
+    "qid": "t07-s2-q2",
+    "scenarioId": "t07-s2",
+    "title": "Halving until small",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "series",
+      "tolerance",
+      "factorial",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "round_mid_calc",
+      "float_equality",
+      "infinite_while",
+      "import_used",
+      "int_vs_float_division"
+    ],
+    "diff": "hard",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t07-s2-q3",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t07-s2",
+    "title": "The e series (exam style)",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "nested-loop",
+      "range",
+      "string-building"
+    ],
+    "core": false,
+    "detects": [
+      "accumulator_init",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "predict",
+    "qid": "t07-s3-q1",
+    "scenarioId": "t07-s3",
+    "title": "Stall labels by row",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "nested-loop",
+      "range",
+      "accumulator",
+      "trace"
+    ],
+    "core": false,
+    "detects": [
+      "off_by_one_range",
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "trace",
+    "qid": "t07-s3-q2",
+    "scenarioId": "t07-s3",
+    "title": "Site fees for every size",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "nested-loop",
+      "combinations",
+      "range",
+      "tuple",
+      "list"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "type_error_other",
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "parsons",
+    "qid": "t07-s3-q3",
+    "scenarioId": "t07-s3",
+    "title": "Every pair of stalls once",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "nested-loop",
+      "combinations",
+      "tuple",
+      "list",
+      "accumulator"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "early_return_in_loop",
+      "off_by_one_range",
+      "return_type_wrong",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t07-s3-q4",
+    "scenarioId": "t07-s3",
+    "title": "Meal deals under budget (exam style)",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "sentinel",
+      "index",
+      "loop-update"
+    ],
+    "core": true,
+    "detects": [
+      "infinite_while"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "fixBug",
+    "qid": "t07-s4-q1",
+    "scenarioId": "t07-s4",
+    "title": "The logger freezes",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "sentinel",
+      "index",
+      "tuple",
+      "max",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "index_out_of_range",
+      "infinite_while",
+      "invalid_row_not_skipped",
+      "accumulator_init",
+      "round_mid_calc",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t07-s4-q2",
+    "scenarioId": "t07-s4",
+    "title": "Batch summary up to the sentinel",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "index",
+      "merge",
+      "list"
+    ],
+    "core": false,
+    "detects": [
+      "index_out_of_range",
+      "off_by_one_range",
+      "mutated_input",
+      "infinite_while"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t07-s4-q3",
+    "scenarioId": "t07-s4",
+    "title": "Merge two sorted logs",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "dict-get",
+      "keyerror",
+      "dict-update"
+    ],
+    "core": true,
+    "detects": [
+      "dict_keyerror"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "errorTranslator",
+    "qid": "t08-s1-q1",
+    "scenarioId": "t08-s1",
+    "title": "The latte that was not there",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-items",
+      "dict-get",
+      "dict-update"
+    ],
+    "core": true,
+    "detects": [
+      "dict_keyerror",
+      "forgot_to_call"
+    ],
+    "diff": "easy",
+    "expectedSec": 120,
+    "format": "cloze",
+    "qid": "t08-s1-q2",
+    "scenarioId": "t08-s1",
+    "title": "Restock from a delivery",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-get",
+      "counting",
+      "for-each"
+    ],
+    "core": false,
+    "detects": [
+      "dict_keyerror",
+      "accumulator_init",
+      "mutated_input"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "refactor",
+    "qid": "t08-s1-q3",
+    "scenarioId": "t08-s1",
+    "title": "Count sales without the index",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-get",
+      "counting",
+      "dict-len"
+    ],
+    "core": true,
+    "detects": [
+      "case_sensitive_compare",
+      "accumulator_init",
+      "dict_keyerror"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "predict",
+    "qid": "t08-s2-q1",
+    "scenarioId": "t08-s2",
+    "title": "Counting tap-ons",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "counting",
+      "dict-del",
+      "mutate-while-iterating"
+    ],
+    "core": true,
+    "detects": [
+      "mutate_while_iterating",
+      "mutated_input"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "fixBug",
+    "qid": "t08-s2-q2",
+    "scenarioId": "t08-s2",
+    "title": "Dropping quiet stations",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-get",
+      "grouping",
+      "tuple-unpacking",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "dict_keyerror",
+      "return_type_wrong"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "write",
+    "kind": "function",
+    "qid": "t08-s2-q3",
+    "scenarioId": "t08-s2",
+    "title": "Fare totals per card",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-items",
+      "sort-key",
+      "tie-break"
+    ],
+    "core": true,
+    "detects": [
+      "sort_tiebreak",
+      "return_type_wrong"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "mcq",
+    "qid": "t08-s3-q1",
+    "scenarioId": "t08-s3",
+    "title": "Sorting runs with a tie-break",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-items",
+      "sort-key",
+      "tie-break",
+      "slicing"
+    ],
+    "core": true,
+    "detects": [
+      "sort_tiebreak",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "parsons",
+    "qid": "t08-s3-q2",
+    "scenarioId": "t08-s3",
+    "title": "Top batters",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "counting",
+      "dict-items",
+      "sort-key",
+      "tie-break"
+    ],
+    "core": false,
+    "detects": [
+      "sort_tiebreak",
+      "dict_keyerror",
+      "return_type_wrong",
+      "accumulator_init"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t08-s3-q3",
+    "scenarioId": "t08-s3",
+    "title": "Build the ladder",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "grouping",
+      "dict-of-lists",
+      "tuple-keys",
+      "aliasing"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "aliasing_copy"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "predict",
+    "qid": "t08-s4-q1",
+    "scenarioId": "t08-s4",
+    "title": "Grouping by lab session",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "nested-dict",
+      "grouping",
+      "max-per-key",
+      "tuple-unpacking"
+    ],
+    "core": false,
+    "detects": [
+      "dict_keyerror",
+      "aliasing_copy",
+      "accumulator_init",
+      "mutated_input"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "qid": "t08-s4-q2",
+    "scenarioId": "t08-s4",
+    "title": "Best attempt per lab",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "grouping",
+      "dict-of-lists",
+      "dict-items",
+      "elif",
+      "sort"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if",
+      "dict_keyerror",
+      "none_from_inplace",
+      "mutated_input"
+    ],
+    "diff": "hard",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t08-s4-q3",
+    "scenarioId": "t08-s4",
+    "title": "Names by UWA grade",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "write",
+      "readline",
+      "newline",
+      "strip-split"
+    ],
+    "core": true,
+    "detects": [
+      "file_newline"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "predict",
+    "qid": "t09-s1-q1",
+    "scenarioId": "t09-s1",
+    "title": "What the logger wrote",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "read-lines",
+      "strip-split",
+      "newline"
+    ],
+    "core": true,
+    "detects": [
+      "file_newline"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "fixBug",
+    "qid": "t09-s1-q2",
+    "scenarioId": "t09-s1",
+    "title": "Maylands readings go missing",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "write",
+      "newline",
+      "str-conversion",
+      "counter"
+    ],
+    "core": true,
+    "detects": [
+      "file_newline",
+      "str_int_concat"
+    ],
+    "diff": "medium",
+    "expectedSec": 200,
+    "format": "parsons",
+    "qid": "t09-s1-q3",
+    "scenarioId": "t09-s1",
+    "title": "Save the warm sites",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "read-lines",
+      "strip-split",
+      "case-insensitive",
+      "min-max",
+      "tuple-return"
+    ],
+    "core": true,
+    "detects": [
+      "file_newline",
+      "case_sensitive_compare",
+      "invalid_row_not_skipped",
+      "accumulator_init",
+      "return_type_wrong",
+      "csv_ext_assumed"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "write",
+    "kind": "function",
+    "qid": "t09-s1-q4",
+    "rules": [
+      "noImport",
+      "noCsvExt"
+    ],
+    "scenarioId": "t09-s1",
+    "title": "Daily temperature range",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "header",
+      "index",
+      "strip-split"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "file_newline",
+      "case_sensitive_compare"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "mcq",
+    "qid": "t09-s2-q1",
+    "scenarioId": "t09-s2",
+    "title": "Finding the Fare column",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "project-rules",
+      "no-import",
+      "file-name",
+      "header"
+    ],
+    "core": false,
+    "detects": [
+      "import_used",
+      "csv_ext_assumed",
+      "header_order_assumed"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "multi",
+    "qid": "t09-s2-q2",
+    "scenarioId": "t09-s2",
+    "title": "What the project marker penalises",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "header",
+      "index",
+      "strip-split",
+      "accumulator"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "file_newline"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "cloze",
+    "qid": "t09-s2-q3",
+    "scenarioId": "t09-s2",
+    "title": "Total fares at one stop",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "header",
+      "case-insensitive",
+      "validation",
+      "mean",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "case_sensitive_compare",
+      "invalid_row_not_skipped",
+      "zero_division",
+      "round_mid_calc",
+      "csv_ext_assumed"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t09-s2-q4",
+    "rules": [
+      "noImport",
+      "noCsvExt",
+      "roundAtEnd"
+    ],
+    "scenarioId": "t09-s2",
+    "title": "Mean of any column",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "file-name",
+      "validation",
+      "header",
+      "case-insensitive"
+    ],
+    "core": false,
+    "detects": [
+      "csv_ext_assumed",
+      "invalid_row_not_skipped"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "fixBug",
+    "qid": "t09-s3-q1",
+    "scenarioId": "t09-s3",
+    "title": "Two bugs in the sign-up counter",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "header",
+      "validation",
+      "dict-of-lists",
+      "duplicates",
+      "case-insensitive"
+    ],
+    "core": false,
+    "detects": [
+      "header_order_assumed",
+      "invalid_row_not_skipped",
+      "case_sensitive_compare",
+      "index_out_of_range",
+      "csv_ext_assumed"
+    ],
+    "diff": "hard",
+    "expectedSec": 720,
+    "format": "write",
+    "kind": "function",
+    "qid": "t09-s3-q2",
+    "rules": [
+      "noImport",
+      "noCsvExt"
+    ],
+    "scenarioId": "t09-s3",
+    "title": "Members per club",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "header",
+      "read-then-write",
+      "validation",
+      "string-building"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "case_sensitive_compare",
+      "invalid_row_not_skipped",
+      "file_newline",
+      "str_int_concat",
+      "csv_ext_assumed"
+    ],
+    "diff": "hard",
+    "expectedSec": 780,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t09-s3-q3",
+    "rules": [
+      "noImport",
+      "noCsvExt"
+    ],
+    "scenarioId": "t09-s3",
+    "title": "Mailing list for volunteers",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "traceback",
+      "value-error",
+      "float-conversion"
+    ],
+    "core": true,
+    "detects": [
+      "invalid_row_not_skipped",
+      "int_of_float_string",
+      "index_out_of_range"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "errorTranslator",
+    "qid": "t10-s1-q1",
+    "scenarioId": "t10-s1",
+    "title": "The Maylands sensor dropped out",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-except",
+      "int-conversion",
+      "loop-flow"
+    ],
+    "core": true,
+    "detects": [
+      "int_of_float_string",
+      "invalid_row_not_skipped"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "predict",
+    "qid": "t10-s1-q2",
+    "scenarioId": "t10-s1",
+    "title": "Dolphin counts from the jetties",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "specific-except",
+      "bare-except",
+      "method-call"
+    ],
+    "core": true,
+    "detects": [
+      "bare_except",
+      "forgot_to_call"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "fixBug",
+    "qid": "t10-s1-q3",
+    "scenarioId": "t10-s1",
+    "title": "Every reading vanished",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-except",
+      "file-not-found",
+      "header-lookup",
+      "skip-invalid-rows"
+    ],
+    "core": true,
+    "detects": [
+      "no_graceful_exit",
+      "invalid_row_not_skipped",
+      "header_order_assumed",
+      "file_newline",
+      "bare_except",
+      "dict_keyerror"
+    ],
+    "diff": "hard",
+    "expectedSec": 720,
+    "format": "write",
+    "kind": "function",
+    "qid": "t10-s1-q4",
+    "scenarioId": "t10-s1",
+    "title": "Average dissolved oxygen per site",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "specific-except",
+      "value-error",
+      "int-conversion"
+    ],
+    "core": true,
+    "detects": [
+      "bare_except",
+      "type_error_other",
+      "int_of_float_string"
+    ],
+    "diff": "easy",
+    "expectedSec": 60,
+    "format": "mcq",
+    "qid": "t10-s2-q1",
+    "scenarioId": "t10-s2",
+    "title": "Pick the right handler",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-placement",
+      "specific-except",
+      "validation"
+    ],
+    "core": false,
+    "detects": [
+      "invalid_row_not_skipped",
+      "type_error_other"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "multi",
+    "qid": "t10-s2-q2",
+    "scenarioId": "t10-s2",
+    "title": "Keep counting after a bad entry",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-except",
+      "validation",
+      "int-conversion",
+      "return-none"
+    ],
+    "core": true,
+    "detects": [
+      "no_graceful_exit",
+      "int_of_float_string",
+      "bare_except",
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "write",
+    "kind": "function",
+    "qid": "t10-s2-q3",
+    "scenarioId": "t10-s2",
+    "title": "Validate a ticket entry",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-except",
+      "sentinel-loop",
+      "zero-division-guard",
+      "validation"
+    ],
+    "core": false,
+    "detects": [
+      "zero_division",
+      "int_of_float_string",
+      "infinite_while",
+      "input_without_int",
+      "invalid_row_not_skipped"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "program",
+    "qid": "t10-s2-q4",
+    "scenarioId": "t10-s2",
+    "title": "End-of-shift tally",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-except",
+      "return-in-try",
+      "loop-flow"
+    ],
+    "core": false,
+    "detects": [
+      "int_of_float_string",
+      "early_return_in_loop"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "predict",
+    "qid": "t10-s3-q1",
+    "scenarioId": "t10-s3",
+    "title": "The first real room number",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "traceback",
+      "zero-division-guard",
+      "try-placement"
+    ],
+    "core": true,
+    "detects": [
+      "zero_division",
+      "bare_except",
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "errorTranslator",
+    "qid": "t10-s3-q2",
+    "scenarioId": "t10-s3",
+    "title": "A week of cancellations",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-placement",
+      "edge-cases",
+      "skip-invalid-rows"
+    ],
+    "core": false,
+    "detects": [
+      "invalid_row_not_skipped"
+    ],
+    "diff": "hard",
+    "expectedSec": 360,
+    "format": "testWriter",
+    "qid": "t10-s3-q3",
+    "scenarioId": "t10-s3",
+    "title": "Break the hours counter",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "local-scope",
+      "parameters",
+      "return-value"
+    ],
+    "core": true,
+    "detects": [
+      "scope_confusion",
+      "print_vs_return"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "predict",
+    "qid": "t11-s1-q1",
+    "scenarioId": "t11-s1",
+    "title": "Paying a fare",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "local-scope",
+      "unbound-local-error",
+      "pass-in-return-out"
+    ],
+    "core": true,
+    "detects": [
+      "scope_confusion",
+      "global_state"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "errorTranslator",
+    "qid": "t11-s1-q2",
+    "scenarioId": "t11-s1",
+    "title": "Counting tap-ons",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "helper-functions",
+      "return-value",
+      "default-parameters",
+      "local-scope"
+    ],
+    "core": true,
+    "detects": [
+      "scope_confusion"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "fixBug",
+    "qid": "t11-s1-q3",
+    "scenarioId": "t11-s1",
+    "title": "A day of trips",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "default-parameters",
+      "mutable-default",
+      "aliasing"
+    ],
+    "core": false,
+    "detects": [
+      "mutable_default_arg",
+      "aliasing_copy"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "predict",
+    "qid": "t11-s2-q1",
+    "scenarioId": "t11-s2",
+    "title": "Saturday and Sunday sales",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "default-parameters",
+      "none-default",
+      "mutable-default"
+    ],
+    "core": true,
+    "detects": [
+      "mutable_default_arg",
+      "global_state",
+      "none_from_inplace"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "mcq",
+    "qid": "t11-s2-q2",
+    "scenarioId": "t11-s2",
+    "title": "A fresh list on every call",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "default-parameters",
+      "helper-functions",
+      "digits",
+      "normalise"
+    ],
+    "core": false,
+    "detects": [
+      "mutable_default_arg",
+      "global_state",
+      "zero_division",
+      "return_type_wrong",
+      "mutated_input"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t11-s2-q3",
+    "scenarioId": "t11-s2",
+    "title": "Benford check on takings",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "global-state",
+      "pass-in-return-out",
+      "tuple-return",
+      "refactor"
+    ],
+    "core": false,
+    "detects": [
+      "global_state",
+      "scope_confusion"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "refactor",
+    "qid": "t11-s3-q1",
+    "scenarioId": "t11-s3",
+    "title": "Economy rate without globals",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "argument-checks",
+      "tuple-return",
+      "default-parameters",
+      "consistent-return-types"
+    ],
+    "core": true,
+    "detects": [
+      "no_graceful_exit",
+      "zero_division",
+      "return_type_wrong",
+      "type_error_other",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t11-s3-q2",
+    "scenarioId": "t11-s3",
+    "title": "Innings summary with a safe answer",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "none-default",
+      "new-not-mutate",
+      "dict-of-lists",
+      "aliasing"
+    ],
+    "core": false,
+    "detects": [
+      "mutable_default_arg",
+      "mutated_input",
+      "aliasing_copy",
+      "dict_keyerror"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "qid": "t11-s3-q3",
+    "scenarioId": "t11-s3",
+    "title": "Adding an innings to the season",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "project-rules",
+      "no-import",
+      "no-print",
+      "round-at-output"
+    ],
+    "core": true,
+    "detects": [
+      "import_used",
+      "csv_ext_assumed",
+      "print_in_main",
+      "round_mid_calc"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "multi",
+    "qid": "t11-s4-q1",
+    "scenarioId": "t11-s4",
+    "title": "Spot the rule breaks",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "project-rules",
+      "main-contract",
+      "round-at-output",
+      "refactor"
+    ],
+    "core": true,
+    "detects": [
+      "input_called",
+      "print_in_main",
+      "round_mid_calc",
+      "csv_ext_assumed"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "refactor",
+    "qid": "t11-s4-q2",
+    "scenarioId": "t11-s4",
+    "title": "Make the draft marker-safe",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "main-contract",
+      "helper-functions",
+      "header-lookup",
+      "graceful-termination",
+      "round-at-output"
+    ],
+    "core": true,
+    "detects": [
+      "missing_main",
+      "csv_ext_assumed",
+      "header_order_assumed",
+      "invalid_row_not_skipped",
+      "no_graceful_exit",
+      "zero_division",
+      "case_sensitive_compare",
+      "print_in_main",
+      "round_mid_calc",
+      "import_used",
+      "input_called"
+    ],
+    "diff": "hard",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "project",
+    "qid": "t11-s4-q3",
+    "rules": [
+      "noImport",
+      "noInput",
+      "noPrint",
+      "roundAtEnd",
+      "noCsvExt",
+      "mainSignature"
+    ],
+    "scenarioId": "t11-s4",
+    "title": "Station summary main()",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "statistics",
+      "standard-deviation",
+      "accumulator"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "round_mid_calc",
+      "early_return_in_loop"
+    ],
+    "diff": "easy",
+    "expectedSec": 100,
+    "format": "mcq",
+    "qid": "t12-s1-q1",
+    "scenarioId": "t12-s1",
+    "title": "From formula to loop",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "statistics",
+      "standard-error",
+      "rounding"
+    ],
+    "core": true,
+    "detects": [
+      "round_mid_calc"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "fixBug",
+    "qid": "t12-s1-q2",
+    "scenarioId": "t12-s1",
+    "title": "The standard error is off by 0.0001",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "statistics",
+      "standard-deviation",
+      "standard-error",
+      "validation"
+    ],
+    "core": true,
+    "detects": [
+      "zero_division",
+      "round_mid_calc",
+      "mutated_input",
+      "invalid_row_not_skipped",
+      "return_type_wrong"
+    ],
+    "diff": "medium",
+    "expectedSec": 330,
+    "format": "write",
+    "kind": "function",
+    "qid": "t12-s1-q3",
+    "rules": [
+      "noImport",
+      "roundAtEnd"
+    ],
+    "scenarioId": "t12-s1",
+    "title": "Mean, standard deviation and standard error",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "csv",
+      "header-lookup",
+      "validation",
+      "statistics",
+      "main-contract"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "invalid_row_not_skipped",
+      "case_sensitive_compare",
+      "no_graceful_exit",
+      "zero_division",
+      "round_mid_calc",
+      "csv_ext_assumed",
+      "import_used",
+      "print_in_main"
+    ],
+    "diff": "hard",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "project",
+    "qid": "t12-s1-q4",
+    "rules": [
+      "noImport",
+      "noInput",
+      "noPrint",
+      "roundAtEnd",
+      "noCsvExt",
+      "mainSignature"
+    ],
+    "scenarioId": "t12-s1",
+    "title": "Project task: one site from the logger file",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "cosine-similarity",
+      "accumulator",
+      "float"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "predict",
+    "qid": "t12-s2-q1",
+    "scenarioId": "t12-s2",
+    "title": "Cosine similarity by hand",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "cosine-similarity",
+      "accumulator",
+      "zero-division"
+    ],
+    "core": true,
+    "detects": [
+      "zero_division",
+      "round_mid_calc",
+      "accumulator_init",
+      "import_used"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "write",
+    "kind": "function",
+    "qid": "t12-s2-q2",
+    "rules": [
+      "noImport",
+      "roundAtEnd"
+    ],
+    "scenarioId": "t12-s2",
+    "title": "Write cosine_sim",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "csv",
+      "cosine-similarity",
+      "dictionary",
+      "tie-break",
+      "main-contract"
+    ],
+    "core": false,
+    "detects": [
+      "header_order_assumed",
+      "invalid_row_not_skipped",
+      "case_sensitive_compare",
+      "sort_tiebreak",
+      "no_graceful_exit",
+      "zero_division",
+      "csv_ext_assumed",
+      "round_mid_calc"
+    ],
+    "diff": "hard",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "project",
+    "qid": "t12-s2-q3",
+    "rules": [
+      "noImport",
+      "noInput",
+      "noPrint",
+      "roundAtEnd",
+      "noCsvExt",
+      "mainSignature"
+    ],
+    "scenarioId": "t12-s2",
+    "title": "Project task: the most similar station",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "csv",
+      "validation",
+      "duplicates",
+      "edge-cases"
+    ],
+    "core": false,
+    "detects": [
+      "case_sensitive_compare",
+      "invalid_row_not_skipped"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "testWriter",
+    "qid": "t12-s3-q1",
+    "scenarioId": "t12-s3",
+    "title": "Break the density calculator",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "csv",
+      "efficiency",
+      "header-lookup",
+      "refactor"
+    ],
+    "core": false,
+    "detects": [
+      "efficiency_repeat_pass",
+      "file_not_closed",
+      "zero_division",
+      "no_graceful_exit"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "refactor",
+    "qid": "t12-s3-q2",
+    "scenarioId": "t12-s3",
+    "title": "Read the file once",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "csv",
+      "nested-dict",
+      "ranking",
+      "tie-break",
+      "main-contract"
+    ],
+    "core": true,
+    "detects": [
+      "sort_tiebreak",
+      "header_order_assumed",
+      "invalid_row_not_skipped",
+      "case_sensitive_compare",
+      "no_graceful_exit",
+      "dict_keyerror",
+      "aliasing_copy",
+      "csv_ext_assumed"
+    ],
+    "diff": "hard",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "project",
+    "qid": "t12-s3-q3",
+    "rules": [
+      "noImport",
+      "noInput",
+      "noPrint",
+      "roundAtEnd",
+      "noCsvExt",
+      "mainSignature"
+    ],
+    "scenarioId": "t12-s3",
+    "title": "Project task: rank suburbs inside each LGA",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "recursive-case",
+      "return"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "print_vs_return"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "mcq",
+    "qid": "t13-s1-q1",
+    "scenarioId": "t13-s1",
+    "title": "Which rockets function works?",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "call-stack",
+      "return",
+      "base-case"
+    ],
+    "core": true,
+    "detects": [
+      "recursion_result_ignored",
+      "print_vs_return"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "predict",
+    "qid": "t13-s1-q2",
+    "scenarioId": "t13-s1",
+    "title": "Countdown to the show",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "call-stack",
+      "base-case",
+      "trace"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "scope_confusion"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "trace",
+    "qid": "t13-s1-q3",
+    "scenarioId": "t13-s1",
+    "title": "Stars in the finale",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "recursion-error",
+      "digits"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "int_vs_float_division",
+      "loop_in_recursion"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "errorTranslator",
+    "qid": "t13-s2-q1",
+    "scenarioId": "t13-s2",
+    "title": "The digit counter that never stops",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "return",
+      "recursive-case",
+      "digits"
+    ],
+    "core": true,
+    "detects": [
+      "recursion_result_ignored"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "fixBug",
+    "qid": "t13-s2-q2",
+    "scenarioId": "t13-s2",
+    "title": "Counting one digit",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "digits",
+      "floor-division",
+      "no-loops"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "loop_in_recursion",
+      "int_vs_float_division",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t13-s2-q3",
+    "rules": [
+      "noLoops"
+    ],
+    "scenarioId": "t13-s2",
+    "title": "Sum of digits (exam style)",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "call-stack",
+      "local-variables",
+      "slicing"
+    ],
+    "core": false,
+    "detects": [
+      "scope_confusion",
+      "recursion_result_ignored"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "predict",
+    "qid": "t13-s3-q1",
+    "scenarioId": "t13-s3",
+    "title": "Spelling on the way back",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "slicing",
+      "palindrome"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "index_out_of_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 200,
+    "format": "parsons",
+    "qid": "t13-s3-q2",
+    "scenarioId": "t13-s3",
+    "title": "Palindrome checker",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "string-recursion",
+      "slicing",
+      "helper-function",
+      "no-loops"
+    ],
+    "core": false,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "loop_in_recursion",
+      "index_out_of_range"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "qid": "t13-s3-q3",
+    "rules": [
+      "noLoops"
+    ],
+    "scenarioId": "t13-s3",
+    "title": "Scrambled email addresses",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "nested-list",
+      "call-stack",
+      "isinstance"
+    ],
+    "core": false,
+    "detects": [
+      "scope_confusion",
+      "recursion_result_ignored"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "trace",
+    "qid": "t13-s4-q1",
+    "scenarioId": "t13-s4",
+    "title": "Adding up a nested survey",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "nested-list",
+      "isinstance",
+      "list-building",
+      "no-loops"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "return_type_wrong",
+      "mutated_input",
+      "loop_in_recursion"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t13-s4-q2",
+    "rules": [
+      "noLoops"
+    ],
+    "scenarioId": "t13-s4",
+    "title": "Flatten the survey sheet",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "nested-list",
+      "isinstance",
+      "tuples",
+      "no-loops"
+    ],
+    "core": false,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "loop_in_recursion",
+      "return_type_wrong",
+      "mutated_input",
+      "index_out_of_range"
+    ],
+    "diff": "hard",
+    "expectedSec": 780,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t13-s4-q3",
+    "rules": [
+      "noLoops"
+    ],
+    "scenarioId": "t13-s4",
+    "title": "Extract the names (exam style)",
+    "topicId": "recursion"
+  }
+]

@@ -60,7 +60,7 @@ export function Dialog({ open, onClose, title, description, children, footer, si
   return (
     <dialog
       ref={ref}
-      class={`dlg ${size}${cls ? ' ' + cls : ''}`}
+      class={`dlg dlg-${size}${cls ? ' ' + cls : ''}`}
       aria-labelledby={titleId}
       aria-describedby={description ? descId : undefined}
       onCancel={(e) => { e.preventDefault(); onCloseRef.current(); }}

@@ -25,6 +25,7 @@ p.tp-explain { display: block; }
 .tp-lock .inline-links { margin-top: 4px; }
 
 .tp-tabs { margin-bottom: var(--sp-4); }
+.tp-tabs .tl-short { display: none; }
 .tp-panel:focus-visible { outline-offset: 4px; border-radius: var(--r-1); }
 
 /* ---------- filters ---------- */
@@ -43,6 +44,7 @@ p.tp-explain { display: block; }
 .weak-note { margin-bottom: var(--sp-2); font-size: var(--fs-13); color: var(--text-muted); }
 
 /* ---------- scenarios and question rows ---------- */
+.filter-summary + .scenario, .locked-note + .scenario { margin-top: var(--sp-2); }
 .scenario + .scenario { margin-top: var(--sp-5); }
 .scenario-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px var(--sp-3); }
 .scenario-title { font-size: var(--fs-14); font-weight: 600; }
@@ -104,4 +106,7 @@ a.q-row:focus-visible { outline-offset: -2px; border-radius: var(--r-3); }
   .q-meta { justify-content: flex-start; flex-wrap: wrap; }
   .q-status { width: auto; }
   .filters { gap: var(--sp-2) var(--sp-4); }
+  .tp-tabs .tab { padding: 0 var(--sp-2); }
+  .tp-tabs .tl-long { display: none; }
+  .tp-tabs .tl-short { display: inline; }
 }

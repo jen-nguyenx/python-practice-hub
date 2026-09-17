@@ -47,7 +47,7 @@ function safeContinue(events: Parameters<typeof continueTarget>[0], settings: Pa
   try { return continueTarget(events, QUESTION_INDEX, settings); } catch { return null; }
 }
 
-function ContinueButton({ target, progress }: { target: { qid: string; topicId: TopicId } | null; progress: Record<TopicId, TopicProgress> }) {
+function ContinueButton({ target, progress, fresh }: { target: { qid: string; topicId: TopicId } | null; progress: Record<TopicId, TopicProgress>; fresh: boolean }) {
   if (target) {
     const q = QUESTION_BY_ID.get(target.qid);
     const topic = TOPIC_BY_ID[target.topicId];
@@ -55,7 +55,7 @@ function ContinueButton({ target, progress }: { target: { qid: string; topicId: 
       <a class="btn primary lg hero-continue" href={href.question(target.qid)}>
         <Icon name="play" size={14} />
         <span class="hero-btn-text">
-          Continue: {topic?.short ?? 'practice'}{q ? <span class="hero-btn-sub"> · {q.title}</span> : null}
+          {fresh ? 'Start' : 'Continue'}: {topic?.short ?? 'practice'}{q ? <span class="hero-btn-sub"> · {q.title}</span> : null}
         </span>
       </a>
     );
@@ -63,7 +63,6 @@ function ContinueButton({ target, progress }: { target: { qid: string; topicId: 
   // No question to resume: point at the furthest open topic that isn't done, else topic 1.
   const open = TOPICS.filter((t) => progress[t.id]?.state !== 'locked');
   const next = open.find((t) => progress[t.id]?.state !== 'completed') ?? open[open.length - 1] ?? TOPICS[0];
-  const fresh = !open.some((t) => (progress[t.id]?.attempted ?? 0) > 0);
   return (
     <a class="btn primary lg hero-continue" href={href.topic(next.id)}>
       <Icon name="play" size={14} />
@@ -82,12 +81,13 @@ function LandingSkeleton() {
         <div class="row"><Skeleton w={200} h={38} /><Skeleton w={180} h={38} /></div>
       </div>
       <div class="landing-grid">
+        <div class="landing-session"><Skeleton h={120} /></div>
         <div class="ladder">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} class="tc tc-skel"><Skeleton w={28} h={28} /><div class="stack" style={{ flex: 1 }}><Skeleton w="50%" h={16} /><Skeleton w="85%" h={12} /><Skeleton w="60%" h={8} /></div></div>
           ))}
         </div>
-        <aside class="side"><Skeleton h={120} /><Skeleton h={120} /></aside>
+        <aside class="side"><Skeleton h={120} /></aside>
       </div>
     </div>
   );
@@ -98,13 +98,16 @@ export function Landing() {
   const events = store.events.value;
   const settings = store.settings.value;
 
+  // sessionId is a getter that changes after 30 idle minutes, so read it on every render.
+  const sessionId = store.sessionId;
+
   const progress = useMemo(() => safeTopicProgress(events, settings), [events, settings]);
   const stats = useMemo(() => safeQuestionStats(events), [events]);
-  const session = useMemo(() => safeSession(events, store.sessionId), [events]);
+  const session = useMemo(() => safeSession(events, sessionId), [events, sessionId]);
   const target = useMemo(() => safeContinue(events, settings), [events, settings]);
   const mistakes = useMemo(() => recentMistakes(events), [events]);
   const attempts = useMemo(() => attemptCount(events), [events]);
-  const lastOther = useMemo(() => lastOtherSessionTs(events, store.sessionId), [events]);
+  const lastOther = useMemo(() => lastOtherSessionTs(events, sessionId), [events, sessionId]);
 
   if (!ready) return <LandingSkeleton />;
 
@@ -117,6 +120,7 @@ export function Landing() {
   if (lastOther !== null) sentence.push(`last session ${relativeDay(lastOther)}`);
 
   const now = Date.now();
+  const hasSession = !!session && session.questions > 0;
   const needsBackup = attempts >= BACKUP_AFTER_ATTEMPTS && (settings.lastExportTs === null || now - settings.lastExportTs > BACKUP_MAX_AGE_MS);
 
   return (
@@ -125,7 +129,7 @@ export function Landing() {
         <h1>CITS1401 Python practice</h1>
         <p class="hero-sentence num">{sentence.join(' · ')}</p>
         <div class="hero-actions">
-          <ContinueButton target={target} progress={progress} />
+          <ContinueButton target={target} progress={progress} fresh={attempts === 0} />
           <a class="btn lg hero-midsem" href={href.midsem()}>
             <Icon name="clock" size={14} />
             Mid-sem practice test
@@ -136,7 +140,12 @@ export function Landing() {
         ) : null}
       </header>
 
-      <div class="landing-grid">
+      <div class={`landing-grid${hasSession ? ' has-session' : ''}`}>
+        {/* Before the ladder in the DOM so a narrow screen shows it first once there is something in it. */}
+        <div class="landing-session">
+          <SessionCard summary={session} />
+        </div>
+
         <div class="ladder">
           {BANDS.map((band) => (
             <section key={band.id} class="band" aria-labelledby={`band-${band.id}`}>
@@ -159,8 +168,7 @@ export function Landing() {
           ))}
         </div>
 
-        <aside class="side" aria-label="Your activity">
-          <SessionCard summary={session} />
+        <aside class="side" aria-label="Recent activity">
           <MistakesCard mistakes={mistakes} />
           {needsBackup ? <BackupReminder lastExportTs={settings.lastExportTs} /> : null}
           <LegendCard />

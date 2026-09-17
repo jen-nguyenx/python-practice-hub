@@ -39,3 +39,4 @@
 .ta-markers li.error { color: var(--bad); }
 .ta-markers li.warning { color: var(--hint); }
 .ta-markers li.info { color: var(--text-muted); }
+.ta-input { font-variant-ligatures: none; }

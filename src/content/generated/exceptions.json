@@ -1,0 +1,32 @@
+{
+  "t10-s1-q1": {
+    "error": {
+      "line": 5,
+      "message": "could not convert string to float: 'N/A'",
+      "type": "ValueError"
+    },
+    "stdout": "Nedlands 7.4\n"
+  },
+  "t10-s1-q2": {
+    "mutantOutputs": [
+      "kept 4\nkept 2.0\nskipped none\nkept 3\ntotal 9\n",
+      "kept 4\nskipped 2.0\ntotal 4\n"
+    ],
+    "stdout": "kept 4\nskipped 2.0\nskipped none\nkept 3\ntotal 7\n"
+  },
+  "t10-s3-q1": {
+    "mutantOutputs": [
+      "bad G12\n3\nbad none\nNone\n",
+      "bad G12\nNone\nbad none\nNone\n"
+    ],
+    "stdout": "bad G12\nbad 3.5\n204\nbad none\nNone\n"
+  },
+  "t10-s3-q2": {
+    "error": {
+      "line": 10,
+      "message": "division by zero",
+      "type": "ZeroDivisionError"
+    },
+    "stdout": "1.75\nskipped cancelled\nskipped n/a\n"
+  }
+}

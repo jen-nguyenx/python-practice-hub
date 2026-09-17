@@ -19,7 +19,7 @@ const loaders: Record<TopicId, () => Promise<{ default: Topic }>> = {
   recursion: () => import('./topics/13-recursion/index.ts'),
 };
 
-const generatedLoaders = import.meta.glob<GeneratedTopic>('./generated/*.json', { import: 'default' });
+const generatedLoaders = import.meta.glob<GeneratedTopic>(['./generated/*.json', '!./generated/question-index.json'], { import: 'default' });
 
 const topicCache = new Map<TopicId, Promise<Topic>>();
 export function loadTopic(id: TopicId): Promise<Topic> {

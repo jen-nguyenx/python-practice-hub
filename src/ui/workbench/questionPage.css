@@ -42,9 +42,9 @@
 }
 
 /* ---------- full (VS Code-like) layout ---------- */
-.qp-full { flex-direction: row; gap: 0; align-items: stretch; border: 1px solid var(--border); border-radius: var(--r-3); background: var(--surface); overflow: hidden; }
-.qp-explorer { flex: none; width: 240px; border-right: 1px solid var(--border); background: var(--surface-2); overflow-y: auto; max-height: calc(100vh - 120px); position: sticky; top: 56px; align-self: flex-start; }
-.ex-details { padding: 8px 0; }
+.qp-full { flex-direction: row; gap: 0; align-items: stretch; border: 1px solid var(--border); border-radius: var(--r-3); background: var(--surface); overflow: clip; }
+.qp-explorer { flex: none; width: 240px; border-right: 1px solid var(--border); background: var(--surface-2); align-self: stretch; }
+.ex-details { padding: 8px 0; position: sticky; top: 56px; max-height: calc(100vh - 64px); overflow-y: auto; }
 .ex-head { display: flex; align-items: baseline; gap: 8px; padding: 4px 12px 8px; cursor: pointer; list-style: none; }
 .ex-head::-webkit-details-marker { display: none; }
 .ex-topic { font-weight: 600; font-size: var(--fs-13); }
@@ -79,7 +79,8 @@
 .sb-py.error { color: var(--bad); }
 @media (max-width: 899px) {
   .qp-full { flex-direction: column; border-radius: var(--r-2); }
-  .qp-explorer { width: auto; max-height: none; position: static; border-right: 0; border-bottom: 1px solid var(--border); }
+  .qp-explorer { width: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .ex-details { position: static; max-height: none; }
   .ex-head { padding: 8px 12px; }
   .ex-head::before { content: "▸"; color: var(--text-faint); }
   .ex-details[open] .ex-head::before { content: "▾"; }

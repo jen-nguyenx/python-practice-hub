@@ -3,15 +3,15 @@ import type { Topic } from '../../schema.ts';
 export const cheatsheet = `**The three parts of every recursive function**
 
 \`\`\`python
-def rockets(rows):
-    if rows == 0:                        # 1. base case: answer straight away, no call
-        return 0
-    return rows + rockets(rows - 1)      # 2. smaller input  3. return the combined result
+def factorial(n):
+    if n == 0:                           # 1. base case: answer straight away, no call
+        return 1
+    return n * factorial(n - 1)          # 2. smaller input  3. return the combined result
 \`\`\`
 
 - **Base case**: the smallest input you can answer without calling the function again. Write it first.
 - **Recursive case**: call the function on a **smaller** input that is guaranteed to reach the base case.
-- **Return**: \`return\` the recursive result (usually combined with the part you handled). A bare call like \`rockets(rows - 1)\` on its own line throws the answer away.
+- **Return**: \`return\` the recursive result (usually combined with the part you handled). A bare call like \`factorial(n - 1)\` on its own line throws the answer away.
 - Every path through the function must end in a \`return\` with the right type.
 
 **How to make the input smaller**
@@ -43,10 +43,10 @@ def sum_to(n):                       # number -> number
         return 0
     return n + sum_to(n - 1)
 
-def reverse(text):                   # string -> string
+def double_up(text):                 # string -> string: 'ab' -> 'aabb'
     if text == '':
         return ''
-    return reverse(text[1:]) + text[0]
+    return text[0] * 2 + double_up(text[1:])
 
 def total(nums):                     # list -> number
     if nums == []:
@@ -76,7 +76,7 @@ def total(data):
         here = first
     return here + total(data[1:])
 
-total([3, [2, [5]], [], 1])                   # 11
+total([4, [1, [6]], [], 2])                   # 13
 \`\`\`
 
 - \`isinstance(x, list)\` is True for lists; \`isinstance(x, (list, tuple))\` accepts either. \`type(x) == list\` also works for plain lists.
@@ -86,16 +86,16 @@ total([3, [2, [5]], [], 1])                   # 11
 **The call stack**
 
 \`\`\`python
-def spell_back(word):
+def letters_back(word):
     if word == '':
         return
-    spell_back(word[1:])       # goes all the way down first
+    letters_back(word[1:])     # goes all the way down first
     print(word[0])             # runs on the way back up
 
-spell_back('uwa')              # prints a, w, u on separate lines
+letters_back('ecu')            # prints u, c, e on separate lines
 \`\`\`
 
-- Each call has its **own** local variables. \`word\` is \`'uwa'\` in the first call and \`'a'\` in the third, at the same time.
+- Each call has its **own** local variables. \`word\` is \`'ecu'\` in the first call and \`'u'\` in the third, at the same time.
 - Code before the recursive call runs as the calls go down. Code after it runs as they return, deepest call first.
 - A trace of the returns: \`sum_to(3)\` waits for \`sum_to(2)\`, which waits for \`sum_to(1)\`, which waits for \`sum_to(0)\` = 0. Then 1 + 0 = 1, 2 + 1 = 3, 3 + 3 = 6.
 
@@ -135,7 +135,7 @@ For digits, \`while n > 0: ... n = n // 10\` becomes \`return n % 10 + f(n // 10
 
 - \`return f(n - 1)\`, not just \`f(n - 1)\`.
 - \`n / 10\` gives a float and the digits come out wrong; use \`n // 10\`.
-- Negative numbers: \`-472 // 10\` is \`-48\` and \`-472 % 10\` is \`8\`, so deal with the sign first (\`if n < 0: return f(-n)\`).
+- Negative numbers: \`-365 // 10\` is \`-37\` and \`-365 % 10\` is \`5\`, so deal with the sign first (\`if n < 0: return f(-n)\`).
 - \`print\` inside the function is not a return value; the auto-marker checks what is returned.
 - A tuple slice is a tuple: \`(1, 2, 3)[1:]\` is \`(2, 3)\`, and \`() == []\` is \`False\`. Use \`len(data) == 0\` when either can arrive.`;
 
@@ -187,57 +187,58 @@ export const commonMistakes: Topic['commonMistakes'] = [
   },
   {
     mistake: 'missing_base_case',
-    bad: `def count_digits(n):
+    bad: `def step_total(n):
+    """Return n + (n - 2) + (n - 4) + ... for the terms above 0."""
     if n == 1:
         return 1
-    return 1 + count_digits(n // 10)`,
-    good: `def count_digits(n):
-    if n < 10:
-        return 1
-    return 1 + count_digits(n // 10)`,
-    note: 'A base case that only matches one exact value can be jumped over. `count_digits(25)` goes 25, 2, 0, 0, 0 ... and never equals 1, so Python raises RecursionError. Make the base case cover every smallest input (`n < 10`, `len(text) <= 1`).',
+    return n + step_total(n - 2)`,
+    good: `def step_total(n):
+    """Return n + (n - 2) + (n - 4) + ... for the terms above 0."""
+    if n <= 0:
+        return 0
+    return n + step_total(n - 2)`,
+    note: 'A base case that only matches one exact value can be jumped over. `step_total(6)` goes 6, 4, 2, 0, -2 ... and never equals 1, so Python raises RecursionError. Make the base case cover every smallest input (`n <= 0`, `n < 10`, `len(text) <= 1`).',
   },
   {
     mistake: 'loop_in_recursion',
-    bad: `def reverse(text):
-    result = ''
-    for ch in text:
-        result = ch + result
-    return result`,
-    good: `def reverse(text):
+    bad: `def count_char(text, ch):
+    count = 0
+    for letter in text:
+        if letter == ch:
+            count += 1
+    return count`,
+    good: `def count_char(text, ch):
     if text == '':
-        return ''
-    return reverse(text[1:]) + text[0]`,
+        return 0
+    if text[0] == ch:
+        return 1 + count_char(text[1:], ch)
+    return count_char(text[1:], ch)`,
     note: 'When the question says looping is not allowed, a working loop still scores zero. The repetition has to come from the function calling itself on a smaller piece.',
   },
   {
     mistake: 'index_out_of_range',
-    bad: `def is_palindrome(word):
-    if len(word) == 1:
-        return True
-    if word[0] != word[-1]:
-        return False
-    return is_palindrome(word[1:-1])`,
-    good: `def is_palindrome(word):
-    if len(word) <= 1:
-        return True
-    if word[0] != word[-1]:
-        return False
-    return is_palindrome(word[1:-1])`,
-    note: 'Even-length words shrink to the empty string: `noon`, `oo`, `\'\'`. With `== 1` the empty string skips the base case and `word[0]` raises IndexError. Catch the empty case before indexing.',
+    bad: `def every_second(text):
+    if len(text) == 1:
+        return text
+    return text[0] + every_second(text[2:])`,
+    good: `def every_second(text):
+    if len(text) <= 1:
+        return text
+    return text[0] + every_second(text[2:])`,
+    note: 'Even-length text shrinks to the empty string: `\'abcd\'`, `\'cd\'`, `\'\'`. With `== 1` the empty string skips the base case and `text[0]` raises IndexError. Catch the empty case before indexing.',
   },
   {
     mistake: 'print_vs_return',
-    bad: `def sum_digits(n):
+    bad: `def digit_product(n):
     if n < 10:
         print(n)
     else:
-        print(n % 10 + sum_digits(n // 10))`,
-    good: `def sum_digits(n):
+        print(n % 10 * digit_product(n // 10))`,
+    good: `def digit_product(n):
     if n < 10:
         return n
-    return n % 10 + sum_digits(n // 10)`,
-    note: 'Printing shows a number but gives `None` back to the call above, so `n % 10 + None` crashes. Each call must `return` its answer so the call that is waiting can use it.',
+    return n % 10 * digit_product(n // 10)`,
+    note: 'Printing shows a number but gives `None` back to the call above, so `n % 10 * None` crashes. Each call must `return` its answer so the call that is waiting can use it.',
   },
   {
     mistake: 'mutated_input',

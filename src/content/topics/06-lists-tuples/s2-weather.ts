@@ -194,7 +194,7 @@ print(totals)`,
           'Lines 3-4 return `None` for an empty list, before anything reads `temps[0]` or divides by a length of 0.\n\n' +
           'Lines 5-6 start `lowest` and `highest` at the first real reading. Starting them at 0 would break a week where every night is below zero (`highest` would stay 0).\n\n' +
           'Line 7 starts the running total at 0, before the loop.\n\n' +
-          'Inside the loop, two separate `if`s update the lowest and highest (one reading can be both, as in a one-night list), and every reading is added to `total`.\n\n' +
+          'Inside the loop, one `if` updates `lowest`, another updates `highest`, and every reading is added to `total`.\n\n' +
           'Line 14 builds the answer as a tuple with round brackets and rounds only the mean, only at the end.\n\n' +
           'The one-line version `return (min(temps), max(temps), round(sum(temps) / len(temps), 2))` after the empty check is also correct.',
       },

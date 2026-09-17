@@ -164,7 +164,7 @@ const scenario: Scenario = {
       hints: [
         'There are two sort rules, and the second only matters when the first is equal. A sort key can return a tuple, and tuples are compared part by part.',
         'Plan: write a key that turns `(player, points)` into `(something for points, player)` so that bigger points come first but names still go A to Z; call `sorted` (not `.sort()`) with that key so the input is untouched; return the result.',
-        'A negative number flips the order of points while names stay A to Z:\n\n```python\ndef points_then_name(entry):\n    return (-entry[1], entry[0])\n```',
+        'A negative number flips the order of points while names stay A to Z. The key function starts like this; the name goes in the second part:\n\n```python\ndef points_then_name(entry):\n    return (-entry[1], ...)\n```',
       ],
       solution: {
         code: `def points_then_name(entry):
@@ -198,7 +198,7 @@ def leaderboard(scores):
       prompt:
         '**Exam practice, 10 marks. No imports.**\n\n' +
         'In the WACA nets a scorer records each ball as a string: `\'.\'` for a dot ball, `\'1\'`, `\'4\'` or `\'6\'` for runs, and `\'W\'` for a wicket. ' +
-        'Write a function `streaks(balls)` that returns a list of `(outcome, count)` tuples, one for each run of identical outcomes in a row, in the order they happened. ' +
+        'Write a function `streaks(balls)` that returns a list of `(outcome, count)` tuples, one for each streak of identical outcomes in a row, in the order they happened. ' +
         'Return an empty list if `balls` is empty.\n\n' +
         'For example, `streaks([\'.\', \'.\', \'4\', \'.\', \'1\', \'1\'])` returns `[(\'.\', 2), (\'4\', 1), (\'.\', 1), (\'1\', 2)]`. ' +
         'Outcomes that repeat later but not next to each other are separate streaks.',
@@ -258,7 +258,7 @@ def leaderboard(scores):
       hints: [
         'Walk through the balls remembering two things: the outcome of the current streak and how long it is so far. Something must happen when the outcome changes, and once more when the balls run out.',
         'Plan: return `[]` straight away for an empty list. Start `current` at the first ball and `count` at 0. For each ball: if it matches `current`, add 1 to `count`; otherwise append `(current, count)`, then start a new streak with `current = ball` and `count = 1`. After the loop, append the final streak and return the list.',
-        '```python\nfor ball in balls:\n    if ball == current:\n        count += 1\n    else:\n        result.append((current, count))\n        ...\nresult.append((current, count))\n```',
+        '```python\nfor ball in balls:\n    if ball == current:\n        count += 1\n    else:\n        result.append((current, count))\n        ...\n```',
       ],
       solution: {
         code: `def streaks(balls):
@@ -283,7 +283,7 @@ def leaderboard(scores):
           'A streak is only appended when the next streak starts, so the last streak is still waiting when the loop ends. Line 14 appends it; without that line a maiden over returns `[]`.\n\n' +
           'Marking guide (10): empty list handled (1), correct loop and comparison with the current streak (3), appending tuples when the outcome changes (3), resetting for the new streak (1), appending the final streak (2).',
       },
-      selfExplain: 'Which test fails if you forget the append after the loop, and what does your function return for it?',
+      selfExplain: "If you forget the append after the loop, what does streaks(['W']) return, and why?",
     },
   ],
 };

@@ -125,7 +125,7 @@ finally:
 
 - \`int('2.0')\` and \`int('2.5')\` raise ValueError. \`int(2.5)\` is 2, \`float('2')\` is 2.0 and \`int(' 7 ')\` is 7.
 - \`except TypeError:\` does not catch a ValueError. Name the exception the failing line really raises.
-- Never use a bare \`except:\`. It also catches the NameError from a misspelt name and the TypeError from a method you forgot to call (\`text.strip\` without brackets), so the bug turns into a silent wrong answer.
+- Never use a bare \`except:\`. It also catches the NameError from a misspelt name and the TypeError from a method you forgot to call, so the bug turns into a silent wrong answer.
 - Keep \`try\` blocks small. Every extra line inside is another place where a real bug can be caught by accident.
 - \`continue\` in an \`except\` inside a loop goes to the next pass; \`return\` gives up on the whole function.
 - A mean over "valid rows only" can divide by zero when every row is bad. Check the count first.
@@ -190,30 +190,32 @@ print(mean_rainfall('bom_april'))   # None (no such file)`,
 export const commonMistakes: Topic['commonMistakes'] = [
   {
     mistake: 'bare_except',
-    bad: `for reading in readings:
+    bad: `total = 0
+for price in prices:
     try:
-        levels.append(float(reading.strip))
+        total += flaot(price)
     except:
         pass`,
-    good: `for reading in readings:
+    good: `total = 0
+for price in prices:
     try:
-        levels.append(float(reading.strip()))
+        total += float(price)
     except ValueError:
         pass`,
-    note: 'A bare `except:` also swallows the TypeError from the missing brackets, so every reading is skipped and no error ever appears. Name the exception you expect; any other bug then crashes loudly where you can see it.',
+    note: 'A bare `except:` also swallows the NameError from the misspelt `flaot`, so every price is skipped, the total stays 0 and no error ever appears. Name the exception you expect; any other bug then crashes loudly where you can see it.',
   },
   {
     mistake: 'invalid_row_not_skipped',
-    bad: `total = 0
+    bad: `postcodes = []
 try:
-    for s in sales:
-        total += int(s)
+    for entry in entries:
+        postcodes.append(int(entry))
 except ValueError:
     pass`,
-    good: `total = 0
-for s in sales:
+    good: `postcodes = []
+for entry in entries:
     try:
-        total += int(s)
+        postcodes.append(int(entry))
     except ValueError:
         pass`,
     note: 'When the `try` wraps the whole loop, the first bad entry jumps out of the loop and every entry after it is lost. Put the `try` inside the loop around the one line that converts, so each bad entry is handled on its own pass.',
@@ -280,13 +282,13 @@ for s in sales:
   {
     mistake: 'type_error_other',
     bad: `try:
-    tickets = int(typed)
+    age = int(answer)
 except TypeError:
-    tickets = 0`,
+    age = None`,
     good: `try:
-    tickets = int(typed)
+    age = int(answer)
 except ValueError:
-    tickets = 0`,
-    note: "`int('two')` raises ValueError: the value is a string, which is the right type, but its content is not a whole number. TypeError is for the wrong type, such as `'Total: ' + 5`. A handler only catches the exception it names.",
+    age = None`,
+    note: "`int('nineteen')` raises ValueError: the value is a string, which is the right type, but its content is not a whole number. TypeError is for the wrong type, such as `'Total: ' + 5`. A handler only catches the exception it names.",
   },
 ];

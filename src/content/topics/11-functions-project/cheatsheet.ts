@@ -19,10 +19,10 @@ print(cost)                   # NameError: cost only existed inside the call
 - So reading it before the assignment fails:
 
 \`\`\`python
-taps = 0
+visitors = 0
 
-def tap_on():
-    taps = taps + 1           # calling tap_on() raises UnboundLocalError on this line
+def count_visitor():
+    visitors = visitors + 1   # calling count_visitor() raises UnboundLocalError here
 \`\`\`
 
 - Reassigning a parameter changes only the local name. The caller's variable is untouched unless the caller stores the return value.
@@ -31,16 +31,16 @@ def tap_on():
 **Pass data in, return data out**
 
 \`\`\`python
-def tap_on(taps):
-    return taps + 1
+def count_visitor(visitors):
+    return visitors + 1
 
-taps = 0
-taps = tap_on(taps)           # the caller stores the new value
+visitors = 0
+visitors = count_visitor(visitors)   # the caller stores the new value
 \`\`\`
 
 - Avoid \`global\`. It hides what a function depends on, and a test that calls the function on its own gets different results depending on what ran before.
 - Return several values as a tuple and unpack them: \`return (low, high)\`, then \`low, high = min_max(values)\`.
-- A bare call like \`tap_on(taps)\` on its own line throws the result away. Typed at the Thonny shell prompt, the value is echoed; as a line in a program, nothing happens to it.
+- A bare call like \`count_visitor(visitors)\` on its own line throws the result away. Typed at the Thonny shell prompt, the value is echoed; as a line in a program, nothing happens to it.
 
 **Default parameters**
 
@@ -55,18 +55,18 @@ stall_takings([120, 85], card_rate=0.015)     # skip fee, set card_rate by name
 
 - Parameters with defaults come **after** the ones without: \`def f(fee=30, sales):\` is a SyntaxError.
 - In a call, keyword arguments come after positional ones: \`f(sales=[1], 30)\` is a SyntaxError.
-- A default is evaluated **once**, when the \`def\` line runs. A list or dict default is shared by every call:
+- A default is evaluated **once**, when the \`def\` line runs. A list or dict default is shared by every call that leaves that argument out:
 
 \`\`\`python
-def add_sale(amount, sales=[]):       # BAD: one list for all calls
-    sales.append(amount)
-    return sales
+def add_song(song, playlist=[]):         # BAD: one list for all calls
+    playlist.append(song)
+    return playlist
 
-def add_sale(amount, sales=None):     # GOOD
-    if sales is None:
-        sales = []                    # a new list on every call
-    sales.append(amount)
-    return sales
+def add_song(song, playlist=None):       # GOOD
+    if playlist is None:
+        playlist = []                    # a new list on every call
+    playlist.append(song)
+    return playlist
 \`\`\`
 
 - Flags such as \`normalise=False\` or \`regularise=False\` are safe defaults: \`True\`, \`False\`, numbers, strings and \`None\` never change.
@@ -208,30 +208,30 @@ def main(csvfile, route):
 export const commonMistakes: Topic['commonMistakes'] = [
   {
     mistake: 'scope_confusion',
-    bad: `taps = 0
+    bad: `visitors = 0
 
-def tap_on():
-    taps = taps + 1
+def count_visitor():
+    visitors = visitors + 1
 
-tap_on()`,
-    good: `def tap_on(taps):
-    return taps + 1
+count_visitor()`,
+    good: `def count_visitor(visitors):
+    return visitors + 1
 
-taps = 0
-taps = tap_on(taps)`,
-    note: 'Assigning to `taps` inside the function makes it local for the whole function, so reading it on the right-hand side raises `UnboundLocalError`. Pass the value in as a parameter, return the new value, and store it where the function is called.',
+visitors = 0
+visitors = count_visitor(visitors)`,
+    note: 'Assigning to `visitors` inside the function makes it local for the whole function, so reading it on the right-hand side raises `UnboundLocalError`. Pass the value in as a parameter, return the new value, and store it where the function is called.',
   },
   {
     mistake: 'mutable_default_arg',
-    bad: `def add_sale(amount, sales=[]):
-    sales.append(amount)
-    return sales`,
-    good: `def add_sale(amount, sales=None):
-    if sales is None:
-        sales = []
-    sales.append(amount)
-    return sales`,
-    note: 'A default list is created once, when the `def` line runs, and every call without a list shares it, so the second call still contains the first sale. Use `None` as the default and create the list inside the function.',
+    bad: `def add_song(song, playlist=[]):
+    playlist.append(song)
+    return playlist`,
+    good: `def add_song(song, playlist=None):
+    if playlist is None:
+        playlist = []
+    playlist.append(song)
+    return playlist`,
+    note: 'A default list is created once, when the `def` line runs, and every call without a list shares it, so a second new playlist still contains the first song. Use `None` as the default and create the list inside the function.',
   },
   {
     mistake: 'global_state',
@@ -265,7 +265,7 @@ spread = mean - smallest`,
 mean = total / n
 spread = mean - smallest
 return [round(mean, 4), round(spread, 4)]`,
-    note: 'Rounding a value that is used again throws away precision, and the errors add up until the 4th decimal place of a later result is wrong. Keep full precision throughout and round only as values go into the returned result.',
+    note: 'Rounding a value that is used again throws away precision, and the error carries into every later result, where it can change the 4th decimal place. Keep full precision throughout and round only as values go into the returned result.',
   },
   {
     mistake: 'csv_ext_assumed',

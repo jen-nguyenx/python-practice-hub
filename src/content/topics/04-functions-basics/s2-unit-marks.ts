@@ -99,7 +99,7 @@ print(result)`,
         explanation: md(
           '1. Line 11: `weighted(80, 10)` returns `80 * 10 / 100`, which is `8.0` (a float, because `/` always gives a float). Nothing is printed.',
           '2. Line 12: `report` calls `weighted(70, 20)`, gets `14.0`, and prints `Project 14.0`. `report` has no `return`, so `result` is `None`.',
-          '3. Line 13: `weighted(50, 60)` returns `30.0`, so this prints `8.0 + 30.0`, which is `38.0`.',
+          '3. Line 13: `weighted(50, 60)` returns `30.0`. Adding it to `lab` gives `38.0`, and that is what is printed.',
           '4. Line 14 prints `None`.',
           '',
           'Output: `Project 14.0`, then `38.0`, then `None`.',

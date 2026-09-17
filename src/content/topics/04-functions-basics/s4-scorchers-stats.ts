@@ -18,7 +18,7 @@ const scenario: Scenario = {
       core: false,
       title: 'How many ways to pick the team',
       prompt: md(
-        'The selectors choose `team` players from a squad of `squad` players. The number of different ways to do that is `squad! // (team! * (squad - team)!)`, where `n!` (n factorial) means 1 × 2 × ... × n, and 0! is 1.',
+        'The selectors choose `team` players from a squad of `squad` players. The number of different ways to do that is `squad! // (team! * (squad - team)!)`, where `n!` (n factorial) means 1 × 2 × ... × n, and `0!` is 1.',
         '',
         'Arrange the lines to build `factorial(n)` and `ways_to_pick(squad, team)`. `ways_to_pick` must return an **int**: for example, `ways_to_pick(15, 11)` returns `1365`. Not every line is needed, and indentation matters.',
       ),

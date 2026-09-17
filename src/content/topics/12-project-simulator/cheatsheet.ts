@@ -11,15 +11,15 @@ export const cheatsheet = `**The project contract: what the marker checks**
 **Skeleton: read once, find columns by name**
 
 \`\`\`python
-def main(csvfile, site):
+def main(csvfile, club):
     try:
         with open(csvfile) as f:
             lines = f.readlines()
     except OSError:              # FileNotFoundError is a kind of OSError
         return None
     header = lines[0].strip().lower().split(',')
-    site_col = header.index('site')          # look up lower-case names
-    value_col = header.index('salinity_ppt')
+    club_col = header.index('club')          # look up lower-case names
+    value_col = header.index('members')
     for line in lines[1:]:
         fields = line.strip().split(',')
         ...
@@ -33,7 +33,7 @@ for line in lines[1:]:
     fields = line.strip().split(',')
     if len(fields) != len(header):       # blank line or a missing column
         continue
-    name = fields[site_col].strip().lower()
+    name = fields[club_col].strip().lower()
     try:
         value = float(fields[value_col]) # int(...) when whole numbers are required
     except ValueError:                   # '', 'NA', 'n/a', and '12.5' for int()
@@ -47,7 +47,7 @@ for line in lines[1:]:
 
 - A blank line strips to \`''\`, and \`''.split(',')\` is \`['']\`: one field, so the length check skips it.
 - \`int(' 42 ')\` and \`float(' 7.5')\` are fine with spaces; \`int('12.5')\` and \`float('')\` raise ValueError.
-- Clean the argument the same way as the data: \`target = site.strip().lower()\`.
+- Clean the argument the same way as the data: \`target = club.strip().lower()\`.
 - Mark a key as seen only after the row has passed every other check.
 
 **Statistics by hand**
@@ -95,21 +95,21 @@ dist = dist ** 0.5                               # Euclidean distance
 \`\`\`python
 groups = {}
 for ...:
-    if lga not in groups:
-        groups[lga] = []                     # a NEW list for each new key
-    groups[lga].append((suburb, population, density))
+    if team not in groups:
+        groups[team] = []                    # a NEW list for each new key
+    groups[team].append((player, goals, accuracy))
 
 result = {}
-for lga, rows in groups.items():
+for team, rows in groups.items():
     rows.sort(key=lambda row: (-row[1], -row[2], row[0]))
-    result[lga] = {}                         # a NEW inner dictionary
+    result[team] = {}                        # a NEW inner dictionary
     rank = 1
-    for suburb, population, density in rows:
-        result[lga][suburb] = [population, round(density, 4), rank]
+    for player, goals, accuracy in rows:
+        result[team][player] = [goals, round(accuracy, 4), rank]
         rank += 1
 \`\`\`
 
-- The key sorts by population high to low, then density high to low, then name A to Z. Negate numbers to sort them high to low; \`reverse=True\` would also flip the names to Z to A.
+- The key sorts by goals high to low, then accuracy high to low, then name A to Z. Negate numbers to sort them high to low; \`reverse=True\` would also flip the names to Z to A.
 - Best item with a tie-break, without sorting:
 
 \`\`\`python
@@ -132,8 +132,8 @@ if best is None or score > best_score or (score == best_score and name < best):
 
 **Gotchas the night before**
 
-- \`header.index('Salinity_ppt')\` raises ValueError after you lower-cased the header. Look up \`'salinity_ppt'\`.
-- Forgetting \`strip()\` leaves \`'\\n'\` on the last field, so \`'Maylands\\n' != 'maylands'\`.
+- \`header.index('Members')\` raises ValueError after you lower-cased the header. Look up \`'members'\`.
+- Forgetting \`strip()\` leaves \`'\\n'\` on the last field, so \`'perth glory\\n' != 'perth glory'\`.
 - Return the type the task names: a list is not a tuple, and a count should be an int, not \`3.0\`.
 - Check for 0 and 1 valid values before dividing by \`n\` or \`n - 1\`.
 - Test your own files: shuffled columns, an extra column, mixed case, blank and invalid rows, a duplicate, a missing file.`;
@@ -221,30 +221,28 @@ def main(csvfile):
 export const commonMistakes: Topic['commonMistakes'] = [
   {
     mistake: 'round_mid_calc',
-    bad: `def std_dev(values):
-    ...
-    return round((total / (n - 1)) ** 0.5, 4)
+    bad: `def share(count, total):
+    return round(count / total, 4)
 
-def std_error(values):
-    return round(std_dev(values) / len(values) ** 0.5, 4)`,
-    good: `def std_dev(values):
-    ...
-    return (total / (n - 1)) ** 0.5
+def percent(count, total):
+    return round(share(count, total) * 100, 4)`,
+    good: `def share(count, total):
+    return count / total
 
-def std_error(values):
-    return round(std_dev(values) / len(values) ** 0.5, 4)`,
-    note: 'A rounded value used in a later calculation carries its rounding error forward, and that is often enough to change the 4th decimal place. Helpers return full precision; round once, as the value goes into the result.',
+def percent(count, total):
+    return round(share(count, total) * 100, 4)`,
+    note: 'A rounded value used in a later calculation carries its rounding error forward, and multiplying makes it bigger: the bad version gives `percent(1, 3)` as 33.33 instead of 33.3333. Even a division can move the 4th decimal place. Helpers return full precision; round once, as the value goes into the result.',
   },
   {
     mistake: 'header_order_assumed',
     bad: `for line in lines[1:]:
     fields = line.strip().split(',')
-    salinity = float(fields[2])`,
+    members = int(fields[2])`,
     good: `header = lines[0].strip().lower().split(',')
-salinity_col = header.index('salinity_ppt')
+members_col = header.index('members')
 for line in lines[1:]:
     fields = line.strip().split(',')
-    salinity = float(fields[salinity_col])`,
+    members = int(fields[members_col])`,
     note: 'Hidden test files shuffle the columns and add extra ones. Find every column from the header by name, once, before the loop.',
   },
   {
@@ -287,10 +285,10 @@ for line in lines[1:]:
   },
   {
     mistake: 'efficiency_repeat_pass',
-    bad: `for lga in lgas:
+    bad: `for club in clubs:
     with open(csvfile) as f:
         lines = f.readlines()
-    totals[lga] = total_for(lines, lga)`,
+    totals[club] = total_for(lines, club)`,
     good: `with open(csvfile) as f:
     lines = f.readlines()
 for line in lines[1:]:

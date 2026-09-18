@@ -11,9 +11,18 @@ export type Route =
   | { name: 'settings' }
   | { name: 'not-found'; path: string };
 
+/**
+ * decodeURIComponent throws URIError on a malformed escape such as "%" or "%E0%A4%A". parseHash runs at
+ * module scope, so an uncaught throw there would leave the whole app unrendered: a link like "#/topic/%"
+ * would show a blank page. Keep the raw segment instead; it simply will not match a topic or question id.
+ */
+function decodeSegment(part: string): string {
+  try { return decodeURIComponent(part); } catch { return part; }
+}
+
 export function parseHash(hash: string): Route {
   const path = hash.replace(/^#/, '') || '/';
-  const parts = path.split('?')[0].split('/').filter(Boolean).map(decodeURIComponent);
+  const parts = path.split('?')[0].split('/').filter(Boolean).map(decodeSegment);
   if (parts.length === 0) return { name: 'landing' };
   switch (parts[0]) {
     case 'topic': return parts[1] ? { name: 'topic', topicId: parts[1] } : { name: 'not-found', path };

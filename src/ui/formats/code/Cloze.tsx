@@ -28,12 +28,23 @@ const PH_RE = /__PLBLANK(\d+)__/g;
 
 type Answers = Record<string, string>;
 
+/** Longest blank a student could sensibly type; also bounds what a hand-edited draft can put on screen. */
+const MAX_BLANK = 200;
+
+/**
+ * Drafts are `unknown` by contract and can come from an imported backup, so every value is checked to be
+ * a string here. Trusting the shape would let `{"answers": {"1": 123}}` throw on `.trim()` during render
+ * and leave that question permanently unopenable.
+ */
 function draftAnswers(draft: unknown): Answers {
-  if (draft && typeof draft === 'object') {
-    const a = (draft as { answers?: unknown }).answers;
-    if (a && typeof a === 'object') return a as Answers;
+  const out: Answers = {};
+  if (!draft || typeof draft !== 'object') return out;
+  const a = (draft as { answers?: unknown }).answers;
+  if (!a || typeof a !== 'object') return out;
+  for (const [k, v] of Object.entries(a as Record<string, unknown>)) {
+    if (typeof v === 'string') out[k] = v.slice(0, MAX_BLANK);
   }
-  return {};
+  return out;
 }
 
 export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {

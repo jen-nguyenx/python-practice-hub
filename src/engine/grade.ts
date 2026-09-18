@@ -453,9 +453,15 @@ export function fillCloze(q: ClozeQuestion, answers: Record<string, string>): st
   });
 }
 
+/** Deepest indent a Parsons line may claim. Matches MAX_INDENT in the Parsons component. */
+export const PARSONS_MAX_INDENT = 4;
+
 /** Build the program from Parsons lines (student order + indents). */
 export function assembleParsons(lines: { text: string; indent: number }[]): string {
-  return lines.map((l) => '    '.repeat(Math.max(0, Math.floor(l.indent) || 0)) + l.text.replace(/^\s+/, '')).join('\n');
+  // The repeat count is capped: an out-of-range indent from a hand-edited draft would otherwise throw
+  // RangeError (invalid string length) and take the whole Check with it.
+  const depth = (n: number) => (Number.isFinite(n) ? Math.min(PARSONS_MAX_INDENT, Math.max(0, Math.floor(n))) : 0);
+  return lines.map((l) => '    '.repeat(depth(l.indent)) + l.text.replace(/^\s+/, '')).join('\n');
 }
 
 /** Number of changed lines between two code strings (line-based diff). Blank lines and trailing spaces are ignored. */

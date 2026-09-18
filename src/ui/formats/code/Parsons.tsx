@@ -35,7 +35,11 @@ function readDraft(d: unknown, ids: Set<string>): Draft | null {
   const removed = (d as Draft).removed;
   if (!Array.isArray(placed)) return null;
   return {
-    placed: placed.filter((p) => p && ids.has(p.id) && typeof p.indent === 'number'),
+    // Clamp the indent: a hand-edited or imported draft could carry 1e9 (one DOM node per level is
+    // rendered as an indent guide, which would freeze the tab) or 1e308 (RangeError, blank question).
+    placed: placed
+      .filter((p) => p && ids.has(p.id) && typeof p.indent === 'number' && Number.isFinite(p.indent))
+      .map((p) => ({ ...p, indent: Math.min(MAX_INDENT, Math.max(0, Math.floor(p.indent))) })),
     removed: Array.isArray(removed) ? removed.filter((r) => ids.has(r)) : [],
   };
 }

@@ -82,6 +82,30 @@ function watchCdnFetches(onFail: (err: Error) => void): () => void {
   return () => { scope.fetch = realFetch; };
 }
 
+/**
+ * Takes Pyodide's Python-to-JavaScript bridge out of the interpreter, after the harness has finished
+ * importing everything it needs.
+ *
+ * The sandbox's import denylist cannot hold on its own: it decides by looking at the calling frame, so
+ * `exec(compile(src, "<x>", "exec"))` slips past it, and it can be sidestepped entirely without importing
+ * anything, because an allowed module reaches the rest of them, e.g.
+ * `traceback.sys.modules["importlib"].import_module("js")`. With the `js` module in hand, pasted code gets
+ * arbitrary JavaScript in this worker, and the worker's origin is the site's own, so it can open the
+ * app's IndexedDB and POST a student's whole progress log anywhere.
+ *
+ * Removing JsFinder from the import system removes the capability rather than filtering names for it, so
+ * there is nothing left to bypass. `_pyodide` and `_pyodide_core` stay: the harness's return path needs
+ * that C-level FFI. Student code keeps everything it is supposed to have, including the virtual
+ * filesystem the CSV questions use.
+ */
+const SEVER_JS_BRIDGE = `
+import sys
+sys.meta_path[:] = [f for f in sys.meta_path if type(f).__name__ != 'JsFinder']
+for _name in ('js', 'pyodide', 'pyodide.code', 'pyodide.ffi', 'pyodide_js'):
+    sys.modules.pop(_name, None)
+del _name
+`;
+
 async function boot(): Promise<boolean> {
   const t0 = performance.now();
   let py: PyodideAPI;
@@ -148,6 +172,7 @@ async function boot(): Promise<boolean> {
     // Warm the imports used on the first real request (ast, json, traceback, the sandbox) so it answers quickly.
     JSON.parse(h.analyze('x = 1\n'));
     JSON.parse(h.run_program('pass\n', '[]', '[]', 2000));
+    py.runPython(SEVER_JS_BRIDGE);
     const python = String(py.runPython('import sys\nsys.version.split()[0]'));
     harness = h;
     post({ type: 'ready', python, pyodide: String(py.version || PYODIDE_VERSION), loadMs: Math.round(performance.now() - t0) });

@@ -44,4 +44,11 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 - **Content changes must pass the verifier** with 0 errors: solutions pass tests in Pyodide, buggy variants and distractors fail tagged tests, read-format answers are generated not typed.
 - **Styling uses tokens only** (`src/styles/tokens.css`), light on `:root`, dark via `prefers-color-scheme` or `data-theme`. No gradients, no purple (hue 250–320), no emoji icons, radius ≤ 8px. Plain student-facing words; never show internal ids.
 - **Never `innerHTML`**. Render Md strings with `Markdown`, code with `CodeBlock`.
+- **Never restore Python's JavaScript bridge.** `pyWorker.ts` runs `SEVER_JS_BRIDGE` after warm-up to drop
+  Pyodide's `JsFinder`; without it, pasted student code can read the app's IndexedDB and post it anywhere.
+  The denylist in `sandbox.py` is a teaching aid, not the boundary. `scripts/smoke.ts` fails the build if any
+  of four escape routes reaches JavaScript. See SECURITY.md.
+- **Treat imported files as hostile.** Everything from an export file goes through `src/store/validate.ts`:
+  allowlisted fields, capped lengths and counts, clamped timestamps and ranges. Drafts are `unknown` by
+  contract, so check types before using them in a component.
 - Test mistake tags are logged only when at least one test passes and no root-cause detection (print_vs_return etc.) explains the failures (`addOutcomeMistakes` in `grade.ts`).

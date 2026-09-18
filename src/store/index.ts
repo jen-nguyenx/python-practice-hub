@@ -6,7 +6,7 @@ import type { AppEvent, NewEvent, Settings } from '../engine/types.ts';
 import { IdbBackend, MemoryBackend, openDatabase } from './idb.ts';
 import type { Backend } from './idb.ts';
 import type { ExportFile, ScratchFile, Snapshot, Store } from './types.ts';
-import { ImportError, sanitizeExport, settingsFrom } from './validate.ts';
+import { ImportError, sanitizeEvent, sanitizeExport, settingsFrom } from './validate.ts';
 
 export { ImportError };
 
@@ -231,7 +231,11 @@ export function createStore(options: StoreOptions = {}): PyLadderStore {
       channel.onmessage = (ev: MessageEvent) => {
         const msg = ev.data as ChannelMsg | null;
         if (!msg || closed) return;
-        if (msg.kind === 'events' && Array.isArray(msg.events)) mergeIntoSignal(msg.events);
+        // BroadcastChannel is same-origin only, but on GitHub Pages every project of the same account
+        // shares one origin, so another page there could post here. Validate rather than trust.
+        if (msg.kind === 'events' && Array.isArray(msg.events)) {
+          mergeIntoSignal(msg.events.map(sanitizeEvent).filter((e): e is AppEvent => e !== null));
+        }
         else if (msg.kind === 'reset') {
           // Another tab deleted everything: drop this tab's local keys too, and keep sweeping in case a test
           // running in THIS tab writes its progress back.

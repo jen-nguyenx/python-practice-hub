@@ -15,6 +15,13 @@ const DRAFT_MAX = 256_000;
 const CODE_MAX = 256_000;
 const STDIN_MAX = 64_000;
 const MAX_EVENTS = 500_000;
+/**
+ * Snapshots and scratch files are also capped. Without a cap a 50 MB import can hold hundreds of
+ * thousands of tiny records: the Playground renders one tab per scratch file with no virtualisation, and
+ * every future launch reads the whole store back, so an oversized import degrades the app permanently.
+ */
+const MAX_SNAPSHOTS = 10_000;
+const MAX_SCRATCH = 500;
 
 const TOPIC_SET = new Set<string>(TOPIC_IDS);
 const MISTAKE_SET = new Set<string>(MISTAKE_IDS);
@@ -35,6 +42,17 @@ const isNum = (x: unknown): x is number => typeof x === 'number' && Number.isFin
 const isBool = (x: unknown): x is boolean => typeof x === 'boolean';
 const idStr = (x: unknown): x is string => typeof x === 'string' && x.length > 0 && x.length <= ID_MAX;
 const nonNeg = (x: unknown): number | null => (isNum(x) && x >= 0 ? x : null);
+/**
+ * A timestamp from a file, bounded to a believable window. Merge keeps whichever record has the later
+ * `updatedAt`, so an imported snapshot claiming a year-3000 timestamp would silently win against real
+ * work every time. Anything outside the window is clamped to now rather than rejected, so an export with
+ * a skewed clock still imports.
+ */
+const MAX_CLOCK_SKEW_MS = 86_400_000;
+const stamp = (x: unknown, now = Date.now()): number | null => {
+  if (!isNum(x) || x < 0) return null;
+  return Math.min(x, now + MAX_CLOCK_SKEW_MS);
+};
 const cap = (s: string, max: number) => (s.length > max ? s.slice(0, max) : s);
 const clamp01 = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x);
 
@@ -158,17 +176,21 @@ export function settingsFrom(raw: unknown): Settings {
 }
 
 function sanitizeSnapshot(raw: unknown): Snapshot | null {
-  if (!isRec(raw) || !idStr(raw.qid) || !isNum(raw.updatedAt)) return null;
+  if (!isRec(raw) || !idStr(raw.qid)) return null;
+  const updatedAt = stamp(raw.updatedAt);
+  if (updatedAt === null) return null;
   const draft = raw.draft === undefined ? null : jsonValue(raw.draft, DRAFT_MAX);
   if (draft === undefined) return null;
-  return { qid: raw.qid, draft, updatedAt: raw.updatedAt };
+  return { qid: raw.qid, draft, updatedAt };
 }
 
 function sanitizeScratch(raw: unknown): ScratchFile | null {
-  if (!isRec(raw) || !idStr(raw.id) || typeof raw.name !== 'string' || typeof raw.code !== 'string' || !isNum(raw.updatedAt)) return null;
+  if (!isRec(raw) || !idStr(raw.id) || typeof raw.name !== 'string' || typeof raw.code !== 'string') return null;
+  const updatedAt = stamp(raw.updatedAt);
+  if (updatedAt === null) return null;
   return {
     id: raw.id, name: cap(raw.name, 200), code: cap(raw.code, CODE_MAX),
-    stdin: typeof raw.stdin === 'string' ? cap(raw.stdin, STDIN_MAX) : '', updatedAt: raw.updatedAt,
+    stdin: typeof raw.stdin === 'string' ? cap(raw.stdin, STDIN_MAX) : '', updatedAt,
   };
 }
 
@@ -201,12 +223,14 @@ export function sanitizeExport(file: unknown): CleanImport {
   }
   const snapshots: Snapshot[] = [];
   for (const raw of Array.isArray(file.snapshots) ? file.snapshots : []) {
+    if (snapshots.length >= MAX_SNAPSHOTS) { skipped++; continue; }
     const s = sanitizeSnapshot(raw);
     if (s) snapshots.push(s);
     else skipped++;
   }
   const scratch: ScratchFile[] = [];
   for (const raw of Array.isArray(file.scratch) ? file.scratch : []) {
+    if (scratch.length >= MAX_SCRATCH) { skipped++; continue; }
     const s = sanitizeScratch(raw);
     if (s) scratch.push(s);
     else skipped++;

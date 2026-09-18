@@ -42,6 +42,67 @@ Mandurah,Mandurah,3000,1800,1500
 Rockingham,Mandurah,n/a,1400,1100
 `;
 
+// Virtual data files for the two-file project question. No .csv extension on the plain pair.
+const WEEKDAY_MAIN = `Station,Line,Weekday
+Perth Underground,Joondalup,18400
+Claremont,Fremantle,3100
+Cottesloe,Fremantle,2050
+Murdoch,Mandurah,9600
+`;
+
+const WEEKEND_MAIN = `Weekend,Station
+5200,Perth Underground
+1400,Claremont
+980,Cottesloe
+1750,Canning Bridge
+`;
+
+const WEEKEND_SOUTH = `Station,Weekend
+Mandurah,2400
+Rockingham,1800
+`;
+
+const WEEKDAY_MESSY = `Weekday,Zone,STATION,Line
+7400,2,Bassendean,Midland
+,2,Guildford,Midland
+4100,3,MIDLAND,Midland
+
+2200,1,,Midland
+-50,2,Success Hill,Midland
+3300,2,bassendean ,Midland
+900,1,Perth Stadium,Airport
+0,3,Kelmscott,Armadale
+`;
+
+const WEEKEND_MESSY = `Station,Weekend,Note
+ Bassendean ,2960,ok
+Midland,abc,bad
+Perth Stadium,12000,event
+Kelmscott,700,ok
+Midland,1640,ok
+`;
+
+const WEEKDAY_CASE = `Station,Weekday
+ Stirling ,5600
+STIRLING,9999
+Warwick,4300
+`;
+
+const WEEKEND_CASE = `Station,Weekend
+stirling,1400
+warwick,0
+`;
+
+const WEEKDAY_SHUFFLED = `Line,WEEKDAY,Station
+Armadale,3400,Armadale
+Armadale,2100,Gosnells
+`;
+
+const WEEKEND_SHUFFLED = `WEEKEND,Station,Note
+1200,Armadale,ok
+600,Gosnells,ok
+`;
+
 const s2: Scenario = {
   id: 't12-s2',
   title: 'Transperth travel patterns',
@@ -386,6 +447,198 @@ def main(csvfile, station):
           '**Output.** The similarity is rounded only in the returned tuple. If the dictionary holds only the target, `best_name` stays `None` and so does the result.',
       },
       selfExplain: 'In the Bassendean file, which station would be returned if the tie rule were left out and the comparison used only sim > best_sim?',
+    },
+    {
+      id: 't12-s2-q4',
+      format: 'write',
+      kind: 'project',
+      diff: 'hard',
+      core: false,
+      title: 'Project task: joining two boarding files',
+      prompt:
+        'The planners now keep weekday and weekend boardings in **two separate exports**, the way Project 2 supplies its data. Write `main(csvfile1, csvfile2)`. Open both names exactly as given; neither has to end in `.csv`.\n\n' +
+        '- `csvfile1` has a header that includes `Station` and `Weekday`, in any order and letter case, possibly with extra columns.\n' +
+        '- `csvfile2` has a header that includes `Station` and `Weekend`, under the same rules.\n\n' +
+        'Return a **dictionary** `{station: [weekday, weekend, ratio]}` holding every station that has a valid row in **both** files, where `ratio` is `weekend / weekday` rounded to 4 decimal places.\n\n' +
+        'Rules:\n\n' +
+        '- Station keys are lower case with the spaces around them removed, and names are matched the same way.\n' +
+        '- A row is valid only if it has the same number of comma-separated fields as its own header, its station name is not blank, and its count is a whole number 0 or more. Skip every other row, including blank lines.\n' +
+        '- If a station has more than one valid row in a file, use only its first valid row in that file.\n' +
+        '- A station whose weekday count is 0 is left out: its ratio does not exist.\n' +
+        '- Return `None` if either argument is not a string, either file cannot be opened, or no station is left.\n' +
+        '- No `import`, `input()` or `print()`, and round only the values you return.\n\n' +
+        'Example: `main(\'boardings_weekday\', \'boardings_weekend\')` returns `{\'perth underground\': [18400, 5200, 0.2826], \'claremont\': [3100, 1400, 0.4516], \'cottesloe\': [2050, 980, 0.478]}`.',
+      fnName: 'main',
+      starter: `def main(csvfile1, csvfile2):
+    """Return {station: [weekday, weekend, ratio]} for the stations in both files,
+    or None."""
+    pass`,
+      rules: ['noImport', 'noInput', 'noPrint', 'roundAtEnd', 'noCsvExt', 'mainSignature'],
+      tests: [
+        {
+          id: 'v1',
+          call: "main('boardings_weekday', 'boardings_weekend')",
+          expect: "{'perth underground': [18400, 5200, 0.2826], 'claremont': [3100, 1400, 0.4516], 'cottesloe': [2050, 980, 0.478]}",
+          cmp: 'float',
+          files: [
+            { name: 'boardings_weekday', content: WEEKDAY_MAIN },
+            { name: 'boardings_weekend', content: WEEKEND_MAIN },
+          ],
+          label: 'four weekday rows, four weekend rows, three stations in both',
+          hidden: false,
+        },
+        {
+          id: 'v2',
+          call: "main('boardings_weekday', 'weekend_south')",
+          expect: 'None',
+          files: [
+            { name: 'boardings_weekday', content: WEEKDAY_MAIN },
+            { name: 'weekend_south', content: WEEKEND_SOUTH },
+          ],
+          label: 'no station appears in both files',
+          hidden: false,
+          tag: 'zero_division',
+        },
+        {
+          id: 'h1',
+          call: "main('weekday_shuffled', 'weekend_shuffled')",
+          expect: "{'armadale': [3400, 1200, 0.3529], 'gosnells': [2100, 600, 0.2857]}",
+          cmp: 'float',
+          files: [
+            { name: 'weekday_shuffled', content: WEEKDAY_SHUFFLED },
+            { name: 'weekend_shuffled', content: WEEKEND_SHUFFLED },
+          ],
+          label: 'columns in a different order, capital headers, an extra column',
+          hidden: true,
+          tag: 'header_order_assumed',
+        },
+        {
+          id: 'h2',
+          call: "main('weekday_mixed.txt', 'weekend_mixed.txt')",
+          expect: "{'bassendean': [7400, 2960, 0.4], 'midland': [4100, 1640, 0.4], 'perth stadium': [900, 12000, 13.3333]}",
+          cmp: 'float',
+          files: [
+            { name: 'weekday_mixed.txt', content: WEEKDAY_MESSY },
+            { name: 'weekend_mixed.txt', content: WEEKEND_MESSY },
+          ],
+          label: 'blank, broken, negative, repeated and zero rows in both files',
+          hidden: true,
+          tag: 'invalid_row_not_skipped',
+        },
+        {
+          id: 'h3',
+          call: "main('weekday_case', 'weekend_case')",
+          expect: "{'stirling': [5600, 1400, 0.25], 'warwick': [4300, 0, 0.0]}",
+          cmp: 'float',
+          files: [
+            { name: 'weekday_case', content: WEEKDAY_CASE },
+            { name: 'weekend_case', content: WEEKEND_CASE },
+          ],
+          label: 'the same station in different cases, and a weekend count of 0',
+          hidden: true,
+          tag: 'case_sensitive_compare',
+        },
+        {
+          id: 'h4',
+          call: "main('boardings_weekday', 'weekend_2027')",
+          expect: 'None',
+          files: [{ name: 'boardings_weekday', content: WEEKDAY_MAIN }],
+          label: 'the second file does not exist',
+          hidden: true,
+          tag: 'no_graceful_exit',
+        },
+        {
+          id: 'h5',
+          call: "main('weekday_2027', 'boardings_weekend')",
+          expect: 'None',
+          files: [{ name: 'boardings_weekend', content: WEEKEND_MAIN }],
+          label: 'the first file does not exist',
+          hidden: true,
+          tag: 'no_graceful_exit',
+        },
+        {
+          id: 'h6',
+          call: "main(7, 'boardings_weekend')",
+          expect: 'None',
+          files: [{ name: 'boardings_weekend', content: WEEKEND_MAIN }],
+          label: 'the first argument is not a string',
+          hidden: true,
+          tag: 'no_graceful_exit',
+        },
+      ],
+      concepts: ['csv', 'two-files', 'header-lookup', 'main-contract', 'round-at-output'],
+      detects: [
+        'header_order_assumed', 'invalid_row_not_skipped', 'case_sensitive_compare', 'csv_ext_assumed',
+        'no_graceful_exit', 'zero_division', 'dict_keyerror', 'round_mid_calc',
+      ],
+      expectedSec: 900,
+      hints: [
+        'The two files differ only in which count column they carry, so one helper can read either of them. Write `main` as: read file one, read file two, then combine what came back.',
+        'Plan: write `read_counts(csvfile, column)` that returns `{station: count}` for one file, or `None` when the file will not open. Inside it, lower-case the header, find `station` and `column` with `index`, then for each later line skip the wrong length, a blank name, a name already recorded, a count `int()` rejects, and a negative count. In `main`, check both arguments are strings, call the helper twice, return `None` if either came back `None`, then walk the weekday dictionary and keep the stations that are also in the weekend dictionary and whose weekday count is above 0. Return `None` if nothing is left.',
+        `\`\`\`python
+for station in weekday:
+    if station in weekend and weekday[station] > 0:
+        ratio = weekend[station] / weekday[station]
+\`\`\``,
+      ],
+      solution: {
+        code: `def read_counts(csvfile, column):
+    """Return {station: count} for the valid rows of csvfile, or None if it will not open."""
+    try:
+        with open(csvfile) as f:
+            lines = f.readlines()
+    except OSError:
+        return None
+    if len(lines) == 0:
+        return {}
+    header = lines[0].strip().lower().split(',')
+    if 'station' not in header or column not in header:
+        return {}
+    station_col = header.index('station')
+    count_col = header.index(column)
+    counts = {}
+    for line in lines[1:]:
+        fields = line.strip().split(',')
+        if len(fields) != len(header):
+            continue
+        station = fields[station_col].strip().lower()
+        if station == '' or station in counts:
+            continue
+        try:
+            count = int(fields[count_col])
+        except ValueError:
+            continue
+        if count < 0:
+            continue
+        counts[station] = count
+    return counts
+
+
+def main(csvfile1, csvfile2):
+    """Return {station: [weekday, weekend, ratio]} for the stations in both files,
+    or None."""
+    if not isinstance(csvfile1, str) or not isinstance(csvfile2, str):
+        return None
+    weekday = read_counts(csvfile1, 'weekday')
+    weekend = read_counts(csvfile2, 'weekend')
+    if weekday is None or weekend is None:
+        return None
+    result = {}
+    for station in weekday:
+        if station in weekend and weekday[station] > 0:
+            result[station] = [weekday[station], weekend[station],
+                               round(weekend[station] / weekday[station], 4)]
+    if len(result) == 0:
+        return None
+    return result`,
+        explanation:
+          '**One helper, two files.** The only difference between the exports is the name of the count column, so `read_counts` takes that name as a parameter. Writing the reader twice is where two-file projects usually go wrong: a fix applied to one copy and not the other.\n\n' +
+          '**Opening.** Each file is opened inside `try` with the name exactly as given, and a file that will not open returns `None` from the helper. `main` turns either `None` into its own `None`, which is the graceful termination the rules ask for. The empty `{}` returned for a file with no usable header is different: the file opened, it simply has nothing to join.\n\n' +
+          '**Valid rows.** The length check drops blank lines and short rows. The name is stripped and lower-cased, so ` Bassendean ` and `bassendean` are the same station, and `station in counts` keeps the first valid row of each station. `int()` rejects a blank and `abc` with a ValueError, and negative counts are skipped.\n\n' +
+          '**The join.** Walking the weekday dictionary and asking `station in weekend` keeps exactly the stations in both files. Kelmscott appears only in the weekend file, and Guildford\'s only weekday row was invalid, so neither reaches the result. A weekday count of 0, like Oats Street-style rows, is left out before the division, so `ZeroDivisionError` cannot happen.\n\n' +
+          '**Output.** The ratio is worked out from the full-precision counts and rounded only as it goes into the list. The two counts stay ints, and an empty result becomes `None`.',
+      },
+      selfExplain: 'Why does the helper return {} rather than None when a file opens but has no Station column?',
     },
   ],
 };

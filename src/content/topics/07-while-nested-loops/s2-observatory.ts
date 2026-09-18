@@ -191,6 +191,63 @@ print(count, total)`,
       },
       selfExplain: 'Why is dividing the previous term by k better than calculating k! from scratch on every pass?',
     },
+    {
+      id: 't07-s2-q4',
+      format: 'fixBug',
+      diff: 'medium',
+      core: true,
+      title: 'The demo that loses its first term',
+      prompt:
+        'The last demo of the night adds up 1 + r + r² + r³ + ... for a ratio `r` between 0 and 1, ' +
+        '**while the current term is at least `tol`**, and returns the sum rounded to 6 decimal places.\n\n' +
+        'The loop stops at the right time, but every answer comes out too small. Run the visible tests, find the bug, and fix it. ' +
+        'The two lines in the body are both correct in themselves; only their order is wrong.',
+      buggy: `def geometric_sum(ratio, tol):
+    """Add 1 + ratio + ratio ** 2 + ... while the term is at least tol."""
+    total = 0
+    term = 1.0
+    while term >= tol:
+        term = term * ratio
+        total = total + term
+    return round(total, 6)`,
+      bugMistake: 'off_by_one_range',
+      maxChangedLines: 2,
+      fnName: 'geometric_sum',
+      tests: [
+        { id: 'v1', call: 'geometric_sum(0.25, 0.01)', expect: '1.328125', cmp: 'float', tol: 1e-9, label: 'ratio 0.25, tol 0.01', hidden: false, tag: 'off_by_one_range' },
+        { id: 'v2', call: 'geometric_sum(0.5, 0.2)', expect: '1.75', cmp: 'float', tol: 1e-9, label: 'ratio 0.5, tol 0.2', hidden: false },
+        { id: 'h1', call: 'geometric_sum(0.1, 0.5)', expect: '1.0', cmp: 'float', tol: 1e-9, label: 'only the first term is big enough', hidden: true, tag: 'off_by_one_range' },
+        { id: 'h2', call: 'geometric_sum(0.5, 2)', expect: '0', label: 'tol above the first term, so nothing is added', hidden: true, tag: 'accumulator_init' },
+        { id: 'h3', call: 'geometric_sum(0.9, 0.3)', expect: '7.175705', cmp: 'float', tol: 1e-9, label: 'a slowly shrinking series', hidden: true },
+        { id: 'h4', call: 'geometric_sum(0.3, 0.001)', expect: '1.42753', cmp: 'float', tol: 1e-9, label: 'a small tolerance', hidden: true },
+      ],
+      concepts: ['while', 'series', 'tolerance', 'accumulator', 'loop-order'],
+      detects: ['off_by_one_range', 'accumulator_init', 'infinite_while'],
+      expectedSec: 210,
+      hints: [
+        'Follow the first pass by hand with `ratio = 0.5`. Which value of `term` is added to `total` first, and which term does the series say should come first?',
+        'The first term of the series is 1, but the body changes `term` to `ratio` before anything is added, so 1 is never counted and one term that is below `tol` is added instead.',
+        'The body should add the current term first and only then work out the next one: `total = total + term` goes above `term = term * ratio`.',
+      ],
+      solution: {
+        code: `def geometric_sum(ratio, tol):
+    """Add 1 + ratio + ratio ** 2 + ... while the term is at least tol."""
+    total = 0
+    term = 1.0
+    while term >= tol:
+        total = total + term
+        term = term * ratio
+    return round(total, 6)`,
+        explanation:
+          '- `term = 1.0` is the first term of the series, and `while term >= tol:` has just checked that it is big enough to matter.\n' +
+          '- In the buggy order, `term = term * ratio` runs first, so that checked term is thrown away before it is added. The 1 is lost, and the term added on the last pass is the one that was too small to pass the check.\n' +
+          '- With the lines the right way round, every pass adds the term the condition approved, then prepares the next one. For `ratio = 0.5, tol = 0.2` the terms added are 1, 0.5 and 0.25, giving 1.75; the buggy version adds 0.5, 0.25 and 0.125, giving 0.875.\n' +
+          '- The loop still ends, because `term` is multiplied by a ratio below 1 on every pass and eventually drops under `tol`.\n' +
+          '- `round(total, 6)` is outside the loop, so the rounding happens once.\n' +
+          '- When `tol` is above 1 the body never runs and `total` stays 0, which is why it must be set before the loop.',
+      },
+      selfExplain: 'Why does the buggy version still stop at the right time even though it adds the wrong terms?',
+    },
   ],
 };
 

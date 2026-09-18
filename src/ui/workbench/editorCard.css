@@ -29,10 +29,13 @@
 .ed-kbd { margin-left: auto; font-family: var(--mono); font-size: var(--fs-12); color: var(--editor-muted); white-space: nowrap; }
 .ed-note { font-family: var(--mono); font-size: var(--fs-12); color: var(--editor-muted); }
 
-/* Buttons inside the dark card (both themes): primary is a light fill with dark text so it reads on the editor ground;
-   secondary is a quiet outline. */
+/* Buttons inside the dark card (both themes). One primary action per region (DESIGN.md): the primary is a light
+   --editor-text fill with dark text, which reads on the editor ground in every accent preset (a plain --accent fill
+   would vanish here with a near-black accent). Everything beside it is a shorter, lighter, unfilled outline, so the
+   pair reads as primary + secondary at a glance. */
 .ed-card .btn { --btn-h: 40px; }
 .ed-card .btn.sm { --btn-h: 32px; }
+.ed-card .btn:not(.primary):not(.sm) { --btn-h: 36px; padding: 0 14px; font-weight: 500; }
 .ed-card .btn.primary { background: var(--editor-text); border-color: var(--editor-text); color: var(--editor-bg); }
 .ed-card .btn.primary:hover { background: var(--editor-text); border-color: var(--editor-text); opacity: 0.88; }
 .ed-card .btn:not(.primary) { background: transparent; color: var(--editor-text); border-color: var(--editor-gutter); }
@@ -68,6 +71,12 @@
 }
 .shell code { font: inherit; background: none; padding: 0; }
 .shell-prompt { color: var(--text-muted); }
+/* A long example scrolls sideways. macOS hides overlay scrollbars at rest, so the side with more content off
+   screen gets a soft edge and the box takes keyboard focus while there is anything left to scroll. */
+.shell[data-scroll="right"] { box-shadow: inset -16px 0 12px -12px var(--border-strong); }
+.shell[data-scroll="left"] { box-shadow: inset 16px 0 12px -12px var(--border-strong); }
+.shell[data-scroll="both"] { box-shadow: inset 16px 0 12px -12px var(--border-strong), inset -16px 0 12px -12px var(--border-strong); }
+.shell[data-scroll]:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 @media (max-width: 600px) {
   .ed-tabs { flex-wrap: wrap; }

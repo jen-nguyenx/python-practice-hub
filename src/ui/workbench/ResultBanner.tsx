@@ -1,6 +1,7 @@
 // Result feedback card after a check: ok-tint "Correct" / bad-tint "Not quite", one sentence of feedback (Markdown,
 // never raw backticks), the score that was actually saved (after hints, none once the answer was shown), and
 // "Next question" (primary when correct).
+import type { Ref } from 'preact';
 import type { GradeResult } from '../../engine/types.ts';
 import { LinkButton } from '../components/Button.tsx';
 import { Icon } from '../components/Icon.tsx';
@@ -20,6 +21,8 @@ export interface ResultCardProps {
   nextHref?: string;
   nextLabel?: string;
   checksLeft?: number;
+  /** The controller focuses this card (or its "Next question" button) when a check drops keyboard focus. */
+  cardRef?: Ref<HTMLDivElement>;
 }
 
 export function marksEarned(score: number, marks: number) {
@@ -31,7 +34,7 @@ export function scoreText({ result, credit, hints, answerShown, marks }: Pick<Re
   if (answerShown) return 'No score: the answer was shown';
   const hintText = hints > 0 ? ` with ${hints} ${hints === 1 ? 'hint' : 'hints'}` : '';
   if (marks) return `${marksEarned(credit, marks)} of ${marks} marks${hintText}`;
-  if (!result.correct && result.score === 0) return '';
+  // Every scored check shows its score, including 0%: leaving it out on a zero read as a missing value.
   return `Score ${Math.round(credit * 100)}%${hintText}`;
 }
 
@@ -49,7 +52,7 @@ export function ResultCard(p: ResultCardProps) {
   return (
     <div class="result-live" aria-live="polite" aria-atomic="true">
       {result ? (
-        <div class={`result-card ${tone}`}>
+        <div class={`result-card ${tone}`} ref={p.cardRef} tabIndex={-1} role="group" aria-label={`Result: ${word}`}>
           <span class="result-icon" aria-hidden="true"><Icon name={result.correct ? 'check' : 'x'} size={18} /></span>
           <div class="result-text">
             <div class="result-head">

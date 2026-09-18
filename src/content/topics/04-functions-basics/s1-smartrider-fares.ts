@@ -192,6 +192,74 @@ def smartrider_fare(zones):
       },
       selfExplain: 'Why did the correct cash fare still appear on the screen just before the crash?',
     },
+
+    // ---------------------------------------------------------------- q4 multi
+    {
+      id: 't04-s1-q4',
+      format: 'multi',
+      diff: 'easy',
+      core: true,
+      title: 'Which arguments go where',
+      prompt: md(
+        'The planner also works out the cost of a batch of journeys. `concession` is a percentage off, so 50 means half price.',
+        '',
+        'Select **every** statement that is true.',
+      ),
+      code: `def journey_cost(trips, fare, concession):
+    """Return the cost of trips journeys at fare dollars each, less a concession discount."""
+    return round(trips * fare * (100 - concession) / 100, 2)`,
+      options: [
+        {
+          id: 'a',
+          text: 'journey_cost(10, 3.2, 50) gives back 16.0',
+          correct: true,
+          why: '`trips` is 10, `fare` is 3.2 and `concession` is 50, so the full cost is 32.0 and half of that is 16.0.',
+        },
+        {
+          id: 'b',
+          text: 'journey_cost(50, 3.2, 10) gives back the same value, because the same three numbers are passed in',
+          correct: false,
+          why: 'Arguments are matched to parameters by position, not by size. This call means 50 trips at $3.20 with 10% off, which is 144.0.',
+        },
+        {
+          id: 'c',
+          text: 'journey_cost(10, 3.2) stops the program with a TypeError about a missing required positional argument',
+          correct: true,
+          why: 'The function has three parameters and no defaults, so every call must supply three arguments. Python names the missing one, `concession`, in the message.',
+        },
+        {
+          id: 'd',
+          text: 'total = journey_cost is a shorter way of calling the function and puts the cost in total',
+          correct: false,
+          mistake: 'forgot_to_call',
+          why: 'Without brackets there is no call. This stores the function itself in `total`, so a later `total * 2` raises a TypeError instead of doubling a cost.',
+        },
+        {
+          id: 'e',
+          text: 'journey_cost(10, 3.2, 0) gives back 32.0',
+          correct: true,
+          why: 'A concession of 0 takes nothing off: `(100 - 0) / 100` is 1.0, so the answer is the full 32.0.',
+        },
+      ],
+      concepts: ['arguments', 'parameters', 'calling-functions'],
+      detects: ['forgot_to_call'],
+      expectedSec: 110,
+      hints: [
+        'The first argument lands in the first parameter, the second in the second, and so on. Nothing is matched by name or by size.',
+        'For each statement, write the call out with the values in place of `trips`, `fare` and `concession`, then work the formula through. For the statements about crashes, count the parameters and count the arguments.',
+        'For (a): `10 * 3.2` is 32.0, and `(100 - 50) / 100` is 0.5.',
+      ],
+      solution: {
+        explanation: md(
+          '- (a) True. 10 trips at $3.20 is 32.0, and 50% off leaves 16.0.',
+          '- (b) False. `journey_cost(50, 3.2, 10)` means 50 trips at $3.20 with 10% off, which is 144.0. Position decides which value each parameter gets.',
+          '- (c) True. Three parameters, two arguments, so Python refuses the call before the body runs.',
+          '- (d) False. `journey_cost` without brackets is the function itself. A call needs brackets and the right number of arguments.',
+          '- (e) True. A 0% concession leaves the full 32.0.',
+        ),
+      },
+      selfExplain: 'How would you change journey_cost(50, 3.2, 10) so that it does return 16.0?',
+    },
   ],
 };
 

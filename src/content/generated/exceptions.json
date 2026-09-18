@@ -28,5 +28,27 @@
       "type": "ZeroDivisionError"
     },
     "stdout": "1.75\nskipped cancelled\nskipped n/a\n"
+  },
+  "t10-s4-q1": {
+    "error": {
+      "line": 5,
+      "message": "[Errno 44] No such file or directory: 'gate_log_sunday'",
+      "type": "FileNotFoundError"
+    },
+    "stdout": "Reading the gate log\n"
+  },
+  "t10-s4-q2": {
+    "mutantOutputs": [
+      "35\na gate time was not a number\nboth gates measured\nreport finished\n",
+      "35\na gate time was not a number\n"
+    ],
+    "stdout": "35\na gate time was not a number\nreport finished\n"
+  },
+  "t10-s5-q1": {
+    "twins": {
+      "differs": true,
+      "outLeft": "skipped cancelled\n75 2\n",
+      "outRight": "skipped cancelled\n75 3\n"
+    }
   }
 }

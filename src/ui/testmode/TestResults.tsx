@@ -64,6 +64,8 @@ export function TestResults({ summary, items, answers, drafts, mode, headingRef,
   };
   const allOpen = open.size === items.length;
   const kind = mode === 'midsem' ? 'Mid-sem practice' : 'Topic test';
+  // Questions from topics that are still locked can be reviewed here but not practised yet: say so once, not per row.
+  const lockedTopics = summary.perTopic.map((t) => t.topicId).filter((t, i, xs) => xs.indexOf(t) === i && isLocked(t));
 
   return (
     <div class="tx-page trs">
@@ -105,8 +107,8 @@ export function TestResults({ summary, items, answers, drafts, mode, headingRef,
                   <span class="trs-bar-score">{r.correct}/{r.total} · {p}%</span>
                   {r.topicId && weak && byTopic ? (
                     locked ? (
-                      <a class="trs-bar-link locked" href={href.topic(r.topicId)} title={lockReason ? `Locked. ${lockReason}` : 'Locked'}>
-                        <Icon name="lock" size={13} /> Locked<span class="sr-only">: open {r.name} topic page</span>
+                      <a class="trs-bar-link locked" href={href.topic(r.topicId)} title={lockReason ? `Not open yet. ${lockReason}` : 'Not open yet'}>
+                        <Icon name="lock" size={13} /> Read up<span class="sr-only"> on {r.name}: notes and worked examples</span>
                       </a>
                     ) : (
                       <a class="trs-bar-link" href={href.topic(r.topicId)}>Practise<span class="sr-only"> {r.name}</span> <Icon name="arrowRight" size={13} /></a>
@@ -128,6 +130,18 @@ export function TestResults({ summary, items, answers, drafts, mode, headingRef,
             {allOpen ? 'Close all' : 'Open all'}
           </Button>
         </div>
+        {lockedTopics.length ? (
+          <p class="trs-lock-note">
+            <Icon name="lock" size={14} />
+            <span>
+              Every answer is explained below. {lockedTopics.length === summary.perTopic.length ? 'These topics are' : 'Some of these topics are'}
+              {' '}not open on your ladder yet, so their practice pages wait until you get there:{' '}
+              {lockedTopics.map((t, i) => (
+                <span key={t}>{i > 0 ? ', ' : ''}<a href={href.topic(t)}>{TOPIC_BY_ID[t]?.short ?? t}</a></span>
+              ))}.
+            </span>
+          </p>
+        ) : null}
         <ol class="trs-list">
           {summary.outcomes.map((o) => (
             <ReviewRow key={o.qid} o={o} item={items[o.index]} answer={answers.get(o.index)} draft={drafts.get(o.index)}
@@ -197,7 +211,7 @@ function ReviewPanel({ item, answer, draft, mode, locked }: { item: TestItem; an
         ) : null}
         <p class="trs-practise">
           {locked
-            ? <a class="locked" href={href.topic(item.topicId)}><Icon name="lock" size={13} /> {topic?.short ?? 'This topic'} is locked · open the topic page</a>
+            ? <a href={href.topic(item.topicId)}>Notes and examples for {topic?.short ?? 'this topic'} <Icon name="arrowRight" size={13} /></a>
             : <a href={href.question(item.q.id)}>Practise this question with hints <Icon name="arrowRight" size={13} /></a>}
         </p>
       </div>

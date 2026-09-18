@@ -14,7 +14,7 @@ export function Write(props: FormatProps<QuestionOf<'write'>>) {
       fp={props as FormatProps<Question>}
       cfg={{
         initialCode: q.starter,
-        resetLabel: 'Reset to starter',
+        resetTo: 'starter code',
         kind: q.kind,
         fnName: q.fnName,
         rules: q.rules,

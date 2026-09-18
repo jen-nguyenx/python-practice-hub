@@ -176,6 +176,63 @@ print(count_digits(30472915))`,
       },
       selfExplain: 'Why does the base case use n < 10 instead of n == 0, and would n == 0 also work?',
     },
+    {
+      id: 't13-s2-q4',
+      format: 'refactor',
+      diff: 'hard',
+      core: false,
+      title: 'The binary printer, without the loop',
+      prompt:
+        'The barrier logs show a card\'s zone flags as a binary number, so the help desk keeps `to_binary(number)`: it returns the non-negative int `number` written in binary, as a string. ' +
+        '`to_binary(0)` returns `\'0\'` and `to_binary(5)` returns `\'101\'`.\n\n' +
+        'This version was written before the team\'s recursion-only rule. **Rewrite it so that it uses recursion and contains no loop at all** (no `while`, no `for`). ' +
+        'Do not use `bin()` or string reversal; keep working with `% 2` and `// 2`. Every result must stay exactly the same.',
+      code: `def to_binary(number):
+    """Return number written in binary as a string. to_binary(0) is '0'."""
+    if number == 0:
+        return '0'
+    bits = ''
+    while number > 0:
+        bits = str(number % 2) + bits
+        number = number // 2
+    return bits`,
+      fnName: 'to_binary',
+      tests: [
+        { id: 'v1', call: 'to_binary(5)', expect: "'101'", label: 'five', hidden: false },
+        { id: 'v2', call: 'to_binary(0)', expect: "'0'", label: 'zero', hidden: false, tag: 'missing_base_case' },
+        { id: 'h1', call: 'to_binary(1)', expect: "'1'", label: 'one', hidden: true, tag: 'missing_base_case' },
+        { id: 'h2', call: 'to_binary(8)', expect: "'1000'", label: 'a power of two', hidden: true },
+        { id: 'h3', call: 'to_binary(6)', expect: "'110'", label: 'a trailing zero bit', hidden: true },
+        { id: 'h4', call: 'to_binary(255)', expect: "'11111111'", label: 'eight bits, all set', hidden: true },
+        { id: 'h5', call: 'to_binary(1024)', expect: "'10000000000'", label: 'a long result', hidden: true },
+      ],
+      mustRemove: ['loop_present'],
+      mustAdd: ['recursion_present'],
+      pattern: 'recursion-checklist',
+      concepts: ['base-case', 'recursive-case', 'digits', 'no-loops'],
+      detects: ['loop_in_recursion', 'missing_base_case', 'recursion_result_ignored', 'off_by_one_range'],
+      expectedSec: 420,
+      hints: [
+        'The loop builds the answer from the right: it takes the last bit, then works on what is left. Say that in one sentence about `number` and `number // 2`, and the recursive case writes itself.',
+        'Plan: the binary of `number` is the binary of `number // 2` followed by the last bit, `number % 2`. Then find the smallest numbers you can answer without halving anything: 0 gives `\'0\'` and 1 gives `\'1\'`, and both are already the string of the number itself. Return the two pieces joined with `+`, smaller half first.',
+        '```python\n    return to_binary(number // 2) + str(number % 2)\n```',
+      ],
+      solution: {
+        code: `def to_binary(number):
+    """Return number written in binary as a string. to_binary(0) is '0'."""
+    if number < 2:
+        return str(number)
+    return to_binary(number // 2) + str(number % 2)`,
+        explanation:
+          '- `if number < 2: return str(number)` is the base case, and it covers both stopping numbers at once: 0 becomes `\'0\'` and 1 becomes `\'1\'`. A base case of only `number == 0` would return `\'0\'` for the leading 1 of every number, so `to_binary(5)` would come out as `\'0101\'`.\n' +
+          '- `to_binary(number // 2) + str(number % 2)` is the loop turned inside out. The old loop stuck each new bit on the **front** of `bits` because it produced the bits right to left. Recursion gets the order for free: the deeper call returns all the leading bits, and this call adds its own last bit on the end.\n' +
+          '- For 5: `to_binary(2) + \'1\'`, and `to_binary(2)` is `to_binary(1) + \'0\'`, and `to_binary(1)` is `\'1\'`. So `\'1\'` + `\'0\'` + `\'1\'` = `\'101\'`.\n' +
+          '- `number // 2` is whole-number division, so the value really does shrink towards 1 and the base case is always reached. With `number / 2` the value would become a float such as 2.5 and never equal 1.\n' +
+          '- `bits` is gone. Nothing accumulates across calls, because each call builds and returns its own piece of the string.\n\n' +
+          'This is the shape the exam asks for when it says loops are not allowed: one base case that answers the smallest inputs, one recursive call on a smaller number, and a `return` that joins the two.',
+      },
+      selfExplain: 'Why does the recursive call come before str(number % 2) in the returned expression, and what would to_binary(5) give if they were swapped?',
+    },
   ],
 };
 

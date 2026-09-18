@@ -12,7 +12,8 @@ Your folder: `src/content/topics/NN-<topic-id>/`.
 ## Ids
 - Scenario id: `tNN-sK` (NN = topic number from `src/content/topics.ts`, K = 1..4). Question id: `tNN-sK-qM`. Ids are unique and stable.
 
-## Volume and mix (per topic)
+## Volume and mix (per topic) — these are MINIMUMS
+A topic may hold more than the table says (extra practice is welcome); the verifier only warns when a topic has fewer questions than planned, or loses a format, difficulty band, paper item or project item. When you add questions, keep the same quality bar and spread them across formats and difficulties.
 | # | Topic id | Questions | Easy/Med/Hard | Format mix |
 |---|---|---|---|---|
 | 01 | variables-expressions | 12 | 5/5/2 | mcq 3 (one true/false), multi 1, predict 3, trace 1, cloze 1, fixBug 1, write 2 |
@@ -29,7 +30,7 @@ Your folder: `src/content/topics/NN-<topic-id>/`.
 | 12 | project-simulator | 10 | 1/4/5 | mcq 1, predict 1, fixBug 1, write 5 (3 project), refactor 1, testWriter 1 |
 | 13 | recursion | 12 | 3/4/5 | mcq 1, predict 2, trace 2, errorTranslator 1, parsons 1, fixBug 1, write 4 (2 paper, rules ['noLoops']) |
 
-3 or 4 scenarios per topic, 3-5 questions each, ordered read → repair → write inside a scenario. Mark about two thirds `core: true`, including at least 3 code-format questions (cloze, parsons, fixBug, write, refactor, testWriter) so the topic minimum (see `minimum` in `src/content/topics.ts`) is reachable using core questions alone.
+3 to 6 scenarios per topic, 3-5 questions each, ordered read → repair → write inside a scenario. Mark about two thirds `core: true`, including at least 3 code-format questions (cloze, parsons, fixBug, write, refactor, testWriter) so the topic minimum (see `minimum` in `src/content/topics.ts`) is reachable using core questions alone.
 
 ## Quality bar
 - **Real, varied contexts.** Mix Perth/UWA life (Transperth, SmartRider, Rottnest ferry, Kings Park, Optus Stadium, Fremantle markets, the Swan River, Reid Library, UWA grades HD/D/CR/P/N, BOM weather, WACA cricket scores, Perth Scorchers, quokkas) with universal ones (receipts, playlists, game scores, sensor readings, student marks). Do not reuse the same context twice in one topic. Names of people: diverse and plausible.

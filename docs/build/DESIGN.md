@@ -17,7 +17,8 @@ Tokens: `src/styles/tokens.css`. Fonts: `--display` Bricolage Grotesque (heading
 - **Progress bars**: `--progress` on `--progress-track`. Current/selected rows: `--accent-soft` background, `--accent-line` border.
 - **Correct / passed**: ink (`--ok`) with a check icon and neutral `--ok-soft` tint. **Wrong / failed**: `--bad` red. **Hints / help**: `--hint` amber. **Links, focus ring, reading-format chips**: `--blue`.
 - Difficulty: 1-3 small pips in `--text-muted`, never coloured.
-- Code editor: dark in both themes (`--editor-*`, VS Code Dark+ syntax colours).
+- Code editor: dark in both themes (`--editor-*`). Syntax colours use the app's own `--syn-*` tokens (the same roles as the static `CodeBlock`), so identical code looks identical everywhere: no green and no purple, even though VS Code's Dark+ theme uses both.
+- Light code wells (`.code-block` on paper) use `--code-string` and `--code-number`, which mirror the dark editor's roles: a muted rust for strings and a deeper amber for numbers, so a string never shares its colour with a plain identifier. Keywords and builtins stay `--blue`.
 - No gradients, no glow, no emoji icons.
 
 ## Frame (from the approved mockup)

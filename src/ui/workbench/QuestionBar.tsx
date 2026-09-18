@@ -1,6 +1,7 @@
 // First row of the question page (the global frame stays visible above it): "‹ Topic" back link, progress dots for
 // the topic's questions (filled = attempted, check = solved, ring = current) with "Question N of M", previous/next
 // icon buttons, the blue format chip and the "Report this question" flag button.
+import { useEffect, useRef } from 'preact/hooks';
 import type { Format, TopicId } from '../../content/ids.ts';
 import { FORMAT_LABEL } from '../../content/ids.ts';
 import type { QuestionStats } from '../../engine/progress.ts';
@@ -35,6 +36,15 @@ const DOT_TEXT: Record<DotState, string> = { solved: 'solved', attempted: 'attem
 export function QuestionBar({ qid, topicId, topicShort, questions, index, stats, format, onLeave }: QuestionBarProps) {
   const prev = index > 0 ? questions[index - 1] : undefined;
   const next = index >= 0 && index < questions.length - 1 ? questions[index + 1] : undefined;
+  // On narrow screens the dots scroll inside their own box (the counter stays pinned), so bring the current one
+  // into view. scrollLeft is set directly, so the page itself never moves.
+  const dotsRef = useRef<HTMLOListElement>(null);
+  useEffect(() => {
+    const list = dotsRef.current;
+    const cur = list?.querySelector<HTMLElement>('.qdot.current');
+    if (!list || !cur || list.scrollWidth <= list.clientWidth) return;
+    list.scrollLeft = Math.max(0, cur.offsetLeft - (list.clientWidth - cur.offsetWidth) / 2);
+  }, [qid]);
   return (
     <div class="qrow">
       <a class="qrow-back" href={href.topic(topicId)} onClick={() => onLeave?.()}>
@@ -42,7 +52,7 @@ export function QuestionBar({ qid, topicId, topicShort, questions, index, stats,
         <span class="qrow-back-text">{topicShort}</span>
       </a>
       <nav class="qrow-center" aria-label="Questions in this topic">
-        <ol class="qrow-dots">
+        <ol class="qrow-dots" ref={dotsRef}>
           {questions.map((x, i) => {
             const st = dotState(stats.get(x.id));
             const current = i === index;

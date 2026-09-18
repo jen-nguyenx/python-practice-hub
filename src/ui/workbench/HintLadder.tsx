@@ -43,15 +43,15 @@ export function HintCallouts({ hints, tier }: { hints: readonly Md[]; tier: numb
 
 /**
  * "Show hint N" button. `look` is 'secondary' (outline, code questions) or 'hint' (amber tint, read formats and
- * Parsons). Locked or closed hints keep the button focusable (aria-disabled) so the tooltip can explain why.
+ * Parsons). A hint that is only locked for now keeps the button focusable (aria-disabled) so the tooltip can say
+ * what unlocks it; once hints are closed for good (solved, or the answer shown) the button goes away instead.
  */
 export function ShowHintButton({ h, look = 'secondary', numbered = true }: { h: HintState; look?: 'secondary' | 'hint'; numbered?: boolean }) {
   const total = hintTotal(h);
-  if (total === 0 || h.tier >= total) return null;
+  if (total === 0 || h.tier >= total || h.closedReason) return null;
   const next = h.tier + 1;
-  const closed = !!h.closedReason;
-  const ready = !closed && h.available;
-  const tip = closed ? h.closedReason! : ready ? `${TIER_NAME[h.tier] ?? 'Hint'} · ${MOD}+'` : `Unlocks ${h.unlockText}`;
+  const ready = h.available;
+  const tip = ready ? `${TIER_NAME[h.tier] ?? 'Hint'} · ${MOD}+'` : `Unlocks ${h.unlockText}`;
   return (
     <Tip text={tip} side="top" align="start">
       {(id) => (
@@ -71,16 +71,25 @@ export function ShowHintButton({ h, look = 'secondary', numbered = true }: { h: 
   );
 }
 
-/** Hints section for the code-question brief: header with "1 of 3 revealed", callouts, then the actions row. */
+/**
+ * Hints section for the code-question brief: header with "1 of 3 revealed", callouts, then the actions row.
+ * Once hints are closed and none were read there is nothing to count, so only the actions row (the answer link)
+ * is left.
+ */
 export function HintsSection({ h, after }: { h: HintState; after?: ComponentChildren }) {
   const total = hintTotal(h);
+  const empty = !!h.closedReason && h.tier === 0;
   return (
     <section class="hints-section" aria-label="Hints">
-      <div class="hints-head">
-        <h2 class="hints-title">Hints</h2>
-        <span class="hints-count">{total === 0 ? 'No hints' : `${h.tier} of ${total} revealed`}</span>
-      </div>
-      <HintCallouts hints={h.hints} tier={h.tier} />
+      {empty ? null : (
+        <>
+          <div class="hints-head">
+            <h2 class="hints-title">Hints</h2>
+            <span class="hints-count">{total === 0 ? 'No hints' : `${h.tier} of ${total} revealed`}</span>
+          </div>
+          <HintCallouts hints={h.hints} tier={h.tier} />
+        </>
+      )}
       <div class="hints-actions">
         <ShowHintButton h={h} />
         {after}

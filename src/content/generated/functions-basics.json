@@ -21,5 +21,19 @@
       "type": "NameError"
     },
     "stdout": ""
+  },
+  "t04-s5-q1": {
+    "mutantOutputs": [
+      "48.0\n0\n",
+      "48.0\nNone\nNone\n"
+    ],
+    "stdout": "48.0\nNone\n"
+  },
+  "t04-s6-q1": {
+    "twins": {
+      "differs": true,
+      "outLeft": "7.5\n",
+      "outRight": "30.0\n"
+    }
   }
 }

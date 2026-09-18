@@ -50,6 +50,16 @@ const PARSONS_SOLUTION = `def heat_alert(max_temp, humidity):
         alert = 'Heat warning'
     return alert`;
 
+const BAN_STARTER = `def total_fire_ban(temp, wind_kmh, humidity, rain_mm):
+    """Return True when a total fire ban applies, otherwise False."""
+    pass`;
+
+const BAN_SOLUTION = `def total_fire_ban(temp, wind_kmh, humidity, rain_mm):
+    """Return True when a total fire ban applies, otherwise False."""
+    if rain_mm >= 5:
+        return False
+    return (temp >= 35 and wind_kmh >= 25 and humidity <= 25) or temp >= 42`;
+
 const scenario: Scenario = {
   id: 't02-s2',
   title: 'Perth heat warnings',
@@ -224,6 +234,74 @@ const scenario: Scenario = {
         ),
       },
       selfExplain: 'What would heat_alert(42, 20) return if the elif were a separate if?',
+    },
+    {
+      id: 't02-s2-q4',
+      format: 'write',
+      kind: 'function',
+      diff: 'hard',
+      core: true,
+      title: 'Write total_fire_ban',
+      prompt: md(
+        'The same noticeboard also shows whether a total fire ban is in force. Complete `total_fire_ban(temp, wind_kmh, humidity, rain_mm)` ' +
+        'so it **returns** the boolean `True` or `False` (not a string, and not a message).',
+        '',
+        'The simplified rule for the district:',
+        '',
+        '- If 5 mm or more of rain has fallen (`rain_mm`), there is **never** a ban, whatever the other numbers say.',
+        '- Otherwise there is a ban when the maximum temperature is at least 35, **and** the wind is at least 25 km/h, **and** the humidity is 25% or below.',
+        '- There is also a ban whenever the temperature reaches 42, whatever the wind and humidity are.',
+        '',
+        '`temp`, `wind_kmh`, `humidity` and `rain_mm` may be ints or floats. Write the answer without `== True`, and without an `if` that returns `True` in one branch and `False` in the other.',
+      ),
+      concepts: ['boolean', 'return-boolean', 'guard', 'boundary'],
+      detects: ['compare_to_true', 'or_with_literal', 'elif_vs_if', 'return_type_wrong'],
+      expectedSec: 480,
+      fnName: 'total_fire_ban',
+      starter: BAN_STARTER,
+      tests: [
+        { id: 'v1', call: 'total_fire_ban(38, 30, 20, 0)', expect: 'True', label: 'hot, windy and dry', hidden: false },
+        { id: 'v2', call: 'total_fire_ban(38, 30, 40, 0)', expect: 'False', label: 'hot and windy but humid', hidden: false },
+        { id: 'v3', call: 'total_fire_ban(45, 5, 80, 0)', expect: 'True', label: '45 degrees, still and humid', hidden: false },
+        { id: 'h1', call: 'total_fire_ban(45, 5, 80, 6.2)', expect: 'False', label: 'extreme heat after heavy rain', hidden: true, tag: 'elif_vs_if' },
+        { id: 'h2', call: 'total_fire_ban(35, 25, 25, 0)', expect: 'True', label: 'every number exactly on its limit', hidden: true },
+        { id: 'h3', call: 'total_fire_ban(34.9, 25, 25, 0)', expect: 'False', label: 'temperature just under 35', hidden: true },
+        { id: 'h4', call: 'total_fire_ban(38, 24, 20, 0)', expect: 'False', label: 'wind just under 25', hidden: true },
+        { id: 'h5', call: 'total_fire_ban(38, 30, 20, 4.9)', expect: 'True', label: 'rain just under 5 mm', hidden: true },
+        { id: 'h6', call: 'total_fire_ban(42, 0, 95, 0)', expect: 'True', label: 'exactly 42, no wind', hidden: true },
+        { id: 'h7', call: 'total_fire_ban(41.9, 0, 95, 0)', expect: 'False', label: 'just under 42, no wind', hidden: true },
+        { id: 'h8', call: 'total_fire_ban(38, 30, 20, 5)', expect: 'False', label: 'rain of exactly 5 mm', hidden: true },
+      ],
+      hints: [
+        'The rain rule cancels everything else, so deal with it on its own before you think about the other three numbers. What is left is a single yes/no question.',
+        md(
+          'Plan:',
+          '',
+          '1. Guard: if there has been 5 mm of rain or more, leave the function with `False` straight away.',
+          '2. Write the hot-windy-dry rule as one condition joined by `and`. All three parts must hold, and each part names its own variable.',
+          '3. The 42 degree rule is a second, independent reason, so join it to the first with `or`.',
+          '4. `return` that whole expression. A comparison is already `True` or `False`, so it needs no `if` around it.',
+        ),
+        md(
+          '```python',
+          '    if rain_mm >= 5:',
+          '        return False',
+          '    return (temp >= 35 and ... and ...) or ...',
+          '```',
+        ),
+      ],
+      solution: {
+        code: BAN_SOLUTION,
+        explanation: md(
+          '- The guard comes first because the rain rule beats both of the others. Written as part of the big expression it is easy to get wrong; as a guard clause it is one line and obviously final.',
+          '- `temp >= 35 and wind_kmh >= 25 and humidity <= 25` needs all three, so the parts are joined with `and`. Each part repeats its variable: `wind_kmh >= 25 and humidity <= 25`, never `wind_kmh >= 25 and <= 25`.',
+          '- The humidity limit points the other way (`<=`), because dry air, not humid air, is the dangerous case.',
+          '- `... or temp >= 42` adds a second, independent reason for a ban. The brackets around the `and` group are not strictly needed, since `and` binds tighter than `or`, but they show the reader that there are two reasons.',
+          '- The comparison expression is already a boolean, so `return` it directly. `if condition: return True else: return False` does the same job in four lines and is what markers call out; `if condition == True:` is the same mistake once more.',
+          '- `total_fire_ban(35, 25, 25, 0)` returning `True` is what pins down the three `>=`/`<=` boundaries, and `41.9` versus `42` pins down the extreme-heat rule.',
+        ),
+      },
+      selfExplain: 'Why does the rain check have to happen before the other two rules rather than being joined to them with and?',
     },
   ],
 };

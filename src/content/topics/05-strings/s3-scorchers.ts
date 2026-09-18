@@ -108,6 +108,70 @@ const scenario: Scenario = {
       },
       selfExplain: "Why is word[0] safe here even though ''[0] would raise IndexError?",
     },
+    {
+      id: 't05-s3-q4',
+      format: 'cloze',
+      diff: 'easy',
+      core: true,
+      title: 'Fit a name on the big screen',
+      prompt:
+        "The big screen has room for 12 characters. Fill in the blanks so `screen_name(name)` returns a **string**: `name` itself when it is 12 characters or shorter, otherwise the first 11 characters followed by a full stop, which is 12 characters in total.\n\nFor example `screen_name('Aziz')` returns `'Aziz'` and `screen_name('Bartholomew Jones')` returns `'Bartholomew.'`.",
+      concepts: ['slicing', 'len', 'boundary'],
+      detects: ['off_by_one_range'],
+      expectedSec: 110,
+      template:
+        'def screen_name(name):\n    """Return name, shortened to 12 characters as first 11 + \'.\' when it is too long."""\n    if ⟦1⟧:\n        return name\n    return name[⟦2⟧] + \'.\'\n',
+      blanks: [
+        { id: '1', accept: ['len(name) <= 12', 'len(name) < 13'] },
+        { id: '2', accept: [':11', '0:11'] },
+      ],
+      fnName: 'screen_name',
+      tests: [
+        { id: 'v1', call: "screen_name('Aziz')", expect: "'Aziz'", label: 'short name', hidden: false },
+        {
+          id: 'v2',
+          call: "screen_name('Bartholomew Jones')",
+          expect: "'Bartholomew.'",
+          label: 'long name',
+          hidden: false,
+        },
+        {
+          id: 'h1',
+          call: "screen_name('Abdurrahman')",
+          expect: "'Abdurrahman'",
+          label: 'exactly 11 characters',
+          hidden: true,
+        },
+        {
+          id: 'h2',
+          call: "screen_name('Hemingway JR')",
+          expect: "'Hemingway JR'",
+          label: 'exactly 12 characters',
+          hidden: true,
+          tag: 'off_by_one_range',
+        },
+        {
+          id: 'h3',
+          call: "screen_name('Aleksandrovna')",
+          expect: "'Aleksandrov.'",
+          label: 'one character too long',
+          hidden: true,
+          tag: 'off_by_one_range',
+        },
+        { id: 'h4', call: "screen_name('')", expect: "''", label: 'empty name', hidden: true },
+      ],
+      hints: [
+        'The screen fits 12 characters. A name of exactly 12 characters already fits, so nothing should be cut.',
+        'Blank 1 is the test for "it already fits". Blank 2 is a slice that keeps the first 11 characters, because the full stop takes the twelfth place.',
+        'A slice from the start needs nothing before the colon: `name[:n]` is the first `n` characters.',
+      ],
+      solution: {
+        code: 'def screen_name(name):\n    """Return name, shortened to 12 characters as first 11 + \'.\' when it is too long."""\n    if len(name) <= 12:\n        return name\n    return name[:11] + \'.\'\n',
+        explanation:
+          "`len(name) <= 12` is the boundary that matters. With `<` a 12-character name would be cut even though it fits, which is the off-by-one this question is about. `len(name) < 13` says the same thing.\n\nWhen the name fits, it is returned unchanged, so an empty name comes straight back.\n\n`name[:11]` takes positions 0 to 10, which is 11 characters. Adding `'.'` makes 12, exactly the width of the screen. `name[:12]` plus a full stop would be 13 characters and would not fit.\n\nSlices never raise IndexError, so no length check is needed on the second line.",
+      },
+      selfExplain: "How many characters does screen_name return for a 40-character name?",
+    },
   ],
 };
 

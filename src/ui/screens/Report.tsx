@@ -16,6 +16,7 @@ import { Icon } from '../components/Icon.tsx';
 import { Segmented } from '../components/Segmented.tsx';
 import { ReportBody } from '../report/ReportView.tsx';
 import { formatDate } from '../report/format.ts';
+import { unlockAllInRange } from '../report/overrides.ts';
 import { eventsForTopic, narrowReport } from '../report/topicFilter.ts';
 import '../report/report.css';
 
@@ -181,7 +182,8 @@ function ReportScreen({ topicId }: { topicId?: string }) {
           </div>
         </section>
       ) : (
-        <ReportBody data={built.data} events={built.events} topicId={tid} now={now} />
+        <ReportBody data={built.data} events={built.events} topicId={tid} now={now}
+          unlockAll={unlockAllInRange(events, range, now)} />
       )}
     </div>
   );

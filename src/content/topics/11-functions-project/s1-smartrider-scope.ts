@@ -216,6 +216,89 @@ def balance_after_trips(balance, fares, concession=False):
       },
       selfExplain: 'Why does halving fare inside apply_fare not change the fares list in balance_after_trips?',
     },
+
+    // ---------------------------------------------------------------- q4 cloze
+    {
+      id: 't11-s1-q4',
+      format: 'cloze',
+      diff: 'medium',
+      core: true,
+      title: 'Seats on the Rottnest ferry',
+      prompt: md(
+        'Mei writes the same style of helper for the Rottnest ferry booking desk. Every sailing carries the same number of seats, so the capacity sits at the top of the file as a constant that no function changes.',
+        '',
+        '- `seats_left(booked)` returns how many seats are still free on a sailing.',
+        '- `book(booked, group)` returns the new booked total, or the booked total unchanged when the group does not fit. A group that fills the sailing exactly does fit.',
+        '',
+        'Fill the three gaps. Nothing is printed, and no name outside the functions changes.',
+      ),
+      template: `SEATS = 480
+
+
+def seats_left(booked):
+    """Return how many seats are still free on a sailing."""
+    return ⟦1⟧ - booked
+
+
+def book(booked, group):
+    """Return the new booked total, or the old total when the group does not fit."""
+    if group > ⟦2⟧:
+        return booked
+    booked = booked + group
+    return ⟦3⟧`,
+      blanks: [
+        { id: '1', accept: ['SEATS'] },
+        { id: '2', accept: ['seats_left(booked)', 'SEATS - booked'] },
+        { id: '3', accept: ['booked'] },
+      ],
+      fnName: 'book',
+      tests: [
+        { id: 'v1', call: 'seats_left(100)', expect: '380', label: '100 seats sold', hidden: false },
+        { id: 'v2', call: 'book(470, 5)', expect: '475', label: 'a group that fits', hidden: false },
+        { id: 'h1', call: 'book(470, 20)', expect: '470', label: 'a group larger than the space left', hidden: true },
+        { id: 'h2', call: 'book(0, 480)', expect: '480', label: 'a group that fills the sailing exactly', hidden: true, tag: 'off_by_one_range' },
+        { id: 'h3', call: 'seats_left(480)', expect: '0', label: 'a full sailing', hidden: true },
+        { id: 'h4', call: 'book(480, 1)', expect: '480', label: 'one more passenger on a full sailing', hidden: true },
+      ],
+      concepts: ['local-scope', 'module-constant', 'helper-functions', 'return-value'],
+      detects: ['scope_confusion', 'forgot_to_call', 'off_by_one_range'],
+      expectedSec: 180,
+      hints: [
+        'Each gap needs a value that already exists somewhere: one at the top of the file, one that another function works out, and one that the line above has just produced.',
+        'A function may read a name defined at the top of the file as long as it never assigns to that name, so gap 1 is the capacity itself. Gap 2 is the space left on this sailing, which `seats_left` already returns for a given booked total. Gap 3 is the total that the line above has just stored in the local `booked`.',
+        md(
+          '```python',
+          '    if group > seats_left(booked):',
+          '```',
+        ),
+      ],
+      solution: {
+        code: `SEATS = 480
+
+
+def seats_left(booked):
+    """Return how many seats are still free on a sailing."""
+    return SEATS - booked
+
+
+def book(booked, group):
+    """Return the new booked total, or the old total when the group does not fit."""
+    if group > seats_left(booked):
+        return booked
+    booked = booked + group
+    return booked`,
+        explanation: md(
+          '1. `SEATS` is created once at the top of the file. `seats_left` only **reads** it, so no `global` is needed: a function can see a name from the file it lives in as long as it never assigns to that name.',
+          '2. `return SEATS - booked` hands the answer back. Writing `print(SEATS - booked)` instead would show the number and return `None`, and `book` could not compare `None` with a group size.',
+          '3. In `book`, gap 2 asks how much room this sailing has. `seats_left(booked)` reuses the helper rather than repeating the subtraction. Writing `seats_left` without brackets stores the function itself, and comparing a group size with a function raises `TypeError`.',
+          '4. The comparison is `>` and not `>=`: a group of exactly 480 on an empty sailing fills it and is allowed.',
+          '5. `booked = booked + group` changes only the local parameter. Gap 3 returns that local total, so the desk can store it. `booked + group` there would add the group a second time, and test v2 would give 480 instead of 475.',
+          '',
+          '`SEATS - booked` is also accepted in gap 2, but calling the helper means the capacity rule is written once.',
+        ),
+      },
+      selfExplain: 'Line 13 assigns to booked. Why does that not change the variable the caller passed in?',
+    },
   ],
 };
 

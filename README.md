@@ -2,8 +2,10 @@
 
 Python practice for first-year UWA students taking **CITS1401 Computational Thinking with Python**.
 
+**Live site: https://jen-nguyenx.github.io/python-practice-hub/**
+
 - 13 topics from variables and if/else up to files, project rules and recursion, unlocked one after another.
-- Around 155 questions in 12 formats: multiple choice, select all, predict the output, trace tables, spot the difference, error translator, fill in the blank, Parsons puzzles, fix the bug, write code (including paper-exam and CSV project styles), refactor, and break the code.
+- 264 questions in 12 formats: multiple choice, select all, predict the output, trace tables, spot the difference, error translator, fill in the blank, Parsons puzzles, fix the bug, write code (including paper-exam and CSV project styles), refactor, and break the code.
 - A VS Code-style editor (Monaco) running real Python 3.14 in the browser (Pyodide). Nothing is sent to a server.
 - Hints in three steps, full answers with explanations, a free-coding Playground, a mid-semester practice test and topic tests.
 - Reports on strengths, weak spots, repeated mistakes and the best-practice patterns to work on.

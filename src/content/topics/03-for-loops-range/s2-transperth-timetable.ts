@@ -134,6 +134,56 @@ const scenario: Scenario = {
       },
       selfExplain: 'Why is last + gap not a safe stop value for this range?',
     },
+    {
+      id: 't03-s2-q4',
+      format: 'write',
+      kind: 'function',
+      diff: 'medium',
+      core: true,
+      title: 'The last train you can catch',
+      prompt:
+        'Times are whole numbers of minutes after midnight, so 360 is 6:00 am. The first train of the day leaves at `first`, and another leaves every `gap` minutes after that.\n\n' +
+        'Write `last_train(first, gap, deadline)` that **returns** the departure time of the last train that leaves at or before `deadline`, as an int. ' +
+        'A train that leaves at exactly `deadline` still counts. Return `-1` if no train leaves by then. `gap` is at least 1.\n\n' +
+        'For example `last_train(360, 15, 400)` returns 390, because the trains are 360, 375, 390, 405 and 405 is too late.',
+      fnName: 'last_train',
+      starter:
+        'def last_train(first, gap, deadline):\n' +
+        '    """Return the departure time of the last train leaving at or before deadline, or -1."""\n' +
+        '    pass\n',
+      tests: [
+        { id: 'v1', call: 'last_train(360, 15, 400)', expect: '390', label: 'trains every 15 minutes from 6:00', hidden: false },
+        { id: 'v2', call: 'last_train(400, 15, 380)', expect: '-1', label: 'the first train is already too late', hidden: false, tag: 'accumulator_init' },
+        { id: 'h1', call: 'last_train(360, 15, 360)', expect: '360', label: 'a train leaves at exactly the deadline', hidden: true, tag: 'off_by_one_range' },
+        { id: 'h2', call: 'last_train(360, 15, 390)', expect: '390', label: 'several trains fit before the deadline', hidden: true, tag: 'early_return_in_loop' },
+        { id: 'h3', call: 'last_train(300, 7, 320)', expect: '314', label: 'gap that does not divide the wait evenly', hidden: true },
+        { id: 'h4', call: 'last_train(420, 10, 459)', expect: '450', label: 'deadline between two trains', hidden: true },
+      ],
+      concepts: ['range', 'range-step', 'accumulator', 'function-body'],
+      detects: ['off_by_one_range', 'accumulator_init', 'early_return_in_loop', 'print_vs_return'],
+      expectedSec: 240,
+      hints: [
+        'A `range` can produce every departure time for you. What do you want to remember about the times it produces?',
+        'Plan: set an answer variable to -1 before the loop, because that is what you report when no train fits. Loop over every departure from `first` up to and including `deadline`, and on each pass overwrite the answer with that departure. Return the answer once the loop has finished.',
+        'The loop header is `for depart in range(first, deadline + 1, gap):` and its body is one line that stores `depart`.',
+      ],
+      solution: {
+        code:
+          'def last_train(first, gap, deadline):\n' +
+          '    """Return the departure time of the last train leaving at or before deadline, or -1."""\n' +
+          '    best = -1\n' +
+          '    for depart in range(first, deadline + 1, gap):\n' +
+          '        best = depart\n' +
+          '    return best\n',
+        explanation:
+          '1. `best = -1` is the answer to give when the loop never runs. Starting at 0 would report a train at midnight when there is no train at all.\n' +
+          '2. `range(first, deadline + 1, gap)` produces `first`, `first + gap`, `first + 2 * gap`, ... and stops before `deadline + 1`. The `+ 1` is what lets a train at exactly `deadline` count; with stop `deadline`, `last_train(360, 15, 360)` would return -1.\n' +
+          '3. `best = depart` overwrites the answer on every pass, so once the loop ends, `best` holds the last time the range produced.\n' +
+          '4. If `first` is already after `deadline`, the range is empty, the body never runs, and `best` is still -1.\n' +
+          '5. `return best` is lined up with `for`, so it runs once, after the loop. A `return depart` inside the loop would hand back the **first** train instead of the last.',
+      },
+      selfExplain: 'Why does this function keep overwriting best instead of returning inside the loop?',
+    },
   ],
 };
 

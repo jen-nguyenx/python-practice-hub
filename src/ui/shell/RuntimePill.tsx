@@ -10,12 +10,14 @@ function shortVersion(v: string) {
   return m ? `${m[1]}.${m[2]}` : v;
 }
 
-export type RuntimeTone = 'loading' | 'ok' | 'busy' | 'bad';
+export type RuntimeTone = 'idle' | 'loading' | 'ok' | 'busy' | 'bad';
 
 export function describeRuntime(s: RuntimeStatus, secs: number): { tone: RuntimeTone; text: string; version: string; announce: string; title: string } {
   switch (s.state) {
     case 'idle':
-      return { tone: 'loading', text: 'Starting Python', version: 'Python', announce: 'Python is starting', title: 'Python loads in the background. Reading questions work straight away.' };
+      // Python has not been asked for yet: normally for a moment before the shell warms it up, and for
+      // as long as the student stays off coding pages when the browser reports data saver.
+      return { tone: 'idle', text: 'Python not started', version: 'Python', announce: 'Python has not started', title: 'Python starts when you open a coding question or the Playground.' };
     case 'loading':
       return { tone: 'loading', text: secs > 0 ? `Starting Python ${secs} s` : 'Starting Python', version: 'Python', announce: 'Python is starting', title: `${s.stage || 'Loading'}. Reading questions work while Python starts.` };
     case 'ready':

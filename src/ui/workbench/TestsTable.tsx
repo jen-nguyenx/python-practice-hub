@@ -115,6 +115,11 @@ function gotText(o: TestOutcome, program: boolean): string {
   return o.got ?? '';
 }
 
+/** The button that runs the hidden tests on this format: "Submit" on the editor formats, "Check" on the rest. */
+export type RunsOn = 'submit' | 'check';
+
+const RUNS_TEXT: Record<RunsOn, string> = { submit: 'Runs when you submit', check: 'Runs when you check' };
+
 export interface TestRowsProps {
   tests: readonly Test[];
   result: TestsResult | null;
@@ -123,9 +128,11 @@ export interface TestRowsProps {
   onExplain?: () => void;
   /** Shown instead of rows when there is nothing to list. */
   emptyText?: string;
+  /** Names the real button in the "Runs when you …" line on hidden rows. */
+  runsOn?: RunsOn;
 }
 
-export function TestRows({ tests, result, revealed, onExplain, emptyText }: TestRowsProps) {
+export function TestRows({ tests, result, revealed, onExplain, emptyText, runsOn = 'submit' }: TestRowsProps) {
   const byId = new Map(tests.map((t) => [t.id, t]));
   const blocking = result ? result.compileError ?? result.topLevelError : undefined;
   const ran = new Set(result?.outcomes.map((o) => o.id) ?? []);
@@ -154,20 +161,21 @@ export function TestRows({ tests, result, revealed, onExplain, emptyText }: Test
       <ul class="tr-list">
         {tests.map((t) => {
           const o = result?.outcomes.find((x) => x.id === t.id);
-          return <TestRow key={t.id} t={t} o={ran.has(t.id) ? o : undefined} revealed={revealed} blocked={!!result && !!(blocking || result.missingFunction)} />;
+          return <TestRow key={t.id} t={t} o={ran.has(t.id) ? o : undefined} revealed={revealed} blocked={!!result && !!(blocking || result.missingFunction)} runsOn={runsOn} />;
         })}
-        {result?.outcomes.filter((o) => !byId.has(o.id)).map((o) => <TestRow key={o.id} o={o} revealed={revealed} blocked={false} />)}
+        {result?.outcomes.filter((o) => !byId.has(o.id)).map((o) => <TestRow key={o.id} o={o} revealed={revealed} blocked={false} runsOn={runsOn} />)}
       </ul>
     </div>
   );
 }
 
-function TestRow({ t, o, revealed, blocked }: { t?: Test; o?: TestOutcome; revealed: boolean; blocked: boolean }) {
+function TestRow({ t, o, revealed, blocked, runsOn = 'submit' }: { t?: Test; o?: TestOutcome; revealed: boolean; blocked: boolean; runsOn?: RunsOn }) {
   const hidden = (o?.hidden ?? t?.hidden ?? false) && !revealed;
   const program = !t?.call;
   const state = !o || o.notRun || blocked ? 'idle' : o.pass ? 'pass' : 'fail';
   const tag = o?.tag ?? t?.tag;
-  const tagLabel = state === 'fail' ? mistakeLabel(tag) : undefined;
+  // A test that timed out never got as far as comparing values, so it says nothing about the mistake it looks for.
+  const tagLabel = state === 'fail' && !o?.timedOut ? mistakeLabel(tag) : undefined;
   const detections = o && state === 'fail' ? o.detections.filter((d) => d !== tag).map(mistakeLabel).filter(Boolean) : [];
   const label = o?.label ?? t?.label ?? '';
   const expected = o?.expected ?? t?.expect ?? t?.expectStdout ?? '';
@@ -182,7 +190,7 @@ function TestRow({ t, o, revealed, blocked }: { t?: Test; o?: TestOutcome; revea
         {icon}
         <span class="tr-main">
           <span class="tr-hidden"><Icon name="lock" size={12} /> Hidden test</span> <span class="tr-label">{label}</span>
-          {state === 'idle' && !o ? <span class="tr-sub">Runs when you submit</span> : null}
+          {state === 'idle' && !o ? <span class="tr-sub">{RUNS_TEXT[runsOn]}</span> : null}
           {tagLabel ? <span class="tr-sub">Checks for: {tagLabel}</span> : null}
         </span>
       </li>
@@ -219,6 +227,6 @@ function TestRow({ t, o, revealed, blocked }: { t?: Test; o?: TestOutcome; revea
 }
 
 /** Backwards-compatible wrapper: rows with a one-line summary (used in flowing contexts). */
-export function TestsTable({ result, tests, revealed, onExplain }: { result: TestsResult; tests: readonly Test[]; revealed: boolean; title?: string; onExplain?: () => void }) {
-  return <TestRows tests={tests} result={result} revealed={revealed} onExplain={onExplain} />;
+export function TestsTable({ result, tests, revealed, onExplain, runsOn }: { result: TestsResult; tests: readonly Test[]; revealed: boolean; title?: string; onExplain?: () => void; runsOn?: RunsOn }) {
+  return <TestRows tests={tests} result={result} revealed={revealed} onExplain={onExplain} runsOn={runsOn} />;
 }

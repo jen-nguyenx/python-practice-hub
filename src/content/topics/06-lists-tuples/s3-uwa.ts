@@ -244,6 +244,119 @@ print(marks)`,
       },
       selfExplain: 'Why does the inner loop use range(len(row) - 1) instead of range(len(row))?',
     },
+
+    // ------------------------------------------------------------------ q4 write (hard)
+    {
+      id: 't06-s3-q4',
+      format: 'write',
+      kind: 'function',
+      diff: 'hard',
+      core: true,
+      title: 'Median mark for the unit report',
+      prompt:
+        'The unit coordinator reports the median quiz mark, because one or two very low marks drag the average down.\n\n' +
+        'Write `median_and_above(marks)` that takes a list of marks (ints) and returns a **tuple** `(median, above)`:\n\n' +
+        '- `median` is the middle mark once the marks are in order, rounded to 2 decimal places. With an even number of marks it is the mean of the two middle marks.\n' +
+        '- `above` is an int: how many marks are **strictly greater** than that median.\n' +
+        '- Return `None` if `marks` is empty.\n' +
+        '- `marks` must still be in its original order after the call.\n\n' +
+        'For example, `median_and_above([72, 58, 91])` returns `(72, 1)` and `median_and_above([72, 58, 91, 60])` returns `(66.0, 2)`.',
+      fnName: 'median_and_above',
+      starter: `def median_and_above(marks):
+    """Return (median rounded to 2 dp, how many marks beat it), or None if marks is empty."""
+    pass`,
+      tests: [
+        {
+          id: 'v1',
+          call: 'median_and_above([72, 58, 91])',
+          expect: '(72, 1)',
+          label: 'three marks',
+          hidden: false,
+        },
+        {
+          id: 'v2',
+          call: 'median_and_above([72, 58, 91, 60])',
+          expect: '(66.0, 2)',
+          cmp: 'float',
+          label: 'four marks, median between two',
+          hidden: false,
+        },
+        {
+          id: 'h1',
+          call: 'median_and_above([])',
+          expect: 'None',
+          label: 'no marks',
+          hidden: true,
+          tag: 'index_out_of_range',
+        },
+        {
+          id: 'h2',
+          call: 'median_and_above([50])',
+          expect: '(50, 0)',
+          label: 'one mark',
+          hidden: true,
+        },
+        {
+          id: 'h3',
+          call: 'median_and_above([70, 70, 70])',
+          expect: '(70, 0)',
+          label: 'every mark the same',
+          hidden: true,
+        },
+        {
+          id: 'h4',
+          call: 'median_and_above([40, 45])',
+          expect: '(42.5, 1)',
+          cmp: 'float',
+          label: 'two marks, median is a half',
+          hidden: true,
+          tag: 'off_by_one_range',
+        },
+        {
+          id: 'h5',
+          setup: 'quiz = [88, 45, 61, 61, 92]',
+          call: 'median_and_above(quiz)',
+          expect: '(61, 2)',
+          argsUnchanged: ['quiz'],
+          label: 'the coordinator\'s list is not reordered',
+          hidden: true,
+          tag: 'mutated_input',
+        },
+      ],
+      concepts: ['sorted', 'median', 'tuple-return', 'round', 'integer-division'],
+      detects: ['mutated_input', 'none_from_inplace', 'index_out_of_range', 'off_by_one_range', 'return_type_wrong'],
+      expectedSec: 480,
+      hints: [
+        'Two jobs, in order: find the middle of a sorted copy, then count how many marks beat it. Sorting a copy is what keeps the caller\'s list in its original order.',
+        'Plan: return `None` for an empty list first. Make `ordered = sorted(marks)` and let `middle = len(ordered) // 2`. If the length is odd, the median is `ordered[middle]`; if it is even, it is the mean of `ordered[middle - 1]` and `ordered[middle]`. Then loop over the marks counting the ones greater than the median, and return the tuple with the median rounded.',
+        '```python\nordered = sorted(marks)\nmiddle = len(ordered) // 2\nif len(ordered) % 2 == 1:\n    median = ordered[middle]\nelse:\n    median = (ordered[middle - 1] + ordered[middle]) / 2\n```',
+      ],
+      solution: {
+        code: `def median_and_above(marks):
+    """Return (median rounded to 2 dp, how many marks beat it), or None if marks is empty."""
+    if len(marks) == 0:
+        return None
+    ordered = sorted(marks)
+    middle = len(ordered) // 2
+    if len(ordered) % 2 == 1:
+        median = ordered[middle]
+    else:
+        median = (ordered[middle - 1] + ordered[middle]) / 2
+    above = 0
+    for mark in marks:
+        if mark > median:
+            above += 1
+    return (round(median, 2), above)`,
+        explanation:
+          'The empty list is handled first, before anything indexes into the list or divides by its length.\n\n' +
+          '`sorted(marks)` returns a new sorted list, so the coordinator\'s list keeps its original order. `marks.sort()` would reorder their data, and `ordered = marks.sort()` would set `ordered` to `None`.\n\n' +
+          '`middle = len(ordered) // 2` uses floor division, so it is a position, not a fraction. For 3 marks it is 1, the middle of 0, 1, 2. For 4 marks it is 2, the first of the two upper marks.\n\n' +
+          'With an odd length, `ordered[middle]` is the median. With an even length, the two middle marks are at `middle - 1` and `middle`, and their mean is the median. `/` here is deliberate: `[40, 45]` has a median of 42.5, and `//` would report 42.\n\n' +
+          '`above` counts the marks strictly greater than the median. Looping over `marks` or over `ordered` gives the same count, since both hold the same values.\n\n' +
+          'The answer is a tuple built with round brackets, with the median rounded only at the end. `round` leaves a whole number as an int, so `(72, 1)` comes back for three marks, which is what the spec shows.',
+      },
+      selfExplain: 'Why is the median found with sorted(marks) rather than marks.sort()?',
+    },
   ],
 };
 

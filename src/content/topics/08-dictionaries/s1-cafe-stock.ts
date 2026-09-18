@@ -163,6 +163,109 @@ print(stock)`,
       },
       selfExplain: 'Why does counts.get(order, 0) + 1 never raise KeyError, while counts[order] += 1 can?',
     },
+    {
+      id: 't08-s1-q4',
+      format: 'write',
+      kind: 'function',
+      diff: 'hard',
+      core: false,
+      title: 'Tonight\'s restock list',
+      prompt:
+        'At closing time the manager wants to know what to reorder.\n\n' +
+        '- `stock` is a dictionary mapping each item to how many were on the shelf this morning.\n' +
+        '- `sales` is a list of item names, one entry per item sold today. A few sales are special orders that were never on the shelf: **ignore** any sale of an item that is not a key of `stock`.\n' +
+        '- `threshold` is an int.\n\n' +
+        'Write `restock_list(stock, sales, threshold)` that returns a **list of tuples** `(item, left)` for every item whose remaining count is ' +
+        '**at most** `threshold`, where `left` is this morning\'s count minus the sales of that item. ' +
+        'Sort the list by remaining count from lowest to highest, and items on the same count A to Z. ' +
+        'Return `[]` when nothing needs reordering. **Do not change `stock`.**\n\n' +
+        "Example: `restock_list({'flat white': 5, 'muffin': 2, 'scone': 7}, ['muffin', 'flat white', 'muffin'], 4)` returns `[('muffin', 0), ('flat white', 4)]`.",
+      fnName: 'restock_list',
+      starter: `def restock_list(stock, sales, threshold):
+    """Return (item, left) tuples for items down to threshold or below, lowest count first."""
+    pass`,
+      tests: [
+        {
+          id: 'v1',
+          call: "restock_list({'flat white': 5, 'muffin': 2, 'scone': 7}, ['muffin', 'flat white', 'muffin'], 4)",
+          expect: "[('muffin', 0), ('flat white', 4)]",
+          label: 'two items at or below the threshold',
+          hidden: false,
+        },
+        {
+          id: 'v2',
+          call: "restock_list({'flat white': 5, 'muffin': 2, 'scone': 7}, ['muffin', 'flat white', 'muffin'], 0)",
+          expect: "[('muffin', 0)]",
+          label: 'threshold 0',
+          hidden: false,
+        },
+        { id: 'h1', call: "restock_list({}, ['chai'], 3)", expect: '[]', label: 'nothing on the shelf', hidden: true },
+        {
+          id: 'h2',
+          call: "restock_list({'chai': 3}, ['latte', 'chai'], 2)",
+          expect: "[('chai', 2)]",
+          label: 'a sale of an item that was never on the shelf',
+          hidden: true,
+          tag: 'dict_keyerror',
+        },
+        {
+          id: 'h3',
+          call: "restock_list({'bagel': 1, 'apple': 1}, [], 1)",
+          expect: "[('apple', 1), ('bagel', 1)]",
+          label: 'two items on the same count',
+          hidden: true,
+          tag: 'sort_tiebreak',
+        },
+        {
+          id: 'h4',
+          call: "restock_list({'wrap': 3, 'sushi': 8}, ['wrap'], 1)",
+          expect: '[]',
+          label: 'nothing needs reordering',
+          hidden: true,
+          tag: 'return_type_wrong',
+        },
+        {
+          id: 'h5',
+          setup: "stock = {'wrap': 3}",
+          call: "restock_list(stock, ['wrap'], 5)",
+          expect: "[('wrap', 2)]",
+          argsUnchanged: ['stock'],
+          label: 'the stock dictionary is not changed',
+          hidden: true,
+          tag: 'mutated_input',
+        },
+      ],
+      concepts: ['dict-copy', 'in-membership', 'dict-items', 'sort-key', 'tie-break'],
+      detects: ['mutated_input', 'dict_keyerror', 'sort_tiebreak', 'return_type_wrong', 'aliasing_copy'],
+      expectedSec: 600,
+      hints: [
+        'Three steps: work out what is left for every item, pick the items that are low enough, then put them in order. The counts you subtract from must not be the manager\'s own dictionary.',
+        'Plan: build a new dictionary `left` holding a copy of every count in `stock`. For each sale, if the item is a key of `left`, take 1 off it. Then build a list of `(item, count)` tuples for the items at or below the threshold, sort it, and return it.',
+        'Copy with a loop: `for item in stock:` then `left[item] = stock[item]`. Guard each sale with `if item in left:`. The sort key is `lambda pair: (pair[1], pair[0])` — no minus sign, because the lowest count comes first.',
+      ],
+      solution: {
+        code: `def restock_list(stock, sales, threshold):
+    left = {}
+    for item in stock:
+        left[item] = stock[item]
+    for item in sales:
+        if item in left:
+            left[item] = left[item] - 1
+    low = []
+    for item in left:
+        if left[item] <= threshold:
+            low.append((item, left[item]))
+    low.sort(key=lambda pair: (pair[1], pair[0]))
+    return low`,
+        explanation:
+          '- The first loop copies every count into a new dictionary `left`. Writing `left = stock` would give the same dictionary a second name, and subtracting the sales would wipe out the manager\'s morning figures. `dict(stock)` and `stock.copy()` do the same job in one line.\n' +
+          '- `for item in sales:` walks the sales one at a time. `if item in left:` skips a special order that was never on the shelf; without it, `left[item] - 1` would raise `KeyError` on the first such sale.\n' +
+          '- The third loop collects `(item, count)` tuples for the low items. `<= threshold` includes an item sitting exactly on the threshold, which is what "at most" means.\n' +
+          '- `low.sort(key=lambda pair: (pair[1], pair[0]))` sorts by count first, and by name for items on the same count. The counts go lowest first, so there is no minus sign here; the name part sorts A to Z either way.\n' +
+          '- An empty `stock` produces an empty `low`, and the function returns `[]` rather than `None` or a dictionary.',
+      },
+      selfExplain: 'What would the argsUnchanged test show if the first loop were replaced with left = stock?',
+    },
   ],
 };
 

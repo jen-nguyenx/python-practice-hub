@@ -39,5 +39,13 @@
       "outLeft": "[58, 72, 91]\n[72, 58, 91]\n",
       "outRight": "None\n[58, 72, 91]\n"
     }
+  },
+  "t06-s5-q2": {
+    "error": {
+      "line": 5,
+      "message": "min() iterable argument is empty",
+      "type": "ValueError"
+    },
+    "stdout": ""
   }
 }

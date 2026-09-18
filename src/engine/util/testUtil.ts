@@ -60,7 +60,7 @@ export const testResult = (kind: 'topic-test' | 'midsem', topicIds: TopicId[], s
 
 export function meta(qid: string, format: Format, extra: Partial<QuestionMeta> = {}): QuestionMeta {
   return {
-    qid, topicId: topicIdOf(qid), scenarioId: qid.slice(0, 6), format, diff: 'easy', core: true, title: qid, concepts: [], detects: [],
+    qid, topicId: topicIdOf(qid), scenarioId: qid.slice(0, 6), scenarioTitle: qid.slice(0, 6), format, diff: 'easy', core: true, title: qid, concepts: [], detects: [],
     expectedSec: 120, ...extra,
   };
 }

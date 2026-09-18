@@ -10,12 +10,20 @@ import { Icon } from '../../components/Icon.tsx';
 import { Skeleton } from '../../components/Skeleton.tsx';
 import { Tooltip } from '../../components/Tooltip.tsx';
 
+/** "min 5 · 1 coding": the minimum has two parts, so a tile with 5 reading answers cannot read as done. */
+function minimumText(p: TopicProgress) {
+  return p.minimum.code > 0 ? `min ${p.minimum.solve} · ${p.minimum.code} coding` : `min ${p.minimum.solve}`;
+}
+
 function tileLabel(t: TopicMeta, p: TopicProgress, current: boolean) {
   const parts = [`${t.num} ${t.short}`];
   if (p.state === 'locked') parts.push('locked');
   else {
     parts.push(`${p.solved} of ${p.total} solved`);
-    parts.push(p.minimumMet ? 'minimum met' : `minimum ${p.minimum.solve}`);
+    const min = p.minimum.code > 0
+      ? `minimum ${p.minimum.solve} solved including ${p.minimum.code} coding`
+      : `minimum ${p.minimum.solve} solved`;
+    parts.push(p.minimumMet ? 'minimum met' : min);
     if (current) parts.push('current topic');
   }
   return parts.join(', ');
@@ -38,8 +46,8 @@ function Tile({ t, p, current }: { t: TopicMeta; p: TopicProgress; current: bool
       <span class="tile-name" aria-hidden="true">{t.short}</span>
       <span class="tile-bar" aria-hidden="true"><span class="tile-fill" style={{ width: `${locked ? 0 : pct}%` }} /></span>
       <span class="tile-foot" aria-hidden="true">
-        <span>{p.solved}/{p.total}</span>
-        <span>{locked ? '' : p.minimumMet ? 'done' : `min ${p.minimum.solve}`}</span>
+        <span class="tile-count">{p.solved}/{p.total}</span>
+        <span class="tile-min">{locked ? 'Locked' : p.minimumMet ? 'done' : minimumText(p)}</span>
       </span>
     </a>
   );

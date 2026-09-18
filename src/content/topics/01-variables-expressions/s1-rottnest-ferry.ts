@@ -176,6 +176,62 @@ const scenario: Scenario = {
       },
       selfExplain: 'What would ferry_duration(105) return if gap 1 were / instead of //?',
     },
+    {
+      id: 't01-s1-q4',
+      format: 'write',
+      kind: 'function',
+      diff: 'hard',
+      core: false,
+      title: 'Arrival time on the clock',
+      prompt:
+        'The last sailing of the day leaves late in the evening and arrives after midnight, so the board has to wrap the clock around.\n\n' +
+        'Complete `ferry_arrival(depart_minutes, trip_minutes)` so it **returns** the arrival time as a string on a 24-hour clock, in the form `HH:MM`, with **two digits in both halves**.\n\n' +
+        '- `depart_minutes` is the departure time as whole minutes after midnight, from 0 to 1439. `540` is 09:00.\n' +
+        '- `trip_minutes` is a whole number of minutes, 0 or more, and may be longer than a whole day.\n' +
+        '- A trip that runs past midnight wraps: departing at 1380 (23:00) on a 105 minute trip arrives at `00:45`.\n\n' +
+        'Formatting tip: in an f-string, `{value:02d}` shows `7` as `07`.',
+      concepts: ['modulo', 'floor-division', 'f-strings', 'return-value'],
+      detects: ['int_vs_float_division', 'print_vs_return', 'str_int_concat'],
+      expectedSec: 420,
+      fnName: 'ferry_arrival',
+      starter: py(
+        'def ferry_arrival(depart_minutes, trip_minutes):',
+        '    """Return the arrival time as \'HH:MM\' on a 24-hour clock."""',
+        '    pass',
+      ),
+      tests: [
+        { id: 'v1', call: 'ferry_arrival(540, 105)', expect: "'10:45'", label: '09:00 sailing', hidden: false },
+        { id: 'v2', call: 'ferry_arrival(725, 105)', expect: "'13:50'", label: '12:05 sailing', hidden: false },
+        { id: 'h1', call: 'ferry_arrival(1380, 105)', expect: "'00:45'", label: 'arrives after midnight', hidden: true },
+        { id: 'h2', call: 'ferry_arrival(600, 60)', expect: "'11:00'", label: 'lands on the hour', hidden: true, tag: 'int_vs_float_division' },
+        { id: 'h3', call: 'ferry_arrival(0, 0)', expect: "'00:00'", label: 'midnight, no trip', hidden: true },
+        { id: 'h4', call: 'ferry_arrival(1439, 1)', expect: "'00:00'", label: 'one minute before midnight', hidden: true },
+        { id: 'h5', call: 'ferry_arrival(1380, 1500)', expect: "'00:00'", label: 'trip longer than a day', hidden: true },
+      ],
+      hints: [
+        'Add the two numbers first. The sum can be 1485 or more, which is past the end of the day, so it has to come back into the range 0 to 1439 before you split it into hours and minutes.',
+        'Plan: add the departure and the trip; bring the total back inside one day (a day is 24 * 60 minutes, and `%` is the operator that wraps a number into a range); split that into whole hours and left-over minutes; build the text with an f-string.',
+        'Start with `arrive = (depart_minutes + trip_minutes) % (24 * 60)`. Then `arrive // 60` and `arrive % 60` are the two halves of the clock, and each needs `:02d` inside the f-string.',
+      ],
+      solution: {
+        code: py(
+          'def ferry_arrival(depart_minutes, trip_minutes):',
+          '    """Return the arrival time as \'HH:MM\' on a 24-hour clock."""',
+          '    arrive = (depart_minutes + trip_minutes) % (24 * 60)',
+          '    hours = arrive // 60',
+          '    minutes = arrive % 60',
+          "    return f'{hours:02d}:{minutes:02d}'",
+        ),
+        explanation:
+          '- Line 3 adds the two times, then `% 1440` wraps the result into one day. For 1380 + 105 = 1485, `1485 % 1440` is `45`, which is 00:45. ' +
+          'The same `%` also handles a trip longer than a day, because it keeps subtracting whole days until the value fits.\n' +
+          '- Line 4 uses `//`, not `/`. `45 / 60` is `0.75`, and `{0.75:02d}` raises `ValueError: Unknown format code \'d\' for object of type \'float\'`.\n' +
+          '- Line 5 takes the minutes left over after the whole hours.\n' +
+          '- Line 6 pads each half to two digits: without `02d` the answer would be `0:45`, and a time board never shows that.\n' +
+          '- The brackets in `(depart_minutes + trip_minutes) % (24 * 60)` matter: `%` binds tighter than `+`, so without them only `trip_minutes` would be wrapped.',
+      },
+      selfExplain: 'What does ferry_arrival(1380, 105) return if you leave out the % (24 * 60)?',
+    },
   ],
 };
 

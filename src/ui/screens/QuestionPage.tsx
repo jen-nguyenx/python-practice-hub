@@ -32,7 +32,7 @@ import { ResultCard } from '../workbench/ResultBanner.tsx';
 import { RulesList } from '../workbench/RuleViolations.tsx';
 import { ScratchEditor } from '../workbench/ScratchEditor.tsx';
 import { isEditableTarget } from '../workbench/shortcuts.ts';
-import { compactResponse, flagsOf, hintGate } from '../workbench/hints.ts';
+import { checkVerb, compactResponse, flagsOf, hintGate, restoredChecks, restoredHintTier } from '../workbench/hints.ts';
 import { backupDraft, takeDraftBackup } from '../workbench/unsaved.ts';
 import '../workbench/questionPage.css';
 
@@ -246,18 +246,33 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   });
 
   const visibleMs = useVisibleClock();
-  const [checkNo, setCheckNo] = useState(0);
-  const [failed, setFailed] = useState(0);
+  const [checkNoHere, setCheckNo] = useState(0);
+  const [failedHere, setFailed] = useState(0);
   const [solved, setSolved] = useState(false);
   const [revealedHere, setRevealedHere] = useState(false);
   const [shown, setShown] = useState<ShownResult | null>(null);
-  const [hintTier, setHintTier] = useState<0 | 1 | 2 | 3>(0);
+  const [hintTierHere, setHintTier] = useState<0 | 1 | 2 | 3>(0);
   const shownAt = useRef<number[]>([0, 0, 0, 0]);
   const checksAt = useRef<number[]>([0, 0, 0, 0]);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   // A shown answer is remembered from the event log (reveal events), so leaving and coming back keeps the question
   // revealed: answers stay visible, input stays locked and later checks earn no credit.
   const revealed = revealedHere || (practice && (stats.get(q.id)?.revealed ?? false));
+  // Revealed hints are remembered the same way (hint events), so a reload re-shows the hint text and keeps the
+  // credit multiplier: a student cannot clear the hint penalty by reloading.
+  const hintTier = Math.max(hintTierHere, practice ? restoredHintTier(events, q.id, q.hints.length) : 0) as 0 | 1 | 2 | 3;
+  // Checks already used are remembered too (attempt events), so the checks left, the hint gate and the auto-reveal
+  // when the limit runs out all survive leaving the page: reloading before the last check no longer buys a new one.
+  // A question that is already finished (solved, or the answer shown) starts fresh instead, so it can be practised
+  // again without the old checks locking its Check button.
+  const finished = revealed || (practice && (stats.get(q.id)?.solved ?? false));
+  const priorChecks = useMemo(
+    () => (practice && !finished ? restoredChecks(events, q.id) : { checks: 0, failed: 0 }),
+    [events, q.id, practice, finished],
+  );
+  const checkNo = Math.max(checkNoHere, priorChecks.checks);
+  const failed = Math.max(failedHere, priorChecks.failed);
 
   // Latest values for callbacks that formats call after async work.
   const live = useRef({ checkNo, failed, revealed, hintTier, solved });
@@ -332,13 +347,14 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
 
   // Hints close for good once the question is solved or the answer is shown.
   const hintsClosed = revealed ? 'The answer is shown, so hints are closed' : solved ? 'Solved, so hints are closed' : null;
-  const gate = hintGate(hintTier, checkNo, visibleMs(), shownAt.current, checksAt.current);
+  const verb = checkVerb(q.format);
+  const gate = hintGate(hintTier, checkNo, visibleMs(), shownAt.current, checksAt.current, verb);
   useTicker(hintTier < 3 && !gate.available && !hintsClosed);
   const showHint = () => {
     const cur = live.current;
     if (cur.revealed || cur.solved) return;
     const t = cur.hintTier;
-    const g = hintGate(t, cur.checkNo, visibleMs(), shownAt.current, checksAt.current);
+    const g = hintGate(t, cur.checkNo, visibleMs(), shownAt.current, checksAt.current, verb);
     if (!g.available || t >= Math.min(3, q.hints.length)) return;
     const nt = (t + 1) as 1 | 2 | 3;
     const now = visibleMs();
@@ -349,6 +365,19 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
     setHintTier(nt);
     safeAppend({ type: 'hint', qid: q.id, topicId, tier: nt, dwellMs });
   };
+
+  // After a check, a format component often replaces the button that was pressed, which drops keyboard focus to
+  // <body>. When that happens, move focus to the result ("Next question" if it is offered, otherwise the card) so
+  // a keyboard user carries on from the result instead of tabbing from the top of the page. Focus is never taken
+  // from an element that is still there (the editor, a still-present Check button).
+  useEffect(() => {
+    if (!shown) return;
+    const el = document.activeElement;
+    if (el && el !== document.body && el !== document.documentElement && el.isConnected) return;
+    const card = resultRef.current;
+    if (!card) return;
+    (card.querySelector<HTMLElement>('.result-next') ?? card).focus();
+  }, [shown]);
 
   // Keyboard: next/previous question and next hint.
   const keyRef = useRef({ showHint, prev, next });
@@ -391,12 +420,23 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
 
   const h: HintState = { hints: q.hints, tier: hintTier, available: gate.available, unlockText: gate.text, onShow: showHint, closedReason: hintsClosed };
   const total = hintTotal(h);
-  const freeReveal = failed >= 2 || (mode === 'paper' && checkNo > 0);
+  // Once the question is solved there is nothing left to lose, so the model answer opens without the confirm and
+  // the link says plainly what it does.
+  const freeReveal = solved || failed >= 2 || (mode === 'paper' && checkNo > 0);
   const testMode = mode === 'topic-test' || mode === 'midsem';
-  const revealControl = <RevealControl revealed={revealed} free={freeReveal} onReveal={reveal} hidden={testMode} />;
+  const revealControl = (
+    <RevealControl
+      revealed={revealed}
+      free={freeReveal}
+      onReveal={reveal}
+      hidden={testMode}
+      label={solved ? 'Show the model answer' : 'Reveal full answer'}
+    />
+  );
 
   const resultCard = (
     <ResultCard
+      cardRef={resultRef}
       result={shown?.res ?? null}
       credit={shown?.credit ?? 0}
       hints={shown?.hints ?? 0}

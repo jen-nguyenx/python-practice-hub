@@ -26,6 +26,13 @@ export const FILL_ROUTES: Route['name'][] = ['playground'];
 /** Routes where a tour popping up would get in the way (timed tests). */
 const NO_TOUR_ROUTES: Route['name'][] = ['topic-test', 'midsem'];
 
+/** True when the browser says the student is on data saver or a slow mobile connection. */
+function savingData(): boolean {
+  const c = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  if (!c) return false;
+  return c.saveData === true || c.effectiveType === '2g' || c.effectiveType === 'slow-2g';
+}
+
 function scheduleIdle(fn: () => void) {
   const w = window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number };
   if (typeof w.requestIdleCallback === 'function') w.requestIdleCallback(fn, { timeout: 1500 });
@@ -47,10 +54,13 @@ export function AppShell({ route, children }: { route: Route; children: Componen
     else root.removeAttribute('data-motion');
   }, [settings.reducedMotion]);
 
-  // Start Python once, after the first paint.
+  // Start Python once, after the first paint. Loading the runtime costs about 10 MB, so a student on
+  // data saver or a slow mobile connection waits until a page actually needs Python: every code
+  // question, the Playground and the tests warm it up themselves, and the pill can start it by hand.
   useEffect(() => {
     if (warmed.current) return;
     warmed.current = true;
+    if (savingData()) return;
     scheduleIdle(() => {
       try { py.warmUp(); } catch { /* the pill shows the error state */ }
     });
@@ -98,8 +108,10 @@ export function AppShell({ route, children }: { route: Route; children: Componen
     e.preventDefault();
     const main = mainRef.current;
     if (!main) return;
-    main.focus();
-    main.scrollIntoView();
+    // preventScroll + an explicit pane scroll: main.scrollIntoView() would scroll the document itself and
+    // push the fixed frame off-screen (html/body never scroll in this app).
+    main.focus({ preventScroll: true });
+    main.scrollTo({ top: 0 });
   };
 
   return (

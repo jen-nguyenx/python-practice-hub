@@ -276,6 +276,72 @@ def economy_rate(overs):
       },
       selfExplain: 'Why does dict(season) on its own still change the old season when an existing player scores?',
     },
+
+    // ---------------------------------------------------------------- q4 testWriter
+    {
+      id: 't11-s3-q4',
+      format: 'testWriter',
+      diff: 'hard',
+      core: false,
+      title: 'Break the lowest-score helper',
+      prompt: md(
+        'Two versions of `lowest_score(scores)` were handed in for the season report. One follows the specification below exactly; the other is wrong for a whole family of inputs.',
+        '',
+        'Enter an argument tuple that makes the two versions return different values.',
+      ),
+      fnName: 'lowest_score',
+      spec: md(
+        '`lowest_score(scores)` takes a list of ints, one score per innings. Every score is 0 or more.',
+        '',
+        '- It returns the smallest score in the list.',
+        '- It returns `None` when the list is empty.',
+        '- It does not change the list it is given, and it prints nothing.',
+      ),
+      reference: `def lowest_score(scores):
+    """Return the smallest score, or None for an empty list."""
+    if len(scores) == 0:
+        return None
+    lowest = scores[0]
+    for score in scores:
+        if score < lowest:
+            lowest = score
+    return lowest`,
+      buggy: `def lowest_score(scores):
+    """Return the smallest score, or None for an empty list."""
+    if len(scores) == 0:
+        return None
+    lowest = 0
+    for score in scores:
+        if score < lowest:
+            lowest = score
+    return lowest`,
+      bugMistake: 'accumulator_init',
+      argsExample: '([0, 45, 12],)',
+      concepts: ['edge-cases', 'test-design', 'accumulator-init', 'minimum'],
+      detects: ['accumulator_init', 'index_out_of_range', 'return_type_wrong'],
+      expectedSec: 420,
+      hints: [
+        'Both versions loop the same way and both handle the empty list. The difference is what the running answer starts at, so ask which starting value could survive to the end.',
+        'One version starts from a score that is really in the list; the other starts from a number the batter may never have made. Think about which lists contain a score smaller than that starting number, and which do not.',
+        'The empty list gives `None` from both versions, and a list that contains a duck gives the same answer from both. Try three innings where every score is above 0, such as 45, 12 and 78.',
+      ],
+      solution: {
+        code: '([45, 12, 78],)',
+        explanation: md(
+          'The buggy version starts its running minimum at `lowest = 0` instead of at the first score, so it can only ever return 0 or something below 0. Because every score is 0 or more, 0 wins whenever the batter was never out for a duck.',
+          '',
+          'With `([45, 12, 78],)` the correct version returns `12` and the buggy version returns `0`.',
+          '',
+          'Inputs that do **not** expose it:',
+          '',
+          '- `([],)` returns `None` from both, because the guard runs before the starting value is chosen.',
+          '- `([0, 45, 12],)` contains a duck, so 0 really is the smallest score and both versions agree. That is why it is safe as the example in the box.',
+          '',
+          'This is the accumulator-start mistake in its usual disguise. A running total may start at 0, because adding 0 changes nothing, but a running minimum or maximum must start at a value taken from the data, which is also why the empty list has to be dealt with first.',
+        ),
+      },
+      selfExplain: 'If scores could be negative, would ([45, 12, 78],) still be the first input you would try?',
+    },
   ],
 };
 

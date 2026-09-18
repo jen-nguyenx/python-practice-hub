@@ -195,6 +195,72 @@ const scenario: Scenario = {
       },
       selfExplain: 'Why can at most one of the two copy-the-rest loops actually add anything?',
     },
+    {
+      id: 't07-s4-q4',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 12,
+      diff: 'hard',
+      core: true,
+      title: 'Longest dry spell (exam style)',
+      prompt:
+        '*Exam style, 12 marks. Write it by hand first, then submit once.*\n\n' +
+        'The observer wants the longest run of dry days in a batch. A reading of `0.0` is a dry day.\n\n' +
+        'Write `longest_dry_spell(readings)` that returns an **int**: the length of the longest run of consecutive `0.0` readings in the batch.\n\n' +
+        '- The value `-1` is the sentinel: stop there, and ignore it and everything after it.\n' +
+        '- Some batches were cut off and have **no** `-1`: then use every reading.\n' +
+        '- Return `0` when there are no dry days at all, and for an empty list.\n' +
+        '- Use a `while` loop with an index. Do not use `import`.\n\n' +
+        'Example: `longest_dry_spell([0.0, 0.0, 3.2, 0.0, -1])` returns `2`.',
+      fnName: 'longest_dry_spell',
+      starter: `def longest_dry_spell(readings):
+    """Return the length of the longest run of 0.0 readings before the -1 sentinel."""
+    pass`,
+      rules: ['noImport'],
+      tests: [
+        { id: 'v1', call: 'longest_dry_spell([0.0, 0.0, 3.2, 0.0, -1])', expect: '2', label: 'a run of two, then a run of one', hidden: false },
+        { id: 'v2', call: 'longest_dry_spell([1.0, 2.0, -1])', expect: '0', label: 'no dry days', hidden: false },
+        { id: 'h1', call: 'longest_dry_spell([])', expect: '0', label: 'empty batch', hidden: true, tag: 'index_out_of_range' },
+        { id: 'h2', call: 'longest_dry_spell([0.0, 0.0, 0.0])', expect: '3', label: 'no sentinel (batch cut off)', hidden: true, tag: 'index_out_of_range' },
+        { id: 'h3', call: 'longest_dry_spell([0.0, -1, 0.0, 0.0, 0.0])', expect: '1', label: 'readings after the sentinel are ignored', hidden: true },
+        { id: 'h4', call: 'longest_dry_spell([3.0, 0.0])', expect: '1', label: 'the batch ends in the middle of a dry run', hidden: true, tag: 'off_by_one_range' },
+        { id: 'h5', call: 'longest_dry_spell([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1])', expect: '3', label: 'the longest run is not the last one', hidden: true, tag: 'accumulator_init' },
+        { id: 'h6', call: 'longest_dry_spell([-1, 0.0, 0.0])', expect: '0', label: 'sentinel first', hidden: true },
+      ],
+      concepts: ['while', 'sentinel', 'index', 'run-length', 'accumulator'],
+      detects: ['index_out_of_range', 'off_by_one_range', 'accumulator_init', 'infinite_while', 'return_type_wrong'],
+      expectedSec: 600,
+      hints: [
+        'You need two counters, not one: how long the run you are in is now, and the best run seen so far. A wet day ends the current run but must not touch the best.',
+        'Plan: set `longest` and `run` to 0 and `i` to 0. Loop while `i` is still inside the list **and** the reading is not `-1`. If the reading is `0.0`, add 1 to `run` and update `longest` when `run` beats it; otherwise set `run` back to 0. Always add 1 to `i`. Return `longest`.',
+        'The header is `while i < len(readings) and readings[i] != -1:`. Update the best straight after you lengthen the run: `if run > longest:` then `longest = run`.',
+      ],
+      solution: {
+        code: `def longest_dry_spell(readings):
+    longest = 0
+    run = 0
+    i = 0
+    while i < len(readings) and readings[i] != -1:
+        if readings[i] == 0.0:
+            run = run + 1
+            if run > longest:
+                longest = run
+        else:
+            run = 0
+        i = i + 1
+    return longest`,
+        explanation:
+          'A marker would look for these steps (12 marks):\n\n' +
+          '1. `longest`, `run` and `i` all set to 0 before the loop (2 marks). A batch with no dry days never touches `longest`, so it must already hold 0.\n' +
+          '2. `while i < len(readings) and readings[i] != -1:` — the index check comes **first**, so a batch with no sentinel stops at the end of the list instead of raising IndexError, and an empty list runs zero passes (3 marks).\n' +
+          '3. A dry day lengthens the run, any other reading resets it to 0 (3 marks). Resetting `longest` instead of `run` would throw away everything seen so far.\n' +
+          '4. `if run > longest: longest = run` inside the dry branch, so the best is updated while the run is still going (2 marks). Updating only when a run **ends** misses a run that reaches the end of the batch, which is what `[3.0, 0.0]` checks.\n' +
+          '5. `i = i + 1` outside the `if`, so it runs on wet days too, and `return longest` after the loop (2 marks).\n\n' +
+          'On `[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1]` the run reaches 3, drops to 0 at the wet day, climbs back to 2, and `longest` stays 3.',
+      },
+      selfExplain: 'Why must longest be updated inside the loop rather than after it?',
+    },
   ],
 };
 

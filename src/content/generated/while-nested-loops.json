@@ -67,5 +67,20 @@
         "25"
       ]
     ]
+  },
+  "t07-s5-q1": {
+    "twins": {
+      "differs": true,
+      "outLeft": "3 0\n",
+      "outRight": "4 -100\n"
+    }
+  },
+  "t07-s6-q2": {
+    "error": {
+      "line": 6,
+      "message": "list index out of range",
+      "type": "IndexError"
+    },
+    "stdout": "seats in this row: 5\n"
   }
 }

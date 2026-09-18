@@ -19,6 +19,13 @@
       ]
     ]
   },
+  "t03-s1-q4": {
+    "twins": {
+      "differs": true,
+      "outLeft": "Steps so far: 242\nSteps so far: 726\nSteps so far: 1452\n",
+      "outRight": "Steps so far: 1452\n"
+    }
+  },
   "t03-s2-q1": {
     "mutantOutputs": [
       "20 min\n15 min\n10 min\n5 min\n0 min\nTrain arriving\n",
@@ -64,5 +71,20 @@
         "8"
       ]
     ]
+  },
+  "t03-s5-q1": {
+    "error": {
+      "line": 3,
+      "message": "'float' object cannot be interpreted as an integer",
+      "type": "TypeError"
+    },
+    "stdout": ""
+  },
+  "t03-s6-q2": {
+    "twins": {
+      "differs": true,
+      "outLeft": "Fine: 10\n",
+      "outRight": "Fine: 15\n"
+    }
   }
 }

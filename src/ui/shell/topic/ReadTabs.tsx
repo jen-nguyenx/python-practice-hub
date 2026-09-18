@@ -42,7 +42,7 @@ export function CheatSheetTab({ topic }: { topic: Topic }) {
       <article class="tp-card tp-read-main">
         {sections.map((s, i) => (
           <section key={i} class="tp-cs-sec">
-            {s.title ? <h3 class="tp-read-h">{s.title}</h3> : null}
+            {s.title ? <h2 class="tp-read-h">{s.title}</h2> : null}
             {s.body ? <Markdown text={s.body} class="tp-md" /> : null}
           </section>
         ))}
@@ -61,7 +61,7 @@ export function WorkedExampleTab({ topic }: { topic: Topic }) {
     <div class="tp-read tp-we">
       <article class="tp-card tp-we-card">
         <p class="tp-label">Worked example</p>
-        <h3 class="tp-read-title">{ex.title}</h3>
+        <h2 class="tp-read-title">{ex.title}</h2>
         {hasCode ? <CodeBlock code={ex.code} numbered label={`Worked example code: ${ex.title}`} /> : null}
         {ex.steps.length ? (
           <ol class="tp-steps">
@@ -87,7 +87,7 @@ export function MistakesTab({ topic }: { topic: Topic }) {
         return (
           <li key={`${m.mistake}-${i}`} class="tp-card tp-cm">
             <div class="tp-cm-text">
-              <h3 class="tp-read-h">{def?.label ?? 'Common mistake'}</h3>
+              <h2 class="tp-read-h">{def?.label ?? 'Common mistake'}</h2>
               {m.note ? <Markdown text={m.note} class="tp-md tp-cm-note" /> : null}
             </div>
             <div class="tp-cm-pair">

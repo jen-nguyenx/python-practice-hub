@@ -403,7 +403,7 @@ export function checkTopicStatic(issues: Issues, info: TopicInfo, topic: Topic):
   }
   const scenarios = t.scenarios as Loose[];
   const seen = new Set<string>();
-  if (!stub && (scenarios.length < 3 || scenarios.length > 4)) sc.warn(`has ${scenarios.length} scenarios; CONTENT.md asks for 3 or 4`);
+  if (!stub && (scenarios.length < 3 || scenarios.length > 6)) sc.warn(`has ${scenarios.length} scenarios; CONTENT.md asks for 3 to 6`);
   for (const [i, s] of scenarios.entries()) {
     const sid = nonEmpty(s?.id) ? s.id : `t${info.num}-s${i + 1}?`;
     const ssc = scope(issues, info.id, sid);
@@ -411,7 +411,7 @@ export function checkTopicStatic(issues: Issues, info: TopicInfo, topic: Topic):
       ssc.error(`scenario id must look like t${info.num}-sK (K = 1..4)`);
     } else if (seen.has(s.id)) ssc.error('duplicate scenario id');
     else seen.add(s.id);
-    if (nonEmpty(s?.id) && Number(s.id.split('-s')[1]) > 4) ssc.warn('scenario number above 4');
+    if (nonEmpty(s?.id) && Number(s.id.split('-s')[1]) > 6) ssc.warn('scenario number above 6');
     if (!nonEmpty(s?.title)) ssc.error('scenario title is empty');
     if (!nonEmpty(s?.story)) ssc.warn('scenario story is empty');
     const qs = arr(s?.questions) as Question[];
@@ -454,21 +454,26 @@ export function checkTopicStatic(issues: Issues, info: TopicInfo, topic: Topic):
       if (q?.format === 'write' && q.mode === 'paper') paper++;
       if (q?.format === 'write' && q.kind === 'project') project++;
     }
+    // The CONTENT.md table is a MINIMUM, not a cap: topics may grow past it, but must not fall below it
+    // or lose a format, so every topic keeps its planned coverage.
     const diffs2: string[] = [];
-    if (qs.length !== mix.total) diffs2.push(`${qs.length} questions (target ${mix.total})`);
+    if (qs.length < mix.total) diffs2.push(`${qs.length} questions (at least ${mix.total} expected)`);
     const d = mix.diff;
-    if (diffs.easy !== d.easy || diffs.medium !== d.medium || diffs.hard !== d.hard) {
-      diffs2.push(`easy/medium/hard ${diffs.easy}/${diffs.medium}/${diffs.hard} (target ${d.easy}/${d.medium}/${d.hard})`);
-    }
+    const lowDiffs = [
+      diffs.easy < d.easy ? `easy ${diffs.easy}/${d.easy}` : '',
+      diffs.medium < d.medium ? `medium ${diffs.medium}/${d.medium}` : '',
+      diffs.hard < d.hard ? `hard ${diffs.hard}/${d.hard}` : '',
+    ].filter(Boolean);
+    if (lowDiffs.length) diffs2.push(`fewer than planned (have/min): ${lowDiffs.join(', ')}`);
     const fmtDiff: string[] = [];
     for (const f of FORMATS) {
       const want = mix.formats[f] ?? 0;
       const have = formats[f] ?? 0;
-      if (want !== have) fmtDiff.push(`${f} ${have}/${want}`);
+      if (have < want) fmtDiff.push(`${f} ${have}/${want}`);
     }
-    if (fmtDiff.length) diffs2.push(`format mix differs (have/target): ${fmtDiff.join(', ')}`);
-    if ((mix.paper ?? 0) !== paper) diffs2.push(`${paper} paper write items (target ${mix.paper ?? 0})`);
-    if ((mix.project ?? 0) !== project) diffs2.push(`${project} project write items (target ${mix.project ?? 0})`);
+    if (fmtDiff.length) diffs2.push(`fewer than planned per format (have/min): ${fmtDiff.join(', ')}`);
+    if (paper < (mix.paper ?? 0)) diffs2.push(`${paper} paper write items (at least ${mix.paper ?? 0} expected)`);
+    if (project < (mix.project ?? 0)) diffs2.push(`${project} project write items (at least ${mix.project ?? 0} expected)`);
     for (const m of diffs2) sc.warn(`mix vs CONTENT.md: ${m}`);
   }
 }

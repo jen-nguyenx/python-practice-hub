@@ -4,7 +4,8 @@ import { FORMAT_LADDER, OFFLINE_FORMATS } from '../../content/ids.ts';
 import type { Candidate } from './select.ts';
 import type { GeneratedQuestion, Question } from '../../content/schema.ts';
 import {
-  estimatedMinutes, isGradable, midsemEligible, seededRng, selectMidsem, selectTopicTest, topicTestPassMark, waterFill,
+  estimatedMinutes, isGradable, midsemEligible, recentlyUsedQids, seededRng, selectMidsem, selectTopicTest,
+  topicTestPassMark, waterFill,
 } from './select.ts';
 
 let n = 0;
@@ -109,11 +110,38 @@ describe('selectTopicTest', () => {
     const pool = [c(t, 'predict'), c(t, 'mcq'), c(t, 'parsons'), c(t, 'fixBug'), c(t, 'write'), c(t, 'predict'), c(t, 'multi')];
     const first = selectTopicTest(pool, seededRng(2));
     const again = selectTopicTest(pool, seededRng(2), undefined, new Set(first.map((p) => p.id)));
-    // Same slot shape as the first attempt (fixBug counts as a coding slot here).
-    expect(again.map((p) => p.format).slice(2)).toEqual(first.map((p) => p.format).slice(2));
+    // Same slot shape as the first attempt: two reading slots, a fix-or-complete slot, two coding slots.
+    expect(again).toHaveLength(5);
     expect(again.slice(0, 2).every((p) => FORMAT_LADDER[p.format] === 'read')).toBe(true);
-    // Both read slots get the two unused read questions.
+    expect(['cloze', 'parsons', 'fixBug']).toContain(again[2].format);
+    expect(['write', 'fixBug', 'refactor']).toContain(again[3].format);
+    expect(['write', 'fixBug', 'refactor']).toContain(again[4].format);
+    // Both read slots get the two unused read questions; the thin coding end has to repeat one.
     expect(again.slice(0, 2).every((p) => !first.some((f) => f.id === p.id))).toBe(true);
+    expect(again.some((p) => first.some((f) => f.id === p.id))).toBe(true);
+  });
+
+  it('six retakes in a row are not two papers taking turns', () => {
+    // A realistic topic: 18 questions across the formats, like the shipped content.
+    const topic = (): Candidate[] => {
+      const t: TopicId = 'variables-expressions';
+      const diffs: Diff[] = ['medium', 'hard', 'easy'];
+      const formats: Format[] = ['mcq', 'multi', 'predict', 'predict', 'trace', 'twins', 'cloze', 'cloze', 'parsons',
+        'parsons', 'fixBug', 'fixBug', 'write', 'write', 'refactor', 'errorTranslator', 'predict', 'write'];
+      return formats.map((f, i) => c(t, f, diffs[i % 3]));
+    };
+    const pool = topic();
+    const papers: string[][] = [];
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const avoid = recentlyUsedQids(papers.slice().reverse(), pool.length);
+      papers.push(selectTopicTest(pool, seededRng(attempt * 7 + 1), undefined, avoid).map((p) => p.id));
+    }
+    const distinct = new Set(papers.map((p) => p.slice().sort().join(',')));
+    expect(distinct.size).toBeGreaterThan(2);
+    // The paper right after one is never the same paper again.
+    for (let i = 1; i < papers.length; i++) {
+      expect(papers[i].filter((q) => papers[i - 1].includes(q)).length).toBeLessThan(5);
+    }
   });
 
   it('pass mark is 4 of 5, scaled down for smaller tests', () => {
@@ -171,10 +199,66 @@ describe('selectMidsem', () => {
     expect(rungIdx).toEqual(rungIdx.slice().sort((a, b) => a - b));
   });
 
-  it('prefers medium questions', () => {
-    const picks = selectMidsem(bigPool(), { topicIds: eight, count: 16, includeCoding: true }, seededRng(11));
-    const medium = picks.filter((p) => p.diff === 'medium').length;
-    expect(medium).toBeGreaterThanOrEqual(picks.length / 2);
+  it('prefers medium questions without always picking them', () => {
+    let medium = 0;
+    let total = 0;
+    const sizes = new Set<number>();
+    for (let seed = 1; seed <= 60; seed++) {
+      const picks = selectMidsem(bigPool(), { topicIds: eight, count: 16, includeCoding: true }, seededRng(seed));
+      medium += picks.filter((p) => p.diff === 'medium').length;
+      total += picks.length;
+      sizes.add(picks.filter((p) => p.diff === 'medium').length);
+    }
+    // Most questions are medium, but the level is a preference, not a rule: the count varies between papers.
+    expect(medium / total).toBeGreaterThan(0.5);
+    expect(medium / total).toBeLessThan(0.95);
+    expect(sizes.size).toBeGreaterThan(1);
+  });
+
+  it('two papers from the same pool differ substantially', () => {
+    const pool = bigPool();
+    let overlap = 0;
+    let worst = 0;
+    for (let seed = 1; seed <= 40; seed++) {
+      const opts = { topicIds: eight, count: 10, includeCoding: true };
+      const a = selectMidsem(pool, opts, seededRng(seed * 2 - 1));
+      const b = selectMidsem(pool, opts, seededRng(seed * 2));
+      const ids = new Set(a.map((p) => p.id));
+      const same = b.filter((p) => ids.has(p.id)).length;
+      overlap += same;
+      worst = Math.max(worst, same);
+    }
+    // Before this selector randomised each cell, almost every question repeated. Now under half do, on average.
+    expect(overlap / (40 * 10)).toBeLessThan(0.5);
+    expect(worst).toBeLessThan(10);
+  });
+
+  it('avoids questions from recent attempts while unseen ones are left', () => {
+    const pool = bigPool();
+    const opts = { topicIds: eight, count: 10, includeCoding: true };
+    for (let seed = 1; seed <= 20; seed++) {
+      const first = selectMidsem(pool, opts, seededRng(seed));
+      const again = selectMidsem(pool, opts, seededRng(seed + 500), new Set(first.map((p) => p.id)));
+      expect(again).toHaveLength(10);
+      expect(again.some((p) => first.some((f) => f.id === p.id))).toBe(false);
+    }
+  });
+
+  it('reuses questions once the whole pool has been seen', () => {
+    const pool = bigPool();
+    const all = new Set(pool.map((p) => p.id));
+    const picks = selectMidsem(pool, { topicIds: eight, count: 12, includeCoding: true }, seededRng(7), all);
+    expect(picks).toHaveLength(12);
+    expect(new Set(picks.map((p) => p.id)).size).toBe(12);
+  });
+
+  it('recentlyUsedQids takes the newest attempts and stops before it swallows the pool', () => {
+    const attempts = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']];
+    expect([...recentlyUsedQids(attempts, 100)]).toEqual(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']);
+    expect([...recentlyUsedQids(attempts, 100, 2)]).toEqual(['a', 'b', 'c', 'd']);
+    // Two thirds of 6 is 4: once the set covers that much of the pool, older attempts are left out.
+    expect([...recentlyUsedQids(attempts, 6)]).toEqual(['a', 'b', 'c', 'd']);
+    expect([...recentlyUsedQids([], 10)]).toEqual([]);
   });
 
   it('with coding off: read formats only, never paper write', () => {
@@ -239,17 +323,35 @@ describe('estimatedMinutes', () => {
 });
 
 describe('selectMidsem difficulty across cells', () => {
-  it('fills a rung from a topic that has a medium question before one that only has hard ones', () => {
-    // Two write slots and two topics' worth of writes: one medium must be used before a second hard one.
+  it('takes the medium question of a cell far more often than an even draw would', () => {
+    // One medium write against four hard ones in the same topic and rung.
+    const pool: Candidate[] = [
+      c('strings', 'mcq', 'medium'), c('strings', 'write', 'medium'),
+      c('strings', 'write', 'hard'), c('strings', 'write', 'hard'), c('strings', 'write', 'hard'), c('strings', 'write', 'hard'),
+    ];
+    let medium = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      const picks = selectMidsem(pool, { topicIds: ['strings'], count: 2, includeCoding: true }, seededRng(seed));
+      const write = picks.find((p) => p.format === 'write');
+      if (write?.diff === 'medium') medium++;
+    }
+    expect(medium / 200).toBeGreaterThan(0.4); // an even draw would be 0.2
+    expect(medium / 200).toBeLessThan(1); // and the hard ones still get a turn
+  });
+
+  it('prefers a topic whose cell has a medium question when the rung is short of them', () => {
+    // Two write slots, one medium write and two hard ones: the medium one is used in most papers.
     const pool: Candidate[] = [
       c('strings', 'mcq', 'medium'), c('strings', 'write', 'hard'), c('strings', 'write', 'hard'),
       c('lists-tuples', 'mcq', 'medium'), c('lists-tuples', 'write', 'medium'),
     ];
-    for (let seed = 1; seed <= 10; seed++) {
+    let withMedium = 0;
+    for (let seed = 1; seed <= 100; seed++) {
       const picks = selectMidsem(pool, { topicIds: ['strings', 'lists-tuples'], count: 3, includeCoding: true }, seededRng(seed));
       const writes = picks.filter((p) => p.format === 'write');
       expect(writes.length).toBeGreaterThanOrEqual(1);
-      expect(writes.some((w) => w.diff === 'medium')).toBe(true);
+      if (writes.some((w) => w.diff === 'medium')) withMedium++;
     }
+    expect(withMedium).toBeGreaterThan(30);
   });
 });

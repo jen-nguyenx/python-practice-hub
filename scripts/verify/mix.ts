@@ -1,4 +1,5 @@
-// Target question volume and format mix per topic, copied from the table in docs/build/CONTENT.md.
+// MINIMUM question volume and format mix per topic, from the table in docs/build/CONTENT.md.
+// Topics may exceed these; the verifier only warns when a topic falls below them.
 import type { Format } from '../../src/content/ids.ts';
 
 export interface MixTarget {

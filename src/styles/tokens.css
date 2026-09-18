@@ -52,8 +52,14 @@
 
   --editor-bg: #1b1b1d; --editor-chrome: #232325; --editor-line: #252528; --editor-selection: #34404f;
   --editor-text: #e8eaf0; --editor-gutter: #5a5d66; --editor-muted: #8a8d96;
-  --syn-keyword: #569cd6; --syn-control: #c586c0; --syn-string: #ce9178; --syn-number: #b5cea8;
+  /* No green and no purple: numbers are amber and control words share the keyword blue, so Monaco and the
+     static code blocks colour identical Python identically. */
+  --syn-keyword: #569cd6; --syn-control: #569cd6; --syn-string: #ce9178; --syn-number: #f2a94b;
   --syn-comment: #7c8591; --syn-function: #dcdcaa; --syn-builtin: #4fc1ff; --syn-variable: #9cdcfe;
+
+  /* Light code wells mirror the dark editor's roles: a muted rust for strings and a deeper amber for
+     numbers, so a string never shares its colour with a plain identifier. Still no green, no purple. */
+  --code-string: #a0522d; --code-number: #8a4a02;
 
   --heat-0: #efece3; --heat-1: #ddd8cb; --heat-2: #b9b2a1; --heat-3: #6b675e; --heat-4: #1c1c1c;
   --heat-text-0: #1c1c1c; --heat-text-1: #1c1c1c; --heat-text-2: #1c1c1c; --heat-text-3: #ffffff; --heat-text-4: #ffffff;
@@ -83,6 +89,7 @@
     --shadow-overlay: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05);
     --shadow-card: none;
     --editor-bg: #141415; --editor-chrome: #1a1a1c; --editor-line: #1f1f21; --editor-selection: #34404f;
+    --code-string: #ce9178; --code-number: #f2a94b;
     --heat-0: #1a1a1c; --heat-1: #2c2c2f; --heat-2: #4a4a4f; --heat-3: #8e8e89; --heat-4: #ededeb;
     --heat-text-0: #ededeb; --heat-text-1: #ededeb; --heat-text-2: #ededeb; --heat-text-3: #111112; --heat-text-4: #111112;
   }
@@ -103,6 +110,7 @@
   --shadow-overlay: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05);
   --shadow-card: none;
   --editor-bg: #141415; --editor-chrome: #1a1a1c; --editor-line: #1f1f21; --editor-selection: #34404f;
+  --code-string: #ce9178; --code-number: #f2a94b;
   --heat-0: #1a1a1c; --heat-1: #2c2c2f; --heat-2: #4a4a4f; --heat-3: #8e8e89; --heat-4: #ededeb;
   --heat-text-0: #ededeb; --heat-text-1: #ededeb; --heat-text-2: #ededeb; --heat-text-3: #111112; --heat-text-4: #111112;
 }

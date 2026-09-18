@@ -177,8 +177,14 @@ export function isCodeLike(text: string): boolean {
   const t = (text ?? '').trim();
   if (!t) return false;
   if (/\n/.test(t)) return true;
-  const proseWords = t.split(/\s+/).filter((w) => /^[A-Za-z][a-z]*[,.;:]?$/.test(w) && w.replace(/[,.;:]$/, '').length >= 2);
-  if (proseWords.length >= 3) return false;
+  // Python's word-shaped operators and keywords read like prose words but are code, so a condition
+  // such as "mark >= 60 or mark < 70" must not be mistaken for a sentence.
+  const pyWords = new Set(['and', 'or', 'not', 'in', 'is', 'if', 'else', 'elif', 'for', 'while', 'def', 'return', 'import', 'from', 'as', 'pass', 'break', 'continue', 'lambda', 'del', 'with', 'try', 'except', 'finally', 'raise', 'global', 'assert', 'yield']);
+  const words = t.split(/\s+/);
+  const proseWords = words.filter((w) => /^[A-Za-z][a-z]*[,.;:]?$/.test(w) && w.replace(/[,.;:]$/, '').length >= 2 && !pyWords.has(w.replace(/[,.;:]$/, '')));
+  // A sentence is mostly words; an expression such as "name in seats and count > 0" has a few
+  // identifiers surrounded by operators, so the words must also be the majority of the tokens.
+  if (proseWords.length >= 3 && proseWords.length * 2 > words.length) return false;
   if (/^[-+\d.,\s]+$/.test(t) && /\d/.test(t)) return true;
   if (/[()[\]{}='"#<>]|\/\/|\*\*|%/.test(t)) return true;
   if (/^(True|False|None)$/.test(t)) return true;

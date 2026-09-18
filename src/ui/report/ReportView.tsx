@@ -93,7 +93,12 @@ export function Headline({ data, topicId }: { data: ReportData; topicId?: TopicI
               <li key={i} class="rp-row-item"><Icon name="check" size={15} class="rp-ok-icon" /><span>{s}</span></li>
             ))}
           </ul>
-        ) : <p class="rp-quiet">Strengths show up once {topicId ? 'this topic has' : 'a topic has'} a few correct answers.</p>}
+        ) : (
+          <p class="rp-quiet">
+            {topicId ? 'This topic becomes' : 'A topic becomes'} a strength once you score 85% or more across at least
+            5 questions there, with hints or answers needed on few of them.
+          </p>
+        )}
         {strengths.length ? <p class="rp-card-note">Keep these warm with one review question a week.</p> : null}
       </section>
       <section class="rp-card rp-list-card" aria-labelledby="rp-workon">
@@ -116,7 +121,11 @@ export function Headline({ data, topicId }: { data: ReportData; topicId?: TopicI
   );
 }
 
-export function ReportBody({ data, events, topicId, now }: { data: ReportData; events: readonly AppEvent[]; topicId?: TopicId; now: number }) {
+export function ReportBody({ data, events, topicId, now, unlockAll }: {
+  data: ReportData; events: readonly AppEvent[]; topicId?: TopicId; now: number;
+  /** "Unlock all topics" was on in Settings during this range: the ladder order did not apply. */
+  unlockAll?: boolean;
+}) {
   const mistakeTotal = data.mistakes.reduce((s, m) => s + m.count, 0);
   const tried = data.topics.filter((t) => t.label !== 'not-started').length;
   return (
@@ -125,6 +134,12 @@ export function ReportBody({ data, events, topicId, now }: { data: ReportData; e
       <Headline data={data} topicId={topicId} />
 
       <Section id="rp-topics" title={topicId ? 'Progress' : 'Topics'} note={topicId ? undefined : `${tried} of ${data.topics.length} practised`}>
+        {unlockAll ? (
+          <p class="rp-note-line">
+            <Icon name="unlock" size={14} />
+            <span>Topics were unlocked from the Settings switch, so the ladder order was skipped.</span>
+          </p>
+        ) : null}
         <TopicMap rows={data.topics} ladder={data.ladder} now={now} single={!!topicId} />
       </Section>
 
@@ -133,7 +148,7 @@ export function ReportBody({ data, events, topicId, now }: { data: ReportData; e
       </Section>
 
       <Section id="rp-ready" title="Readiness" note={topicId ? 'Exam and project checks for this topic' : 'Exam and project checks'}>
-        <Readiness data={data.readiness} topicId={topicId} />
+        <Readiness data={data.readiness} topicId={topicId} events={events} range={data.range} />
       </Section>
 
       <Section id="rp-sessions" title="Sessions" note={data.sessions.length ? `${data.sessions.length} in this range` : undefined}>

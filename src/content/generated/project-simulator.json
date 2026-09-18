@@ -1,9 +1,24 @@
 {
+  "t12-s1-q5": {
+    "error": {
+      "line": 10,
+      "message": "division by zero",
+      "type": "ZeroDivisionError"
+    },
+    "stdout": "Blackwall Reach 0.6557\n"
+  },
   "t12-s2-q1": {
     "mutantOutputs": [
       "144 144 144\n144.0\n1.0\n",
       "24 25 25\n25.0\n0.96\n"
     ],
     "stdout": "168 169 169\n169.0\n0.9941\n"
+  },
+  "t12-s4-q1": {
+    "mutantOutputs": [
+      "{'CITS1401': {'ben': 58}, 'MATH1011': {'ana': 91}}\n2\n{'ben': 58}\n",
+      "{'CITS1401': {'ana': 91, 'ben': 58}, 'MATH1011': {'ana': 91, 'ben': 58}}\n2\n{'ana': 91, 'ben': 58}\n"
+    ],
+    "stdout": "{'CITS1401': {'ana': 72, 'ben': 58}, 'MATH1011': {'ana': 91}}\n2\n{'ana': 72, 'ben': 58}\n"
   }
 }

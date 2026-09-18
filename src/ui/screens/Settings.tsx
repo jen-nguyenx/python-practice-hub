@@ -43,7 +43,13 @@ function prefersReducedMotion() {
 function jumpTo(id: string) {
   const heading = document.getElementById(`set-${id}-title`);
   if (!heading) return;
-  heading.scrollIntoView({ block: 'start', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  // scrollIntoView() scrolls EVERY ancestor scroller, including the document, which drags the app frame
+  // (title bar, icon rail, status bar) out of place. Scroll only the main pane instead.
+  const main = scroller();
+  if (main) {
+    const top = main.scrollTop + heading.getBoundingClientRect().top - main.getBoundingClientRect().top - 16;
+    main.scrollTo({ top: Math.max(0, top), behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  }
   heading.focus({ preventScroll: true });
 }
 

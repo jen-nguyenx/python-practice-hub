@@ -181,7 +181,7 @@ export function QuestionsTab({ topic, stats, filters, onFilters, locked, recent 
     body = (
       <section class="tp-scn" aria-label="Questions, weak spots first">
         <div class="tp-scn-head">
-          <h3 class="tp-scn-title">Weak spots first</h3>
+          <h2 class="tp-scn-title">Weak spots first</h2>
         </div>
         <p class="tp-scn-story">
           {recent.length === 0
@@ -204,7 +204,7 @@ export function QuestionsTab({ topic, stats, filters, onFilters, locked, recent 
       return (
         <section key={s.id} class="tp-scn" aria-labelledby={`sc-${s.id}`}>
           <div class="tp-scn-head">
-            <h3 id={`sc-${s.id}`} class="tp-scn-title">{s.title}</h3>
+            <h2 id={`sc-${s.id}`} class="tp-scn-title">{s.title}</h2>
             <span class="tp-scn-count" title={`${solved} of ${s.questions.length} solved`}>
               <span aria-hidden="true">{solved}/{s.questions.length}</span>
               <span class="sr-only">{solved} of {s.questions.length} solved</span>

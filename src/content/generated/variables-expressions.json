@@ -28,5 +28,20 @@
       "2.75 2 3\n0.3 0.3\nPaid: $0.30\n"
     ],
     "stdout": "2.75 2 3\n0.30000000000000004 0.3\nPaid: $0.30\n"
+  },
+  "t01-s5-q1": {
+    "error": {
+      "line": 4,
+      "message": "division by zero",
+      "type": "ZeroDivisionError"
+    },
+    "stdout": "Bill: 96.0\n"
+  },
+  "t01-s5-q2": {
+    "twins": {
+      "differs": true,
+      "outLeft": "99.99\n",
+      "outRight": "100.0\n"
+    }
   }
 }

@@ -1,6 +1,7 @@
 // Playground (#/playground): free coding space with scratch files, Run with input, Output, Problems and Explain.
 // Layout: one full-height dark card (file tabs + runtime + Run strip; editor | output split, stacked under 900px).
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { shortcutSheetOpen } from '../shell/uiState.ts';
 import type { AstFinding, PyError } from '../../runtime/protocol.ts';
 import type { ScratchFile } from '../../store/types.ts';
 import { py, store } from '../../app/services.ts';
@@ -276,7 +277,13 @@ export function Playground() {
           ) : <div class="pg-files" />}
           <div class="pg-strip-end">
             <span class={`pg-runtime ${status.state}`} title="Your code runs on this computer. Nothing is sent anywhere.">{runtimeLabel(status)}</span>
-            <CardIconButton icon="keyboard" label="Keyboard help" tip={editorHelp} class="pg-help" />
+            <CardIconButton
+              icon="keyboard"
+              label="Keyboard shortcuts"
+              tip={`Keyboard shortcuts · ${editorHelp}`}
+              class="pg-help"
+              onClick={() => { shortcutSheetOpen.value = true; }}
+            />
             <Button
               variant="primary"
               size="sm"

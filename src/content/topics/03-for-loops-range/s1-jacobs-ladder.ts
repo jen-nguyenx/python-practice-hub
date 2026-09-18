@@ -151,6 +151,43 @@ const scenario: Scenario = {
       },
       selfExplain: 'What would total_steps(3) return if return total were indented two levels, inside the loop?',
     },
+    {
+      id: 't03-s1-q4',
+      format: 'twins',
+      diff: 'easy',
+      core: true,
+      title: 'One line or three?',
+      prompt:
+        'Mei wants the program to report her total once, after three days of climbing. ' +
+        'The two versions differ by the indentation of one line. Work out what each one prints and say which one she wants.',
+      left:
+        'total = 0\n' +
+        'for day in range(1, 4):\n' +
+        '    total = total + day * 242\n' +
+        "    print('Steps so far:', total)",
+      right:
+        'total = 0\n' +
+        'for day in range(1, 4):\n' +
+        '    total = total + day * 242\n' +
+        "print('Steps so far:', total)",
+      mistake: 'indent_error',
+      concepts: ['range', 'accumulator', 'indentation'],
+      detects: ['indent_error'],
+      expectedSec: 90,
+      hints: [
+        'Indentation decides what belongs to the loop. A line indented under `for` runs once per pass.',
+        'Count the passes: `range(1, 4)` gives 1, 2, 3. Then ask, for each version, how many times the `print` runs and what `total` holds each time.',
+        'The left version prints on every pass, so its first line is `Steps so far: 242`.',
+      ],
+      solution: {
+        explanation:
+          '`range(1, 4)` gives 1, 2, 3, so the loop runs three times and `total` grows 242, 726, 1452.\n\n' +
+          '- **Left**: the `print` is indented, so it belongs to the loop body and runs on every pass. It prints three lines, ending with `Steps so far: 1452`.\n' +
+          '- **Right**: the `print` is not indented, so it runs once, after the loop has finished, and prints only `Steps so far: 1452`.\n\n' +
+          'Both versions add up the steps the same way. Only the position of the `print` changes, and that is what Mei wants to fix: she wants the single line, so the `print` goes outside the loop.',
+      },
+      selfExplain: 'Both versions end with the same number. Why is only the last line of the left version correct?',
+    },
   ],
 };
 

@@ -36,7 +36,7 @@ export function Refactor(props: FormatProps<QuestionOf<'refactor'>>) {
         fp={props as FormatProps<Question>}
         cfg={{
           initialCode: q.code,
-          resetLabel: 'Reset to original',
+          resetTo: 'original code',
           kind: 'function',
           fnName: q.fnName,
           tests: q.tests,

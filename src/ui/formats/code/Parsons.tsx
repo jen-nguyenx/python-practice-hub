@@ -415,7 +415,7 @@ export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
           tabs={[{
             id: 'tests', label: 'Tests', content: (
               <div class="ct-stack">
-                <TestRows tests={q.tests} result={shownResult} revealed={revealed} />
+                <TestRows tests={q.tests} result={shownResult} revealed={revealed} runsOn={testMode ? 'submit' : 'check'} />
                 {shownResult.compileError ? <ExplainError error={shownResult.compileError} code={res!.code} /> : null}
               </div>
             ),

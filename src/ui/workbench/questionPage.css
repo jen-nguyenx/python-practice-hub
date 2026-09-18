@@ -19,8 +19,14 @@
 .qrow-back-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .qrow-back:hover { color: var(--text); text-decoration: none; background: var(--surface-2); }
 .qrow-center { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
-.qrow-dots { display: flex; align-items: center; list-style: none; margin: 0; padding: 0; }
-.qrow-dots li { display: flex; }
+/* A long topic has more dots than a phone is wide, so the row shrinks and scrolls rather than
+   pushing "Question N of M" off the edge. The scrollbar itself stays hidden. */
+.qrow-dots {
+  display: flex; align-items: center; list-style: none; margin: 0; padding: 0;
+  min-width: 0; flex: 0 1 auto; overflow-x: auto; scrollbar-width: none;
+}
+.qrow-dots::-webkit-scrollbar { display: none; }
+.qrow-dots li { display: flex; flex: none; }
 .qdot { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 28px; color: var(--on-accent); text-decoration: none; }
 .qdot::before { content: ""; position: absolute; left: 3px; top: 9px; width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background-color var(--dur) ease-out; }
 .qdot.attempted::before { background: var(--text-muted); }
@@ -81,7 +87,8 @@
   padding: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-3); box-shadow: var(--shadow-card);
 }
 .qp-top-text { display: flex; flex-direction: column; gap: var(--sp-3); flex: 1 1 420px; min-width: 0; max-width: 820px; }
-.qp-top > .shell { flex: 0 1 320px; min-width: 220px; }
+/* The example takes the spare room beside the text, and wraps under it when there is none. */
+.qp-top > .shell { flex: 1 1 340px; min-width: 220px; }
 .qp-bar-help { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
 .qp-hint-count { font-size: var(--fs-14); color: var(--text-muted); }
 
@@ -107,7 +114,11 @@
 @media (max-width: 1000px) {
   .qp-page { padding: var(--sp-3) var(--sp-4) var(--sp-6); }
   .qrow { grid-template-columns: minmax(0, 1fr) auto; row-gap: 2px; margin-bottom: var(--sp-3); }
-  .qrow-center { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; overflow-x: auto; }
+  /* "Question N of M" is the part that must always be readable, so it stays pinned and only the dots scroll. */
+  .qrow-center { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; gap: var(--sp-2); overflow: visible; }
+  .qrow-dots { flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .qrow-dots::-webkit-scrollbar { display: none; }
+  .qrow-count { flex: none; }
   .qp-code, .qp-read { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); }
   .qp-read { padding-top: 0; }
     .qp-read-main { max-width: none; }

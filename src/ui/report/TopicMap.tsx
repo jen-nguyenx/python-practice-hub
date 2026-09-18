@@ -2,12 +2,17 @@
 // A status pill opens the row to show why it is marked that way, read / repair / write accuracy and links.
 // Topics not started yet sit behind one "Show" row so the table stays short.
 import { Fragment } from 'preact';
-import { useState } from 'preact/hooks';
-import type { Diff } from '../../content/ids.ts';
+import { useMemo, useState } from 'preact/hooks';
+import type { Diff, TopicId } from '../../content/ids.ts';
+import { QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
 import type { ReportData } from '../../engine/report.ts';
+import { topicProgressAll } from '../../engine/progress.ts';
+import type { TopicProgress } from '../../engine/progress.ts';
+import { store } from '../../app/services.ts';
 import { href } from '../../app/router.ts';
 import { Icon } from '../components/Icon.tsx';
+import { lockCopy } from '../testmode/lock.ts';
 import { HEAT_LEGEND, heatStep, pct, relativeDay } from './format.ts';
 import { ladderGaps } from './words.ts';
 
@@ -68,6 +73,12 @@ export function TopicMap({ rows, ladder = [], now, single }: { rows: ReportData[
     if (next.has(id)) next.delete(id); else next.add(id);
     setOpen(next);
   };
+  const events = store.events.value;
+  const settings = store.settings.value;
+  // Topics that are not open yet still appear here; their rows say so instead of offering practice they cannot do.
+  const progress = useMemo<Partial<Record<TopicId, TopicProgress>>>(() => {
+    try { return topicProgressAll(events, QUESTION_INDEX, settings); } catch { return {}; }
+  }, [events, settings]);
   const ladderBy = new Map(ladder.map((l) => [l.topicId, l]));
   const active = rows.filter((r) => r.label !== 'not-started');
   const idle = rows.filter((r) => r.label === 'not-started');
@@ -96,12 +107,16 @@ export function TopicMap({ rows, ladder = [], now, single }: { rows: ReportData[
               const isOpen = open.has(r.topicId);
               const detailId = `rp-topic-${r.topicId}`;
               const notStarted = r.label === 'not-started';
+              const locked = progress[r.topicId]?.state === 'locked';
               return (
                 <Fragment key={r.topicId}>
                   <tr class={`${notStarted ? 'idle' : ''}${isOpen ? ' is-open' : ''}`}>
                     <th scope="row">
-                      <a href={href.topic(r.topicId)} class="rp-topic-link"><span class="rp-topic-num">{meta?.num}</span>{meta?.short ?? r.topicId}</a>
-                      <span class="rp-topic-sub">{r.attempted} of {r.total} tried</span>
+                      <a href={href.topic(r.topicId)} class="rp-topic-link">
+                        <span class="rp-topic-num">{meta?.num}</span>{meta?.short ?? r.topicId}
+                        {locked ? <Icon name="lock" size={12} class="rp-lock-ic" /> : null}
+                      </a>
+                      <span class="rp-topic-sub">{r.attempted} of {r.total} tried{locked ? ' · not open yet' : ''}</span>
                     </th>
                     <Heat value={r.score} text={pct(r.score)} label={r.score === null ? 'Score: not tried' : `Score ${pct(r.score)}`} />
                     <DiffCell cell={r.byDiff.easy} diff="easy" />
@@ -133,10 +148,18 @@ export function TopicMap({ rows, ladder = [], now, single }: { rows: ReportData[
                             </p>
                           ) : null}
                           <Rungs row={ladderBy.get(r.topicId)} />
+                          {locked ? (
+                            <p class="rp-note-line">
+                              <Icon name="lock" size={14} />
+                              <span>Not open on your ladder yet. {lockCopy(progress, r.topicId).sentence}</span>
+                            </p>
+                          ) : null}
                           <p class="rp-links">
-                            <a href={href.topic(r.topicId)}>{notStarted ? 'Start' : 'Practise'} {meta?.short}</a>
+                            <a href={href.topic(r.topicId)}>
+                              {locked ? `Notes for ${meta?.short ?? 'this topic'}` : `${notStarted ? 'Start' : 'Practise'} ${meta?.short ?? 'this topic'}`}
+                            </a>
                             {!single ? <a href={href.report(r.topicId)}>Topic report</a> : null}
-                            <a href={href.topicTest(r.topicId)}>Topic test</a>
+                            {!locked ? <a href={href.topicTest(r.topicId)}>Topic test</a> : null}
                           </p>
                         </div>
                       </td>

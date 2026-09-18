@@ -20,5 +20,13 @@
       "False\nTrue\nTrue\nSea breeze\n"
     ],
     "stdout": "False\nFalse\nTrue\nSea breeze\n"
+  },
+  "t02-s5-q2": {
+    "error": {
+      "line": 4,
+      "message": "'>' not supported between instances of 'str' and 'int'",
+      "type": "TypeError"
+    },
+    "stdout": "Score: 156\n"
   }
 }

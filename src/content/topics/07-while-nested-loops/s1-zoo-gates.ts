@@ -161,6 +161,75 @@ print(bits)`,
       },
       selfExplain: 'Why is it easier to count positions from the right with % and // than from the left?',
     },
+    {
+      id: 't07-s1-q4',
+      format: 'multi',
+      diff: 'easy',
+      core: true,
+      title: 'What the digit loop does',
+      prompt:
+        'This is the shape every gate check uses. The membership number is 3070.\n\n' +
+        'Select **every** statement that is true.',
+      code: `n = 3070
+while n > 0:
+    digit = n % 10
+    n = n // 10`,
+      options: [
+        {
+          id: 'a',
+          text: '`digit` takes the values 0, 7, 0, 3, in that order.',
+          correct: true,
+          why: 'True. `n % 10` always gives the rightmost digit that is still in `n`, so the digits come out right to left: 0, then 7, then 0, then 3.',
+        },
+        {
+          id: 'b',
+          text: 'The loop body runs 4 times, once for each digit of 3070.',
+          correct: true,
+          why: 'True. `n` goes 3070 to 307 to 30 to 3 to 0, so the body runs 4 times and then `n > 0` is False.',
+        },
+        {
+          id: 'c',
+          text: 'Changing the last line to `n = n / 10` gives the same four digits, just as floats.',
+          correct: false,
+          mistake: 'int_vs_float_division',
+          why:
+            'False. `3070 / 10` is 307.0, so the next `% 10` gives 7.0, but after that `n` is 30.7 and `30.7 % 10` is 0.7, which is not a digit. ' +
+            'A float only creeps towards 0, so the loop runs for hundreds of passes on rubbish values. `//` is what keeps `n` a whole number.',
+        },
+        {
+          id: 'd',
+          text: 'If `n` starts at 0 the body never runs, so `digit` is never given a value.',
+          correct: true,
+          why: 'True. `while` checks its condition before the first pass, and `0 > 0` is False. This is why a digit-sum function must set its total before the loop, not inside it.',
+        },
+        {
+          id: 'e',
+          text: 'The line `n = n // 10` could be left out, because `n % 10` already makes `n` smaller.',
+          correct: false,
+          mistake: 'infinite_while',
+          why:
+            'False. `n % 10` only works out a value; it does not change `n`. With that line gone, nothing in the body changes `n`, `n > 0` stays True and the loop never ends.',
+        },
+      ],
+      concepts: ['while', 'digits', 'modulo', 'floor-division', 'loop-update'],
+      detects: ['int_vs_float_division', 'infinite_while'],
+      expectedSec: 105,
+      hints: [
+        'Two separate jobs happen in the body: one line reads a digit, the other line shrinks the number. Check each statement against the job of each line.',
+        'Write the values of `n` and `digit` down the page for a few passes. Then ask which line is the one that can ever make `n > 0` False.',
+        'The values of `n` are 3070, 307, 30, 3, 0. Only `n = n // 10` changes `n`, and `//` is what keeps the values whole.',
+      ],
+      solution: {
+        explanation:
+          'Each pass does two things: `digit = n % 10` reads the rightmost digit, and `n = n // 10` drops it.\n\n' +
+          '- **a** is true: the digits come out right to left, 0, 7, 0, 3.\n' +
+          '- **b** is true: `n` is 3070, 307, 30, 3, 0, so the body runs 4 times, once per digit.\n' +
+          '- **c** is false: `/` gives a float, and after 30.7 the remainders are no longer digits.\n' +
+          '- **d** is true: the condition is tested first, so a starting value of 0 means zero passes.\n' +
+          '- **e** is false: `n % 10` computes a value but assigns nothing, so `n` would never change.',
+      },
+      selfExplain: 'Which single line stops this loop from running forever, and why?',
+    },
   ],
 };
 

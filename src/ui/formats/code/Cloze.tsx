@@ -152,7 +152,9 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
   const shownResult = res && !hideResult && !busy ? res.result : null;
   const checksNote = testMode ? (checks ? 'Answer submitted' : 'One check in the test') : Number.isFinite(checksLeft) ? `${Math.max(0, checksLeft)} ${checksLeft === 1 ? 'check' : 'checks'} left` : '';
 
-  const footer = (
+  // Once the check button is gone there is nothing for the keyboard hint to point at, and a footer with nothing
+  // in it is just an empty bar, so the bar itself goes too.
+  const footer = !readOnly || revealed ? (
     <>
       {!readOnly ? (
         <Button variant="primary" onClick={check} disabled={!canCheck} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Enter' : 'Control+Enter'}>
@@ -162,9 +164,9 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
       <span class="ed-note" aria-live="polite">{readOnly ? '' : checksNote}</span>
       {!allFilled && !readOnly ? <span class="ed-note">Fill every gap to check</span> : null}
       {revealed ? <span class="ed-note">Your answers are marked · an accepted answer sits beside each wrong gap</span> : null}
-      <span class="ed-kbd" aria-hidden="true">{MOD} + Enter</span>
+      {!readOnly ? <span class="ed-kbd" aria-hidden="true">{MOD} + Enter</span> : null}
     </>
-  );
+  ) : undefined;
 
   return (
     <div class="cloze ct" ref={rootRef} data-run-scope>
@@ -179,12 +181,12 @@ export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
       <ResultsCard
         label="Results"
         tabs={[
-          { id: 'tests', label: 'Tests', content: <TestRows tests={q.tests} result={shownResult} revealed={revealed} onExplain={explainable ? () => setTab('explain') : undefined} /> },
+          { id: 'tests', label: 'Tests', content: <TestRows tests={q.tests} result={shownResult} revealed={revealed} runsOn={testMode ? 'submit' : 'check'} onExplain={explainable ? () => setTab('explain') : undefined} /> },
           ...(shownResult && explainable ? [{ id: 'explain', label: 'Explain', content: <ExplainError error={explainable} code={res!.code} /> }] : []),
         ]}
         active={tab}
         onTab={setTab}
-        status={<TestsStatusChip result={shownResult} busy={busy} idleText={`${q.tests.length} ${q.tests.length === 1 ? 'test' : 'tests'} run on Check`} />}
+        status={<TestsStatusChip result={shownResult} busy={busy} idleText={`${q.tests.length} ${q.tests.length === 1 ? 'test' : 'tests'} run on ${testMode ? 'Submit' : 'Check'}`} />}
       />
       {revealed && !wb.onQuestionPage ? (
         <div class="cloze-accepted">

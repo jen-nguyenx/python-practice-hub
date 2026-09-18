@@ -98,6 +98,7 @@ html, body { height: 100%; overflow: hidden; }
 .titlebar .rt { min-width: 9.5rem; justify-content: flex-end; }
 .rt-compact { gap: 7px; font-family: var(--mono); font-size: var(--fs-12); }
 .rt-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-faint); flex: none; }
+.rt-idle .rt-dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--text-faint); }
 .rt-loading .rt-dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--text-muted); animation: rt-pulse 1.2s ease-in-out infinite; }
 .rt-ok .rt-dot { background: var(--text-muted); }
 .rt-busy .rt-dot { background: var(--text); animation: rt-pulse 0.8s ease-in-out infinite; }
@@ -128,6 +129,10 @@ html, body { height: 100%; overflow: hidden; }
 .pal-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pal-detail { flex: none; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); font-size: var(--fs-13); }
 .pal-empty { padding: 24px 12px; text-align: center; color: var(--text-muted); font-size: var(--fs-14); }
+/* An entry that cannot be used right now (the page a running test is already on): dimmed, and it says why. */
+.pal-opt.is-off { color: var(--text-muted); cursor: default; }
+.pal-notice { display: flex; align-items: center; gap: 8px; flex: none; padding: 8px 16px; border-top: 1px solid var(--border); background: var(--surface-2); font-size: var(--fs-13); color: var(--text); }
+.pal-notice svg { flex: none; color: var(--text-muted); }
 .pal-foot { display: flex; gap: 16px; flex: none; padding: 8px 16px; border-top: 1px solid var(--border); font-size: var(--fs-12); color: var(--text-muted); }
 .pal-foot kbd { font-size: var(--fs-11); }
 
@@ -231,3 +236,8 @@ html, body { height: 100%; overflow: hidden; }
   .app { display: block; height: auto; }
   .app-main { padding: 0; overflow: visible; }
 }
+
+/* Not found page: a real heading, matching the rest of the app. */
+.notfound-page { display: grid; gap: 14px; justify-items: start; padding-block: var(--sp-6); }
+.notfound-page h1 { font-family: var(--display); font-size: var(--fs-28); font-weight: 700; letter-spacing: -0.02em; }
+.notfound-text { color: var(--text-muted); font-size: var(--fs-16); }

@@ -6,6 +6,8 @@ import type { QuestionMeta } from '../../content/questionIndex.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
 import type { TopicMeta } from '../../content/topics.ts';
 import { continueTarget, sessionSummaries } from '../../engine/progress.ts';
+import { defaultMidsemTopics } from '../testmode/lock.ts';
+import { MIDSEM_DEFAULT_COUNT, MIDSEM_DEFAULT_MINUTES } from '../testmode/select.ts';
 import type { TopicProgress } from '../../engine/progress.ts';
 import type { AppEvent, Settings } from '../../engine/types.ts';
 import { readProgress } from '../testmode/progress.ts';
@@ -38,11 +40,16 @@ function startOfToday(now: number) {
   return d.getTime();
 }
 
-/** Distinct questions attempted today, focused minutes and first-ever mistakes from sessions that touched today. */
+/**
+ * Distinct questions attempted today, focused minutes and first-ever mistakes from sessions that touched today.
+ * All three count test answers as well as practice: the minutes and the mistakes come from `sessionSummaries`, which
+ * counts every attempt, so leaving tests out of the question count made Home say "0 questions today" right after a
+ * mid-sem test. Test answers are questions the student answered, so they belong in all three numbers.
+ */
 export function todayNumbers(events: readonly AppEvent[], now = Date.now()): TodayNumbers {
   const since = startOfToday(now);
   const qids = new Set<string>();
-  for (const e of events) if (e.type === 'attempt' && e.ts >= since && (e.mode === 'practice' || e.mode === 'paper')) qids.add(e.qid);
+  for (const e of events) if (e.type === 'attempt' && e.ts >= since) qids.add(e.qid);
   let minutes = 0;
   let newMistakes = 0;
   try {
@@ -52,7 +59,9 @@ export function todayNumbers(events: readonly AppEvent[], now = Date.now()): Tod
       newMistakes += s.newMistakes.length;
     }
   } catch { /* partial data: keep zeros */ }
-  return { questions: qids.size, minutes: Math.round(minutes), newMistakes };
+  // Round up to the first minute: half a minute of work is "1 minute", never "0 minutes" beside answered questions.
+  const shown = minutes > 0 || qids.size > 0 ? Math.max(1, Math.round(minutes)) : 0;
+  return { questions: qids.size, minutes: shown, newMistakes };
 }
 
 export function hasAnyAttempt(events: readonly AppEvent[]) {
@@ -62,12 +71,14 @@ export function hasAnyAttempt(events: readonly AppEvent[]) {
 
 export interface MidsemSummary { count: number; minutes: number; scope: string; resumable: boolean }
 
-/** Reads the mid-sem setup the test screen remembers, with the screen's defaults. */
-export function midsemSummary(): MidsemSummary {
-  const defaults = TOPICS.filter((t) => t.midsem);
-  let count = 15;
-  let minutes = 30;
-  let ids: string[] = defaults.map((t) => t.id);
+/**
+  * Reads the mid-sem setup the test screen remembers, falling back to the SAME defaults that screen uses
+  * (including its topic choice for the student's progress), so the home card never promises a different test.
+  */
+export function midsemSummary(progress?: Parameters<typeof defaultMidsemTopics>[0]): MidsemSummary {
+  let count = MIDSEM_DEFAULT_COUNT;
+  let minutes = MIDSEM_DEFAULT_MINUTES;
+  let ids: string[] = defaultMidsemTopics(progress ?? {});
   try {
     const raw = JSON.parse(localStorage.getItem('pyladder:midsem-setup') ?? 'null') as { count?: unknown; minutes?: unknown; topicIds?: unknown } | null;
     if (raw) {

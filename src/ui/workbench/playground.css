@@ -86,7 +86,7 @@
 .pg-runtime.error { color: var(--pg-bad); }
 .pg-card .pg-run { height: 32px; background: var(--editor-text); border-color: var(--editor-text); color: var(--editor-bg); }
 .pg-card .pg-run:hover { background: var(--editor-text); border-color: var(--editor-text); opacity: 0.88; }
-.pg-card .pg-run .kbd-hint { color: var(--editor-bg); opacity: 0.6; }
+.pg-card .pg-run .kbd-hint { color: var(--editor-bg); opacity: 0.8; }  /* 0.6 fell under 4.5:1 on the light fill */
 .pg-card .pg-run:focus-visible { outline: 2px solid var(--pg-focus); outline-offset: 2px; }
 .pg-card .pg-run:disabled { background: var(--pg-hover); border-color: var(--pg-line); color: var(--editor-muted); }
 
@@ -145,7 +145,7 @@
 }
 .pg-empty p { margin: 0; }
 .pg-empty-icon { display: inline-flex; margin-bottom: 4px; opacity: 0.8; }
-.pg-empty-sub { font-size: var(--fs-12); opacity: 0.85; }
+.pg-empty-sub { font-size: var(--fs-12); }  /* no dimming: this is normal text and needs 4.5:1 */
 .pg-kbd {
   font-family: var(--mono); font-size: var(--fs-11); padding: 1px 5px; border-radius: 4px;
   border: 1px solid var(--pg-line-strong); background: transparent; color: var(--editor-text);
@@ -218,3 +218,4 @@
   .pg-out-head { padding-left: var(--sp-3); }
   .pg-out-body { padding: var(--sp-3); }
 }
+

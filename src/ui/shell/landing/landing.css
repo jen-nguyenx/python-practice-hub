@@ -54,6 +54,9 @@
 .tile-bar { display: block; height: 4px; border-radius: 999px; background: var(--progress-track); overflow: hidden; }
 .tile-fill { display: block; height: 100%; border-radius: 999px; background: var(--progress); }
 .tile-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: var(--mono); font-size: var(--fs-12); line-height: 18px; color: var(--text-muted); white-space: nowrap; }
+/* The minimum names both parts ("min 5 · 1 coding"), so it shrinks first on a narrow tile. */
+.tile-count { flex: none; }
+.tile-min { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
 .tile.is-skel { grid-template-rows: 12px 16px 4px 12px; row-gap: 16px; }
 .ladder-skel-head { margin-bottom: 2px; }
@@ -69,6 +72,7 @@
   .page.home { gap: 28px; }
   .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .tile { padding: 14px 14px 12px; row-gap: 10px; }
+  .tile-foot { gap: 6px; font-size: var(--fs-11); }
   .hc { padding: 22px; }
   .hc-title { font-size: var(--fs-20); }
   .home-today { gap: 2px 18px; font-size: var(--fs-14); }

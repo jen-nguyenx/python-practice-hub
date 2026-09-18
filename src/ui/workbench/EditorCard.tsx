@@ -1,6 +1,7 @@
 // Dark editor card (dark in both themes): a file tab with a rung underline, a mono runtime label, the editor or
 // code body, and an optional bottom bar inside the card. Used by the code formats and the read-format scratch editor.
 import type { ComponentChildren } from 'preact';
+import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { py } from '../../app/services.ts';
 import type { RuntimeStatus } from '../../runtime/protocol.ts';
 import './editorCard.css';
@@ -56,11 +57,49 @@ export function EditorCard({ file, label, tabActions, footer, below, children, c
   );
 }
 
+/**
+ * Which edges of a sideways-scrolling box have more content off-screen. macOS hides overlay scrollbars at rest,
+ * so a long example otherwise looks as if it just stops mid-word; the edge the reader can scroll towards gets a
+ * shadow, and the box becomes keyboard-scrollable while there is anything to scroll.
+ */
+function useScrollEdges() {
+  const ref = useRef<HTMLPreElement>(null);
+  const [edges, setEdges] = useState<'' | 'left' | 'right' | 'both'>('');
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      if (max <= 1) return setEdges('');
+      const left = el.scrollLeft > 1;
+      const right = el.scrollLeft < max - 1;
+      setEdges(left && right ? 'both' : left ? 'left' : right ? 'right' : '');
+    };
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
+    ro?.observe(el);
+    return () => {
+      el.removeEventListener('scroll', update);
+      ro?.disconnect();
+    };
+  });
+  return { ref, edges };
+}
+
 /** Example block written as a Python shell session: ">>> call" then the result. */
 export function ShellSession({ lines, label = 'Example' }: { lines: { input: string[]; output: string }[]; label?: string }) {
+  const { ref, edges } = useScrollEdges();
   if (!lines.length) return null;
   return (
-    <pre class="shell" aria-label={label}>
+    <pre
+      class="shell"
+      ref={ref}
+      aria-label={label}
+      data-scroll={edges || undefined}
+      role={edges ? 'region' : undefined}
+      tabIndex={edges ? 0 : undefined}
+    >
       <code>
         {lines.map((l, i) => (
           <span key={i} class="shell-entry">

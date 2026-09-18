@@ -14,6 +14,7 @@
     "format": "predict",
     "qid": "t01-s1-q1",
     "scenarioId": "t01-s1",
+    "scenarioTitle": "Rottnest ferry timetable",
     "title": "Hours and minutes",
     "topicId": "variables-expressions"
   },
@@ -31,6 +32,7 @@
     "format": "mcq",
     "qid": "t01-s1-q2",
     "scenarioId": "t01-s1",
+    "scenarioTitle": "Rottnest ferry timetable",
     "title": "Family fare",
     "topicId": "variables-expressions"
   },
@@ -51,7 +53,31 @@
     "format": "cloze",
     "qid": "t01-s1-q3",
     "scenarioId": "t01-s1",
+    "scenarioTitle": "Rottnest ferry timetable",
     "title": "Trip length on the departure board",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "modulo",
+      "floor-division",
+      "f-strings",
+      "return-value"
+    ],
+    "core": false,
+    "detects": [
+      "int_vs_float_division",
+      "print_vs_return",
+      "str_int_concat"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "write",
+    "kind": "function",
+    "qid": "t01-s1-q4",
+    "scenarioId": "t01-s1",
+    "scenarioTitle": "Rottnest ferry timetable",
+    "title": "Arrival time on the clock",
     "topicId": "variables-expressions"
   },
   {
@@ -70,6 +96,7 @@
     "format": "predict",
     "qid": "t01-s2-q1",
     "scenarioId": "t01-s2",
+    "scenarioTitle": "SmartRider top-up kiosk",
     "title": "Text that looks like a number",
     "topicId": "variables-expressions"
   },
@@ -88,6 +115,7 @@
     "format": "multi",
     "qid": "t01-s2-q2",
     "scenarioId": "t01-s2",
+    "scenarioTitle": "SmartRider top-up kiosk",
     "title": "Which conversions crash?",
     "topicId": "variables-expressions"
   },
@@ -105,6 +133,7 @@
     "format": "fixBug",
     "qid": "t01-s2-q3",
     "scenarioId": "t01-s2",
+    "scenarioTitle": "SmartRider top-up kiosk",
     "title": "Top-ups with cents",
     "topicId": "variables-expressions"
   },
@@ -124,6 +153,7 @@
     "format": "mcq",
     "qid": "t01-s3-q1",
     "scenarioId": "t01-s3",
+    "scenarioTitle": "Kings Park fun run",
     "title": "Name that variable",
     "topicId": "variables-expressions"
   },
@@ -142,6 +172,7 @@
     "format": "trace",
     "qid": "t01-s3-q2",
     "scenarioId": "t01-s3",
+    "scenarioTitle": "Kings Park fun run",
     "title": "Overtaking on the last lap",
     "topicId": "variables-expressions"
   },
@@ -167,6 +198,7 @@
     "kind": "program",
     "qid": "t01-s3-q3",
     "scenarioId": "t01-s3",
+    "scenarioTitle": "Kings Park fun run",
     "title": "Pace per kilometre",
     "topicId": "variables-expressions"
   },
@@ -185,6 +217,7 @@
     "format": "mcq",
     "qid": "t01-s4-q1",
     "scenarioId": "t01-s4",
+    "scenarioTitle": "UWA visitor parking",
     "title": "Charging for full hours",
     "topicId": "variables-expressions"
   },
@@ -205,6 +238,7 @@
     "format": "predict",
     "qid": "t01-s4-q2",
     "scenarioId": "t01-s4",
+    "scenarioTitle": "UWA visitor parking",
     "title": "Receipt rounding",
     "topicId": "variables-expressions"
   },
@@ -229,7 +263,182 @@
       "noImport"
     ],
     "scenarioId": "t01-s4",
+    "scenarioTitle": "UWA visitor parking",
     "title": "Pay per started hour",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "division",
+      "runtime-error",
+      "reading-tracebacks"
+    ],
+    "core": true,
+    "detects": [
+      "zero_division",
+      "int_vs_float_division",
+      "type_error_other"
+    ],
+    "diff": "easy",
+    "expectedSec": 100,
+    "format": "errorTranslator",
+    "qid": "t01-s5-q1",
+    "scenarioId": "t01-s5",
+    "scenarioTitle": "Splitting a Northbridge dinner bill",
+    "title": "Nobody turned up",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "round",
+      "float-precision",
+      "money"
+    ],
+    "core": true,
+    "detects": [
+      "round_mid_calc",
+      "float_equality"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "twins",
+    "qid": "t01-s5-q2",
+    "scenarioId": "t01-s5",
+    "scenarioTitle": "Splitting a Northbridge dinner bill",
+    "title": "Round now or round later",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "f-strings",
+      "format-spec",
+      "money"
+    ],
+    "core": false,
+    "detects": [
+      "str_int_concat",
+      "print_vs_return"
+    ],
+    "diff": "easy",
+    "expectedSec": 120,
+    "format": "cloze",
+    "qid": "t01-s5-q3",
+    "scenarioId": "t01-s5",
+    "scenarioTitle": "Splitting a Northbridge dinner bill",
+    "title": "One line of the receipt",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "percentage",
+      "true-division",
+      "round",
+      "return-value"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division",
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 210,
+    "format": "parsons",
+    "qid": "t01-s5-q4",
+    "scenarioId": "t01-s5",
+    "scenarioTitle": "Splitting a Northbridge dinner bill",
+    "title": "Build split_bill",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "round",
+      "floor-division",
+      "float-precision",
+      "money"
+    ],
+    "core": true,
+    "detects": [
+      "float_equality",
+      "int_vs_float_division",
+      "import_used",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "qid": "t01-s5-q5",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t01-s5",
+    "scenarioTitle": "Splitting a Northbridge dinner bill",
+    "title": "Round the cash total to 5 cents",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "types",
+      "type-conversion",
+      "floor-division"
+    ],
+    "core": true,
+    "detects": [
+      "int_of_float_string",
+      "int_vs_float_division",
+      "input_without_int"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "multi",
+    "qid": "t01-s6-q1",
+    "scenarioId": "t01-s6",
+    "scenarioTitle": "His Majesty's Theatre box office",
+    "title": "Which lines store the int 3?",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "floor-division",
+      "modulo",
+      "off-by-one",
+      "f-strings",
+      "return-value"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "int_vs_float_division",
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "parsons",
+    "qid": "t01-s6-q2",
+    "scenarioId": "t01-s6",
+    "scenarioTitle": "His Majesty's Theatre box office",
+    "title": "Ticket number to row and seat",
+    "topicId": "variables-expressions"
+  },
+  {
+    "concepts": [
+      "true-division",
+      "percentage",
+      "round",
+      "return-value"
+    ],
+    "core": false,
+    "detects": [
+      "int_vs_float_division",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 400,
+    "format": "fixBug",
+    "qid": "t01-s6-q3",
+    "scenarioId": "t01-s6",
+    "scenarioTitle": "His Majesty's Theatre box office",
+    "title": "How full was the house?",
     "topicId": "variables-expressions"
   },
   {
@@ -247,6 +456,7 @@
     "format": "mcq",
     "qid": "t02-s1-q1",
     "scenarioId": "t02-s1",
+    "scenarioTitle": "UWA grade bands",
     "title": "Which condition means CR?",
     "topicId": "if-elif-else"
   },
@@ -265,6 +475,7 @@
     "format": "predict",
     "qid": "t02-s1-q2",
     "scenarioId": "t02-s1",
+    "scenarioTitle": "UWA grade bands",
     "title": "Grades in the wrong order",
     "topicId": "if-elif-else"
   },
@@ -286,6 +497,7 @@
     "kind": "function",
     "qid": "t02-s1-q3",
     "scenarioId": "t02-s1",
+    "scenarioTitle": "UWA grade bands",
     "title": "Write uwa_grade(mark)",
     "topicId": "if-elif-else"
   },
@@ -305,6 +517,7 @@
     "format": "multi",
     "qid": "t02-s2-q1",
     "scenarioId": "t02-s2",
+    "scenarioTitle": "Perth heat warnings",
     "title": "Which snippets will not run?",
     "topicId": "if-elif-else"
   },
@@ -322,6 +535,7 @@
     "format": "twins",
     "qid": "t02-s2-q2",
     "scenarioId": "t02-s2",
+    "scenarioTitle": "Perth heat warnings",
     "title": "Two ifs or if and elif?",
     "topicId": "if-elif-else"
   },
@@ -342,7 +556,32 @@
     "format": "parsons",
     "qid": "t02-s2-q3",
     "scenarioId": "t02-s2",
+    "scenarioTitle": "Perth heat warnings",
     "title": "Build heat_alert",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "boolean",
+      "return-boolean",
+      "guard",
+      "boundary"
+    ],
+    "core": true,
+    "detects": [
+      "compare_to_true",
+      "or_with_literal",
+      "elif_vs_if",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "qid": "t02-s2-q4",
+    "scenarioId": "t02-s2",
+    "scenarioTitle": "Perth heat warnings",
+    "title": "Write total_fire_ban",
     "topicId": "if-elif-else"
   },
   {
@@ -361,6 +600,7 @@
     "format": "mcq",
     "qid": "t02-s3-q1",
     "scenarioId": "t02-s3",
+    "scenarioTitle": "Cottesloe beach flags",
     "title": "Red or black?",
     "topicId": "if-elif-else"
   },
@@ -381,6 +621,7 @@
     "format": "predict",
     "qid": "t02-s3-q2",
     "scenarioId": "t02-s3",
+    "scenarioTitle": "Cottesloe beach flags",
     "title": "Text that looks like numbers",
     "topicId": "if-elif-else"
   },
@@ -399,6 +640,7 @@
     "format": "fixBug",
     "qid": "t02-s3-q3",
     "scenarioId": "t02-s3",
+    "scenarioTitle": "Cottesloe beach flags",
     "title": "Fix swim_flag",
     "topicId": "if-elif-else"
   },
@@ -416,6 +658,7 @@
     "format": "mcq",
     "qid": "t02-s4-q1",
     "scenarioId": "t02-s4",
+    "scenarioTitle": "SmartRider rules",
     "title": "is or ==?",
     "topicId": "if-elif-else"
   },
@@ -434,6 +677,7 @@
     "format": "refactor",
     "qid": "t02-s4-q2",
     "scenarioId": "t02-s4",
+    "scenarioTitle": "SmartRider rules",
     "title": "Flatten can_tag_on",
     "topicId": "if-elif-else"
   },
@@ -457,7 +701,179 @@
     "kind": "function",
     "qid": "t02-s4-q3",
     "scenarioId": "t02-s4",
+    "scenarioTitle": "SmartRider rules",
     "title": "Write trip_fare",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "boolean",
+      "short-circuit",
+      "guard"
+    ],
+    "core": false,
+    "detects": [
+      "zero_division",
+      "indent_error"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "mcq",
+    "qid": "t02-s5-q1",
+    "scenarioId": "t02-s5",
+    "scenarioTitle": "Scorchers run chase",
+    "title": "The last ball has gone",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "comparison",
+      "types",
+      "conversion",
+      "runtime-error"
+    ],
+    "core": true,
+    "detects": [
+      "input_without_int",
+      "int_of_float_string",
+      "type_error_other"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "errorTranslator",
+    "qid": "t02-s5-q2",
+    "scenarioId": "t02-s5",
+    "scenarioTitle": "Scorchers run chase",
+    "title": "The feed sends text",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "elif",
+      "comparison",
+      "boundary",
+      "branch-order"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if",
+      "assign_vs_compare"
+    ],
+    "diff": "easy",
+    "expectedSec": 120,
+    "format": "cloze",
+    "qid": "t02-s5-q3",
+    "scenarioId": "t02-s5",
+    "scenarioTitle": "Scorchers run chase",
+    "title": "Win, lose or still chasing",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "guard",
+      "division",
+      "return-none"
+    ],
+    "core": false,
+    "detects": [
+      "zero_division",
+      "return_type_wrong"
+    ],
+    "diff": "medium",
+    "expectedSec": 210,
+    "format": "fixBug",
+    "qid": "t02-s5-q4",
+    "scenarioId": "t02-s5",
+    "scenarioTitle": "Scorchers run chase",
+    "title": "Guard the division",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "guard",
+      "elif",
+      "branch-order",
+      "boundary",
+      "return"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if",
+      "zero_division",
+      "print_vs_return",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t02-s5-q5",
+    "scenarioId": "t02-s5",
+    "scenarioTitle": "Scorchers run chase",
+    "title": "Write chase_status",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "comparison",
+      "chained-comparison",
+      "boolean",
+      "not"
+    ],
+    "core": false,
+    "detects": [
+      "or_with_literal",
+      "syntax_other"
+    ],
+    "diff": "medium",
+    "expectedSec": 160,
+    "format": "multi",
+    "qid": "t02-s6-q1",
+    "scenarioId": "t02-s6",
+    "scenarioTitle": "Perth Airport bag drop",
+    "title": "Bags the belt will take",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "elif",
+      "boundary",
+      "boolean",
+      "branch-order"
+    ],
+    "core": true,
+    "detects": [
+      "elif_vs_if",
+      "off_by_one_range",
+      "compare_to_true"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "cloze",
+    "qid": "t02-s6-q2",
+    "scenarioId": "t02-s6",
+    "scenarioTitle": "Perth Airport bag drop",
+    "title": "Fill in the kiosk decision",
+    "topicId": "if-elif-else"
+  },
+  {
+    "concepts": [
+      "boundary",
+      "edge-cases",
+      "comparison",
+      "testing"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range"
+    ],
+    "diff": "hard",
+    "expectedSec": 390,
+    "format": "testWriter",
+    "qid": "t02-s6-q3",
+    "scenarioId": "t02-s6",
+    "scenarioTitle": "Perth Airport bag drop",
+    "title": "Break the excess fee",
     "topicId": "if-elif-else"
   },
   {
@@ -474,6 +890,7 @@
     "format": "multi",
     "qid": "t03-s1-q1",
     "scenarioId": "t03-s1",
+    "scenarioTitle": "Jacob's Ladder training",
     "title": "Even training days",
     "topicId": "for-loops-range"
   },
@@ -493,6 +910,7 @@
     "format": "trace",
     "qid": "t03-s1-q2",
     "scenarioId": "t03-s1",
+    "scenarioTitle": "Jacob's Ladder training",
     "title": "Build-up week",
     "topicId": "for-loops-range"
   },
@@ -513,7 +931,27 @@
     "format": "parsons",
     "qid": "t03-s1-q3",
     "scenarioId": "t03-s1",
+    "scenarioTitle": "Jacob's Ladder training",
     "title": "Total steps for the plan",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "accumulator",
+      "indentation"
+    ],
+    "core": true,
+    "detects": [
+      "indent_error"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "twins",
+    "qid": "t03-s1-q4",
+    "scenarioId": "t03-s1",
+    "scenarioTitle": "Jacob's Ladder training",
+    "title": "One line or three?",
     "topicId": "for-loops-range"
   },
   {
@@ -531,6 +969,7 @@
     "format": "predict",
     "qid": "t03-s2-q1",
     "scenarioId": "t03-s2",
+    "scenarioTitle": "Transperth timetable",
     "title": "Countdown board",
     "topicId": "for-loops-range"
   },
@@ -549,6 +988,7 @@
     "format": "predict",
     "qid": "t03-s2-q2",
     "scenarioId": "t03-s2",
+    "scenarioTitle": "Transperth timetable",
     "title": "Skipping carriages",
     "topicId": "for-loops-range"
   },
@@ -568,7 +1008,32 @@
     "format": "cloze",
     "qid": "t03-s2-q3",
     "scenarioId": "t03-s2",
+    "scenarioTitle": "Transperth timetable",
     "title": "How many trains?",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "range-step",
+      "accumulator",
+      "function-body"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "accumulator_init",
+      "early_return_in_loop",
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "write",
+    "kind": "function",
+    "qid": "t03-s2-q4",
+    "scenarioId": "t03-s2",
+    "scenarioTitle": "Transperth timetable",
+    "title": "The last train you can catch",
     "topicId": "for-loops-range"
   },
   {
@@ -586,6 +1051,7 @@
     "format": "mcq",
     "qid": "t03-s3-q1",
     "scenarioId": "t03-s3",
+    "scenarioTitle": "Perth heatwave week",
     "title": "Where does the counter start?",
     "topicId": "for-loops-range"
   },
@@ -607,6 +1073,7 @@
     "format": "predict",
     "qid": "t03-s3-q2",
     "scenarioId": "t03-s3",
+    "scenarioTitle": "Perth heatwave week",
     "title": "Rising forecast",
     "topicId": "for-loops-range"
   },
@@ -626,6 +1093,7 @@
     "format": "parsons",
     "qid": "t03-s3-q3",
     "scenarioId": "t03-s3",
+    "scenarioTitle": "Perth heatwave week",
     "title": "Average maximum",
     "topicId": "for-loops-range"
   },
@@ -649,6 +1117,7 @@
     "kind": "program",
     "qid": "t03-s3-q4",
     "scenarioId": "t03-s3",
+    "scenarioTitle": "Perth heatwave week",
     "title": "Hot streak",
     "topicId": "for-loops-range"
   },
@@ -668,6 +1137,7 @@
     "format": "trace",
     "qid": "t03-s4-q1",
     "scenarioId": "t03-s4",
+    "scenarioTitle": "Rottnest quokka colony",
     "title": "Pairs month by month",
     "topicId": "for-loops-range"
   },
@@ -688,6 +1158,7 @@
     "format": "fixBug",
     "qid": "t03-s4-q2",
     "scenarioId": "t03-s4",
+    "scenarioTitle": "Rottnest quokka colony",
     "title": "First month over the target",
     "topicId": "for-loops-range"
   },
@@ -713,7 +1184,156 @@
     "paper": true,
     "qid": "t03-s4-q3",
     "scenarioId": "t03-s4",
+    "scenarioTitle": "Rottnest quokka colony",
     "title": "Filtered Fibonacci sum",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "int-vs-float",
+      "floor-division"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "errorTranslator",
+    "qid": "t03-s5-q1",
+    "scenarioId": "t03-s5",
+    "scenarioTitle": "Fremantle Markets stall",
+    "title": "Checking half the rows",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "accumulator",
+      "range",
+      "round",
+      "percentage"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "cloze",
+    "qid": "t03-s5-q2",
+    "scenarioId": "t03-s5",
+    "scenarioTitle": "Fremantle Markets stall",
+    "title": "Takings growing 5% a week",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "accumulator",
+      "series",
+      "early-return",
+      "loop-if"
+    ],
+    "core": false,
+    "detects": [
+      "accumulator_init",
+      "off_by_one_range",
+      "early_return_in_loop"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "fixBug",
+    "qid": "t03-s5-q3",
+    "scenarioId": "t03-s5",
+    "scenarioTitle": "Fremantle Markets stall",
+    "title": "Saving for a new stall",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range-step",
+      "running-maximum",
+      "loop-if",
+      "search"
+    ],
+    "core": false,
+    "detects": [
+      "off_by_one_range",
+      "sort_tiebreak",
+      "accumulator_init",
+      "return_type_wrong",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t03-s5-q4",
+    "scenarioId": "t03-s5",
+    "scenarioTitle": "Fremantle Markets stall",
+    "title": "Choosing the price",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "loop-variable",
+      "indentation"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "scope_confusion",
+      "indent_error"
+    ],
+    "diff": "easy",
+    "expectedSec": 75,
+    "format": "mcq",
+    "qid": "t03-s6-q1",
+    "scenarioId": "t03-s6",
+    "scenarioTitle": "Reid Library returns desk",
+    "title": "The loop variable after the loop",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "range",
+      "accumulator",
+      "off-by-one"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 140,
+    "format": "twins",
+    "qid": "t03-s6-q2",
+    "scenarioId": "t03-s6",
+    "scenarioTitle": "Reid Library returns desk",
+    "title": "Which day does the fine start on?",
+    "topicId": "for-loops-range"
+  },
+  {
+    "concepts": [
+      "accumulator",
+      "loop-if",
+      "round",
+      "guard-clause"
+    ],
+    "core": false,
+    "detects": [
+      "shadow_builtin",
+      "round_mid_calc"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "refactor",
+    "qid": "t03-s6-q3",
+    "scenarioId": "t03-s6",
+    "scenarioTitle": "Reid Library returns desk",
+    "title": "Tidying up the fine calculator",
     "topicId": "for-loops-range"
   },
   {
@@ -731,6 +1351,7 @@
     "format": "mcq",
     "qid": "t04-s1-q1",
     "scenarioId": "t04-s1",
+    "scenarioTitle": "SmartRider fares",
     "title": "Printed, but not returned",
     "topicId": "functions-basics"
   },
@@ -749,6 +1370,7 @@
     "format": "predict",
     "qid": "t04-s1-q2",
     "scenarioId": "t04-s1",
+    "scenarioTitle": "SmartRider fares",
     "title": "Topping up a card",
     "topicId": "functions-basics"
   },
@@ -767,7 +1389,27 @@
     "format": "fixBug",
     "qid": "t04-s1-q3",
     "scenarioId": "t04-s1",
+    "scenarioTitle": "SmartRider fares",
     "title": "The fare that crashes the planner",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "arguments",
+      "parameters",
+      "calling-functions"
+    ],
+    "core": true,
+    "detects": [
+      "forgot_to_call"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "multi",
+    "qid": "t04-s1-q4",
+    "scenarioId": "t04-s1",
+    "scenarioTitle": "SmartRider fares",
+    "title": "Which arguments go where",
     "topicId": "functions-basics"
   },
   {
@@ -787,6 +1429,7 @@
     "format": "predict",
     "qid": "t04-s2-q1",
     "scenarioId": "t04-s2",
+    "scenarioTitle": "CITS1401 marks",
     "title": "Points, printed and returned",
     "topicId": "functions-basics"
   },
@@ -806,6 +1449,7 @@
     "format": "cloze",
     "qid": "t04-s2-q2",
     "scenarioId": "t04-s2",
+    "scenarioTitle": "CITS1401 marks",
     "title": "Fill in the marks helpers",
     "topicId": "functions-basics"
   },
@@ -828,7 +1472,32 @@
     "kind": "function",
     "qid": "t04-s2-q3",
     "scenarioId": "t04-s2",
+    "scenarioTitle": "CITS1401 marks",
     "title": "Grade from three marks",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "helper-functions",
+      "return-in-loop",
+      "for-range",
+      "search"
+    ],
+    "core": false,
+    "detects": [
+      "early_return_in_loop",
+      "off_by_one_range",
+      "forgot_to_call",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "qid": "t04-s2-q4",
+    "scenarioId": "t04-s2",
+    "scenarioTitle": "CITS1401 marks",
+    "title": "What do I need in the exam?",
     "topicId": "functions-basics"
   },
   {
@@ -848,6 +1517,7 @@
     "format": "mcq",
     "qid": "t04-s3-q1",
     "scenarioId": "t04-s3",
+    "scenarioTitle": "Rottnest quokka survey",
     "title": "Calling the density function",
     "topicId": "functions-basics"
   },
@@ -867,6 +1537,7 @@
     "format": "errorTranslator",
     "qid": "t04-s3-q2",
     "scenarioId": "t04-s3",
+    "scenarioTitle": "Rottnest quokka survey",
     "title": "Where did total go?",
     "topicId": "functions-basics"
   },
@@ -890,6 +1561,7 @@
     "kind": "function",
     "qid": "t04-s3-q3",
     "scenarioId": "t04-s3",
+    "scenarioTitle": "Rottnest quokka survey",
     "title": "Years until the colony recovers",
     "topicId": "functions-basics"
   },
@@ -911,6 +1583,7 @@
     "format": "parsons",
     "qid": "t04-s4-q1",
     "scenarioId": "t04-s4",
+    "scenarioTitle": "Perth Scorchers toolkit",
     "title": "How many ways to pick the team",
     "topicId": "functions-basics"
   },
@@ -930,6 +1603,7 @@
     "format": "refactor",
     "qid": "t04-s4-q2",
     "scenarioId": "t04-s4",
+    "scenarioTitle": "Perth Scorchers toolkit",
     "title": "Return the condition itself",
     "topicId": "functions-basics"
   },
@@ -954,7 +1628,159 @@
     "kind": "function",
     "qid": "t04-s4-q3",
     "scenarioId": "t04-s4",
+    "scenarioTitle": "Perth Scorchers toolkit",
     "title": "Scorecard line",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "return",
+      "none",
+      "branches"
+    ],
+    "core": true,
+    "detects": [
+      "return_type_wrong",
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "predict",
+    "qid": "t04-s5-q1",
+    "scenarioId": "t04-s5",
+    "scenarioTitle": "Fremantle Markets paperwork",
+    "title": "The fee that came back as None",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "calling-functions",
+      "return",
+      "helper-functions"
+    ],
+    "core": true,
+    "detects": [
+      "forgot_to_call"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "fixBug",
+    "qid": "t04-s5-q2",
+    "scenarioId": "t04-s5",
+    "scenarioTitle": "Fremantle Markets paperwork",
+    "title": "The GST that was never worked out",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "helper-functions",
+      "return",
+      "parameters",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "forgot_to_call",
+      "print_vs_return",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "write",
+    "kind": "function",
+    "qid": "t04-s5-q3",
+    "scenarioId": "t04-s5",
+    "scenarioTitle": "Fremantle Markets paperwork",
+    "title": "Rent for the pitch",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "helper-functions",
+      "floor-division",
+      "modulo",
+      "return-int"
+    ],
+    "core": false,
+    "detects": [
+      "int_vs_float_division",
+      "forgot_to_call",
+      "off_by_one_range",
+      "print_vs_return",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "write",
+    "kind": "function",
+    "qid": "t04-s5-q4",
+    "scenarioId": "t04-s5",
+    "scenarioTitle": "Fremantle Markets paperwork",
+    "title": "Coffee cart loyalty card",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "return",
+      "loop-in-function",
+      "accumulator"
+    ],
+    "core": true,
+    "detects": [
+      "early_return_in_loop"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "twins",
+    "qid": "t04-s6-q1",
+    "scenarioId": "t04-s6",
+    "scenarioTitle": "Swan River ferry",
+    "title": "Where the return goes",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "helper-functions",
+      "return",
+      "range",
+      "accumulator"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "forgot_to_call",
+      "print_vs_return",
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 220,
+    "format": "cloze",
+    "qid": "t04-s6-q2",
+    "scenarioId": "t04-s6",
+    "scenarioTitle": "Swan River ferry",
+    "title": "A day of crossings",
+    "topicId": "functions-basics"
+  },
+  {
+    "concepts": [
+      "helper-functions",
+      "floor-division",
+      "modulo",
+      "return"
+    ],
+    "core": false,
+    "detects": [
+      "int_vs_float_division",
+      "forgot_to_call",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "parsons",
+    "qid": "t04-s6-q3",
+    "scenarioId": "t04-s6",
+    "scenarioTitle": "Swan River ferry",
+    "title": "How many crossings for the group",
     "topicId": "functions-basics"
   },
   {
@@ -973,6 +1799,7 @@
     "format": "predict",
     "qid": "t05-s1-q1",
     "scenarioId": "t05-s1",
+    "scenarioTitle": "Unit codes in your timetable",
     "title": "Slicing a unit code",
     "topicId": "strings"
   },
@@ -991,6 +1818,7 @@
     "format": "mcq",
     "qid": "t05-s1-q2",
     "scenarioId": "t05-s1",
+    "scenarioTitle": "Unit codes in your timetable",
     "title": "Did strip() change the code?",
     "topicId": "strings"
   },
@@ -1012,6 +1840,7 @@
     "kind": "function",
     "qid": "t05-s1-q3",
     "scenarioId": "t05-s1",
+    "scenarioTitle": "Unit codes in your timetable",
     "title": "Clean a typed unit code",
     "topicId": "strings"
   },
@@ -1032,6 +1861,7 @@
     "format": "errorTranslator",
     "qid": "t05-s2-q1",
     "scenarioId": "t05-s2",
+    "scenarioTitle": "SmartRider card numbers",
     "title": "Checking a PIN for repeated digits",
     "topicId": "strings"
   },
@@ -1050,6 +1880,7 @@
     "format": "cloze",
     "qid": "t05-s2-q2",
     "scenarioId": "t05-s2",
+    "scenarioTitle": "SmartRider card numbers",
     "title": "Hide the card number on a receipt",
     "topicId": "strings"
   },
@@ -1072,6 +1903,7 @@
     "kind": "function",
     "qid": "t05-s2-q3",
     "scenarioId": "t05-s2",
+    "scenarioTitle": "SmartRider card numbers",
     "title": "Format a typed card number",
     "topicId": "strings"
   },
@@ -1091,6 +1923,7 @@
     "format": "predict",
     "qid": "t05-s3-q1",
     "scenarioId": "t05-s3",
+    "scenarioTitle": "Scorchers scoreboard",
     "title": "Reading a score with find",
     "topicId": "strings"
   },
@@ -1109,6 +1942,7 @@
     "format": "twins",
     "qid": "t05-s3-q2",
     "scenarioId": "t05-s3",
+    "scenarioTitle": "Scorchers scoreboard",
     "title": "Counting vowels in the ground name",
     "topicId": "strings"
   },
@@ -1127,7 +1961,27 @@
     "format": "fixBug",
     "qid": "t05-s3-q3",
     "scenarioId": "t05-s3",
+    "scenarioTitle": "Scorchers scoreboard",
     "title": "Team acronyms for the big screen",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "slicing",
+      "len",
+      "boundary"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "cloze",
+    "qid": "t05-s3-q4",
+    "scenarioId": "t05-s3",
+    "scenarioTitle": "Scorchers scoreboard",
+    "title": "Fit a name on the big screen",
     "topicId": "strings"
   },
   {
@@ -1147,7 +2001,31 @@
     "format": "predict",
     "qid": "t05-s4-q1",
     "scenarioId": "t05-s4",
+    "scenarioTitle": "Kings Park treasure hunt",
     "title": "Is the clue a palindrome?",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "slicing",
+      "loop-over-string",
+      "case",
+      "search"
+    ],
+    "core": false,
+    "detects": [
+      "off_by_one_range",
+      "case_sensitive_compare",
+      "index_out_of_range"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t05-s4-q2",
+    "scenarioId": "t05-s4",
+    "scenarioTitle": "Kings Park treasure hunt",
+    "title": "Count a pattern in a plaque",
     "topicId": "strings"
   },
   {
@@ -1169,6 +2047,7 @@
     "kind": "function",
     "qid": "t05-s4-q3",
     "scenarioId": "t05-s4",
+    "scenarioTitle": "Kings Park treasure hunt",
     "title": "Shift the letters of a clue",
     "topicId": "strings"
   },
@@ -1197,7 +2076,155 @@
       "noImport"
     ],
     "scenarioId": "t05-s4",
+    "scenarioTitle": "Kings Park treasure hunt",
     "title": "Anagram lock (exam style)",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "slicing",
+      "indexing",
+      "negative-index"
+    ],
+    "core": false,
+    "detects": [
+      "off_by_one_range"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "multi",
+    "qid": "t05-s5-q1",
+    "scenarioId": "t05-s5",
+    "scenarioTitle": "Signs for a Fremantle markets stall",
+    "title": "Cut the price out of a label",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "loop-over-string",
+      "accumulator",
+      "str-vs-int"
+    ],
+    "core": true,
+    "detects": [
+      "str_int_concat",
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 220,
+    "format": "trace",
+    "qid": "t05-s5-q2",
+    "scenarioId": "t05-s5",
+    "scenarioTitle": "Signs for a Fremantle markets stall",
+    "title": "Barcode check digit",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "split",
+      "accumulator",
+      "len",
+      "tie-break"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "sort_tiebreak"
+    ],
+    "diff": "medium",
+    "expectedSec": 210,
+    "format": "parsons",
+    "qid": "t05-s5-q3",
+    "scenarioId": "t05-s5",
+    "scenarioTitle": "Signs for a Fremantle markets stall",
+    "title": "Widest word on the sign",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "split",
+      "string-building",
+      "case",
+      "methods"
+    ],
+    "core": true,
+    "detects": [
+      "case_sensitive_compare",
+      "accumulator_init",
+      "string_immutability",
+      "index_out_of_range"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t05-s5-q4",
+    "scenarioId": "t05-s5",
+    "scenarioTitle": "Signs for a Fremantle markets stall",
+    "title": "Put a sign into title case",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "in",
+      "find",
+      "case",
+      "startswith"
+    ],
+    "core": true,
+    "detects": [
+      "case_sensitive_compare",
+      "off_by_one_range"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "mcq",
+    "qid": "t05-s6-q1",
+    "scenarioId": "t05-s6",
+    "scenarioTitle": "The Reid Library catalogue",
+    "title": "Searching the catalogue in lower case",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "for-each",
+      "loop-over-string",
+      "string-building",
+      "methods"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 210,
+    "format": "refactor",
+    "qid": "t05-s6-q2",
+    "scenarioId": "t05-s6",
+    "scenarioTitle": "The Reid Library catalogue",
+    "title": "Pull the digits out of an ISBN",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "find",
+      "slicing",
+      "search",
+      "edge-cases"
+    ],
+    "core": false,
+    "detects": [
+      "off_by_one_range",
+      "index_out_of_range"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "testWriter",
+    "qid": "t05-s6-q3",
+    "scenarioId": "t05-s6",
+    "scenarioTitle": "The Reid Library catalogue",
+    "title": "Break the field reader",
     "topicId": "strings"
   },
   {
@@ -1216,6 +2243,7 @@
     "format": "mcq",
     "qid": "t06-s1-q1",
     "scenarioId": "t06-s1",
+    "scenarioTitle": "Derby day at Optus Stadium",
     "title": "Backup of the booked seats",
     "topicId": "lists-tuples"
   },
@@ -1234,6 +2262,7 @@
     "format": "predict",
     "qid": "t06-s1-q2",
     "scenarioId": "t06-s1",
+    "scenarioTitle": "Derby day at Optus Stadium",
     "title": "Gate 3 queue",
     "topicId": "lists-tuples"
   },
@@ -1254,6 +2283,7 @@
     "format": "predict",
     "qid": "t06-s1-q3",
     "scenarioId": "t06-s1",
+    "scenarioTitle": "Derby day at Optus Stadium",
     "title": "Adding to the kiosk roster",
     "topicId": "lists-tuples"
   },
@@ -1275,6 +2305,7 @@
     "format": "fixBug",
     "qid": "t06-s1-q4",
     "scenarioId": "t06-s1",
+    "scenarioTitle": "Derby day at Optus Stadium",
     "title": "Bays still on sale",
     "topicId": "lists-tuples"
   },
@@ -1294,6 +2325,7 @@
     "format": "mcq",
     "qid": "t06-s2-q1",
     "scenarioId": "t06-s2",
+    "scenarioTitle": "Bureau of Meteorology weather logs",
     "title": "Which line crashes?",
     "topicId": "lists-tuples"
   },
@@ -1313,6 +2345,7 @@
     "format": "trace",
     "qid": "t06-s2-q2",
     "scenarioId": "t06-s2",
+    "scenarioTitle": "Bureau of Meteorology weather logs",
     "title": "Rain gauge totals",
     "topicId": "lists-tuples"
   },
@@ -1336,7 +2369,29 @@
     "kind": "function",
     "qid": "t06-s2-q3",
     "scenarioId": "t06-s2",
+    "scenarioTitle": "Bureau of Meteorology weather logs",
     "title": "Weekly summary as a tuple",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "nested-list",
+      "aliasing",
+      "list-copy",
+      "append"
+    ],
+    "core": true,
+    "detects": [
+      "aliasing_copy",
+      "mutated_input"
+    ],
+    "diff": "medium",
+    "expectedSec": 260,
+    "format": "fixBug",
+    "qid": "t06-s2-q4",
+    "scenarioId": "t06-s2",
+    "scenarioTitle": "Bureau of Meteorology weather logs",
+    "title": "A blank log for every station",
     "topicId": "lists-tuples"
   },
   {
@@ -1355,6 +2410,7 @@
     "format": "twins",
     "qid": "t06-s3-q1",
     "scenarioId": "t06-s3",
+    "scenarioTitle": "Results week at UWA",
     "title": "sort() or sorted()?",
     "topicId": "lists-tuples"
   },
@@ -1376,6 +2432,7 @@
     "format": "parsons",
     "qid": "t06-s3-q2",
     "scenarioId": "t06-s3",
+    "scenarioTitle": "Results week at UWA",
     "title": "Who passed, A to Z",
     "topicId": "lists-tuples"
   },
@@ -1399,7 +2456,34 @@
     "kind": "function",
     "qid": "t06-s3-q3",
     "scenarioId": "t06-s3",
+    "scenarioTitle": "Results week at UWA",
     "title": "Two free desks side by side",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "sorted",
+      "median",
+      "tuple-return",
+      "round",
+      "integer-division"
+    ],
+    "core": true,
+    "detects": [
+      "mutated_input",
+      "none_from_inplace",
+      "index_out_of_range",
+      "off_by_one_range",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "qid": "t06-s3-q4",
+    "scenarioId": "t06-s3",
+    "scenarioTitle": "Results week at UWA",
+    "title": "Median mark for the unit report",
     "topicId": "lists-tuples"
   },
   {
@@ -1419,6 +2503,7 @@
     "format": "refactor",
     "qid": "t06-s4-q1",
     "scenarioId": "t06-s4",
+    "scenarioTitle": "Perth Scorchers stats desk",
     "title": "Top scorer without the indexes",
     "topicId": "lists-tuples"
   },
@@ -1442,6 +2527,7 @@
     "kind": "function",
     "qid": "t06-s4-q2",
     "scenarioId": "t06-s4",
+    "scenarioTitle": "Perth Scorchers stats desk",
     "title": "Fantasy league table with tie-breaks",
     "topicId": "lists-tuples"
   },
@@ -1469,7 +2555,162 @@
       "noImport"
     ],
     "scenarioId": "t06-s4",
+    "scenarioTitle": "Perth Scorchers stats desk",
     "title": "Streaks in a bowling spell (exam style)",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "sorted",
+      "sort",
+      "list-copy",
+      "list-concatenation"
+    ],
+    "core": true,
+    "detects": [
+      "none_from_inplace",
+      "mutated_input",
+      "aliasing_copy"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "multi",
+    "qid": "t06-s5-q1",
+    "scenarioId": "t06-s5",
+    "scenarioTitle": "Swim squad time trials",
+    "title": "Which ones leave the times alone?",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "empty-list",
+      "min",
+      "filtering",
+      "edge-case"
+    ],
+    "core": false,
+    "detects": [
+      "index_out_of_range",
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "errorTranslator",
+    "qid": "t06-s5-q2",
+    "scenarioId": "t06-s5",
+    "scenarioTitle": "Swim squad time trials",
+    "title": "No qualifying laps",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "list-of-tuples",
+      "range-len",
+      "early-return",
+      "search"
+    ],
+    "core": true,
+    "detects": [
+      "index_out_of_range",
+      "early_return_in_loop"
+    ],
+    "diff": "easy",
+    "expectedSec": 115,
+    "format": "cloze",
+    "qid": "t06-s5-q3",
+    "scenarioId": "t06-s5",
+    "scenarioTitle": "Swim squad time trials",
+    "title": "Find a swimmer on the sign-on sheet",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "list-of-tuples",
+      "grouping",
+      "parallel-lists",
+      "tuple-return",
+      "round"
+    ],
+    "core": false,
+    "detects": [
+      "mutated_input",
+      "return_type_wrong",
+      "index_out_of_range",
+      "accumulator_init"
+    ],
+    "diff": "hard",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "qid": "t06-s5-q4",
+    "scenarioId": "t06-s5",
+    "scenarioTitle": "Swim squad time trials",
+    "title": "Best time for each swimmer",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "in-membership",
+      "append",
+      "duplicates",
+      "list-copy"
+    ],
+    "core": true,
+    "detects": [
+      "mutated_input",
+      "aliasing_copy",
+      "accumulator_init"
+    ],
+    "diff": "easy",
+    "expectedSec": 115,
+    "format": "cloze",
+    "qid": "t06-s6-q1",
+    "scenarioId": "t06-s6",
+    "scenarioTitle": "Rottnest Island ferry office",
+    "title": "Each passenger once",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "nested-loop",
+      "in-membership",
+      "append",
+      "duplicates"
+    ],
+    "core": true,
+    "detects": [
+      "aliasing_copy",
+      "early_return_in_loop",
+      "mutated_input"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "parsons",
+    "qid": "t06-s6-q2",
+    "scenarioId": "t06-s6",
+    "scenarioTitle": "Rottnest Island ferry office",
+    "title": "Day trippers on both sailings",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
+      "duplicates",
+      "sorted",
+      "ranking",
+      "edge-cases"
+    ],
+    "core": false,
+    "detects": [
+      "sort_tiebreak",
+      "index_out_of_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 330,
+    "format": "testWriter",
+    "qid": "t06-s6-q3",
+    "scenarioId": "t06-s6",
+    "scenarioTitle": "Rottnest Island ferry office",
+    "title": "Break the second-busiest day",
     "topicId": "lists-tuples"
   },
   {
@@ -1491,6 +2732,7 @@
     "format": "trace",
     "qid": "t07-s1-q1",
     "scenarioId": "t07-s1",
+    "scenarioTitle": "Perth Zoo ticket gate checks",
     "title": "A gate number in binary",
     "topicId": "while-nested-loops"
   },
@@ -1512,6 +2754,7 @@
     "format": "cloze",
     "qid": "t07-s1-q2",
     "scenarioId": "t07-s1",
+    "scenarioTitle": "Perth Zoo ticket gate checks",
     "title": "Digit sum",
     "topicId": "while-nested-loops"
   },
@@ -1537,7 +2780,30 @@
     "kind": "function",
     "qid": "t07-s1-q3",
     "scenarioId": "t07-s1",
+    "scenarioTitle": "Perth Zoo ticket gate checks",
     "title": "Luhn check for bank cards",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "digits",
+      "modulo",
+      "floor-division",
+      "loop-update"
+    ],
+    "core": true,
+    "detects": [
+      "int_vs_float_division",
+      "infinite_while"
+    ],
+    "diff": "easy",
+    "expectedSec": 105,
+    "format": "multi",
+    "qid": "t07-s1-q4",
+    "scenarioId": "t07-s1",
+    "scenarioTitle": "Perth Zoo ticket gate checks",
+    "title": "What the digit loop does",
     "topicId": "while-nested-loops"
   },
   {
@@ -1556,6 +2822,7 @@
     "format": "mcq",
     "qid": "t07-s2-q1",
     "scenarioId": "t07-s2",
+    "scenarioTitle": "Perth Observatory maths night",
     "title": "When should a series stop?",
     "topicId": "while-nested-loops"
   },
@@ -1577,6 +2844,7 @@
     "format": "predict",
     "qid": "t07-s2-q2",
     "scenarioId": "t07-s2",
+    "scenarioTitle": "Perth Observatory maths night",
     "title": "Halving until small",
     "topicId": "while-nested-loops"
   },
@@ -1607,7 +2875,31 @@
       "noImport"
     ],
     "scenarioId": "t07-s2",
+    "scenarioTitle": "Perth Observatory maths night",
     "title": "The e series (exam style)",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "series",
+      "tolerance",
+      "accumulator",
+      "loop-order"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "accumulator_init",
+      "infinite_while"
+    ],
+    "diff": "medium",
+    "expectedSec": 210,
+    "format": "fixBug",
+    "qid": "t07-s2-q4",
+    "scenarioId": "t07-s2",
+    "scenarioTitle": "Perth Observatory maths night",
+    "title": "The demo that loses its first term",
     "topicId": "while-nested-loops"
   },
   {
@@ -1626,6 +2918,7 @@
     "format": "predict",
     "qid": "t07-s3-q1",
     "scenarioId": "t07-s3",
+    "scenarioTitle": "Fremantle Markets weekend planner",
     "title": "Stall labels by row",
     "topicId": "while-nested-loops"
   },
@@ -1646,6 +2939,7 @@
     "format": "trace",
     "qid": "t07-s3-q2",
     "scenarioId": "t07-s3",
+    "scenarioTitle": "Fremantle Markets weekend planner",
     "title": "Site fees for every size",
     "topicId": "while-nested-loops"
   },
@@ -1668,6 +2962,7 @@
     "format": "parsons",
     "qid": "t07-s3-q3",
     "scenarioId": "t07-s3",
+    "scenarioTitle": "Fremantle Markets weekend planner",
     "title": "Every pair of stalls once",
     "topicId": "while-nested-loops"
   },
@@ -1694,6 +2989,7 @@
     "paper": true,
     "qid": "t07-s3-q4",
     "scenarioId": "t07-s3",
+    "scenarioTitle": "Fremantle Markets weekend planner",
     "title": "Meal deals under budget (exam style)",
     "topicId": "while-nested-loops"
   },
@@ -1713,6 +3009,7 @@
     "format": "fixBug",
     "qid": "t07-s4-q1",
     "scenarioId": "t07-s4",
+    "scenarioTitle": "Kalamunda rain gauge logger",
     "title": "The logger freezes",
     "topicId": "while-nested-loops"
   },
@@ -1740,6 +3037,7 @@
     "kind": "function",
     "qid": "t07-s4-q2",
     "scenarioId": "t07-s4",
+    "scenarioTitle": "Kalamunda rain gauge logger",
     "title": "Batch summary up to the sentinel",
     "topicId": "while-nested-loops"
   },
@@ -1763,7 +3061,171 @@
     "kind": "function",
     "qid": "t07-s4-q3",
     "scenarioId": "t07-s4",
+    "scenarioTitle": "Kalamunda rain gauge logger",
     "title": "Merge two sorted logs",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "sentinel",
+      "index",
+      "run-length",
+      "accumulator"
+    ],
+    "core": true,
+    "detects": [
+      "index_out_of_range",
+      "off_by_one_range",
+      "accumulator_init",
+      "infinite_while",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t07-s4-q4",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t07-s4",
+    "scenarioTitle": "Kalamunda rain gauge logger",
+    "title": "Longest dry spell (exam style)",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "loop-bound",
+      "accumulator",
+      "boundary"
+    ],
+    "core": false,
+    "detects": [
+      "off_by_one_range",
+      "infinite_while"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "twins",
+    "qid": "t07-s5-q1",
+    "scenarioId": "t07-s5",
+    "scenarioTitle": "Rottnest ferry boarding",
+    "title": "One ferry too many",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "loop-bound",
+      "accumulator",
+      "loop-update"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "infinite_while"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "cloze",
+    "qid": "t07-s5-q2",
+    "scenarioId": "t07-s5",
+    "scenarioTitle": "Rottnest ferry boarding",
+    "title": "How many ferries?",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "nested-loop",
+      "index",
+      "accumulator",
+      "list"
+    ],
+    "core": false,
+    "detects": [
+      "infinite_while",
+      "off_by_one_range",
+      "mutated_input",
+      "index_out_of_range",
+      "accumulator_init"
+    ],
+    "diff": "hard",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "qid": "t07-s5-q3",
+    "scenarioId": "t07-s5",
+    "scenarioTitle": "Rottnest ferry boarding",
+    "title": "Boarding whole groups",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "nested-loop",
+      "break",
+      "counting",
+      "for-each"
+    ],
+    "core": true,
+    "detects": [
+      "early_return_in_loop"
+    ],
+    "diff": "easy",
+    "expectedSec": 90,
+    "format": "mcq",
+    "qid": "t07-s6-q1",
+    "scenarioId": "t07-s6",
+    "scenarioTitle": "His Majesty's Theatre seat map",
+    "title": "Where does break stop?",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "index",
+      "bounds",
+      "nested-loop"
+    ],
+    "core": true,
+    "detects": [
+      "index_out_of_range",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "errorTranslator",
+    "qid": "t07-s6-q2",
+    "scenarioId": "t07-s6",
+    "scenarioTitle": "His Majesty's Theatre seat map",
+    "title": "The seat next door",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "nested-loop",
+      "while",
+      "index",
+      "early-return",
+      "bounds"
+    ],
+    "core": true,
+    "detects": [
+      "index_out_of_range",
+      "off_by_one_range",
+      "early_return_in_loop",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "parsons",
+    "qid": "t07-s6-q3",
+    "scenarioId": "t07-s6",
+    "scenarioTitle": "His Majesty's Theatre seat map",
+    "title": "The first two seats together",
     "topicId": "while-nested-loops"
   },
   {
@@ -1781,6 +3243,7 @@
     "format": "errorTranslator",
     "qid": "t08-s1-q1",
     "scenarioId": "t08-s1",
+    "scenarioTitle": "Reid Library café stock",
     "title": "The latte that was not there",
     "topicId": "dictionaries"
   },
@@ -1800,6 +3263,7 @@
     "format": "cloze",
     "qid": "t08-s1-q2",
     "scenarioId": "t08-s1",
+    "scenarioTitle": "Reid Library café stock",
     "title": "Restock from a delivery",
     "topicId": "dictionaries"
   },
@@ -1820,7 +3284,34 @@
     "format": "refactor",
     "qid": "t08-s1-q3",
     "scenarioId": "t08-s1",
+    "scenarioTitle": "Reid Library café stock",
     "title": "Count sales without the index",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-copy",
+      "in-membership",
+      "dict-items",
+      "sort-key",
+      "tie-break"
+    ],
+    "core": false,
+    "detects": [
+      "mutated_input",
+      "dict_keyerror",
+      "sort_tiebreak",
+      "return_type_wrong",
+      "aliasing_copy"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t08-s1-q4",
+    "scenarioId": "t08-s1",
+    "scenarioTitle": "Reid Library café stock",
+    "title": "Tonight's restock list",
     "topicId": "dictionaries"
   },
   {
@@ -1840,7 +3331,8 @@
     "format": "predict",
     "qid": "t08-s2-q1",
     "scenarioId": "t08-s2",
-    "title": "Counting tap-ons",
+    "scenarioTitle": "SmartRider tap-ons",
+    "title": "Tap-ons per station",
     "topicId": "dictionaries"
   },
   {
@@ -1859,6 +3351,7 @@
     "format": "fixBug",
     "qid": "t08-s2-q2",
     "scenarioId": "t08-s2",
+    "scenarioTitle": "SmartRider tap-ons",
     "title": "Dropping quiet stations",
     "topicId": "dictionaries"
   },
@@ -1881,6 +3374,7 @@
     "kind": "function",
     "qid": "t08-s2-q3",
     "scenarioId": "t08-s2",
+    "scenarioTitle": "SmartRider tap-ons",
     "title": "Fare totals per card",
     "topicId": "dictionaries"
   },
@@ -1900,6 +3394,7 @@
     "format": "mcq",
     "qid": "t08-s3-q1",
     "scenarioId": "t08-s3",
+    "scenarioTitle": "Perth Scorchers rankings",
     "title": "Sorting runs with a tie-break",
     "topicId": "dictionaries"
   },
@@ -1920,6 +3415,7 @@
     "format": "parsons",
     "qid": "t08-s3-q2",
     "scenarioId": "t08-s3",
+    "scenarioTitle": "Perth Scorchers rankings",
     "title": "Top batters",
     "topicId": "dictionaries"
   },
@@ -1943,6 +3439,7 @@
     "kind": "function",
     "qid": "t08-s3-q3",
     "scenarioId": "t08-s3",
+    "scenarioTitle": "Perth Scorchers rankings",
     "title": "Build the ladder",
     "topicId": "dictionaries"
   },
@@ -1963,6 +3460,7 @@
     "format": "predict",
     "qid": "t08-s4-q1",
     "scenarioId": "t08-s4",
+    "scenarioTitle": "CITS1401 marks and grades",
     "title": "Grouping by lab session",
     "topicId": "dictionaries"
   },
@@ -1986,6 +3484,7 @@
     "kind": "function",
     "qid": "t08-s4-q2",
     "scenarioId": "t08-s4",
+    "scenarioTitle": "CITS1401 marks and grades",
     "title": "Best attempt per lab",
     "topicId": "dictionaries"
   },
@@ -2011,7 +3510,183 @@
     "paper": true,
     "qid": "t08-s4-q3",
     "scenarioId": "t08-s4",
+    "scenarioTitle": "CITS1401 marks and grades",
     "title": "Names by UWA grade",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-keys",
+      "tuple-keys",
+      "immutability"
+    ],
+    "core": true,
+    "detects": [
+      "type_error_other",
+      "tuple_immutability",
+      "dict_keyerror"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "errorTranslator",
+    "qid": "t08-s4-q4",
+    "scenarioId": "t08-s4",
+    "scenarioTitle": "CITS1401 marks and grades",
+    "title": "The session that could not be a key",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-get",
+      "counting",
+      "default-value"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "dict_keyerror"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "twins",
+    "qid": "t08-s5-q1",
+    "scenarioId": "t08-s5",
+    "scenarioTitle": "Kings Park wildflower survey",
+    "title": "The default that counts one too many",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-get",
+      "default-value",
+      "counting",
+      "keyerror"
+    ],
+    "core": false,
+    "detects": [
+      "dict_keyerror",
+      "accumulator_init"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "cloze",
+    "qid": "t08-s5-q2",
+    "scenarioId": "t08-s5",
+    "scenarioTitle": "Kings Park wildflower survey",
+    "title": "What nobody found",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-of-lists",
+      "grouping",
+      "dict-keys",
+      "sort"
+    ],
+    "core": true,
+    "detects": [
+      "dict_keyerror",
+      "accumulator_init",
+      "mutated_input"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "parsons",
+    "qid": "t08-s5-q3",
+    "scenarioId": "t08-s5",
+    "scenarioTitle": "Kings Park wildflower survey",
+    "title": "Which areas is each species in?",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "counting",
+      "dict-get",
+      "max-by-value",
+      "tie-break",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "sort_tiebreak",
+      "accumulator_init",
+      "dict_keyerror",
+      "return_type_wrong",
+      "round_mid_calc",
+      "mutated_input"
+    ],
+    "diff": "hard",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "qid": "t08-s5-q4",
+    "scenarioId": "t08-s5",
+    "scenarioTitle": "Kings Park wildflower survey",
+    "title": "The most common wildflower",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict",
+      "in-membership",
+      "dict-get",
+      "dict-keys"
+    ],
+    "core": true,
+    "detects": [
+      "dict_keyerror",
+      "return_type_wrong"
+    ],
+    "diff": "easy",
+    "expectedSec": 115,
+    "format": "multi",
+    "qid": "t08-s6-q1",
+    "scenarioId": "t08-s6",
+    "scenarioTitle": "RTRFM request line",
+    "title": "What the tally can tell you",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict-get",
+      "counting",
+      "insertion-order",
+      "trace"
+    ],
+    "core": true,
+    "detects": [
+      "dict_keyerror",
+      "accumulator_init"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "trace",
+    "qid": "t08-s6-q2",
+    "scenarioId": "t08-s6",
+    "scenarioTitle": "RTRFM request line",
+    "title": "Building the tally",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
+      "dict",
+      "counting",
+      "maximum",
+      "tie-break"
+    ],
+    "core": false,
+    "detects": [
+      "sort_tiebreak",
+      "case_sensitive_compare",
+      "mutated_input"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "fixBug",
+    "qid": "t08-s6-q3",
+    "scenarioId": "t08-s6",
+    "scenarioTitle": "RTRFM request line",
+    "title": "The tie that picks the wrong song",
     "topicId": "dictionaries"
   },
   {
@@ -2030,6 +3705,7 @@
     "format": "predict",
     "qid": "t09-s1-q1",
     "scenarioId": "t09-s1",
+    "scenarioTitle": "Swan River sensor logs",
     "title": "What the logger wrote",
     "topicId": "files-csv"
   },
@@ -2048,6 +3724,7 @@
     "format": "fixBug",
     "qid": "t09-s1-q2",
     "scenarioId": "t09-s1",
+    "scenarioTitle": "Swan River sensor logs",
     "title": "Maylands readings go missing",
     "topicId": "files-csv"
   },
@@ -2068,6 +3745,7 @@
     "format": "parsons",
     "qid": "t09-s1-q3",
     "scenarioId": "t09-s1",
+    "scenarioTitle": "Swan River sensor logs",
     "title": "Save the warm sites",
     "topicId": "files-csv"
   },
@@ -2098,6 +3776,7 @@
       "noCsvExt"
     ],
     "scenarioId": "t09-s1",
+    "scenarioTitle": "Swan River sensor logs",
     "title": "Daily temperature range",
     "topicId": "files-csv"
   },
@@ -2118,6 +3797,7 @@
     "format": "mcq",
     "qid": "t09-s2-q1",
     "scenarioId": "t09-s2",
+    "scenarioTitle": "SmartRider fare exports",
     "title": "Finding the Fare column",
     "topicId": "files-csv"
   },
@@ -2139,6 +3819,7 @@
     "format": "multi",
     "qid": "t09-s2-q2",
     "scenarioId": "t09-s2",
+    "scenarioTitle": "SmartRider fare exports",
     "title": "What the project marker penalises",
     "topicId": "files-csv"
   },
@@ -2159,6 +3840,7 @@
     "format": "cloze",
     "qid": "t09-s2-q3",
     "scenarioId": "t09-s2",
+    "scenarioTitle": "SmartRider fare exports",
     "title": "Total fares at one stop",
     "topicId": "files-csv"
   },
@@ -2190,6 +3872,7 @@
       "roundAtEnd"
     ],
     "scenarioId": "t09-s2",
+    "scenarioTitle": "SmartRider fare exports",
     "title": "Mean of any column",
     "topicId": "files-csv"
   },
@@ -2210,6 +3893,7 @@
     "format": "fixBug",
     "qid": "t09-s3-q1",
     "scenarioId": "t09-s3",
+    "scenarioTitle": "UWA Guild O-Day sign-ups",
     "title": "Two bugs in the sign-up counter",
     "topicId": "files-csv"
   },
@@ -2239,6 +3923,7 @@
       "noCsvExt"
     ],
     "scenarioId": "t09-s3",
+    "scenarioTitle": "UWA Guild O-Day sign-ups",
     "title": "Members per club",
     "topicId": "files-csv"
   },
@@ -2269,7 +3954,209 @@
       "noCsvExt"
     ],
     "scenarioId": "t09-s3",
+    "scenarioTitle": "UWA Guild O-Day sign-ups",
     "title": "Mailing list for volunteers",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "readlines",
+      "file-cursor",
+      "newline"
+    ],
+    "core": true,
+    "detects": [
+      "efficiency_repeat_pass",
+      "file_newline"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "predict",
+    "qid": "t09-s4-q1",
+    "scenarioId": "t09-s4",
+    "scenarioTitle": "Rottnest ferry manifests",
+    "title": "Reading the log twice",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "open-modes",
+      "write",
+      "file-not-found"
+    ],
+    "core": false,
+    "detects": [
+      "no_graceful_exit",
+      "str_int_concat"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "multi",
+    "qid": "t09-s4-q2",
+    "scenarioId": "t09-s4",
+    "scenarioTitle": "Rottnest ferry manifests",
+    "title": "Opening the manifest",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "header",
+      "index",
+      "strip-split"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "case_sensitive_compare"
+    ],
+    "diff": "medium",
+    "expectedSec": 200,
+    "format": "fixBug",
+    "qid": "t09-s4-q3",
+    "scenarioId": "t09-s4",
+    "scenarioTitle": "Rottnest ferry manifests",
+    "title": "The total that read the wrong column",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "header",
+      "validation",
+      "maximum",
+      "tuple-return"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "case_sensitive_compare",
+      "invalid_row_not_skipped",
+      "sort_tiebreak",
+      "csv_ext_assumed"
+    ],
+    "diff": "medium",
+    "expectedSec": 330,
+    "format": "write",
+    "kind": "function",
+    "qid": "t09-s4-q4",
+    "rules": [
+      "noImport",
+      "noCsvExt"
+    ],
+    "scenarioId": "t09-s4",
+    "scenarioTitle": "Rottnest ferry manifests",
+    "title": "The fullest sailing",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "two-files",
+      "header",
+      "membership",
+      "validation",
+      "sorting"
+    ],
+    "core": false,
+    "detects": [
+      "header_order_assumed",
+      "case_sensitive_compare",
+      "invalid_row_not_skipped",
+      "sort_tiebreak",
+      "csv_ext_assumed"
+    ],
+    "diff": "hard",
+    "expectedSec": 700,
+    "format": "write",
+    "kind": "function",
+    "qid": "t09-s4-q5",
+    "rules": [
+      "noImport",
+      "noCsvExt"
+    ],
+    "scenarioId": "t09-s4",
+    "scenarioTitle": "Rottnest ferry manifests",
+    "title": "Who never boarded",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "readline",
+      "strip-split",
+      "accumulator",
+      "trace"
+    ],
+    "core": true,
+    "detects": [
+      "file_newline",
+      "str_int_concat",
+      "accumulator_init"
+    ],
+    "diff": "easy",
+    "expectedSec": 115,
+    "format": "trace",
+    "qid": "t09-s5-q1",
+    "scenarioId": "t09-s5",
+    "scenarioTitle": "Bibbulmun Track hut logbooks",
+    "title": "Walkers counted line by line",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "with-open",
+      "for-each",
+      "header-lookup",
+      "strip-split"
+    ],
+    "core": false,
+    "detects": [
+      "file_not_closed",
+      "invalid_row_not_skipped",
+      "case_sensitive_compare"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "refactor",
+    "qid": "t09-s5-q2",
+    "scenarioId": "t09-s5",
+    "scenarioTitle": "Bibbulmun Track hut logbooks",
+    "title": "One pass through the logbook",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
+      "main-contract",
+      "header-lookup",
+      "validation",
+      "grouping",
+      "round-at-output"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "case_sensitive_compare",
+      "invalid_row_not_skipped",
+      "sort_tiebreak",
+      "csv_ext_assumed",
+      "round_mid_calc",
+      "print_in_main",
+      "import_used",
+      "missing_main",
+      "accumulator_init"
+    ],
+    "diff": "hard",
+    "expectedSec": 840,
+    "format": "write",
+    "kind": "project",
+    "qid": "t09-s5-q3",
+    "rules": [
+      "noImport",
+      "noInput",
+      "noPrint",
+      "roundAtEnd",
+      "noCsvExt"
+    ],
+    "scenarioId": "t09-s5",
+    "scenarioTitle": "Bibbulmun Track hut logbooks",
+    "title": "Section summary for the track office",
     "topicId": "files-csv"
   },
   {
@@ -2289,6 +4176,7 @@
     "format": "errorTranslator",
     "qid": "t10-s1-q1",
     "scenarioId": "t10-s1",
+    "scenarioTitle": "Swan River water sensors",
     "title": "The Maylands sensor dropped out",
     "topicId": "exceptions"
   },
@@ -2308,6 +4196,7 @@
     "format": "predict",
     "qid": "t10-s1-q2",
     "scenarioId": "t10-s1",
+    "scenarioTitle": "Swan River water sensors",
     "title": "Dolphin counts from the jetties",
     "topicId": "exceptions"
   },
@@ -2327,6 +4216,7 @@
     "format": "fixBug",
     "qid": "t10-s1-q3",
     "scenarioId": "t10-s1",
+    "scenarioTitle": "Swan River water sensors",
     "title": "Every reading vanished",
     "topicId": "exceptions"
   },
@@ -2352,6 +4242,7 @@
     "kind": "function",
     "qid": "t10-s1-q4",
     "scenarioId": "t10-s1",
+    "scenarioTitle": "Swan River water sensors",
     "title": "Average dissolved oxygen per site",
     "topicId": "exceptions"
   },
@@ -2372,6 +4263,7 @@
     "format": "mcq",
     "qid": "t10-s2-q1",
     "scenarioId": "t10-s2",
+    "scenarioTitle": "Fringe World box office",
     "title": "Pick the right handler",
     "topicId": "exceptions"
   },
@@ -2391,6 +4283,7 @@
     "format": "multi",
     "qid": "t10-s2-q2",
     "scenarioId": "t10-s2",
+    "scenarioTitle": "Fringe World box office",
     "title": "Keep counting after a bad entry",
     "topicId": "exceptions"
   },
@@ -2414,6 +4307,7 @@
     "kind": "function",
     "qid": "t10-s2-q3",
     "scenarioId": "t10-s2",
+    "scenarioTitle": "Fringe World box office",
     "title": "Validate a ticket entry",
     "topicId": "exceptions"
   },
@@ -2438,6 +4332,7 @@
     "kind": "program",
     "qid": "t10-s2-q4",
     "scenarioId": "t10-s2",
+    "scenarioTitle": "Fringe World box office",
     "title": "End-of-shift tally",
     "topicId": "exceptions"
   },
@@ -2457,6 +4352,7 @@
     "format": "predict",
     "qid": "t10-s3-q1",
     "scenarioId": "t10-s3",
+    "scenarioTitle": "Reid Library study rooms",
     "title": "The first real room number",
     "topicId": "exceptions"
   },
@@ -2477,6 +4373,7 @@
     "format": "errorTranslator",
     "qid": "t10-s3-q2",
     "scenarioId": "t10-s3",
+    "scenarioTitle": "Reid Library study rooms",
     "title": "A week of cancellations",
     "topicId": "exceptions"
   },
@@ -2495,7 +4392,185 @@
     "format": "testWriter",
     "qid": "t10-s3-q3",
     "scenarioId": "t10-s3",
+    "scenarioTitle": "Reid Library study rooms",
     "title": "Break the hours counter",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "file-not-found",
+      "specific-except",
+      "graceful-exit"
+    ],
+    "core": true,
+    "detects": [
+      "no_graceful_exit",
+      "invalid_row_not_skipped",
+      "file_not_closed"
+    ],
+    "diff": "medium",
+    "expectedSec": 140,
+    "format": "errorTranslator",
+    "qid": "t10-s4-q1",
+    "scenarioId": "t10-s4",
+    "scenarioTitle": "Perth Zoo gate counts",
+    "title": "The handler that did not help",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "exception-propagation",
+      "try-except",
+      "call-stack"
+    ],
+    "core": false,
+    "detects": [
+      "invalid_row_not_skipped",
+      "no_graceful_exit"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "predict",
+    "qid": "t10-s4-q2",
+    "scenarioId": "t10-s4",
+    "scenarioTitle": "Perth Zoo gate counts",
+    "title": "Where the error surfaces",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "specific-except",
+      "graceful-exit",
+      "skip-invalid-rows"
+    ],
+    "core": true,
+    "detects": [
+      "no_graceful_exit",
+      "invalid_row_not_skipped",
+      "bare_except",
+      "int_of_float_string"
+    ],
+    "diff": "medium",
+    "expectedSec": 210,
+    "format": "cloze",
+    "qid": "t10-s4-q3",
+    "scenarioId": "t10-s4",
+    "scenarioTitle": "Perth Zoo gate counts",
+    "title": "Two handlers, two jobs",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-except",
+      "file-not-found",
+      "skip-invalid-rows",
+      "return-none"
+    ],
+    "core": true,
+    "detects": [
+      "no_graceful_exit",
+      "invalid_row_not_skipped",
+      "bare_except",
+      "index_out_of_range",
+      "print_vs_return"
+    ],
+    "diff": "medium",
+    "expectedSec": 330,
+    "format": "write",
+    "kind": "function",
+    "qid": "t10-s4-q4",
+    "scenarioId": "t10-s4",
+    "scenarioTitle": "Perth Zoo gate counts",
+    "title": "First gate over the line",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-except",
+      "graceful-exit",
+      "validation",
+      "tuple-return"
+    ],
+    "core": true,
+    "detects": [
+      "no_graceful_exit",
+      "invalid_row_not_skipped",
+      "int_of_float_string",
+      "bare_except",
+      "index_out_of_range",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t10-s4-q5",
+    "scenarioId": "t10-s4",
+    "scenarioTitle": "Perth Zoo gate counts",
+    "title": "Totals and rejects",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-except",
+      "counting",
+      "skip-invalid-rows"
+    ],
+    "core": true,
+    "detects": [
+      "invalid_row_not_skipped"
+    ],
+    "diff": "easy",
+    "expectedSec": 110,
+    "format": "twins",
+    "qid": "t10-s5-q1",
+    "scenarioId": "t10-s5",
+    "scenarioTitle": "Matilda Bay kayak hire",
+    "title": "Counting the hires that worked",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "try-except",
+      "accumulator",
+      "skip-invalid-rows",
+      "continue"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "invalid_row_not_skipped"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "parsons",
+    "qid": "t10-s5-q2",
+    "scenarioId": "t10-s5",
+    "scenarioTitle": "Matilda Bay kayak hire",
+    "title": "Total the minutes, skip the rest",
+    "topicId": "exceptions"
+  },
+  {
+    "concepts": [
+      "specific-except",
+      "guard-clause",
+      "try-placement",
+      "skip-invalid-rows"
+    ],
+    "core": false,
+    "detects": [
+      "bare_except",
+      "zero_division",
+      "invalid_row_not_skipped",
+      "no_graceful_exit"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "refactor",
+    "qid": "t10-s5-q3",
+    "scenarioId": "t10-s5",
+    "scenarioTitle": "Matilda Bay kayak hire",
+    "title": "The except that hid everything",
     "topicId": "exceptions"
   },
   {
@@ -2514,6 +4589,7 @@
     "format": "predict",
     "qid": "t11-s1-q1",
     "scenarioId": "t11-s1",
+    "scenarioTitle": "SmartRider balance helpers",
     "title": "Paying a fare",
     "topicId": "functions-project"
   },
@@ -2533,6 +4609,7 @@
     "format": "errorTranslator",
     "qid": "t11-s1-q2",
     "scenarioId": "t11-s1",
+    "scenarioTitle": "SmartRider balance helpers",
     "title": "Counting tap-ons",
     "topicId": "functions-project"
   },
@@ -2552,7 +4629,30 @@
     "format": "fixBug",
     "qid": "t11-s1-q3",
     "scenarioId": "t11-s1",
+    "scenarioTitle": "SmartRider balance helpers",
     "title": "A day of trips",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "local-scope",
+      "module-constant",
+      "helper-functions",
+      "return-value"
+    ],
+    "core": true,
+    "detects": [
+      "scope_confusion",
+      "forgot_to_call",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "cloze",
+    "qid": "t11-s1-q4",
+    "scenarioId": "t11-s1",
+    "scenarioTitle": "SmartRider balance helpers",
+    "title": "Seats on the Rottnest ferry",
     "topicId": "functions-project"
   },
   {
@@ -2571,6 +4671,7 @@
     "format": "predict",
     "qid": "t11-s2-q1",
     "scenarioId": "t11-s2",
+    "scenarioTitle": "Fremantle Markets takings",
     "title": "Saturday and Sunday sales",
     "topicId": "functions-project"
   },
@@ -2591,6 +4692,7 @@
     "format": "mcq",
     "qid": "t11-s2-q2",
     "scenarioId": "t11-s2",
+    "scenarioTitle": "Fremantle Markets takings",
     "title": "A fresh list on every call",
     "topicId": "functions-project"
   },
@@ -2615,6 +4717,7 @@
     "kind": "function",
     "qid": "t11-s2-q3",
     "scenarioId": "t11-s2",
+    "scenarioTitle": "Fremantle Markets takings",
     "title": "Benford check on takings",
     "topicId": "functions-project"
   },
@@ -2635,6 +4738,7 @@
     "format": "refactor",
     "qid": "t11-s3-q1",
     "scenarioId": "t11-s3",
+    "scenarioTitle": "Perth Scorchers stats helpers",
     "title": "Economy rate without globals",
     "topicId": "functions-project"
   },
@@ -2659,6 +4763,7 @@
     "kind": "function",
     "qid": "t11-s3-q2",
     "scenarioId": "t11-s3",
+    "scenarioTitle": "Perth Scorchers stats helpers",
     "title": "Innings summary with a safe answer",
     "topicId": "functions-project"
   },
@@ -2682,7 +4787,30 @@
     "kind": "function",
     "qid": "t11-s3-q3",
     "scenarioId": "t11-s3",
+    "scenarioTitle": "Perth Scorchers stats helpers",
     "title": "Adding an innings to the season",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "edge-cases",
+      "test-design",
+      "accumulator-init",
+      "minimum"
+    ],
+    "core": false,
+    "detects": [
+      "accumulator_init",
+      "index_out_of_range",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "testWriter",
+    "qid": "t11-s3-q4",
+    "scenarioId": "t11-s3",
+    "scenarioTitle": "Perth Scorchers stats helpers",
+    "title": "Break the lowest-score helper",
     "topicId": "functions-project"
   },
   {
@@ -2704,6 +4832,7 @@
     "format": "multi",
     "qid": "t11-s4-q1",
     "scenarioId": "t11-s4",
+    "scenarioTitle": "BOM rainfall project",
     "title": "Spot the rule breaks",
     "topicId": "functions-project"
   },
@@ -2726,6 +4855,7 @@
     "format": "refactor",
     "qid": "t11-s4-q2",
     "scenarioId": "t11-s4",
+    "scenarioTitle": "BOM rainfall project",
     "title": "Make the draft marker-safe",
     "topicId": "functions-project"
   },
@@ -2765,7 +4895,138 @@
       "mainSignature"
     ],
     "scenarioId": "t11-s4",
+    "scenarioTitle": "BOM rainfall project",
     "title": "Station summary main()",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "default-parameters",
+      "keyword-arguments",
+      "local-scope"
+    ],
+    "core": true,
+    "detects": [
+      "scope_confusion",
+      "global_state"
+    ],
+    "diff": "medium",
+    "expectedSec": 180,
+    "format": "predict",
+    "qid": "t11-s5-q1",
+    "scenarioId": "t11-s5",
+    "scenarioTitle": "Reid Library loans desk",
+    "title": "When is a default worked out?",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "round-at-output",
+      "helper-functions",
+      "return-type",
+      "project-rules"
+    ],
+    "core": true,
+    "detects": [
+      "round_mid_calc",
+      "print_in_main",
+      "return_type_wrong"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "mcq",
+    "qid": "t11-s5-q2",
+    "scenarioId": "t11-s5",
+    "scenarioTitle": "Reid Library loans desk",
+    "title": "Where the rounding belongs",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "header-lookup",
+      "csv",
+      "helper-functions"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "fixBug",
+    "qid": "t11-s5-q3",
+    "scenarioId": "t11-s5",
+    "scenarioTitle": "Reid Library loans desk",
+    "title": "The column that moved",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "main-contract",
+      "helper-functions",
+      "header-lookup",
+      "graceful-termination",
+      "round-at-output"
+    ],
+    "core": true,
+    "detects": [
+      "missing_main",
+      "csv_ext_assumed",
+      "header_order_assumed",
+      "invalid_row_not_skipped",
+      "no_graceful_exit",
+      "zero_division",
+      "case_sensitive_compare",
+      "print_in_main",
+      "round_mid_calc",
+      "import_used",
+      "input_called"
+    ],
+    "diff": "hard",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "project",
+    "qid": "t11-s5-q4",
+    "rules": [
+      "noImport",
+      "noInput",
+      "noPrint",
+      "roundAtEnd",
+      "noCsvExt",
+      "mainSignature"
+    ],
+    "scenarioId": "t11-s5",
+    "scenarioTitle": "Reid Library loans desk",
+    "title": "Project task: one category of loans",
+    "topicId": "functions-project"
+  },
+  {
+    "concepts": [
+      "default-parameters",
+      "none-default",
+      "sort-tiebreak",
+      "round-at-output"
+    ],
+    "core": false,
+    "detects": [
+      "sort_tiebreak",
+      "mutated_input",
+      "return_type_wrong",
+      "no_graceful_exit",
+      "round_mid_calc"
+    ],
+    "diff": "hard",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "qid": "t11-s5-q5",
+    "rules": [
+      "noImport",
+      "roundAtEnd"
+    ],
+    "scenarioId": "t11-s5",
+    "scenarioTitle": "Reid Library loans desk",
+    "title": "Overdue fines with sensible defaults",
     "topicId": "functions-project"
   },
   {
@@ -2785,6 +5046,7 @@
     "format": "mcq",
     "qid": "t12-s1-q1",
     "scenarioId": "t12-s1",
+    "scenarioTitle": "Swan River salinity report",
     "title": "From formula to loop",
     "topicId": "project-simulator"
   },
@@ -2803,6 +5065,7 @@
     "format": "fixBug",
     "qid": "t12-s1-q2",
     "scenarioId": "t12-s1",
+    "scenarioTitle": "Swan River salinity report",
     "title": "The standard error is off by 0.0001",
     "topicId": "project-simulator"
   },
@@ -2831,6 +5094,7 @@
       "roundAtEnd"
     ],
     "scenarioId": "t12-s1",
+    "scenarioTitle": "Swan River salinity report",
     "title": "Mean, standard deviation and standard error",
     "topicId": "project-simulator"
   },
@@ -2868,7 +5132,30 @@
       "mainSignature"
     ],
     "scenarioId": "t12-s1",
+    "scenarioTitle": "Swan River salinity report",
     "title": "Project task: one site from the logger file",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "statistics",
+      "sample-size",
+      "zero-division",
+      "guard-clause"
+    ],
+    "core": true,
+    "detects": [
+      "zero_division",
+      "accumulator_init",
+      "bare_except"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "errorTranslator",
+    "qid": "t12-s1-q5",
+    "scenarioId": "t12-s1",
+    "scenarioTitle": "Swan River salinity report",
+    "title": "The site with one reading",
     "topicId": "project-simulator"
   },
   {
@@ -2887,6 +5174,7 @@
     "format": "predict",
     "qid": "t12-s2-q1",
     "scenarioId": "t12-s2",
+    "scenarioTitle": "Transperth travel patterns",
     "title": "Cosine similarity by hand",
     "topicId": "project-simulator"
   },
@@ -2913,6 +5201,7 @@
       "roundAtEnd"
     ],
     "scenarioId": "t12-s2",
+    "scenarioTitle": "Transperth travel patterns",
     "title": "Write cosine_sim",
     "topicId": "project-simulator"
   },
@@ -2949,7 +5238,45 @@
       "mainSignature"
     ],
     "scenarioId": "t12-s2",
+    "scenarioTitle": "Transperth travel patterns",
     "title": "Project task: the most similar station",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "csv",
+      "two-files",
+      "header-lookup",
+      "main-contract",
+      "round-at-output"
+    ],
+    "core": false,
+    "detects": [
+      "header_order_assumed",
+      "invalid_row_not_skipped",
+      "case_sensitive_compare",
+      "csv_ext_assumed",
+      "no_graceful_exit",
+      "zero_division",
+      "dict_keyerror",
+      "round_mid_calc"
+    ],
+    "diff": "hard",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "project",
+    "qid": "t12-s2-q4",
+    "rules": [
+      "noImport",
+      "noInput",
+      "noPrint",
+      "roundAtEnd",
+      "noCsvExt",
+      "mainSignature"
+    ],
+    "scenarioId": "t12-s2",
+    "scenarioTitle": "Transperth travel patterns",
+    "title": "Project task: joining two boarding files",
     "topicId": "project-simulator"
   },
   {
@@ -2969,6 +5296,7 @@
     "format": "testWriter",
     "qid": "t12-s3-q1",
     "scenarioId": "t12-s3",
+    "scenarioTitle": "Perth suburbs planning report",
     "title": "Break the density calculator",
     "topicId": "project-simulator"
   },
@@ -2991,6 +5319,7 @@
     "format": "refactor",
     "qid": "t12-s3-q2",
     "scenarioId": "t12-s3",
+    "scenarioTitle": "Perth suburbs planning report",
     "title": "Read the file once",
     "topicId": "project-simulator"
   },
@@ -3027,7 +5356,143 @@
       "mainSignature"
     ],
     "scenarioId": "t12-s3",
+    "scenarioTitle": "Perth suburbs planning report",
     "title": "Project task: rank suburbs inside each LGA",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "nested-dict",
+      "grouping",
+      "dict-keys"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "aliasing_copy"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "predict",
+    "qid": "t12-s4-q1",
+    "scenarioId": "t12-s4",
+    "scenarioTitle": "Unit results board",
+    "title": "Building a dictionary of dictionaries",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "sort-tiebreak",
+      "ranking",
+      "sort-key"
+    ],
+    "core": false,
+    "detects": [
+      "sort_tiebreak",
+      "none_from_inplace",
+      "type_error_other"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "mcq",
+    "qid": "t12-s4-q2",
+    "scenarioId": "t12-s4",
+    "scenarioTitle": "Unit results board",
+    "title": "Ranking with a tie-break",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "validation",
+      "csv",
+      "none-check"
+    ],
+    "core": true,
+    "detects": [
+      "invalid_row_not_skipped"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "fixBug",
+    "qid": "t12-s4-q3",
+    "scenarioId": "t12-s4",
+    "scenarioTitle": "Unit results board",
+    "title": "The rows that should have been skipped",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "statistics",
+      "standard-deviation",
+      "nested-dict",
+      "header-lookup",
+      "main-contract"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "invalid_row_not_skipped",
+      "case_sensitive_compare",
+      "no_graceful_exit",
+      "zero_division",
+      "round_mid_calc",
+      "csv_ext_assumed",
+      "import_used",
+      "print_in_main"
+    ],
+    "diff": "hard",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "project",
+    "qid": "t12-s4-q4",
+    "rules": [
+      "noImport",
+      "noInput",
+      "noPrint",
+      "roundAtEnd",
+      "noCsvExt",
+      "mainSignature"
+    ],
+    "scenarioId": "t12-s4",
+    "scenarioTitle": "Unit results board",
+    "title": "Project task: standardised marks",
+    "topicId": "project-simulator"
+  },
+  {
+    "concepts": [
+      "nested-dict",
+      "ranking",
+      "sort-tiebreak",
+      "csv",
+      "main-contract"
+    ],
+    "core": false,
+    "detects": [
+      "sort_tiebreak",
+      "header_order_assumed",
+      "invalid_row_not_skipped",
+      "case_sensitive_compare",
+      "no_graceful_exit",
+      "dict_keyerror",
+      "round_mid_calc",
+      "csv_ext_assumed"
+    ],
+    "diff": "hard",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "project",
+    "qid": "t12-s4-q5",
+    "rules": [
+      "noImport",
+      "noInput",
+      "noPrint",
+      "roundAtEnd",
+      "noCsvExt",
+      "mainSignature"
+    ],
+    "scenarioId": "t12-s4",
+    "scenarioTitle": "Unit results board",
+    "title": "Project task: the top three in every unit",
     "topicId": "project-simulator"
   },
   {
@@ -3047,6 +5512,7 @@
     "format": "mcq",
     "qid": "t13-s1-q1",
     "scenarioId": "t13-s1",
+    "scenarioTitle": "Skyworks countdown",
     "title": "Which rockets function works?",
     "topicId": "recursion"
   },
@@ -3066,6 +5532,7 @@
     "format": "predict",
     "qid": "t13-s1-q2",
     "scenarioId": "t13-s1",
+    "scenarioTitle": "Skyworks countdown",
     "title": "Countdown to the show",
     "topicId": "recursion"
   },
@@ -3085,7 +5552,30 @@
     "format": "trace",
     "qid": "t13-s1-q3",
     "scenarioId": "t13-s1",
+    "scenarioTitle": "Skyworks countdown",
     "title": "Stars in the finale",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "recursive-case",
+      "list-recursion",
+      "slicing"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "off_by_one_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 210,
+    "format": "cloze",
+    "qid": "t13-s1-q4",
+    "scenarioId": "t13-s1",
+    "scenarioTitle": "Skyworks countdown",
+    "title": "Sparks that split again",
     "topicId": "recursion"
   },
   {
@@ -3105,6 +5595,7 @@
     "format": "errorTranslator",
     "qid": "t13-s2-q1",
     "scenarioId": "t13-s2",
+    "scenarioTitle": "SmartRider digit checks",
     "title": "The digit counter that never stops",
     "topicId": "recursion"
   },
@@ -3123,6 +5614,7 @@
     "format": "fixBug",
     "qid": "t13-s2-q2",
     "scenarioId": "t13-s2",
+    "scenarioTitle": "SmartRider digit checks",
     "title": "Counting one digit",
     "topicId": "recursion"
   },
@@ -3151,7 +5643,31 @@
       "noLoops"
     ],
     "scenarioId": "t13-s2",
+    "scenarioTitle": "SmartRider digit checks",
     "title": "Sum of digits (exam style)",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "recursive-case",
+      "digits",
+      "no-loops"
+    ],
+    "core": false,
+    "detects": [
+      "loop_in_recursion",
+      "missing_base_case",
+      "recursion_result_ignored",
+      "off_by_one_range"
+    ],
+    "diff": "hard",
+    "expectedSec": 420,
+    "format": "refactor",
+    "qid": "t13-s2-q4",
+    "scenarioId": "t13-s2",
+    "scenarioTitle": "SmartRider digit checks",
+    "title": "The binary printer, without the loop",
     "topicId": "recursion"
   },
   {
@@ -3170,6 +5686,7 @@
     "format": "predict",
     "qid": "t13-s3-q1",
     "scenarioId": "t13-s3",
+    "scenarioTitle": "Guild puzzle night",
     "title": "Spelling on the way back",
     "topicId": "recursion"
   },
@@ -3190,6 +5707,7 @@
     "format": "parsons",
     "qid": "t13-s3-q2",
     "scenarioId": "t13-s3",
+    "scenarioTitle": "Guild puzzle night",
     "title": "Palindrome checker",
     "topicId": "recursion"
   },
@@ -3216,6 +5734,7 @@
       "noLoops"
     ],
     "scenarioId": "t13-s3",
+    "scenarioTitle": "Guild puzzle night",
     "title": "Scrambled email addresses",
     "topicId": "recursion"
   },
@@ -3235,6 +5754,7 @@
     "format": "trace",
     "qid": "t13-s4-q1",
     "scenarioId": "t13-s4",
+    "scenarioTitle": "Quokka tally sheets",
     "title": "Adding up a nested survey",
     "topicId": "recursion"
   },
@@ -3262,6 +5782,7 @@
       "noLoops"
     ],
     "scenarioId": "t13-s4",
+    "scenarioTitle": "Quokka tally sheets",
     "title": "Flatten the survey sheet",
     "topicId": "recursion"
   },
@@ -3291,7 +5812,125 @@
       "noLoops"
     ],
     "scenarioId": "t13-s4",
+    "scenarioTitle": "Quokka tally sheets",
     "title": "Extract the names (exam style)",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "nested-list",
+      "recursive-case"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "index_out_of_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 150,
+    "format": "mcq",
+    "qid": "t13-s5-q1",
+    "scenarioId": "t13-s5",
+    "scenarioTitle": "Royal Show showbags",
+    "title": "Which total_value works?",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "call-stack",
+      "nested-list",
+      "local-variables"
+    ],
+    "core": true,
+    "detects": [
+      "recursion_result_ignored",
+      "scope_confusion"
+    ],
+    "diff": "medium",
+    "expectedSec": 300,
+    "format": "predict",
+    "qid": "t13-s5-q2",
+    "scenarioId": "t13-s5",
+    "scenarioTitle": "Royal Show showbags",
+    "title": "Which bag finishes first?",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "nested-list",
+      "no-loops"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "index_out_of_range"
+    ],
+    "diff": "medium",
+    "expectedSec": 240,
+    "format": "fixBug",
+    "qid": "t13-s5-q3",
+    "scenarioId": "t13-s5",
+    "scenarioTitle": "Royal Show showbags",
+    "title": "The count that never stops",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "tuple-return",
+      "no-loops"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "loop_in_recursion",
+      "return_type_wrong",
+      "index_out_of_range"
+    ],
+    "diff": "hard",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "paper": true,
+    "qid": "t13-s5-q4",
+    "rules": [
+      "noLoops"
+    ],
+    "scenarioId": "t13-s5",
+    "scenarioTitle": "Royal Show showbags",
+    "title": "Cheapest and dearest (exam style)",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "nested-list",
+      "isinstance",
+      "new-not-mutate",
+      "no-loops"
+    ],
+    "core": false,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "mutated_input",
+      "return_type_wrong",
+      "loop_in_recursion"
+    ],
+    "diff": "hard",
+    "expectedSec": 540,
+    "format": "write",
+    "kind": "function",
+    "qid": "t13-s5-q5",
+    "rules": [
+      "noLoops"
+    ],
+    "scenarioId": "t13-s5",
+    "scenarioTitle": "Royal Show showbags",
+    "title": "Swapping a line of stock",
     "topicId": "recursion"
   }
 ]

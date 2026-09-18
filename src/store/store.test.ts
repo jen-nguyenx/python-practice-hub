@@ -16,9 +16,15 @@ function memStorage() {
     getItem: (k: string) => m.get(k) ?? null,
     setItem: (k: string, v: string) => void m.set(k, v),
     removeItem: (k: string) => void m.delete(k),
+    key: (i: number) => [...m.keys()][i] ?? null,
+    get length() {
+      return m.size;
+    },
     map: m,
   };
 }
+
+const pyKeys = (m: Map<string, string>) => [...m.keys()].filter((k) => k.startsWith('pyladder:')).sort();
 
 function clock(start = Date.UTC(2026, 8, 17, 9, 0, 0)) {
   let t = start;
@@ -276,7 +282,44 @@ describe('store: export and import', () => {
     s.close();
     const t = make({ dbName, storage });
     await t.ready;
-    expect(t.events.value).toEqual([]);
+    // Nothing came back; reloading after a reset opens a fresh session, like a browser that had never seen PyLadder.
+    expect(t.events.value.map((e) => e.type)).toEqual(['session_start']);
+  });
+
+  it('resetAll deletes every pyladder: key other screens wrote, and a test cannot save its key back afterwards', async () => {
+    const dbName = `db-${++n}`;
+    const storage = memStorage();
+    const s = make({ dbName, storage });
+    await s.ready;
+    s.updateSettings({ theme: 'dark', unlockAll: true });
+    s.append({ type: 'topic_open', topicId: 'strings' });
+    // Keys written straight to localStorage by the test, topic, Playground and report screens.
+    storage.map.set('pyladder:test-progress:midsem:midsem', '{"v":1,"kind":"midsem"}');
+    storage.map.set('pyladder:test-progress:topic-test:strings', '{"v":1,"kind":"topic-test"}');
+    storage.map.set('pyladder:midsem-setup', '{"count":15}');
+    storage.map.set('pyladder:topic-filters:strings', '{}');
+    storage.map.set('pyladder:playground-active', 'f1');
+    storage.map.set('pyladder:report-range', 'week');
+    storage.map.set('someone-elses-key', 'kept');
+
+    await s.resetAll();
+
+    expect(pyKeys(storage.map)).toEqual([SETTINGS_KEY]);
+    expect(storage.map.get('someone-elses-key')).toBe('kept');
+    expect(s.settings.value).toEqual({ ...DEFAULT_SETTINGS, theme: 'dark' });
+    expect(s.events.value).toEqual([]);
+
+    // A test screen that was still running saves its progress on unmount, just after the reset: it must not come back.
+    storage.map.set('pyladder:test-progress:midsem:midsem', '{"v":1,"kind":"midsem"}');
+    storage.map.set('pyladder:midsem-setup', '{"count":15}');
+    await until(() => pyKeys(storage.map).length === 1);
+    expect(pyKeys(storage.map)).toEqual([SETTINGS_KEY]);
+
+    // The next event starts a fresh session, exactly as a browser that had never seen PyLadder would.
+    const before = s.sessionId;
+    s.append({ type: 'topic_open', topicId: 'strings' });
+    expect(s.events.value.map((e) => e.type)).toEqual(['session_start', 'topic_open']);
+    expect(s.sessionId).not.toBe(before);
   });
 });
 

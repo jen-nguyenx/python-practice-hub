@@ -200,6 +200,102 @@ print(totals)`,
       },
       selfExplain: 'Why does starting highest at 0 give the wrong answer for [-2.0, -5.5]?',
     },
+
+    // ------------------------------------------------------------------ q4 fixBug (medium)
+    {
+      id: 't06-s2-q4',
+      format: 'fixBug',
+      diff: 'medium',
+      core: true,
+      title: 'A blank log for every station',
+      prompt:
+        '`blank_log(stations, days)` should return a **new list of lists**: one row per station, each row holding `days` zeros. ' +
+        'The rows have to be independent, so that writing a reading into one station\'s row leaves the other rows at zero.\n\n' +
+        'It returns rows of the right shape, but as soon as one reading is stored, the same number appears in every row. ' +
+        'Find the bug and fix it by changing as few lines as you can.',
+      buggy: `def blank_log(stations, days):
+    """Return one row of days zeros per station."""
+    rows = []
+    row = [0] * days
+    for station in range(stations):
+        rows.append(row)
+    return rows`,
+      bugMistake: 'aliasing_copy',
+      maxChangedLines: 2,
+      fnName: 'blank_log',
+      tests: [
+        {
+          id: 'v1',
+          call: 'blank_log(2, 3)',
+          expect: '[[0, 0, 0], [0, 0, 0]]',
+          label: 'two stations, three days',
+          hidden: false,
+        },
+        {
+          id: 'v2',
+          setup: 'log = blank_log(3, 2)\nlog[0][0] = 5',
+          call: 'log',
+          expect: '[[5, 0], [0, 0], [0, 0]]',
+          label: 'a reading in the first row only',
+          hidden: false,
+          tag: 'aliasing_copy',
+        },
+        {
+          id: 'h1',
+          setup: 'log = blank_log(2, 2)\nlog[1][1] = 9',
+          call: 'log',
+          expect: '[[0, 0], [0, 9]]',
+          label: 'a reading in the last row only',
+          hidden: true,
+          tag: 'aliasing_copy',
+        },
+        {
+          id: 'h2',
+          call: 'blank_log(1, 1)',
+          expect: '[[0]]',
+          label: 'one station, one day',
+          hidden: true,
+        },
+        {
+          id: 'h3',
+          call: 'blank_log(0, 4)',
+          expect: '[]',
+          label: 'no stations',
+          hidden: true,
+        },
+        {
+          id: 'h4',
+          call: 'blank_log(2, 0)',
+          expect: '[[], []]',
+          label: 'no days',
+          hidden: true,
+        },
+      ],
+      concepts: ['nested-list', 'aliasing', 'list-copy', 'append'],
+      detects: ['aliasing_copy', 'mutated_input'],
+      expectedSec: 260,
+      hints: [
+        'The shape is right, so count the lists that actually exist. How many times does `[0] * days` build a list?',
+        '`row` is built once, before the loop, and the same list object is appended `stations` times. All the rows in the answer are one list with several names in it. Each row needs its own list.',
+        'Either move the line that builds `row` inside the loop, or append a copy with `rows.append(row[:])`.',
+      ],
+      solution: {
+        code: `def blank_log(stations, days):
+    """Return one row of days zeros per station."""
+    rows = []
+    for station in range(stations):
+        row = [0] * days
+        rows.append(row)
+    return rows`,
+        explanation:
+          '`row = [0] * days` was above the loop, so exactly one inner list was ever created. `rows.append(row)` then put that same list into the outer list once per station.\n\n' +
+          'Appending does not copy. After the call, `rows[0]`, `rows[1]` and `rows[2]` were three names for one list, so `log[0][0] = 5` showed up in every row.\n\n' +
+          'Moving the line inside the loop runs `[0] * days` once per station, so each station gets a fresh list. `rows.append(row[:])` is an equally good one-line fix: it appends a copy instead of the shared list.\n\n' +
+          'The same trap appears as `[[0] * days] * stations`, which repeats one inner list `stations` times. `*` on the outer list never copies the rows.\n\n' +
+          'Note that `[0] * days` itself is safe: 0 is a number, and numbers cannot be changed in place.',
+      },
+      selfExplain: 'Why does the two-stations, three-days test pass even with the bug?',
+    },
   ],
 };
 

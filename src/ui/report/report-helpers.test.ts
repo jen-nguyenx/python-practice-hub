@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { TopicId } from '../../content/ids.ts';
 import type { ReportData } from '../../engine/report.ts';
 import type { AppEvent } from '../../engine/types.ts';
+import { unlockAllInRange } from './overrides.ts';
 import { eventsForTopic, narrowReport } from './topicFilter.ts';
 import { behaviourNotes, fixTimeText, ladderGaps } from './words.ts';
 
@@ -68,5 +69,49 @@ describe('eventsForTopic', () => {
     expect(n.ladder).toHaveLength(1);
     expect(n.sessions).toHaveLength(1);
     expect(n.patterns).toHaveLength(1);
+  });
+});
+
+describe('unlockAllInRange', () => {
+  const base = { v: 1 as const };
+  const NOW = 1_000_000_000;
+  const DAY = 86_400_000;
+  const attempt = (eid: string, ts: number, sessionId: string): AppEvent => ({
+    ...base, eid, ts, sessionId, type: 'attempt', qid: 't01-s1-q1', topicId: 'variables-expressions', format: 'mcq',
+    diff: 'easy', mode: 'practice', checkNo: 1, correct: true, score: 1, credit: 1, hintTier: 0, revealed: false,
+    timeMs: 1000, mistakes: [],
+  });
+  const override = (eid: string, ts: number, sessionId: string, value: boolean): AppEvent =>
+    ({ ...base, eid, ts, sessionId, type: 'override', what: 'unlockAll', value });
+
+  it('is false with no override events, and for an empty log', () => {
+    expect(unlockAllInRange([attempt('a', NOW - DAY, 's1')], 'all', NOW)).toBe(false);
+    expect(unlockAllInRange([], 'all', NOW)).toBe(false);
+  });
+
+  it('is true when the switch went on inside the range', () => {
+    const events = [attempt('a', NOW - 2 * DAY, 's1'), override('b', NOW - DAY, 's1', true)];
+    expect(unlockAllInRange(events, 'all', NOW)).toBe(true);
+    expect(unlockAllInRange(events, '7d', NOW)).toBe(true);
+  });
+
+  it('is true when it was already on before the range started', () => {
+    const events = [override('a', NOW - 40 * DAY, 's0', true), attempt('b', NOW - DAY, 's1')];
+    expect(unlockAllInRange(events, '7d', NOW)).toBe(true);
+    expect(unlockAllInRange(events, 'session', NOW)).toBe(true);
+  });
+
+  it('is false once it was switched off before the range', () => {
+    const events = [
+      override('a', NOW - 40 * DAY, 's0', true), override('b', NOW - 39 * DAY, 's0', false), attempt('c', NOW - DAY, 's1'),
+    ];
+    expect(unlockAllInRange(events, '7d', NOW)).toBe(false);
+    expect(unlockAllInRange(events, 'all', NOW)).toBe(true); // the whole log includes the time it was on
+  });
+
+  it('looks only at the latest session for the session range', () => {
+    const events = [attempt('a', NOW - 9 * DAY, 's1'), override('b', NOW - 9 * DAY, 's1', true), override('c', NOW - 8 * DAY, 's1', false), attempt('d', NOW - 60_000, 's2')];
+    expect(unlockAllInRange(events, 'session', NOW)).toBe(false);
+    expect(unlockAllInRange(events, '30d', NOW)).toBe(true);
   });
 });

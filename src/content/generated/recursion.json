@@ -69,5 +69,12 @@
         "11"
       ]
     ]
+  },
+  "t13-s5-q2": {
+    "mutantOutputs": [
+      "bag at depth 2 holds 2\nbag at depth 1 holds 3\n9\n",
+      "bag at depth 2 holds 2\nbag at depth 2 holds 5\n14\n"
+    ],
+    "stdout": "bag at depth 2 holds 2\nbag at depth 1 holds 5\n14\n"
   }
 }

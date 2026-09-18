@@ -112,7 +112,8 @@ for (const { info, topic } of loaded) {
     for (const q of s.questions ?? []) {
       if (!q || typeof q.id !== 'string') continue;
       const meta: QuestionMeta = {
-        qid: q.id, topicId: info.id as QuestionMeta['topicId'], scenarioId: s.id, format: q.format, diff: q.diff,
+        qid: q.id, topicId: info.id as QuestionMeta['topicId'], scenarioId: s.id, scenarioTitle: s.title ?? '',
+        format: q.format, diff: q.diff,
         core: q.core === true, title: q.title, concepts: q.concepts ?? [], detects: q.detects ?? [], expectedSec: q.expectedSec,
       };
       if (q.format === 'write') {

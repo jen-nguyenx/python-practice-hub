@@ -15,7 +15,7 @@ export function FixBug(props: FormatProps<QuestionOf<'fixBug'>>) {
       fp={props as FormatProps<Question>}
       cfg={{
         initialCode: q.buggy,
-        resetLabel: 'Reset to original',
+        resetTo: 'original code',
         kind: 'function',
         fnName: q.fnName,
         tests: q.tests,

@@ -3,6 +3,9 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { TopicId } from '../../content/ids.ts';
 import { FORMAT_LADDER, TOPIC_IDS } from '../../content/ids.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
+import { QUESTION_INDEX } from '../../content/loadIndex.ts';
+import { topicProgressAll } from '../../engine/progress.ts';
+import type { TopicProgress } from '../../engine/progress.ts';
 import { store } from '../../app/services.ts';
 import { href } from '../../app/router.ts';
 import { Button, LinkButton } from '../components/Button.tsx';
@@ -15,12 +18,15 @@ import { TestRunner } from '../testmode/TestRunner.tsx';
 import type { PoolEntry } from '../testmode/pool.ts';
 import { loadPool } from '../testmode/pool.ts';
 import {
-  estimatedMinutes, MIDSEM_COUNTS, MIDSEM_MINUTES, MIDSEM_PASS_PERCENT, midsemEligible, seededRng, selectMidsem,
+  estimatedMinutes, MIDSEM_COUNTS, MIDSEM_DEFAULT_COUNT, MIDSEM_DEFAULT_MINUTES, MIDSEM_MINUTES, MIDSEM_PASS_PERCENT,
+  midsemEligible, recentlyUsedQids, seededRng, selectMidsem,
 } from '../testmode/select.ts';
+import { defaultMidsemTopics, openTopicIds } from '../testmode/lock.ts';
 import { bestResult, testHistory } from '../testmode/summary.ts';
 import type { TestProgress } from '../testmode/progress.ts';
 import { clearProgress, readProgress } from '../testmode/progress.ts';
 import { ResumeCard } from '../testmode/ResumeCard.tsx';
+import { storeReady } from '../shell/storeReady.ts';
 import '../testmode/testmode.css';
 
 interface Setup { topicIds: TopicId[]; count: number; minutes: number; includeCoding: boolean }
@@ -28,12 +34,13 @@ interface Setup { topicIds: TopicId[]; count: number; minutes: number; includeCo
 const SETUP_KEY = 'pyladder:midsem-setup';
 const PROGRESS_KEY = 'midsem';
 const DEFAULT_TOPICS: TopicId[] = TOPICS.filter((t) => t.midsem).map((t) => t.id);
-const DEFAULT_SETUP: Setup = { topicIds: DEFAULT_TOPICS, count: 15, minutes: 30, includeCoding: true };
+const DEFAULT_SETUP: Setup = { topicIds: DEFAULT_TOPICS, count: MIDSEM_DEFAULT_COUNT, minutes: MIDSEM_DEFAULT_MINUTES, includeCoding: true };
 
-function loadSetup(): Setup {
+/** The saved setup, or null when the student has never changed it (then the topics come from what they can practise). */
+function loadSetup(): Setup | null {
   try {
     const raw = JSON.parse(localStorage.getItem(SETUP_KEY) ?? 'null') as Partial<Setup> | null;
-    if (!raw) return DEFAULT_SETUP;
+    if (!raw) return null;
     const topicIds = Array.isArray(raw.topicIds) ? raw.topicIds.filter((t): t is TopicId => (TOPIC_IDS as readonly string[]).includes(t)) : DEFAULT_TOPICS;
     return {
       topicIds,
@@ -42,7 +49,7 @@ function loadSetup(): Setup {
       includeCoding: typeof raw.includeCoding === 'boolean' ? raw.includeCoding : true,
     };
   } catch {
-    return DEFAULT_SETUP;
+    return null;
   }
 }
 
@@ -52,14 +59,30 @@ function saveSetup(s: Setup) {
 
 const RUNG_WORDS = { read: 'reading', repair: 'fix or complete', write: 'coding' } as const;
 
+/**
+ * Questions already handed out in this browser session (started or replaced with "Different questions").
+ * Module scope, so leaving the page and coming back still gives a different paper; finished tests are remembered
+ * in the event log instead.
+ */
+let seenThisSession: readonly string[] = [];
+
 export function MidsemTest() {
-  const [setup, setSetupState] = useState<Setup>(loadSetup);
+  const [stored, setStored] = useState<Setup | null>(loadSetup);
+  const [autoTopics, setAutoTopics] = useState<TopicId[] | null>(null);
   const [pool, setPool] = useState<PoolEntry[] | null>(null);
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 2 ** 31));
   const [running, setRunning] = useState<{ items: PoolEntry[]; minutes: number; runId: number; resume?: TestProgress } | null>(null);
   const [saved, setSaved] = useState<TestProgress | null>(() => readProgress('midsem', PROGRESS_KEY));
   const [confirmNew, setConfirmNew] = useState(false);
+  // Questions from papers already seen, so "Different questions" and a second go really do give different ones.
+  const [seenHere, setSeenHereState] = useState<readonly string[]>(seenThisSession);
+  const rememberSeen = (qids: readonly string[]) => {
+    seenThisSession = [...seenThisSession, ...qids].slice(-60);
+    setSeenHereState(seenThisSession);
+  };
   const events = store.events.value;
+  const settings = store.settings.value;
+  const ready = storeReady.value;
 
   useEffect(() => {
     let alive = true;
@@ -67,23 +90,49 @@ export function MidsemTest() {
     return () => { alive = false; };
   }, []);
 
+  const progress = useMemo<Partial<Record<TopicId, TopicProgress>>>(() => {
+    try { return topicProgressAll(events, QUESTION_INDEX, settings); } catch { return {}; }
+  }, [events, settings]);
+
+  // Without a saved setup, start from the topics the student can practise (so every result links somewhere useful).
+  useEffect(() => {
+    if (!stored && ready) setAutoTopics(defaultMidsemTopics(progress));
+  }, [stored, ready, progress]);
+
+  const setup: Setup = stored ?? { ...DEFAULT_SETUP, topicIds: autoTopics ?? DEFAULT_TOPICS };
   const setSetup = (patch: Partial<Setup>) => {
     const next = { ...setup, ...patch };
-    setSetupState(next);
+    setStored(next);
     saveSetup(next);
   };
 
+  const topicKey = setup.topicIds.join(',');
+  const history = useMemo(() => testHistory(events, 'midsem'), [events]);
+  const eligibleCount = useMemo(
+    () => (pool ? midsemEligible(pool, { topicIds: setup.topicIds, includeCoding: setup.includeCoding }).length : 0),
+    [pool, topicKey, setup.includeCoding],
+  );
+  // Questions from recent attempts are held back until the pool runs out, so repeat papers are genuinely new.
+  const avoid = useMemo(() => {
+    const set = recentlyUsedQids(history.map((h) => h.qids), eligibleCount);
+    for (const qid of seenHere) set.add(qid);
+    return set;
+  }, [history, eligibleCount, seenHere]);
   const selection = useMemo(
-    () => (pool ? selectMidsem(pool, { topicIds: setup.topicIds, count: setup.count, includeCoding: setup.includeCoding }, seededRng(seed)) : []),
-    [pool, setup, seed],
+    () => (pool ? selectMidsem(pool, { topicIds: setup.topicIds, count: setup.count, includeCoding: setup.includeCoding }, seededRng(seed), avoid) : []),
+    [pool, topicKey, setup.count, setup.includeCoding, seed, avoid],
   );
   const eligibleByTopic = useMemo(() => {
     const m = new Map<TopicId, number>();
     if (pool) for (const t of TOPICS) m.set(t.id, midsemEligible(pool, { topicIds: [t.id], includeCoding: setup.includeCoding }).length);
     return m;
   }, [pool, setup.includeCoding]);
-  const history = useMemo(() => testHistory(events, 'midsem'), [events]);
   const best = bestResult(history);
+  const lockedChosen = ready ? setup.topicIds.filter((t) => progress[t]?.state === 'locked') : [];
+  const reshuffle = () => {
+    rememberSeen(selection.map((s) => s.id));
+    setSeed(Math.floor(Math.random() * 2 ** 31));
+  };
 
   if (running) {
     const n = running.items.length;
@@ -140,9 +189,12 @@ export function MidsemTest() {
     setConfirmNew(false);
     clearProgress('midsem', PROGRESS_KEY);
     setSaved(null);
+    rememberSeen(selection.map((s) => s.id));
     setRunning({ items: selection, minutes: setup.minutes, runId: seed });
   };
   const isDefault = setup.topicIds.length === DEFAULT_TOPICS.length && DEFAULT_TOPICS.every((t) => setup.topicIds.includes(t));
+  const openIds = openTopicIds(progress);
+  const isOpenOnly = ready && setup.topicIds.length === openIds.length && openIds.every((t) => setup.topicIds.includes(t));
 
   return (
     <div class="tx-page ms">
@@ -166,6 +218,7 @@ export function MidsemTest() {
             <span class="ms-sub tx-mono">{setup.topicIds.length} of {TOPICS.length}</span>
             <span class="ms-quick">
               <button type="button" class="tx-textbtn" aria-pressed={isDefault} onClick={() => setSetup({ topicIds: DEFAULT_TOPICS })}>Mid-sem topics</button>
+              <button type="button" class="tx-textbtn" aria-pressed={isOpenOnly} onClick={() => setSetup({ topicIds: openTopicIds(progress) })}>Ones I can practise</button>
               <button type="button" class="tx-textbtn" onClick={() => setSetup({ topicIds: TOPICS.map((t) => t.id) })}>All</button>
               <button type="button" class="tx-textbtn" onClick={() => setSetup({ topicIds: [] })}>Clear</button>
             </span>
@@ -222,7 +275,24 @@ export function MidsemTest() {
             <p class="ms-note"><Icon name="info" size={16} /> <span>Only {plural(selection.length, 'question')} match these choices.</span></p>
           ) : null}
           {selection.length > 0 && est > setup.minutes * 1.2 ? (
-            <p class="ms-note"><Icon name="clock" size={16} /> <span>These usually take about {est} minutes, so the time will be tight.</span></p>
+            <p class="ms-note">
+              <Icon name="clock" size={16} />
+              <span>
+                These usually take about {est} minutes, so {setup.minutes} minutes will not be enough for all of them.
+                Give yourself more time, or fewer questions, for a full run.
+              </span>
+            </p>
+          ) : null}
+          {lockedChosen.length > 0 && selection.length > 0 ? (
+            <p class="ms-note">
+              <Icon name="lock" size={16} />
+              <span>
+                {lockedChosen.length === setup.topicIds.length
+                  ? 'These topics are not open on your ladder yet.'
+                  : `${plural(lockedChosen.length, 'chosen topic')} ${lockedChosen.length === 1 ? 'is' : 'are'} not open on your ladder yet.`}
+                {' '}Revise them here any time; their practice pages open as you work up the ladder.
+              </span>
+            </p>
           ) : null}
           <p class="ms-note">
             <Icon name="info" size={16} />
@@ -232,7 +302,7 @@ export function MidsemTest() {
             <Button variant={saved ? "secondary" : "primary"} size="lg" onClick={start} disabled={!canStart}>
               Start test <Icon name="arrowRight" />
             </Button>
-            {canStart ? <Button variant="ghost" onClick={() => setSeed(Math.floor(Math.random() * 2 ** 31))}><Icon name="refresh" /> Different questions</Button> : null}
+            {canStart ? <Button variant="ghost" onClick={reshuffle}><Icon name="refresh" /> Different questions</Button> : null}
           </div>
         </div>
       </section>

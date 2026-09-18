@@ -33,7 +33,8 @@ import './code.css';
 
 export interface CodeTaskConfig {
   initialCode: string;
-  resetLabel: string;
+  /** What "Reset code" puts back, named in the confirm dialog: "starter code" or "original code". */
+  resetTo: string;
   kind: 'function' | 'program' | 'project';
   fnName?: string;
   rules?: RuleId[];
@@ -65,12 +66,12 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   const [tab, setTab] = useState('tests');
   const [busy, setBusy] = useState<null | 'run' | 'submit'>(null);
   const [failure, setFailure] = useState<string | null>(null);
-  const [runRes, setRunRes] = useState<TestsResult | null>(null);
+  const [runRes, setRunRes] = useState<{ result: TestsResult; code: string } | null>(null);
   const [sub, setSub] = useState<{ result: TestsResult; graded: GradeResult; code: string } | null>(null);
   const [last, setLast] = useState<'run' | 'submit' | 'program' | null>(null);
   const [submits, setSubmits] = useState(0);
   const [stdinText, setStdinText] = useState('');
-  const [analysis, setAnalysis] = useState<{ syntaxError?: PyError; flags: AstFinding[] } | null>(null);
+  const [analysis, setAnalysis] = useState<{ code: string; syntaxError?: PyError; flags: AstFinding[] } | null>(null);
   const [confirmEl, confirm] = useConfirm();
   const inFlight = useRef(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -87,15 +88,17 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   }, [cfg.tests, visibleTests, revealed]);
   const readOnly = locked || revealed || (oneShot && submits > 0);
   const canSubmit = !readOnly && busy === null && code.trim().length > 0;
-  const canRun = !paper && busy === null && code.trim().length > 0;
+  // Once the question is finished the editor is read-only and Submit is off, so Run tests goes off with them.
+  const canRun = !paper && !readOnly && busy === null && code.trim().length > 0;
 
-  // Live problems (syntax + warnings), only once Python is ready and never in paper mode.
+  // Live problems (syntax + warnings), only once Python is ready and never in paper mode. The analysis is stored
+  // with the code it describes, so an older analysis is ignored the moment the code changes (see `fresh` below).
   const analyzeToken = useRef(0);
   useEffect(() => {
     if (paper || status.state !== 'ready') return;
     const my = ++analyzeToken.current;
     const t = setTimeout(() => {
-      py.analyze(code).then((a) => { if (my === analyzeToken.current) setAnalysis(a); }).catch(() => undefined);
+      py.analyze(code).then((a) => { if (my === analyzeToken.current) setAnalysis({ code, ...a }); }).catch(() => undefined);
     }, 700);
     return () => clearTimeout(t);
   }, [code, paper, status.state === 'ready']);
@@ -127,7 +130,7 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     setBusy(null);
     setFailure(f);
     if (result) {
-      setRunRes(result);
+      setRunRes({ result, code });
       setLast('run');
     }
   };
@@ -161,22 +164,35 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
 
   useRunShortcuts({ onRun: paper ? undefined : run, onSubmit: submit }, true, rootRef);
 
+  // One wording everywhere: the button, the dialog title and the confirm button all say "Reset code".
   const reset = async () => {
-    const ok = await confirm({ title: cfg.resetLabel + '?', body: 'Your code for this question will be replaced. You can undo with Ctrl+Z (Cmd+Z on a Mac).', confirmLabel: cfg.resetLabel, danger: true });
+    const ok = await confirm({
+      title: 'Reset code?',
+      body: `Your code goes back to the ${cfg.resetTo}. You can undo with Ctrl+Z (Cmd+Z on a Mac).`,
+      confirmLabel: 'Reset code',
+      danger: true,
+    });
     if (ok) change(cfg.initialCode);
   };
 
   // What the card shows.
   const hideSubmitResult = testMode && !revealed;
-  const testsResult: TestsResult | null = last === 'submit' && sub && !hideSubmitResult ? sub.result : last === 'run' ? runRes : sub && !hideSubmitResult ? sub.result : runRes;
+  const shownTests = last === 'submit' && sub && !hideSubmitResult ? sub : last === 'run' ? runRes : sub && !hideSubmitResult ? sub : runRes;
+  const testsResult: TestsResult | null = shownTests?.result ?? null;
+  // The last run describes the code it ran on. After an edit it is stale, so nothing derived from it may point at
+  // a line number any more: the Problems badge and the editor squiggles clear as soon as the code changes.
+  const testsStale = !!shownTests && shownTests.code !== code;
+  const fresh = analysis && analysis.code === code ? analysis : null;
   const programErr = last === 'program' ? program.state.result?.error : undefined;
   const explainable = explainableError(testsResult, programErr, revealed);
-  const syntaxError = analysis?.syntaxError ?? testsResult?.compileError ?? null;
-  const flags = analysis?.flags ?? testsResult?.flags ?? EMPTY_FLAGS;
+  const syntaxError = fresh?.syntaxError ?? (testsStale ? null : testsResult?.compileError) ?? null;
+  const flags = fresh?.flags ?? (testsStale ? EMPTY_FLAGS : testsResult?.flags) ?? EMPTY_FLAGS;
   const violations = testsResult?.ruleViolations ?? [];
+  const liveViolations = testsStale ? [] : violations;
+  const liveError = testsStale ? null : explainable;
   const markers = useMemo(
-    () => (paper && !sub ? [] : markersFrom({ syntaxError, runtimeError: explainable && explainable !== syntaxError ? explainable : null, flags: paper ? [] : flags })),
-    [paper, sub, syntaxError, explainable, flags],
+    () => (paper && !sub ? [] : markersFrom({ syntaxError, runtimeError: liveError && liveError !== syntaxError ? liveError : null, flags: paper ? [] : flags })),
+    [paper, sub, syntaxError, liveError, flags],
   );
   const problemTotal = (syntaxError ? 1 : 0) + (paper ? 0 : warningFlags(flags).length);
   const graded = sub?.graded ?? null;
@@ -206,13 +222,13 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
       </div>
     ),
   });
-  if (!paper && (cfg.kind === 'program' || (last === 'run' && runRes?.outcomes.some((o) => o.stdout && !o.hidden)))) {
+  if (!paper && (cfg.kind === 'program' || (last === 'run' && runRes?.result.outcomes.some((o) => o.stdout && !o.hidden)))) {
     tabs.push({
       id: 'output', label: 'Output', badge: programErr ? '!' : null,
       content: cfg.kind === 'program' ? (
         <Terminal state={program.state} onInput={program.answer} onClear={program.clear} onExplain={() => setTab('explain')} emptyText="Press Run to see what your program prints." />
       ) : (
-        <PrintedOutput result={last === 'run' ? runRes : null} />
+        <PrintedOutput result={last === 'run' ? runRes?.result ?? null : null} />
       ),
     });
   }
@@ -227,11 +243,11 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
   if (dataFiles.length) {
     tabs.push({ id: 'files', label: 'Files', badge: dataFiles.length, content: <DataFiles files={dataFiles} /> });
   }
-  if (!paper && (problemTotal > 0 || violations.length > 0)) {
-    tabs.push({ id: 'problems', label: 'Problems', badge: problemTotal + violations.length, content: (
+  if (!paper && (problemTotal > 0 || liveViolations.length > 0)) {
+    tabs.push({ id: 'problems', label: 'Problems', badge: problemTotal + liveViolations.length, content: (
       <div class="ct-stack">
         <ProblemsList syntaxError={syntaxError} flags={flags} />
-        <RuleViolations violations={violations} />
+        <RuleViolations violations={liveViolations} />
       </div>
     ) });
   }
@@ -252,7 +268,13 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
     </>
   ) : (
     <>
-      <Button variant="primary" onClick={run} disabled={!canRun} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Enter' : 'Control+Enter'}>
+      <Button
+        variant="primary"
+        onClick={run}
+        disabled={!canRun}
+        title={readOnly ? 'This question is finished, so the code and the tests are locked' : `${MOD}+Enter runs the visible tests`}
+        aria-keyshortcuts={MOD === '⌘' ? 'Meta+Enter' : 'Control+Enter'}
+      >
         <Icon name="play" size={12} /> {busy === 'run' ? 'Running…' : runLabel}
       </Button>
       <Button onClick={submit} disabled={!canSubmit} title={`Runs every test, including hidden ones · ${MOD}+Shift+Enter`} aria-keyshortcuts={MOD === '⌘' ? 'Meta+Shift+Enter' : 'Control+Shift+Enter'}>

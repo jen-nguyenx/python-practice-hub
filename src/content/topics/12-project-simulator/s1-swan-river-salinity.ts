@@ -464,6 +464,74 @@ def main(csvfile, site):
       },
       selfExplain: 'Why is the site and date pair recorded in seen only after the row has passed every validity check?',
     },
+    {
+      id: 't12-s1-q5',
+      format: 'errorTranslator',
+      diff: 'medium',
+      core: true,
+      title: 'The site with one reading',
+      prompt:
+        'The monthly summary loops over the sites and prints each one with its sample standard deviation. It prints the first line and then stops.\n\n' +
+        'Click the line that raised the error, choose the exception type, then choose the cause and the fix.',
+      code: `readings = {'Blackwall Reach': [34.2, 33.7, 35.0], 'Guildford': [12.6]}
+
+
+def std_dev(values):
+    n = len(values)
+    mean = sum(values) / n
+    total = 0
+    for x in values:
+        total = total + (x - mean) ** 2
+    return (total / (n - 1)) ** 0.5
+
+
+for site in readings:
+    print(site, round(std_dev(readings[site]), 4))`,
+      exceptionOptions: ['ZeroDivisionError', 'ValueError', 'TypeError', 'IndexError'],
+      causes: [
+        {
+          id: 'a',
+          correct: true,
+          text:
+            'Guildford has only one reading, so `n` is 1 and `n - 1` is 0. The sample standard deviation is undefined for a single reading. ' +
+            'Guard it before dividing: `if n < 2: return None`, and have the caller decide what to print or return for such a site.',
+        },
+        {
+          id: 'b',
+          mistake: 'accumulator_init',
+          text:
+            'The loop never runs for Guildford, because a list with one item has nothing to compare against, so `total` stays 0 and the return line divides 0 by 0. ' +
+            'Start `total` at the first squared difference instead of at 0.',
+        },
+        {
+          id: 'c',
+          mistake: 'bare_except',
+          text:
+            'The crash is on the last line: `round` cannot handle the value that `std_dev` gives back for Guildford. ' +
+            'Wrap the `print` in `try` with a bare `except` so the report skips any site that misbehaves.',
+        },
+      ],
+      concepts: ['statistics', 'sample-size', 'zero-division', 'guard-clause'],
+      detects: ['zero_division', 'accumulator_init', 'bare_except'],
+      expectedSec: 150,
+      hints: [
+        'Blackwall Reach printed, so `std_dev` works for three readings. Work through the same function with Guildford\'s single reading and watch the two numbers `n` and `n - 1`.',
+        'The sample standard deviation divides by `n - 1`, not by `n`, because one reading gives no spread to measure. Ask what `n - 1` is when a site was sampled once, and which line does that division.',
+        'The error is raised on the `return` line of `std_dev`. The fix is a guard in `std_dev` that checks the number of readings before any division.',
+      ],
+      solution: {
+        explanation:
+          'The dictionary is walked in insertion order, so Blackwall Reach is summarised first. Its three readings give `n` 3 and `n - 1` 2, and the line prints normally.\n\n' +
+          'Guildford has one reading. `mean = sum(values) / n` is fine (12.6 / 1), and the loop runs once, adding `(12.6 - 12.6) ** 2`, which is 0.0. ' +
+          'The crash is on `return (total / (n - 1)) ** 0.5`: `n - 1` is 0, so Python raises `ZeroDivisionError: float division by zero`.\n\n' +
+          'The fix belongs in the function, before the division:\n\n' +
+          '```python\ndef std_dev(values):\n    n = len(values)\n    if n < 2:\n        return None\n    ...\n```\n\n' +
+          'Option (b) is wrong about the loop: it does run once for Guildford, and `total` being 0.0 is not the problem, because 0.0 divided by a non-zero number is simply 0.0. ' +
+          'Option (c) blames the wrong line and hides the fault: a bare `except` also swallows typing mistakes and interrupts, and a project that quietly skips data loses marks. ' +
+          'In project code the same guard becomes a `return None` from `main`, which is what graceful termination means.',
+      },
+      selfExplain: 'Why does the mean on line 6 not crash for Guildford when the return line does?',
+    },
   ],
 };
 

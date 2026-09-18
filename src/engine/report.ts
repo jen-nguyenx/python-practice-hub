@@ -296,7 +296,9 @@ export function buildReport(events: readonly AppEvent[], index: readonly Questio
     questions: qs.length,
     attempts: attempts.length,
     sessions: sessions.length,
-    focusedMinutes: Math.round(summaries.reduce((s, x) => s + x.focusedMin, 0)),
+    // Sum the per-session figures the sessions table shows (each rounded up to at least 1 minute when
+    // questions were answered), so the headline can never read 0 minutes while a session row reads 1 min.
+    focusedMinutes: sessions.reduce((sum, x) => sum + x.durationMin, 0),
     accuracy: meanCredit(qs),
     firstTryRate: shareOf(attemptedQs, (q) => q.firstCorrect === true),
     hintRate: shareOf(qs, (q) => q.maxHint >= 1),

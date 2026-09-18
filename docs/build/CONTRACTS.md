@@ -19,6 +19,7 @@ Read this before writing code. The product plan is `docs/plan/PLAN.md` (read §0
 - No `enum`, no `namespace`, no parameter properties (erasableSyntaxOnly).
 - Never use `innerHTML` / `dangerouslySetInnerHTML`. Render text with JSX. Use `Markdown` for Md strings and `CodeBlock` for static code.
 - Singletons: `import { store, py } from '../app/services.ts'`. Never construct your own store or Python client.
+- Python costs about 10 MB to load, so `AppShell` warms it up after first paint EXCEPT when the browser reports data saver or a 2g connection. Any page that needs Python must call `py.warmUp()` itself (code questions, the Playground, tests already do), and `py.run`/`runTests` start the worker on first use anyway. The runtime pill's `idle` state says "Python not started", so never write copy that assumes it is already loading.
 - Routes: use `href.*` and `navigate()` from `src/app/router.ts`.
 - Styling: CSS files next to your components, imported from your components. Use ONLY tokens from `src/styles/tokens.css` (`var(--surface)`, `var(--accent)` …). Never hard-code colours. No gradients, no purple, no glow, no shadows on flat cards, radius ≤ 8px. Every state has text or an icon, not colour alone. Respect reduced motion (transitions ≤ 150ms, opacity/transform only).
 - Plain language in the UI: "Hint 1 of 3", "Show answer", "score", "Check", "Run". Never show internal words (credit, channel, ladder, L4, mistake ids). Use `MISTAKES[id].label` to name mistakes.

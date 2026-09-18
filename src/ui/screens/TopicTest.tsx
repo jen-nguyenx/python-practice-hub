@@ -15,14 +15,14 @@ import { formatDate, formatDuration, plural } from '../report/format.ts';
 import { TestRunner } from '../testmode/TestRunner.tsx';
 import type { PoolEntry } from '../testmode/pool.ts';
 import { loadPool } from '../testmode/pool.ts';
-import { selectTopicTest, TOPIC_TEST_MINUTES, TOPIC_TEST_SIZE, topicTestPassMark } from '../testmode/select.ts';
+import { recentlyUsedQids, selectTopicTest, TOPIC_TEST_MINUTES, TOPIC_TEST_SIZE, topicTestPassMark } from '../testmode/select.ts';
 import type { TestSummary } from '../testmode/summary.ts';
 import { testHistory } from '../testmode/summary.ts';
 import type { TestProgress } from '../testmode/progress.ts';
 import { clearProgress, readProgress } from '../testmode/progress.ts';
 import { ResumeCard } from '../testmode/ResumeCard.tsx';
 import { ConfirmDialog } from '../testmode/ConfirmDialog.tsx';
-import { unlockingTopic } from '../testmode/lock.ts';
+import { lockCopy } from '../testmode/lock.ts';
 import { storeReady } from '../shell/storeReady.ts';
 import '../testmode/testmode.css';
 
@@ -102,19 +102,20 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
 
   // A locked topic's test cannot be taken: passing it would unlock the next topic while this one stayed locked.
   if (locked && ready) {
-    const opener = unlockingTopic(progress, meta.id);
-    const reason = progress[meta.id]?.lockReason;
+    // One name per topic (its short name), and the sentence, the detail and the button all point at the same topic.
+    const { opener, sentence, detail } = lockCopy(progress, meta.id);
     return (
       <div class="tx-page tt-page">
         <section class="tx-card tt-card tt-lock" aria-labelledby="tt-h">
           <span class="tt-lock-icon" aria-hidden="true"><Icon name="lock" size={20} /></span>
           <h1 id="tt-h">The {meta.short} test is locked</h1>
-          <p class="tt-lede">It opens when {meta.title} unlocks, so the test only covers topics you can practise.</p>
-          {reason ? <p class="tt-lock-reason"><Icon name="info" size={16} /><span>{reason}</span></p> : null}
+          <p class="tt-lede">{sentence} That way the test only covers topics you can practise.</p>
+          {detail ? <p class="tt-lock-reason"><Icon name="info" size={16} /><span>{detail}</span></p> : null}
           <div class="tx-actions">
             {opener
               ? <LinkButton href={href.topic(opener.id)} variant="primary">Work on {opener.short} <Icon name="arrowRight" /></LinkButton>
               : <LinkButton href={href.landing()} variant="primary">Back to topics</LinkButton>}
+            <LinkButton href={href.topic(meta.id)} variant="ghost">Read the {meta.short} notes</LinkButton>
           </div>
         </section>
       </div>
@@ -129,8 +130,8 @@ function TopicTestScreen({ topicId }: { topicId: string }) {
     clearProgress('topic-test', meta.id);
     setSaved(null);
     setResume(undefined);
-    // A retake prefers questions that were not in the last attempt, whose answers were just shown.
-    const avoid = new Set(history[0]?.qids ?? []);
+    // A retake prefers questions the recent attempts did not use, whose answers were shown in their reviews.
+    const avoid = recentlyUsedQids(history.map((h) => h.qids), pool.length);
     setPicked(selectTopicTest(pool, Math.random, undefined, avoid));
   };
   const start = () => {

@@ -44,7 +44,9 @@
 .set-desc { font-size: var(--fs-14); color: var(--text-muted); line-height: 1.5; max-width: 56ch; }
 .set-desc kbd { font-size: var(--fs-11); padding: 0 5px; }
 .set-strong { color: var(--text); font-weight: 600; }
-.set-control { flex: none; display: flex; align-items: center; justify-content: flex-end; gap: var(--sp-2); margin-left: auto; }
+/* max-width keeps a wide control (the accent picker) inside the row instead of pushing the page sideways: once it is
+   on its own wrapped line it fills the row and wraps itself. */
+.set-control { flex: none; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--sp-2); margin-left: auto; min-width: 0; max-width: 100%; }
 .stack-row .set-control { display: block; margin-left: 0; }
 .set-row:not(:has(.set-control)) .set-desc { max-width: 72ch; }
 .set-value { font-family: var(--mono); font-size: var(--fs-13); color: var(--text); }
@@ -80,13 +82,12 @@
 .set-card > .font-preview { border-top: 0; padding: 0 24px 20px; }
 .font-preview .code-block { font-size: inherit; line-height: 1.6; padding: 12px 16px; }
 
-/* ---------- narrow: index becomes a horizontal scroll row ---------- */
+/* ---------- narrow: the index becomes a row of links that wraps (nothing is ever cut off) ---------- */
 @media (max-width: 900px) {
   .settings-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .set-head { margin-bottom: 24px; }
-  .set-index { position: static; margin: 0 -4px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); }
-  .set-index::-webkit-scrollbar { display: none; }
-  .set-index ul { display: flex; gap: 20px; padding: 0 4px; }
+  .set-index { position: static; margin: 0 -4px; border-bottom: 1px solid var(--border); }
+  .set-index ul { display: flex; flex-wrap: wrap; gap: 0 20px; padding: 0 4px; }
   .set-index-link { height: 40px; padding: 0; border-radius: 0; white-space: nowrap; font-size: var(--fs-14); }
   .set-index-link:hover { background: transparent; }
   .set-index-link.is-current::before { left: 0; right: 0; top: auto; bottom: -1px; width: auto; height: 2px; border-radius: 2px 2px 0 0; }
@@ -107,7 +108,7 @@
 }
 
 /* Accent colour picker. Swatches preview each preset's own colours (fixed preview values, both themes). */
-.accent-picker { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.accent-picker { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; max-width: 100%; }
 .accent-opt {
   display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px 0 8px;
   border: 1px solid var(--border-control); border-radius: var(--r-2); background: var(--surface); color: var(--text);

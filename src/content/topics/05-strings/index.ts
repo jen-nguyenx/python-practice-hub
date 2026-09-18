@@ -5,13 +5,15 @@ import s1 from './s1-unit-codes.ts';
 import s2 from './s2-smartrider.ts';
 import s3 from './s3-scorchers.ts';
 import s4 from './s4-kings-park-hunt.ts';
+import s5 from './s5-markets.ts';
+import s6 from './s6-reid-library.ts';
 
 const topic: Topic = {
   id: 'strings',
   cheatsheet,
   workedExample,
   commonMistakes,
-  scenarios: [s1, s2, s3, s4],
+  scenarios: [s1, s2, s3, s4, s5, s6],
 };
 
 export default topic;

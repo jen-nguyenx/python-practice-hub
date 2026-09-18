@@ -5,6 +5,8 @@ export interface QuestionMeta {
   qid: string;
   topicId: TopicId;
   scenarioId: string;
+  /** The scenario's title ("Rottnest ferry timetable"), so search need not load the topic chunks. */
+  scenarioTitle: string;
   format: Format;
   diff: Diff;
   core: boolean;

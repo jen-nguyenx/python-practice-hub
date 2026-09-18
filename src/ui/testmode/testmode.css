@@ -37,6 +37,11 @@
 .tx-page :focus-visible, .tr :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .tr h2[tabindex="-1"]:focus, .tx-page h1[tabindex="-1"]:focus { outline: none; }
 .tx-dialog .dlg-body p + p { margin-top: 8px; }
+/* Phone width: three choices do not fit on one row, so stack them full width in reading order. */
+@media (max-width: 520px) {
+  .tx-dialog .dlg-foot { flex-direction: column; align-items: stretch; gap: 8px; }
+  .tx-dialog .dlg-foot .btn { width: 100%; justify-content: center; }
+}
 
 /* Quiet text button (quick topic choices). */
 .tx-textbtn {
@@ -306,11 +311,19 @@
 .trs-fill { display: block; height: 100%; border-radius: 2px; background: var(--progress); }
 .trs-bar-link { display: inline-flex; align-items: center; gap: 4px; min-width: 76px; justify-content: flex-end; font-size: var(--fs-13); font-weight: 600; color: var(--blue); text-decoration: none; white-space: nowrap; }
 .trs-bar-link:hover { text-decoration: underline; }
-.trs-bar-link.locked { color: var(--text-faint); font-weight: 500; }
+.trs-bar-link.locked { color: var(--text-muted); font-weight: 500; }
 .trs-bar-link.locked svg { color: var(--lock); }
 .trs-strong { margin-top: 10px; font-size: var(--fs-14); color: var(--text-muted); }
 
 .trs-review-card { gap: 10px; }
+/* The lock is explained once here, not on every reviewed question. */
+.trs-lock-note {
+  display: flex; gap: 8px; align-items: flex-start; max-width: 76ch;
+  font-size: var(--fs-14); line-height: 1.5; color: var(--text-muted);
+}
+.trs-lock-note svg { flex: none; margin-top: 3px; color: var(--lock); }
+.trs-lock-note a { color: var(--blue); text-decoration: none; }
+.trs-lock-note a:hover { text-decoration: underline; }
 .trs-list { list-style: none; margin: 0; padding: 0; }
 .trs-item { border-top: 1px solid var(--border); }
 /* Fixed columns so a long status never pushes the title across. */

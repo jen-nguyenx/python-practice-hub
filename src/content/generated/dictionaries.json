@@ -21,5 +21,44 @@
       "['Aisha', 'Chen']\n3 2\n"
     ],
     "stdout": "['Aisha', 'Chen']\n4 2\n"
+  },
+  "t08-s4-q4": {
+    "error": {
+      "line": 4,
+      "message": "cannot use 'list' as a dict key (unhashable type: 'list')",
+      "type": "TypeError"
+    },
+    "stdout": "2 ['Aisha', 'Chen']\n"
+  },
+  "t08-s5-q1": {
+    "twins": {
+      "differs": true,
+      "outLeft": "{'kangaroo paw': 3, 'banksia': 2, 'grevillea': 1}\n2\n",
+      "outRight": "{'kangaroo paw': 4, 'banksia': 3, 'grevillea': 2}\n3\n"
+    }
+  },
+  "t08-s6-q2": {
+    "traceRows": [
+      [
+        "'Cosmos'",
+        "{'Cosmos': 1}"
+      ],
+      [
+        "'Marrow'",
+        "{'Cosmos': 1, 'Marrow': 1}"
+      ],
+      [
+        "'Cosmos'",
+        "{'Cosmos': 2, 'Marrow': 1}"
+      ],
+      [
+        "'Kalka'",
+        "{'Cosmos': 2, 'Marrow': 1, 'Kalka': 1}"
+      ],
+      [
+        "'Marrow'",
+        "{'Cosmos': 2, 'Marrow': 2, 'Kalka': 1}"
+      ]
+    ]
   }
 }

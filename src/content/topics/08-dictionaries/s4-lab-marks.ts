@@ -273,6 +273,64 @@ print(len(groups), len(groups[('Wed', 14)]))`,
       },
       selfExplain: 'Why must the conditions be checked from HD downwards when you use >=?',
     },
+    {
+      id: 't08-s4-q4',
+      format: 'errorTranslator',
+      diff: 'medium',
+      core: true,
+      title: 'The session that could not be a key',
+      prompt:
+        'The timetabler is adding a new lab session to the same `(day, hour)` grouping. It prints one line, then crashes. ' +
+        'Click the line that raised the error, pick the exception, then pick the cause and the fix.',
+      code: `sessions = {('Tue', 9): ['Aisha', 'Chen'], ('Wed', 14): ['Ben']}
+print(len(sessions), sessions[('Tue', 9)])
+label = ['Thu', 11]
+sessions[label] = []
+print(len(sessions))`,
+      exceptionOptions: ['TypeError', 'KeyError', 'ValueError', 'IndexError'],
+      causes: [
+        {
+          id: 'a',
+          text:
+            'A dictionary key has to be **immutable**, and a list can be changed at any time, so Python refuses to use one as a key. ' +
+            "Fix: build the label as a tuple, `label = ('Thu', 11)`",
+          correct: true,
+        },
+        {
+          id: 'b',
+          text:
+            'Only strings and numbers can be dictionary keys; the pairs on line 1 work by accident. ' +
+            "Fix: use a string key such as `'Thu 11'` and stop using tuples as keys",
+          mistake: 'tuple_immutability',
+        },
+        {
+          id: 'c',
+          text:
+            '`sessions[label] = []` fails because `label` is not a key yet, and a dictionary can only be assigned to keys that already exist. ' +
+            'Fix: create the key first with `sessions.setdefault(label, [])`',
+          mistake: 'dict_keyerror',
+        },
+      ],
+      concepts: ['dict-keys', 'tuple-keys', 'immutability'],
+      detects: ['type_error_other', 'tuple_immutability', 'dict_keyerror'],
+      expectedSec: 150,
+      hints: [
+        'Line 1 already uses two-part keys and works, and line 2 prints fine. So the problem is not the idea of a two-part key. Compare line 1 and line 3 closely.',
+        'Look at the brackets. Line 1 uses round brackets, line 3 uses square brackets. What is the difference between those two kinds of value?',
+        'A key must be hashable, which in this unit means it must not be able to change. Tuples cannot change; lists can.',
+      ],
+      solution: {
+        explanation:
+          "Line 1 builds a dictionary whose keys are the tuples `('Tue', 9)` and `('Wed', 14)`, and line 2 prints `2 ['Aisha', 'Chen']`.\n\n" +
+          'Line 3 builds `label` with **square** brackets, so it is a list, not a tuple. Line 4 tries to use that list as a key and Python raises ' +
+          "`TypeError: unhashable type: 'list'`. Line 5 never runs.\n\n" +
+          'Python works out where to store a key from the key itself. If the key could change later, the entry would be lost, so only values that cannot change are allowed: ' +
+          'strings, numbers, booleans and tuples of those. Lists and dictionaries are not.\n\n' +
+          "The fix is one character each side: `label = ('Thu', 11)`. Then `sessions[label] = []` adds a third session and line 5 prints `3`.\n\n" +
+          'Note that this is not a `KeyError`. Assigning to a key that does not exist is normal and creates it; the trouble here is the **type** of the key, which is why the error arrives on the assignment rather than on a read.',
+      },
+      selfExplain: 'Why is a tuple allowed as a dictionary key when a list is not?',
+    },
   ],
 };
 

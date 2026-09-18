@@ -24,11 +24,10 @@ export function App() {
     case 'settings': screen = <Settings />; break;
     default:
       screen = (
-        <div class="page page-narrow">
-          <div class="empty-state">
-            <p><strong>Page not found.</strong></p>
-            <p>That link doesn't match anything in PyLadder. <a href={href.landing()}>Back to topics</a></p>
-          </div>
+        <div class="page page-narrow notfound-page">
+          <h1>Page not found</h1>
+          <p class="notfound-text">That link doesn't match anything in PyLadder.</p>
+          <p><a class="btn primary" href={href.landing()}>Back to topics</a></p>
         </div>
       );
   }

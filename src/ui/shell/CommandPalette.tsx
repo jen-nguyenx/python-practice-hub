@@ -2,6 +2,7 @@
 // topics and every question title. Combobox + listbox pattern inside a native modal <dialog>: typing filters,
 // Up/Down/Home/End move, Enter opens, Esc closes and focus returns to where it was.
 import { Fragment } from 'preact';
+import { signal } from '@preact/signals';
 import { useEffect, useId, useMemo, useRef, useState } from 'preact/hooks';
 import { href, navigate } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
@@ -15,10 +16,18 @@ import { matchItem } from './fuzzy.ts';
 import { continueInfo } from './homeData.ts';
 import { safeTopicProgress } from './progressData.ts';
 import { toggleTheme } from './ThemeToggle.tsx';
-import { paletteOpen, shortcutSheetOpen } from './uiState.ts';
+import { mainFill, paletteOpen, shortcutSheetOpen } from './uiState.ts';
 
 type Group = 'Pages and actions' | 'Topics' | 'Questions';
-interface Item { id: string; group: Group; label: string; detail: string; icon: IconName; search: string; run: () => void }
+interface Item {
+  id: string; group: Group; label: string; detail: string; icon: IconName; search: string; run: () => void;
+  /** The question's topic is locked: shown as "Locked" and ranked below everything that is open. */
+  locked?: boolean;
+  /** Route this item goes to, so the palette can tell when it is the page you are already on. */
+  href?: string;
+  /** Set while a test is running on this item's own route: choosing it explains instead of doing nothing. */
+  unavailable?: string;
+}
 
 const GROUPS: Group[] = ['Pages and actions', 'Topics', 'Questions'];
 const MAX_QUESTIONS = 40;
@@ -30,24 +39,46 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
   const settings = store.settings.value;
   const progress = safeTopicProgress(events, settings);
   const actions: Item[] = [
-    { id: 'a-home', group: 'Pages and actions', label: 'Topics', detail: 'Home', icon: 'ladder', search: 'home ladder', run: go(href.landing()) },
-    { id: 'a-play', group: 'Pages and actions', label: 'Playground', detail: 'Write and run any Python', icon: 'code', search: 'editor run python', run: go(href.playground()) },
-    { id: 'a-midsem', group: 'Pages and actions', label: 'Mid-sem test', detail: 'Timed practice test', icon: 'clock', search: 'midsem practice exam', run: go(href.midsem()) },
-    { id: 'a-report', group: 'Pages and actions', label: 'Report', detail: 'Strengths and weak spots', icon: 'chart', search: 'progress mistakes stats', run: go(href.report()) },
-    { id: 'a-settings', group: 'Pages and actions', label: 'Settings', detail: 'Theme, backup, unlock', icon: 'sliders', search: 'preferences backup export', run: go(href.settings()) },
+    { id: 'a-home', group: 'Pages and actions', label: 'Topics', detail: 'Home', icon: 'ladder', search: 'home ladder', href: href.landing(), run: go(href.landing()) },
+    { id: 'a-play', group: 'Pages and actions', label: 'Playground', detail: 'Write and run any Python', icon: 'code', search: 'editor run python', href: href.playground(), run: go(href.playground()) },
+    { id: 'a-midsem', group: 'Pages and actions', label: 'Mid-sem test', detail: 'Timed practice test', icon: 'clock', search: 'midsem practice exam', href: href.midsem(), run: go(href.midsem()) },
+    { id: 'a-report', group: 'Pages and actions', label: 'Report', detail: 'Strengths and weak spots', icon: 'chart', search: 'progress mistakes stats', href: href.report(), run: go(href.report()) },
+    { id: 'a-settings', group: 'Pages and actions', label: 'Settings', detail: 'Theme, backup, unlock', icon: 'sliders', search: 'preferences backup export', href: href.settings(), run: go(href.settings()) },
     { id: 'a-theme', group: 'Pages and actions', label: 'Toggle theme', detail: 'Switch light and dark', icon: 'moon', search: 'dark light mode', run: toggleTheme },
     { id: 'a-keys', group: 'Pages and actions', label: 'Keyboard shortcuts', detail: 'Show the list', icon: 'keyboard', search: 'keys help', run: () => { shortcutSheetOpen.value = true; } },
   ];
+  // A running test hides the title bar and the icon bar, and its route is already current, so navigate() would do
+  // nothing at all. Say so instead of looking broken.
+  if (mainFill.value) {
+    const here = typeof location === 'undefined' ? '' : location.hash;
+    for (const a of actions) {
+      if (!a.href || a.href !== here) continue;
+      a.detail = 'Unavailable during the test';
+      a.unavailable = `${a.label} is the page you are on. Finish the test, or leave it, to come back here.`;
+    }
+  }
   const topics: Item[] = TOPICS.map((t) => {
     const p = progress[t.id];
-    const detail = p.state === 'locked' ? 'Locked' : `${p.solved} of ${p.total} solved`;
-    return { id: `t-${t.id}`, group: 'Topics', label: `${t.num} ${t.title}`, detail, icon: p.state === 'locked' ? 'lock' : 'ladder', search: t.short, run: go(href.topic(t.id)) };
+    const locked = p.state === 'locked';
+    const detail = locked ? 'Locked' : `${p.solved} of ${p.total} solved`;
+    return {
+      id: `t-${t.id}`, group: 'Topics', label: `${t.num} ${t.title}`, detail, icon: locked ? 'lock' : 'ladder',
+      search: t.short, locked, href: href.topic(t.id), run: go(href.topic(t.id)),
+    };
   });
   const questions: Item[] = QUESTION_INDEX.map((q) => {
     const t = TOPIC_BY_ID[q.topicId];
+    const locked = progress[q.topicId]?.state === 'locked';
+    const short = t?.short ?? '';
+    // The scenario title travels in the question index, so searching for "Rottnest ferry" works
+    // straight away without downloading any topic chunk.
+    const scenario = q.scenarioTitle;
     return {
-      id: `q-${q.qid}`, group: 'Questions', label: q.title, detail: `${t?.short ?? ''} · ${FORMAT_LABEL[q.format]}`,
-      icon: 'file', search: `${t?.short ?? ''} ${FORMAT_LABEL[q.format]}`, run: go(href.question(q.qid)),
+      id: `q-${q.qid}`, group: 'Questions', label: q.title,
+      detail: locked ? `${short} · Locked` : `${short} · ${FORMAT_LABEL[q.format]}`,
+      icon: locked ? 'lock' : 'file',
+      search: `${short} ${t?.title ?? ''} ${scenario} ${FORMAT_LABEL[q.format]}`,
+      locked, href: href.question(q.qid), run: go(href.question(q.qid)),
     };
   });
   let continueItem: Item | null = null;
@@ -67,7 +98,8 @@ function filterItems(all: Item[], continueItem: Item | null, query: string): Ite
     const s = matchItem(q, item.label, item.search);
     if (s !== null) scored.push({ item, score: s });
   }
-  scored.sort((a, b) => b.score - a.score);
+  // Anything the student can open now comes before anything in a locked topic.
+  scored.sort((a, b) => Number(!!a.item.locked) - Number(!!b.item.locked) || b.score - a.score);
   const out: Item[] = [];
   for (const g of GROUPS) {
     const inGroup = scored.filter((s) => s.item.group === g).map((s) => s.item);
@@ -79,6 +111,7 @@ function filterItems(all: Item[], continueItem: Item | null, query: string): Ite
 function PaletteBody({ onClose }: { onClose: () => void }) {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
+  const [notice, setNotice] = useState<string | null>(null);
   const listId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -88,7 +121,7 @@ function PaletteBody({ onClose }: { onClose: () => void }) {
   const optId = (i: number) => `${listId}-o${i}`;
 
   useEffect(() => { inputRef.current?.focus(); }, []);
-  useEffect(() => { setActive(0); }, [query]);
+  useEffect(() => { setActive(0); setNotice(null); }, [query]);
   useEffect(() => {
     if (idx < 0) return;
     listRef.current?.querySelector(`#${CSS.escape(optId(idx))}`)?.scrollIntoView({ block: 'nearest' });
@@ -96,6 +129,10 @@ function PaletteBody({ onClose }: { onClose: () => void }) {
 
   const choose = (item: Item | undefined) => {
     if (!item) return;
+    if (item.unavailable) {
+      setNotice(item.unavailable);
+      return;
+    }
     onClose();
     // Let the dialog close and focus return before the route or theme changes.
     setTimeout(item.run, 0);
@@ -147,7 +184,8 @@ function PaletteBody({ onClose }: { onClose: () => void }) {
                 id={optId(i)}
                 role="option"
                 aria-selected={i === idx}
-                class={`pal-opt${i === idx ? ' is-active' : ''}`}
+                aria-disabled={item.unavailable ? 'true' : undefined}
+                class={`pal-opt${i === idx ? ' is-active' : ''}${item.unavailable ? ' is-off' : ''}`}
                 onMouseMove={() => { if (i !== idx) setActive(i); }}
                 onClick={() => choose(item)}
               >
@@ -160,6 +198,7 @@ function PaletteBody({ onClose }: { onClose: () => void }) {
         })}
         {results.length === 0 ? <p class="pal-empty">No question, topic or page matches "{query.trim()}".</p> : null}
       </div>
+      {notice ? <p class="pal-notice" role="status"><Icon name="info" size={14} />{notice}</p> : null}
       <div class="pal-foot" aria-hidden="true">
         <span><kbd>↑</kbd> <kbd>↓</kbd> move</span>
         <span><kbd>Enter</kbd> open</span>

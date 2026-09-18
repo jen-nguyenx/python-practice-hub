@@ -11,11 +11,27 @@ import { ImportError, sanitizeExport, settingsFrom } from './validate.ts';
 export { ImportError };
 
 export const DB_NAME = 'pyladder';
+/** Every key PyLadder puts in localStorage starts with this. */
+export const LOCAL_PREFIX = 'pyladder:';
 export const SESSION_KEY = 'pyladder:session';
 export const SETTINGS_KEY = 'pyladder:settings';
 export const CHANNEL_NAME = 'pyladder';
 /** A new session starts after 30 minutes without activity. */
 export const SESSION_IDLE_MS = 30 * 60_000;
+
+/**
+ * The only localStorage key a reset keeps: the settings (the reset dialog promises to keep the theme, and
+ * `resetAll` rewrites the rest of that object with the defaults). Everything else under `pyladder:` goes, including
+ * keys other screens write directly: in-progress tests, test setup, filters, Playground state, report range.
+ */
+const KEEP_ON_RESET = new Set<string>([SETTINGS_KEY]);
+
+/**
+ * A test screen saves its progress when it unmounts and up to a second after the last answer, so a test that was
+ * running when the reset started can write its key back just after the sweep. Re-sweeping over this window stops that.
+ */
+export const RESET_SWEEP_MS = 2000;
+const RESET_SWEEP_AT = [50, 250, 600, 1200, RESET_SWEEP_MS];
 
 /** False when IndexedDB is unavailable (for example some private browsing modes): progress lasts only until the tab closes. */
 const storageAvailableSignal = signal(true);
@@ -27,7 +43,7 @@ export interface StoreOptions {
   /** IndexedDB factory. Default globalThis.indexedDB; null forces the in-memory fallback. */
   indexedDB?: IDBFactory | null;
   /** Key/value storage for settings and the session marker. Default localStorage (in-memory if unavailable). */
-  storage?: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> | null;
+  storage?: (Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> & Partial<Pick<Storage, 'key' | 'length'>>) | null;
   /** BroadcastChannel name for other tabs; null disables. Default 'pyladder'. */
   channelName?: string | null;
   /** Clock, for tests. */
@@ -47,7 +63,7 @@ export type PyLadderStore = Store & {
   close(): void;
 };
 
-type KV = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+type KV = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> & Partial<Pick<Storage, 'key' | 'length'>>;
 
 function memoryKV(): KV {
   const m = new Map<string, string>();
@@ -55,7 +71,26 @@ function memoryKV(): KV {
     getItem: (k) => m.get(k) ?? null,
     setItem: (k, v) => void m.set(k, String(v)),
     removeItem: (k) => void m.delete(k),
+    key: (i) => [...m.keys()][i] ?? null,
+    get length() {
+      return m.size;
+    },
   };
+}
+
+/** Every `pyladder:` key currently in the storage. Empty when the storage cannot be enumerated. */
+function pyladderKeys(kv: KV): string[] {
+  const out: string[] = [];
+  try {
+    if (typeof kv.key !== 'function' || typeof kv.length !== 'number') return out;
+    for (let i = 0; i < kv.length; i++) {
+      const k = kv.key(i);
+      if (k !== null && k.startsWith(LOCAL_PREFIX)) out.push(k);
+    }
+  } catch {
+    // storage blocked mid-flight
+  }
+  return out;
 }
 
 function defaultKV(): KV {
@@ -118,7 +153,7 @@ function sortEvents(list: AppEvent[]): AppEvent[] {
   return list.map((e, i) => [e, i] as const).sort((a, b) => a[0].ts - b[0].ts || a[1] - b[1]).map(([e]) => e);
 }
 
-type ChannelMsg = { kind: 'events'; events: AppEvent[] } | { kind: 'reload' };
+type ChannelMsg = { kind: 'events'; events: AppEvent[] } | { kind: 'reload' } | { kind: 'reset' };
 
 export function createStore(options: StoreOptions = {}): PyLadderStore {
   const now = options.now ?? (() => Date.now());
@@ -197,7 +232,12 @@ export function createStore(options: StoreOptions = {}): PyLadderStore {
         const msg = ev.data as ChannelMsg | null;
         if (!msg || closed) return;
         if (msg.kind === 'events' && Array.isArray(msg.events)) mergeIntoSignal(msg.events);
-        else if (msg.kind === 'reload') void reloadEvents();
+        else if (msg.kind === 'reset') {
+          // Another tab deleted everything: drop this tab's local keys too, and keep sweeping in case a test
+          // running in THIS tab writes its progress back.
+          sweepLocalData();
+          void reloadEvents();
+        } else if (msg.kind === 'reload') void reloadEvents();
       };
     } catch {
       channel = null;
@@ -209,6 +249,39 @@ export function createStore(options: StoreOptions = {}): PyLadderStore {
       channel.postMessage(msg);
     } catch {
       // ignore: other tabs will catch up on reload
+    }
+  }
+
+  // ---------------- clearing local keys after a reset ----------------
+  let sweepTimers: ReturnType<typeof setTimeout>[] = [];
+
+  function stopSweep() {
+    for (const t of sweepTimers) clearTimeout(t);
+    sweepTimers = [];
+  }
+
+  /** Remove every `pyladder:` key except the settings (and, after the first pass, the session marker). */
+  function clearLocalData(keepSession: boolean) {
+    for (const k of pyladderKeys(kv)) {
+      if (KEEP_ON_RESET.has(k) || (keepSession && k === SESSION_KEY)) continue;
+      try {
+        kv.removeItem(k);
+      } catch {
+        // storage blocked: nothing was stored to begin with
+      }
+    }
+  }
+
+  /** Clear now, then again over the next couple of seconds so a test that was running cannot save its key back. */
+  function sweepLocalData() {
+    stopSweep();
+    clearLocalData(false);
+    for (const ms of RESET_SWEEP_AT) {
+      const t = setTimeout(() => {
+        if (!closed) clearLocalData(true);
+      }, ms);
+      (t as unknown as { unref?: () => void }).unref?.();
+      sweepTimers.push(t);
     }
   }
 
@@ -427,6 +500,12 @@ export function createStore(options: StoreOptions = {}): PyLadderStore {
     return { added };
   }
 
+  /**
+   * Delete everything: the event log, drafts and Playground files in IndexedDB, and every `pyladder:` key in
+   * localStorage (in-progress tests, test setup, topic filters, Playground state, report range - screens write those
+   * directly). The only setting kept is the theme, as the reset dialog says. The session starts fresh on the next
+   * event. A test still running when this ran cannot bring its key back: see `sweepLocalData`.
+   */
   async function resetAll(): Promise<void> {
     await ready;
     pendingSnapshots.clear();
@@ -435,13 +514,18 @@ export function createStore(options: StoreOptions = {}): PyLadderStore {
     await enqueueStrict((b) => b.clearAll());
     setEvents([]);
     const theme = settings.value.theme;
+    sweepLocalData();
     updateSettings({ ...DEFAULT_SETTINGS, theme });
-    broadcast({ kind: 'reload' });
+    // A brand-new session: the next event starts it, exactly as it would in a browser that had never seen PyLadder.
+    sessionId = uuid();
+    lastActivity = -Infinity;
+    broadcast({ kind: 'reset' });
   }
 
   function close() {
     if (closed) return;
     closed = true;
+    stopSweep();
     if (snapshotTimer !== null) clearTimeout(snapshotTimer);
     try {
       channel?.close();

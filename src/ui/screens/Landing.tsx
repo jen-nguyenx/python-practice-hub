@@ -36,7 +36,7 @@ export function Landing() {
 
   const progress = useMemo(() => safeTopicProgress(events, settings), [events, settings]);
   const info = useMemo(() => continueInfo(events, settings, progress), [events, settings, progress]);
-  const midsem = useMemo(() => midsemSummary(), [events]);
+  const midsem = useMemo(() => midsemSummary(progress), [events, progress]);
 
   const eyebrow = <p class="home-eyebrow num">CITS1401 · {sem.label}</p>;
 

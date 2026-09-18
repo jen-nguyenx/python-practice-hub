@@ -253,6 +253,79 @@ def unit_grade(lab, project, exam):
       },
       selfExplain: 'Why does the exam hurdle have to be checked before the HD branch?',
     },
+
+    // ---------------------------------------------------------------- q4 write
+    {
+      id: 't04-s2-q4',
+      format: 'write',
+      kind: 'function',
+      diff: 'hard',
+      core: false,
+      title: 'What do I need in the exam?',
+      prompt: md(
+        'Mei knows her lab and project marks and wants to know what she still needs in the exam.',
+        '',
+        'Write `exam_needed(lab, project, target)` that **returns** the lowest whole exam mark from 0 to 100 (both included) for which the unit total is at least `target`, as an int. ' +
+          'Return `-1` if even an exam mark of 100 is not enough. Return `0` if the target is already reached with an exam mark of 0.',
+        '',
+        'Work the total out by calling the given helper `unit_total(lab, project, exam)`; do not copy its formula. ' +
+          'For example, `exam_needed(60, 55, 70)` returns `80`: an exam mark of 79 gives a total of 69.9, and 80 gives 70.5.',
+      ),
+      fnName: 'exam_needed',
+      starter: `def unit_total(lab, project, exam):
+    """Return the unit total out of 100: labs 10%, project 30%, exam 60%."""
+    return lab * 0.1 + project * 0.3 + exam * 0.6
+
+
+def exam_needed(lab, project, target):
+    """Return the lowest whole exam mark (0-100) that reaches target, or -1."""
+    pass`,
+      tests: [
+        { id: 'v1', call: 'exam_needed(60, 55, 70)', expect: '80', label: 'needs 80 in the exam', hidden: false },
+        { id: 'v2', call: 'exam_needed(20, 20, 80)', expect: '-1', label: 'out of reach even with 100', hidden: false },
+        { id: 'h1', call: 'exam_needed(100, 100, 35)', expect: '0', label: 'target already reached with 0', hidden: true, tag: 'off_by_one_range' },
+        { id: 'h2', call: 'exam_needed(0, 0, 60)', expect: '100', label: 'needs full marks in the exam', hidden: true, tag: 'off_by_one_range' },
+        { id: 'h3', call: 'exam_needed(30, 40, 55)', expect: '67', label: 'mid-range target', hidden: true, tag: 'early_return_in_loop' },
+        { id: 'h4', call: 'exam_needed(90, 90, 80)', expect: '74', label: 'strong lab and project marks', hidden: true },
+        { id: 'h5', call: 'exam_needed(100, 100, 60)', expect: '34', label: 'small gap left to close', hidden: true },
+      ],
+      concepts: ['helper-functions', 'return-in-loop', 'for-range', 'search'],
+      detects: ['early_return_in_loop', 'off_by_one_range', 'forgot_to_call', 'print_vs_return'],
+      expectedSec: 480,
+      hints: [
+        'You do not need algebra. There are only 101 possible exam marks, so you can try them in order and stop at the first one that works.',
+        'Plan: loop over the exam marks from 0 to 100 in increasing order. On each pass call `unit_total(lab, project, exam)` and compare it with `target`. Return that exam mark as soon as the total is big enough. Only once every mark has been tried can you be sure the answer is -1.',
+        md(
+          'The loop header is `for exam in range(0, 101):`. Inside it:',
+          '',
+          '```python',
+          'if unit_total(lab, project, exam) >= target:',
+          '    return exam',
+          '```',
+        ),
+      ],
+      solution: {
+        code: `def unit_total(lab, project, exam):
+    """Return the unit total out of 100: labs 10%, project 30%, exam 60%."""
+    return lab * 0.1 + project * 0.3 + exam * 0.6
+
+
+def exam_needed(lab, project, target):
+    """Return the lowest whole exam mark (0-100) that reaches target, or -1."""
+    for exam in range(0, 101):
+        if unit_total(lab, project, exam) >= target:
+            return exam
+    return -1`,
+        explanation: md(
+          '1. `for exam in range(0, 101):` tries 0, 1, ..., 100. Both ends matter: starting at 0 lets the function answer 0 when the target is already reached, and the `101` is what makes 100 the last mark tried. `range(0, 100)` would answer -1 for `exam_needed(0, 0, 60)`.',
+          '2. Because the marks are tried in increasing order, the first one that reaches the target is the lowest one, so `return exam` can stop the search straight away.',
+          '3. `unit_total(lab, project, exam)` is called with brackets and all three arguments, and its returned value is compared with `target`. The formula lives in one place.',
+          '4. `>=` is right for "at least `target`": a total of exactly the target counts.',
+          '5. `return -1` is lined up with `for`, so it runs only after all 101 marks have failed. An `else: return -1` inside the loop would give up after trying 0 and answer -1 for every set of marks.',
+        ),
+      },
+      selfExplain: 'Why is the first mark that reaches the target also the lowest one?',
+    },
   ],
 };
 

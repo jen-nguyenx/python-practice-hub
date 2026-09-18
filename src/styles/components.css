@@ -133,8 +133,8 @@ kbd, .kbd {
 .tok-k { color: var(--blue); }
 .tok-b { color: var(--blue); }
 .tok-f { color: var(--text); }
-.tok-s { color: var(--ok); }
-.tok-n { color: var(--hint); }
+.tok-s { color: var(--code-string); }
+.tok-n { color: var(--code-number); }
 .tok-c { color: var(--text-muted); font-style: italic; }
 /* Syntax on the dark editor (both themes): VS Code Dark+. */
 :is(.code-block.dark, .syn-dark) .tok-k { color: var(--syn-keyword); }

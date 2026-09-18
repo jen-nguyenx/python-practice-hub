@@ -1,6 +1,6 @@
 # PyLadder — CLAUDE.md
 
-Python practice app for first-year UWA CITS1401 students: 13 unlockable topics, 155 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, a mid-semester practice test, topic tests, and reports.
+Python practice app for first-year UWA CITS1401 students: 13 unlockable topics, 264 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, a mid-semester practice test, topic tests, and reports.
 
 ## Commands
 ```bash

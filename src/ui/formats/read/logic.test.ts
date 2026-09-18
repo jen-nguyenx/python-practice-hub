@@ -84,7 +84,8 @@ describe('line diff', () => {
 
 describe('isCodeLike', () => {
   it('treats code, values and multi-line outputs as code', () => {
-    for (const t of ["int('12.0')", "'Bus ' + 950", '5.0\nNone', '3.5 3 -4', '7 // 2', 'True', 'None', '[1, 2, 3]', 'x = 5', '42']) {
+    for (const t of ["int('12.0')", "'Bus ' + 950", '5.0\nNone', '3.5 3 -4', '7 // 2', 'True', 'None', '[1, 2, 3]', 'x = 5', '42',
+      'mark >= 60 or mark < 70', 'mark >= 60 and mark < 70', 'name in seats and count > 0']) {
       expect(isCodeLike(t), t).toBe(true);
     }
   });

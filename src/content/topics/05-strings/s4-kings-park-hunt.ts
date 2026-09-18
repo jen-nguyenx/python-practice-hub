@@ -44,6 +44,58 @@ const scenario: Scenario = {
       selfExplain: 'Line 4 and line 5 both compare a phrase with its reverse. Why does only line 4 print True?',
     },
     {
+      id: 't05-s4-q2',
+      format: 'write',
+      kind: 'function',
+      diff: 'hard',
+      core: false,
+      title: 'Count a pattern in a plaque',
+      prompt:
+        "The second clue points at a plaque and asks how many times a short pattern appears in its text.\n\nWrite `count_pattern(text, pattern)` that returns an **int**: the number of places in `text` where `pattern` appears.\n\n- Upper and lower case do not matter: `'Swan'` and `'swan'` are the same pattern.\n- Copies may overlap. `count_pattern('banana', 'ana')` is 2, because `'ana'` starts at position 1 and again at position 3.\n- Return 0 if `pattern` is empty, or if it is longer than `text`.\n\nDo not use `count()`: it skips overlapping copies.",
+      concepts: ['slicing', 'loop-over-string', 'case', 'search'],
+      detects: ['off_by_one_range', 'case_sensitive_compare', 'index_out_of_range'],
+      expectedSec: 540,
+      fnName: 'count_pattern',
+      starter:
+        'def count_pattern(text, pattern):\n    """Return how many times pattern appears in text, ignoring case and counting overlaps."""\n    pass\n',
+      tests: [
+        { id: 'v1', call: "count_pattern('banana', 'ana')", expect: '2', label: 'overlapping copies', hidden: false, tag: 'off_by_one_range' },
+        { id: 'v2', call: "count_pattern('Kings Park, Perth', 'r')", expect: '2', label: 'a single letter', hidden: false },
+        { id: 'v3', call: "count_pattern('Quokka', 'QU')", expect: '1', label: 'pattern typed in capitals', hidden: false },
+        {
+          id: 'h1',
+          call: "count_pattern('aaaa', 'aa')",
+          expect: '3',
+          label: 'every position overlaps',
+          hidden: true,
+          tag: 'off_by_one_range',
+        },
+        {
+          id: 'h2',
+          call: "count_pattern('Swan River', 'swan')",
+          expect: '1',
+          label: 'pattern in the other case',
+          hidden: true,
+          tag: 'case_sensitive_compare',
+        },
+        { id: 'h3', call: "count_pattern('', 'a')", expect: '0', label: 'empty plaque', hidden: true, tag: 'index_out_of_range' },
+        { id: 'h4', call: "count_pattern('abc', 'abcd')", expect: '0', label: 'pattern longer than the text', hidden: true, tag: 'index_out_of_range' },
+        { id: 'h5', call: "count_pattern('Boab', '')", expect: '0', label: 'empty pattern', hidden: true },
+        { id: 'h6', call: "count_pattern('Boab tree', 'z')", expect: '0', label: 'pattern is not there', hidden: true },
+      ],
+      hints: [
+        'Check every starting position in turn. At each position, take a slice as long as the pattern and compare it with the pattern.',
+        "Plan: return 0 straight away for an empty pattern; make lower-case copies of both strings and save them; count from 0; loop over the starting positions with `range`, comparing `text[i:i + len(pattern)]` with the pattern; return the count.",
+        "The last starting position is `len(text) - len(pattern)`, so the loop header is `for i in range(len(text) - len(pattern) + 1):`. When the pattern is longer than the text, that range is empty and the count stays 0.",
+      ],
+      solution: {
+        code: "def count_pattern(text, pattern):\n    \"\"\"Return how many times pattern appears in text, ignoring case and counting overlaps.\"\"\"\n    if pattern == '':\n        return 0\n    haystack = text.lower()\n    needle = pattern.lower()\n    count = 0\n    for i in range(len(haystack) - len(needle) + 1):\n        if haystack[i:i + len(needle)] == needle:\n            count += 1\n    return count\n",
+        explanation:
+          "The empty pattern is handled first, because an empty slice would match at every position and the answer would be the length of the text plus one.\n\n`text.lower()` and `pattern.lower()` are saved into new names. Lower-casing once, before the loop, is what makes `'Swan'` match `'swan'`; comparing the originals would miss it.\n\n`range(len(haystack) - len(needle) + 1)` lists every position where the pattern still fits. For `'banana'` and `'ana'` that is 0, 1, 2, 3. The `+ 1` matters: without it the last position is never tried, and `count_pattern('aaaa', 'aa')` would give 2 instead of 3. If the pattern is longer than the text, the range is empty, so the loop never runs and 0 comes back.\n\n`haystack[i:i + len(needle)]` takes exactly as many characters as the pattern, starting at `i`. Comparing whole slices, rather than one character at a time, keeps the loop simple.\n\nBecause `i` moves one position at a time, overlapping copies are all counted. `haystack.count(needle)` would jump past each match and return 1 for `'banana'` and `'ana'`.",
+      },
+      selfExplain: "Why does the loop stop at len(text) - len(pattern) rather than at len(text)?",
+    },
+    {
       id: 't05-s4-q3',
       format: 'write',
       kind: 'function',

@@ -1,7 +1,7 @@
-// Monaco themes for PyLadder. The editor is dark in BOTH app themes (docs/build/DESIGN.md), with VS Code Dark+
-// syntax colours. Monaco needs literal hex colours, so these mirror the --editor-* and --syn-* tokens in
-// src/styles/tokens.css ('pyladder-light' = values on :root, 'pyladder-dark' = the dark theme's values).
-// Pure data with no Monaco import. Keep in sync when tokens change.
+// Monaco themes for PyLadder. The editor is dark in BOTH app themes (docs/build/DESIGN.md). Monaco needs literal
+// hex colours, so these mirror the --editor-* and --syn-* tokens in src/styles/tokens.css ('pyladder-light' =
+// values on :root, 'pyladder-dark' = the dark theme's values). Pure data with no Monaco import.
+// Keep in sync when tokens change.
 
 export interface ThemeRule { token: string; foreground?: string; fontStyle?: string }
 export interface ThemeData {
@@ -16,9 +16,16 @@ interface Palette {
   bad: string; hint: string; focus: string;
 }
 
-/** --syn-* tokens: VS Code Dark+ syntax colours, with a grey comment colour instead of Dark+'s green. */
+/**
+ * Syntax colours, the same roles the static CodeBlock uses, so identical Python is coloured the same way in the
+ * editor and in a code block. No green and no purple anywhere (CLAUDE.md): numbers are amber (--hint in the dark
+ * theme, which is what the editor ground needs) and control keywords are the same blue as every other keyword,
+ * instead of Dark+'s green numerals and purple control words.
+ * These mirror the --syn-* tokens; --syn-number and --syn-control in src/styles/tokens.css still hold the old
+ * Dark+ values, so `.syn-dark` / `.code-block.dark` re-declare them (code.css, playground.css) until they land.
+ */
 const SYN = {
-  keyword: '#569cd6', control: '#c586c0', string: '#ce9178', number: '#b5cea8', comment: '#7c8591',
+  keyword: '#569cd6', control: '#569cd6', string: '#ce9178', number: '#f2a94b', comment: '#7c8591',
   fn: '#dcdcaa', builtin: '#4fc1ff', variable: '#9cdcfe', delimiter: '#d4d4d4',
 };
 

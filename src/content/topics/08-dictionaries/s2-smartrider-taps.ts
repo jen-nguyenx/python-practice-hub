@@ -12,7 +12,7 @@ const s2: Scenario = {
       format: 'predict',
       diff: 'easy',
       core: true,
-      title: 'Counting tap-ons',
+      title: 'Tap-ons per station',
       prompt: 'The analyst counts tap-ons at each station. Choose exactly what this program prints.',
       code: `taps = ['Perth', 'Claremont', 'perth', 'Perth', 'Claremont']
 counts = {}

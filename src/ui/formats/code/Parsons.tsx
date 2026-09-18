@@ -48,7 +48,7 @@ interface DragState { id: string; from: ListId; pointerId: number; startX: numbe
 
 export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
   const { q, revealed, locked, mode, checksLeft, topicId } = props;
-  const testMode = mode === 'topic-test' || mode === 'midsem';
+  const testMode = mode === 'topic-test' || mode === 'exam';
 
   const items = useMemo<Item[]>(() => [
     ...q.lines.map((l, i) => ({ id: `l${i}`, text: l.text, indent: l.indent, distractor: false })),

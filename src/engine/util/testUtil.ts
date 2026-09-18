@@ -1,7 +1,7 @@
 // Event and index builders shared by engine tests (not imported by app code).
 import type { AstFlag, Diff, Format, MistakeId, TopicId } from '../../content/ids.ts';
 import type { QuestionMeta } from '../../content/questionIndex.ts';
-import type { AppEvent } from '../types.ts';
+import type { AppEvent, Mode, TestKind } from '../types.ts';
 
 let counter = 0;
 type Base = { eid: string; v: 1; ts: number; sessionId: string };
@@ -32,7 +32,7 @@ export interface AttemptOpts {
   revealed?: boolean;
   timeMs?: number;
   mistakes?: MistakeId[];
-  mode?: 'practice' | 'paper' | 'topic-test' | 'midsem';
+  mode?: Mode;
   flags?: AstFlag[];
 }
 
@@ -54,7 +54,7 @@ export const mistake = (qid: string | null, id: MistakeId, ts: number, sessionId
   ...base(ts, sessionId), type: 'mistake', qid, topicId: qid ? topicIdOf(qid) : null, mistake: id, channel: 'test',
 });
 export const selfExplain = (qid: string, ts: number, sessionId = 's1'): AppEvent => ({ ...base(ts, sessionId), type: 'self_explain', qid, text: 'because' });
-export const testResult = (kind: 'topic-test' | 'midsem', topicIds: TopicId[], score: number, total: number, passed: boolean, ts: number, sessionId = 's1'): AppEvent => ({
+export const testResult = (kind: TestKind, topicIds: TopicId[], score: number, total: number, passed: boolean, ts: number, sessionId = 's1'): AppEvent => ({
   ...base(ts, sessionId), type: 'test_result', kind, topicIds, score, total, passed, durationMs: 600_000, qids: [],
 });
 

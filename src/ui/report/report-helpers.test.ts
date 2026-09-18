@@ -46,7 +46,7 @@ describe('eventsForTopic', () => {
     { ...base, eid: 'e', ts: 5, sessionId: 's2', type: 'session_start' },
     { ...base, eid: 'f', ts: 6, sessionId: 's2', type: 'attempt', qid: 't03-s1-q1', topicId: 'for-loops-range', format: 'mcq', diff: 'easy', mode: 'practice', checkNo: 1, correct: true, score: 1, credit: 1, hintTier: 0, revealed: false, timeMs: 1000, mistakes: [] },
     { ...base, eid: 'g', ts: 7, sessionId: 's3', type: 'session_start' },
-    { ...base, eid: 'h', ts: 8, sessionId: 's3', type: 'test_result', kind: 'midsem', topicIds: ['strings', 'for-loops-range'], score: 1, total: 2, passed: true, durationMs: 1, qids: [] },
+    { ...base, eid: 'h', ts: 8, sessionId: 's3', type: 'test_result', kind: 'practice-test', topicIds: ['strings', 'for-loops-range'], score: 1, total: 2, passed: true, durationMs: 1, qids: [] },
     { ...base, eid: 'i', ts: 9, sessionId: 's3', type: 'self_explain', qid: 't05-s1-q1', text: 'because' },
     { ...base, eid: 'j', ts: 10, sessionId: 's1', type: 'override', what: 'unlockAll', value: true },
   ];

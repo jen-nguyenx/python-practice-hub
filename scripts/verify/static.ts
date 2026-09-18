@@ -1,6 +1,6 @@
 // Schema and authoring-rule checks that need no Python.
 import {
-  AST_FLAGS, CODE_FORMATS, DIFFS, FORMATS, MISTAKE_IDS, PATTERN_IDS, RULE_IDS,
+  AST_FLAGS, CODE_FORMATS, DIFFS, EXAM_SLOT_IDS, EXAM_SLOT_MARKS, FORMATS, MISTAKE_IDS, PATTERN_IDS, RULE_IDS,
 } from '../../src/content/ids.ts';
 import type { Format } from '../../src/content/ids.ts';
 import type { Question, Test, Topic } from '../../src/content/schema.ts';
@@ -315,6 +315,18 @@ export function checkQuestionStatic(issues: Issues, info: TopicInfo, scenarioId:
       if (lq.mode !== undefined && lq.mode !== 'practice' && lq.mode !== 'paper') sc.error(`mode must be 'practice' or 'paper'`);
       if (lq.mode === 'paper' && !(typeof lq.marks === 'number' && lq.marks >= 5 && lq.marks <= 20)) {
         sc.warn('paper items should set marks between 5 and 20');
+      }
+      // A question that claims a final-paper slot has to be a paper item worth that slot's marks,
+      // otherwise a mock exam built from the slots would not add up to 100.
+      if (lq.examSlot !== undefined) {
+        if (!isStr(lq.examSlot) || !(EXAM_SLOT_IDS as readonly string[]).includes(lq.examSlot)) {
+          sc.error(`examSlot ${quote(String(lq.examSlot))} is not in EXAM_SLOT_IDS`);
+        } else if (lq.mode !== 'paper') {
+          sc.error('examSlot is only for paper-mode write questions');
+        } else {
+          const want = EXAM_SLOT_MARKS[lq.examSlot as keyof typeof EXAM_SLOT_MARKS];
+          if (lq.marks !== want) sc.error(`examSlot ${lq.examSlot} must carry marks ${want}, not ${String(lq.marks)}`);
+        }
       }
       if (lq.rules !== undefined) {
         if (!Array.isArray(lq.rules)) sc.error('rules must be an array');

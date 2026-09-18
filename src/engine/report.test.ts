@@ -55,7 +55,7 @@ const events: AppEvent[] = [
   attempt({ ts: D19 + 20 * MIN, sessionId: 's3', qid: 't12-s1-q1', format: 'write', correct: false, score: 0.5, credit: 0.5, timeMs: 600_000, mistakes: ['import_used'] }),
   mistake('t12-s1-q1', 'import_used', D19 + 20 * MIN, 's3'),
   attempt({ ts: D19 + 30 * MIN, sessionId: 's3', qid: 't13-s1-q1', format: 'write', timeMs: 300_000, flags: ['recursion_present'] }),
-  testResult('midsem', ['variables-expressions', 'if-elif-else'], 12, 30, false, D19 + 40 * MIN, 's3'),
+  testResult('practice-test', ['variables-expressions', 'if-elif-else'], 12, 30, false, D19 + 40 * MIN, 's3'),
 ];
 
 const label = (id: keyof typeof MISTAKES) => MISTAKES[id].label;
@@ -143,7 +143,7 @@ describe('buildReport (all time)', () => {
 
   it('readiness', () => {
     expect(r.readiness.paperAccuracy).toBe(0.5);
-    expect(r.readiness.midsem).toEqual({ best: 0.4, last: 0.4, attempts: 1 });
+    expect(r.readiness.practiceTest).toEqual({ best: 0.4, last: 0.4, attempts: 1 });
     expect(r.readiness.recursionAccuracy).toBe(1);
     expect(r.readiness.projectRules).toEqual([
       { rule: 'noImport', ok: 0, broken: 1 },
@@ -165,7 +165,7 @@ describe('buildReport (all time)', () => {
     expect(r.headline.workOn).toEqual([
       { text: `Practise Decisions: score 25%, "${label('elif_vs_if')}" keeps coming up and topic test not passed yet.`, href: '#/topic/if-elif-else' },
       { text: `Work on "${label('elif_vs_if')}": it came up 3 times in the last 14 days.`, href: '#/q/t02-s1-q1' },
-      { text: 'Retry the mid-semester practice test (last score 40%).', href: '#/midsem' },
+      { text: 'Sit a mock final exam to see where you stand under exam conditions.', href: '#/exam' },
     ]);
   });
 });

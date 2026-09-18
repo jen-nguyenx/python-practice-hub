@@ -1,6 +1,6 @@
 // Question content schema. Content files under src/content/topics/** export a `Topic` built from these types.
 // Rules for authors live in docs/build/CONTENT.md.
-import type { AstFlag, Diff, Format, MistakeId, PatternId, RuleId, TopicId } from './ids.ts';
+import type { AstFlag, Diff, ExamSlot, Format, MistakeId, PatternId, RuleId, TopicId } from './ids.ts';
 
 /**
  * Markdown-lite string. Supported: paragraphs (blank line), `inline code`, **bold**, *italic*,
@@ -153,6 +153,8 @@ export interface WriteQuestion extends QuestionBase {
   /** paper: plain editor, no Run, one Submit, marks shown. Used for exam-style practice. */
   mode?: 'practice' | 'paper';
   marks?: number;
+  /** Which slot of a closed-book final paper this question can fill. Paper mode only. */
+  examSlot?: ExamSlot;
   rules?: RuleId[];
 }
 

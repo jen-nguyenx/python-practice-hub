@@ -173,11 +173,12 @@ print(len(groups), len(groups[('Wed', 14)]))`,
       kind: 'function',
       mode: 'paper',
       marks: 10,
+      examSlot: 'dict-sort',
       diff: 'hard',
       core: true,
       title: 'Names by UWA grade',
       prompt:
-        'Exam practice: write your answer as you would on paper, without running it.\n\n' +
+        'Exam practice: write your answer as you would on paper, without running it. This question is worth 10 marks.\n\n' +
         'UWA grades a final mark (an int from 0 to 100) as **HD** for 80 and above, **D** for 70 to 79, **CR** for 60 to 69, **P** for 50 to 59 and **N** below 50.\n\n' +
         'Write `grade_groups(marks)`. `marks` is a dictionary mapping each student name to their final mark. ' +
         'Return a **dictionary** mapping each grade to a **list of names sorted A to Z**. Include only grades that at least one student received, so an empty dictionary gives `{}`. Do not change `marks`.\n\n' +

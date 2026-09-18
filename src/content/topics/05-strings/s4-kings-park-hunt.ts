@@ -5,7 +5,7 @@ const scenario: Scenario = {
   id: 't05-s4',
   title: 'Kings Park treasure hunt',
   story:
-    'A student club is running a treasure hunt through Kings Park. The clues are word puzzles: palindromes, messages with shifted letters, and an anagram lock on the final box. String puzzles like these are typical of the early 5 to 10 mark questions in CITS1401 final exams.',
+    'A student club is running a treasure hunt through Kings Park. The clues are word puzzles: palindromes, messages with shifted letters, checkpoint names printed with the spaces taken out, and an anagram lock on the final box. String puzzles like these are typical of the early 5 to 10 mark questions in CITS1401 final exams.',
   questions: [
     {
       id: 't05-s4-q1',
@@ -150,15 +150,16 @@ const scenario: Scenario = {
       format: 'write',
       kind: 'function',
       mode: 'paper',
-      marks: 10,
+      marks: 5,
+      examSlot: 'short-string',
       diff: 'hard',
       core: true,
       title: 'Anagram lock (exam style)',
       prompt:
-        "Exam-style question, 10 marks. No imports.\n\nThe box at the end of the hunt opens only if you type an anagram of the clue: the same letters in a different order. Write `is_anagram(clue, answer)` that returns `True` if `answer` is an anagram of `clue`, and `False` otherwise.\n\n- Only letters count. Ignore spaces, punctuation and digits, and ignore case.\n- Every letter must appear the same number of times in both.\n- If `clue` contains no letters at all, return `False`.\n- Use loops and string methods only: no lists and no `sorted`.\n\nFor example, `is_anagram('Dormitory', 'dirty room')` returns `True` and `is_anagram('Kings Park', 'Parking')` returns `False`.",
+        "Exam-style question, 5 marks. No imports.\n\nThe box at the end of the hunt opens only if you type an anagram of the clue: the same letters in a different order. Write `is_anagram(clue, answer)` that returns `True` if `answer` is an anagram of `clue`, and `False` otherwise.\n\n- Only letters count. Ignore spaces, punctuation and digits, and ignore case.\n- Every letter must appear the same number of times in both.\n- If `clue` contains no letters at all, return `False`.\n- Use loops and string methods only: no lists and no `sorted`.\n\nFor example, `is_anagram('Dormitory', 'dirty room')` returns `True` and `is_anagram('Kings Park', 'Parking')` returns `False`.",
       concepts: ['string-building', 'loop-over-string', 'methods', 'case', 'return-in-loop'],
       detects: ['case_sensitive_compare', 'early_return_in_loop', 'string_immutability', 'accumulator_init'],
-      expectedSec: 660,
+      expectedSec: 420,
       fnName: 'is_anagram',
       rules: ['noImport'],
       starter:
@@ -202,9 +203,96 @@ const scenario: Scenario = {
       solution: {
         code: "def letters_only(text):\n    \"\"\"Return the letters of text in lower case, with everything else removed.\"\"\"\n    result = ''\n    for ch in text.lower():\n        if ch.isalpha():\n            result += ch\n    return result\n\n\ndef is_anagram(clue, answer):\n    \"\"\"Return True if answer uses exactly the letters of clue, ignoring case and non-letters.\"\"\"\n    a = letters_only(clue)\n    b = letters_only(answer)\n    if a == '' or len(a) != len(b):\n        return False\n    for ch in a:\n        if a.count(ch) != b.count(ch):\n            return False\n    return True\n",
         explanation:
-          "`letters_only` builds a new string. It starts with `''` before the loop, walks through a lower-case copy of the text, and adds a character only when `isalpha()` is True. Strings cannot be changed, so removing characters always means building a new string. As a helper, the cleaning is written once and used for both phrases.\n\n`a == ''` handles a clue with no letters, such as `''` or `'1234'`. `len(a) != len(b)` catches an answer with extra letters: every letter of `'swan'` appears once in `'swanriver'`, so the count loop on its own would wrongly say True for `'Swan'` and `'Swan River'`.\n\nThe loop takes each letter of `a` and compares how many times it appears in `a` and in `b`. One difference is enough to know the answer, so the function returns `False` straight away. Checking only `ch in b` is not enough: `'boab tree'` and `'bare boat'` use the same six letters but not the same number of each.\n\n`return True` sits after the loop, so it runs only when every letter has passed. An `else: return True` inside the loop would decide after the first letter.\n\nMarking guide (10): lower-case, letters-only copies of both phrases (3), no-letters case (1), length check (1), loop over the letters (1), counts compared between the two phrases (2), `False` returned as soon as a count differs (1), `True` returned only after the loop (1).",
+          "`letters_only` builds a new string. It starts with `''` before the loop, walks through a lower-case copy of the text, and adds a character only when `isalpha()` is True. Strings cannot be changed, so removing characters always means building a new string. As a helper, the cleaning is written once and used for both phrases.\n\n`a == ''` handles a clue with no letters, such as `''` or `'1234'`. `len(a) != len(b)` catches an answer with extra letters: every letter of `'swan'` appears once in `'swanriver'`, so the count loop on its own would wrongly say True for `'Swan'` and `'Swan River'`.\n\nThe loop takes each letter of `a` and compares how many times it appears in `a` and in `b`. One difference is enough to know the answer, so the function returns `False` straight away. Checking only `ch in b` is not enough: `'boab tree'` and `'bare boat'` use the same six letters but not the same number of each.\n\n`return True` sits after the loop, so it runs only when every letter has passed. An `else: return True` inside the loop would decide after the first letter.\n\nMarking guide (5): lower-case, letters-only copies of both phrases (2), no-letters case and length check (1), loop comparing the count of every letter in both copies (1), `False` returned as soon as a count differs and `True` only after the loop (1).",
       },
       selfExplain: 'The loop already compares the count of every letter. Why is the length check still needed?',
+    },
+    {
+      id: 't05-s4-q5',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 5,
+      examSlot: 'short-string',
+      diff: 'hard',
+      core: false,
+      title: 'Space out a checkpoint name (exam style)',
+      prompt:
+        "Exam-style question, 5 marks. No imports, and there is no Run button: write your answer as you would on paper, then submit it once.\n\n" +
+        "The clue cards print each checkpoint as one run-together word, with a capital at the start of every part: `'BotanicGarden'`, `'StateWarMemorial'`. Write `space_capitals(name)` that returns a **new string** in which a single space is put in front of every upper-case letter, except an upper-case letter that is the first character of `name`.\n\n" +
+        "- Every character of `name` is kept, in order. Nothing else is added or removed.\n" +
+        "- Capitals next to each other each get their own space: `space_capitals('DNATower')` returns `'D N A Tower'`.\n" +
+        "- `name` never contains a space, and may hold digits and lower-case letters, which are copied unchanged.\n" +
+        "- Return `''` when `name` is empty.\n\n" +
+        "For example, `space_capitals('BotanicGarden')` returns `'Botanic Garden'`. Use a loop and string methods only: no lists and no `split`.",
+      concepts: ['string-building', 'loop-over-string', 'case', 'methods'],
+      detects: ['off_by_one_range', 'case_sensitive_compare', 'accumulator_init', 'string_immutability', 'print_vs_return'],
+      expectedSec: 360,
+      fnName: 'space_capitals',
+      rules: ['noImport'],
+      starter:
+        'def space_capitals(name):\n    """Return name with a space in front of every capital except the first character."""\n    pass\n',
+      tests: [
+        { id: 'v1', call: "space_capitals('BotanicGarden')", expect: "'Botanic Garden'", label: 'two parts', hidden: false },
+        { id: 'v2', call: "space_capitals('StateWarMemorial')", expect: "'State War Memorial'", label: 'three parts', hidden: false },
+        {
+          id: 'v3',
+          call: "space_capitals('DNATower')",
+          expect: "'D N A Tower'",
+          label: 'capitals next to each other',
+          hidden: false,
+        },
+        { id: 'h1', call: "space_capitals('')", expect: "''", label: 'empty name', hidden: true, tag: 'accumulator_init' },
+        {
+          id: 'h2',
+          call: "space_capitals('W')",
+          expect: "'W'",
+          label: 'one capital letter and nothing else',
+          hidden: true,
+          tag: 'off_by_one_range',
+        },
+        { id: 'h3', call: "space_capitals('Boab')", expect: "'Boab'", label: 'a single part', hidden: true },
+        {
+          id: 'h4',
+          call: "space_capitals('lotterywestWalkway')",
+          expect: "'lotterywest Walkway'",
+          label: 'starts in lower case',
+          hidden: true,
+          tag: 'off_by_one_range',
+        },
+        {
+          id: 'h5',
+          call: "space_capitals('Level2Lookout')",
+          expect: "'Level2 Lookout'",
+          label: 'a digit in the middle',
+          hidden: true,
+          tag: 'case_sensitive_compare',
+        },
+      ],
+      hints: [
+        'Build a new string one character at a time. Before you copy a character across, ask whether it needs a space in front of it.',
+        "Plan: start `result` at `''`. Loop over the characters of `name`. If the character is upper case, and something has already been written into `result`, add a space to `result` first. Either way, add the character itself. Return `result` after the loop.",
+        "You do not need a counter: the answer so far tells you whether you are at the start.\n\n```python\nif ch.isupper() and result != '':\n    result = result + ' '\n```\n\nUse `ch.isupper()`, which is True only for A-Z. `ch == ch.upper()` is also True for digits, so it would break `'Level2Lookout'`.",
+      ],
+      solution: {
+        code:
+          'def space_capitals(name):\n' +
+          '    """Return name with a space in front of every capital except the first character."""\n' +
+          "    result = ''\n" +
+          '    for ch in name:\n' +
+          "        if ch.isupper() and result != '':\n" +
+          "            result = result + ' '\n" +
+          '        result = result + ch\n' +
+          '    return result\n',
+        explanation:
+          "`result = ''` is created once, before the loop. Strings cannot be changed in place, so the answer has to be built up as a new string, and starting it at `''` is what makes an empty `name` return `''` instead of crashing.\n\n" +
+          "`for ch in name:` hands over one character per pass. The position is never needed, so there is no `range(len(name))` and no chance of an off-by-one.\n\n" +
+          "`ch.isupper()` is True only for A-Z, which is why `'2'` in `'Level2Lookout'` is copied without a space. The common wrong test is `ch == ch.upper()`, which is True for digits and punctuation as well.\n\n" +
+          "`result != ''` is the \"not at the start\" test. Nothing has been written yet only while the first character is being handled, so `'BotanicGarden'` does not come back as `' Botanic Garden'`, and `space_capitals('W')` returns `'W'`. Writing `for i in range(len(name))` and testing `i > 0` does the same job with more moving parts.\n\n" +
+          "The space is added **before** the character, and `result = result + ch` then runs on every pass, inside and outside the `if`. That is what gives each of the three capitals in `'DNATower'` its own space.\n\n" +
+          "Marking guide (5): a new string started before the loop (1), a loop over the characters of `name` (1), upper-case letters detected with `isupper` (1), no space in front of the first character (1), the result returned rather than printed (1).",
+      },
+      selfExplain: "What would space_capitals('BotanicGarden') return if the space were added after the capital instead of before it?",
     },
   ],
 };

@@ -18,12 +18,13 @@ import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { Markdown } from '../components/Markdown.tsx';
 import { formatClock, formatDuration } from '../report/format.ts';
-import { MIDSEM_COUNTS } from './select.ts';
+import { PRACTICE_COUNTS, TIMED_TEST_PASS_PERCENT } from './select.ts';
 import type { QuestionOutcome, SavedAnswer, TestItem, TestSummary } from './summary.ts';
+import type { TestKind } from '../../engine/types.ts';
+import { questionMode } from './summary.ts';
 import { strongNextStep } from './summary.ts';
 
 const RUNG_WORDS: Record<Ladder, string> = { read: 'Reading code', repair: 'Fix or complete', write: 'Writing code' };
-const MIDSEM_TOPIC_COUNT = TOPICS.filter((t) => t.midsem).length;
 
 interface BarRow { key: string; name: string; correct: number; total: number; topicId?: TopicId }
 
@@ -32,7 +33,7 @@ export function TestResults({ summary, items, answers, drafts, mode, headingRef,
   items: readonly TestItem[];
   answers: ReadonlyMap<number, SavedAnswer>;
   drafts: ReadonlyMap<number, unknown>;
-  mode: 'topic-test' | 'midsem';
+  mode: TestKind;
   headingRef: { current: HTMLHeadingElement | null };
   saveError: string | null;
   extra?: ComponentChildren;
@@ -55,7 +56,7 @@ export function TestResults({ summary, items, answers, drafts, mode, headingRef,
         return { key: r, name: RUNG_WORDS[r], correct: os.filter((o) => o.correct).length, total: os.length };
       })
       .filter((r) => r.total > 0);
-  const strong = strongNextStep(summary, { maxCount: MIDSEM_COUNTS[MIDSEM_COUNTS.length - 1], midsemTopics: MIDSEM_TOPIC_COUNT });
+  const strong = strongNextStep(summary, { maxCount: PRACTICE_COUNTS[PRACTICE_COUNTS.length - 1], topicCount: TOPICS.length });
 
   const toggle = (i: number) => {
     const next = new Set(open);
@@ -63,7 +64,7 @@ export function TestResults({ summary, items, answers, drafts, mode, headingRef,
     setOpen(next);
   };
   const allOpen = open.size === items.length;
-  const kind = mode === 'midsem' ? 'Mid-sem practice' : 'Topic test';
+  const kind = mode === 'mock-exam' ? 'Mock final exam' : mode === 'practice-test' ? 'Practice test' : 'Topic test';
   // Questions from topics that are still locked can be reviewed here but not practised yet: say so once, not per row.
   const lockedTopics = summary.perTopic.map((t) => t.topicId).filter((t, i, xs) => xs.indexOf(t) === i && isLocked(t));
 
@@ -73,15 +74,26 @@ export function TestResults({ summary, items, answers, drafts, mode, headingRef,
         <section class="tx-card trs-main" aria-labelledby="trs-heading">
           <span class="tx-eyebrow">{kind} · results</span>
           <h1 id="trs-heading" ref={headingRef} tabIndex={-1}>{summary.title}</h1>
+          {/* A mock exam is marked out of 100 like the real paper; every other test counts questions right. */}
           <div class="trs-score" aria-live="polite">
-            <span class="trs-big" aria-label={`${summary.correct} of ${summary.total} correct`}>{summary.correct}<span>/{summary.total}</span></span>
+            {summary.marks ? (
+              <span class="trs-big" aria-label={`${summary.marks.earned} of ${summary.marks.total} marks`}>
+                {summary.marks.earned}<span>/{summary.marks.total}</span>
+              </span>
+            ) : (
+              <span class="trs-big" aria-label={`${summary.correct} of ${summary.total} correct`}>{summary.correct}<span>/{summary.total}</span></span>
+            )}
             <span class="trs-pct">{summary.percent}%</span>
           </div>
           <p class="trs-status">
             {summary.passed
               ? <span class="tx-pass ok"><Icon name="check" size={14} /> Passed</span>
               : <span class="tx-pass bad"><Icon name="x" size={14} /> Not passed</span>}
-            <span>{summary.passMark} of {summary.total} needed to pass</span>
+            <span>
+              {summary.marks
+                ? `${Math.ceil((summary.marks.total * TIMED_TEST_PASS_PERCENT) / 100)} of ${summary.marks.total} marks needed to pass`
+                : `${summary.passMark} of ${summary.total} needed to pass`}
+            </span>
           </p>
           <dl class="trs-facts">
             <div><dt>Time</dt><dd>{formatClock(summary.durationMs)} of {formatClock(summary.limitMs)}</dd></div>
@@ -161,7 +173,7 @@ function statusOf(o: QuestionOutcome): { tone: 'ok' | 'bad' | 'none'; text: stri
 }
 
 function ReviewRow({ o, item, answer, draft, mode, open, onToggle, locked }: {
-  o: QuestionOutcome; item: TestItem; answer?: SavedAnswer; draft: unknown; mode: 'topic-test' | 'midsem';
+  o: QuestionOutcome; item: TestItem; answer?: SavedAnswer; draft: unknown; mode: TestKind;
   open: boolean; onToggle: () => void; locked: boolean;
 }) {
   const st = statusOf(o);
@@ -175,7 +187,7 @@ function ReviewRow({ o, item, answer, draft, mode, open, onToggle, locked }: {
           <span class="trs-title-text">{o.title}</span>
           {o.flagged ? <span class="flag" title="You flagged this question"><Icon name="flag" size={13} /><span class="sr-only"> (flagged)</span></span> : null}
         </span>
-        <span class="trs-where">{mode === 'midsem' && topic ? `${topic.short} · ` : ''}{FORMAT_LABEL[o.format]}</span>
+        <span class="trs-where">{mode !== 'topic-test' && topic ? `${topic.short} · ` : ''}{FORMAT_LABEL[o.format]}</span>
         <span class={`trs-st ${st.tone}`}>{st.text}</span>
         <span class="trs-time" title="Time on this question">{o.timeMs >= 1000 ? formatDuration(o.timeMs) : ''}</span>
         <Icon name="chevronRight" size={14} class="trs-chev" />
@@ -193,7 +205,7 @@ const noop = () => {};
 /** The review panel shows the worked answer itself, so code formats should not repeat the model answer. */
 const REVIEW_CONTEXT = { layout: 'simple' as const, pageShowsAnswer: true };
 
-function ReviewPanel({ item, answer, draft, mode, locked }: { item: TestItem; answer?: SavedAnswer; draft: unknown; mode: 'topic-test' | 'midsem'; locked: boolean }) {
+function ReviewPanel({ item, answer, draft, mode, locked }: { item: TestItem; answer?: SavedAnswer; draft: unknown; mode: TestKind; locked: boolean }) {
   const Comp = FORMAT_COMPONENTS[item.q.format];
   const mistakes = answer ? answer.result.mistakes.map((m) => m.id).filter((id, i, xs) => xs.indexOf(id) === i) : [];
   const topic = TOPIC_BY_ID[item.topicId];
@@ -218,7 +230,7 @@ function ReviewPanel({ item, answer, draft, mode, locked }: { item: TestItem; an
       <div class="trs-review-work">
         {!answer ? <p class="trs-feedback">Not answered. The correct answer is shown.</p> : null}
         <WorkbenchContext.Provider value={REVIEW_CONTEXT}>
-          <Comp q={item.q} topicId={item.topicId} generated={item.generated} mode={mode} checksLeft={0}
+          <Comp q={item.q} topicId={item.topicId} generated={item.generated} mode={questionMode(mode)} checksLeft={0}
             revealed={true} locked={true} onCheck={noop} draft={draft} onDraft={noop} />
         </WorkbenchContext.Provider>
         <div class="trs-answer">

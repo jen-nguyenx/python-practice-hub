@@ -41,7 +41,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
   const actions: Item[] = [
     { id: 'a-home', group: 'Pages and actions', label: 'Topics', detail: 'Home', icon: 'ladder', search: 'home ladder', href: href.landing(), run: go(href.landing()) },
     { id: 'a-play', group: 'Pages and actions', label: 'Playground', detail: 'Write and run any Python', icon: 'code', search: 'editor run python', href: href.playground(), run: go(href.playground()) },
-    { id: 'a-midsem', group: 'Pages and actions', label: 'Mid-sem test', detail: 'Timed practice test', icon: 'clock', search: 'midsem practice exam', href: href.midsem(), run: go(href.midsem()) },
+    { id: 'a-exam', group: 'Pages and actions', label: 'Exams', detail: 'Mock final paper or a timed practice test', icon: 'clock', search: 'exam final mock practice test timed', href: href.exam(), run: go(href.exam()) },
     { id: 'a-report', group: 'Pages and actions', label: 'Report', detail: 'Strengths and weak spots', icon: 'chart', search: 'progress mistakes stats', href: href.report(), run: go(href.report()) },
     { id: 'a-settings', group: 'Pages and actions', label: 'Settings', detail: 'Theme, backup, unlock', icon: 'sliders', search: 'preferences backup export', href: href.settings(), run: go(href.settings()) },
     { id: 'a-theme', group: 'Pages and actions', label: 'Toggle theme', detail: 'Switch light and dark', icon: 'moon', search: 'dark light mode', run: toggleTheme },

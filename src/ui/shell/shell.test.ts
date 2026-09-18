@@ -65,9 +65,9 @@ describe('todayNumbers', () => {
 
   it('counts test answers in the questions number, like the minutes and the mistakes beside it', () => {
     const events = [
-      attempt('midsem', 'q1', 10, ['off-by-one']),
-      attempt('midsem', 'q2', 9),
-      attempt('midsem', 'q2', 8),
+      attempt('exam', 'q1', 10, ['off-by-one']),
+      attempt('exam', 'q2', 9),
+      attempt('exam', 'q2', 8),
       attempt('practice', 'q3', 7),
     ];
     const t = todayNumbers(events, NOW);
@@ -77,7 +77,7 @@ describe('todayNumbers', () => {
   });
 
   it('ignores attempts from before today', () => {
-    const events = [attempt('midsem', 'q1', 20 * 60), attempt('practice', 'q2', 5)];
+    const events = [attempt('exam', 'q1', 20 * 60), attempt('practice', 'q2', 5)];
     expect(todayNumbers(events, NOW).questions).toBe(1);
   });
 });

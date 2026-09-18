@@ -34,7 +34,7 @@ export function crumbsFor(r: Route): Crumb[] {
       ? [{ label: 'Report', href: href.report() }, { label: TOPIC_BY_ID[r.topicId].short }]
       : [{ label: 'Report' }];
     case 'topic-test': return [topic(r.topicId), { label: 'Topic test' }];
-    case 'midsem': return [{ label: 'Mid-sem practice test' }];
+    case 'exam': return [{ label: 'Exams' }];
     case 'settings': return [{ label: 'Settings' }];
     default: return [{ label: 'Page not found' }];
   }

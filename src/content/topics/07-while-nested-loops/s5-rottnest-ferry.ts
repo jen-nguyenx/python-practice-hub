@@ -171,6 +171,96 @@ print(trips, waiting)`,
       },
       selfExplain: 'Which line guarantees the outer loop cannot run forever when a group is bigger than the ferry?',
     },
+    {
+      id: 't07-s5-q4',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 15,
+      examSlot: 'combinations',
+      diff: 'hard',
+      core: true,
+      title: 'Crews for a sailing (exam style)',
+      prompt:
+        '*Exam style, 15 marks. Write it by hand first, then submit once.*\n\n' +
+        'Every sailing needs a crew of three: one skipper, one deckhand and one guide. The desk keeps three lists of first names. ' +
+        'Some staff are trained for more than one job, so the same name can appear in more than one list, but nobody can hold two jobs on the same sailing.\n\n' +
+        'Write `crew_options(skippers, deckhands, guides)` that returns a **list of strings**. Each string is one possible crew: the three names in the order ' +
+        'skipper, deckhand, guide, separated by single spaces.\n\n' +
+        '- Build the crews in loop order: skippers in the outer loop, then deckhands, then guides, each list in the order given.\n' +
+        '- Leave out any crew in which one name would fill two of the three jobs.\n' +
+        '- Return an empty list if no crew is possible, or if any of the three lists is empty.\n' +
+        '- Return the list. Do not print anything.\n\n' +
+        'Example:\n\n' +
+        '```python\n' +
+        "crew_options(['Ana', 'Dev'], ['Ben', 'Ana'], ['Cleo'])\n" +
+        "# ['Ana Ben Cleo', 'Dev Ben Cleo', 'Dev Ana Cleo']\n" +
+        '```\n\n' +
+        '`Ana Ana Cleo` is missing because Ana cannot be both skipper and deckhand.',
+      fnName: 'crew_options',
+      starter: `def crew_options(skippers, deckhands, guides):
+    pass`,
+      tests: [
+        {
+          id: 'v1', call: "crew_options(['Ana', 'Dev'], ['Ben', 'Ana'], ['Cleo'])",
+          expect: "['Ana Ben Cleo', 'Dev Ben Cleo', 'Dev Ana Cleo']",
+          label: 'the example from the question', hidden: false,
+        },
+        {
+          id: 'v2', call: "crew_options(['Sione', 'Ana'], ['Priya', 'Sione'], ['Marco', 'Ana'])",
+          expect: "['Sione Priya Marco', 'Sione Priya Ana', 'Ana Priya Marco', 'Ana Sione Marco']",
+          label: 'two names in the list of skippers', hidden: false, tag: 'accumulator_init',
+        },
+        {
+          id: 'h1', call: "crew_options(['Ana'], ['Ben'], ['Cleo'])", expect: "['Ana Ben Cleo']",
+          label: 'one name in each list', hidden: true,
+        },
+        {
+          id: 'h2', call: "crew_options(['Ana', 'Ben'], ['Cleo'], [])", expect: '[]',
+          label: 'no guides on shift', hidden: true, tag: 'return_type_wrong',
+        },
+        {
+          id: 'h3', call: "crew_options([], ['Ben'], ['Cleo'])", expect: '[]',
+          label: 'no skippers on shift', hidden: true,
+        },
+        {
+          id: 'h4', call: "crew_options(['Ana'], ['Ana'], ['Ana'])", expect: '[]',
+          label: 'only one person available, so no crew is possible', hidden: true, tag: 'off_by_one_range',
+        },
+        {
+          id: 'h5', call: "crew_options(['Ana', 'Ben', 'Cleo'], ['Ana', 'Ben'], ['Ana', 'Cleo'])",
+          expect: "['Ana Ben Cleo', 'Ben Ana Cleo', 'Cleo Ben Ana']",
+          label: 'every list shares names with the others', hidden: true, tag: 'early_return_in_loop',
+        },
+      ],
+      concepts: ['nested-loop', 'combinations', 'string-building', 'list', 'accumulator'],
+      detects: ['accumulator_init', 'early_return_in_loop', 'return_type_wrong', 'print_vs_return', 'off_by_one_range'],
+      expectedSec: 660,
+      hints: [
+        'One loop per list, one inside the other, and the check that nobody doubles up belongs in the innermost loop where all three names are known.',
+        'Plan: make an empty result list before any loop. Loop over the skippers, inside that the deckhands, inside that the guides. With all three names in hand, check that no two of them are equal, and if so add the joined string. Return the list after all three loops.',
+        'The check needs all three pairs: `if skipper != deckhand and skipper != guide and deckhand != guide:`. The string is `skipper + \' \' + deckhand + \' \' + guide`.',
+      ],
+      solution: {
+        code: `def crew_options(skippers, deckhands, guides):
+    crews = []
+    for skipper in skippers:
+        for deckhand in deckhands:
+            for guide in guides:
+                if skipper != deckhand and skipper != guide and deckhand != guide:
+                    crews.append(skipper + ' ' + deckhand + ' ' + guide)
+    return crews`,
+        explanation:
+          '- `crews = []` is set once, before the outer loop. Inside the skippers loop it would start again for every skipper, and only the last skipper\'s crews would survive.\n' +
+          '- The three loops are nested in the order the spec gives, so the crews come out skippers first, then deckhands, then guides. That is why `Sione Priya Marco` comes before `Sione Priya Ana`.\n' +
+          '- All three comparisons are needed. Checking only `skipper != deckhand` would let `Dev Ana Ana` through, and checking only the ends would let `Ana Ana Cleo` through.\n' +
+          '- `crews.append(skipper + \' \' + deckhand + \' \' + guide)` builds one string with single spaces. `\' \'.join([skipper, deckhand, guide])` gives the same string.\n' +
+          '- The append sits inside the `if` in the innermost loop, and `return crews` comes after all three loops. A `return` inside the loops would hand back only the first crew.\n' +
+          '- An empty list anywhere means that loop runs zero times, so nothing is appended and `[]` comes back without a special case. The same happens when every combination doubles up, as with one name in all three lists.\n\n' +
+          'Marking guide (15): result list set up once (2), three correctly nested loops in the right order (4), all three "not the same person" checks (4), the string joined with single spaces (2), return the list after the loops and print nothing (3).',
+      },
+      selfExplain: 'Why does an empty list of guides give [] without any if statement of its own?',
+    },
   ],
 };
 

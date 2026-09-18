@@ -3,7 +3,7 @@
 import { AST_FLAGS, DIFFS, FORMATS, MISTAKE_IDS, TOPIC_IDS } from '../content/ids.ts';
 import type { AstFlag, MistakeId, TopicId } from '../content/ids.ts';
 import { DEFAULT_SETTINGS, ACCENT_IDS } from '../engine/types.ts';
-import type { AppEvent, DetectionChannel, Mode, Settings } from '../engine/types.ts';
+import type { AppEvent, DetectionChannel, Mode, Settings, TestKind } from '../engine/types.ts';
 import type { ScratchFile, Snapshot } from './types.ts';
 
 export class ImportError extends Error {}
@@ -21,7 +21,11 @@ const MISTAKE_SET = new Set<string>(MISTAKE_IDS);
 const FLAG_SET = new Set<string>(AST_FLAGS);
 const FORMAT_SET = new Set<string>(FORMATS);
 const DIFF_SET = new Set<string>(DIFFS);
-const MODES = new Set<string>(['practice', 'paper', 'topic-test', 'midsem'] satisfies Mode[]);
+const MODES = new Set<string>(['practice', 'paper', 'topic-test', 'exam'] satisfies Mode[]);
+const TEST_KINDS = new Set<string>(['topic-test', 'practice-test', 'mock-exam'] satisfies TestKind[]);
+/** Events stored before the app was refocused on the final exam used the old mid-semester names. */
+const LEGACY_MODE: Record<string, Mode> = { midsem: 'exam' };
+const LEGACY_TEST_KIND: Record<string, TestKind> = { midsem: 'practice-test' };
 const CHANNELS = new Set<string>(['runtime', 'static', 'distractor', 'test'] satisfies DetectionChannel[]);
 const FLAG_REASONS = new Set<string>(['wrong-answer', 'unclear', 'too-hard', 'other']);
 
@@ -74,7 +78,8 @@ export function sanitizeEvent(raw: unknown): AppEvent | null {
       return topic(r.topicId) ? { ...base, type, topicId: r.topicId } : null;
     case 'attempt': {
       if (!idStr(r.qid) || !topic(r.topicId) || typeof r.format !== 'string' || !FORMAT_SET.has(r.format)) return null;
-      if (typeof r.diff !== 'string' || !DIFF_SET.has(r.diff) || typeof r.mode !== 'string' || !MODES.has(r.mode)) return null;
+      const mode = typeof r.mode === 'string' ? (LEGACY_MODE[r.mode] ?? (MODES.has(r.mode) ? (r.mode as Mode) : null)) : null;
+      if (typeof r.diff !== 'string' || !DIFF_SET.has(r.diff) || mode === null) return null;
       if (!isBool(r.correct) || !isNum(r.score) || !isNum(r.credit) || !isBool(r.revealed)) return null;
       const hintTier = r.hintTier;
       if (hintTier !== 0 && hintTier !== 1 && hintTier !== 2 && hintTier !== 3) return null;
@@ -83,7 +88,7 @@ export function sanitizeEvent(raw: unknown): AppEvent | null {
       if (timeMs === null || checkNo === null) return null;
       const ev: AppEvent = {
         ...base, type, qid: r.qid, topicId: r.topicId, format: r.format as (typeof FORMATS)[number], diff: r.diff as (typeof DIFFS)[number],
-        mode: r.mode as Mode, checkNo: Math.floor(checkNo), correct: r.correct, score: clamp01(r.score), credit: clamp01(r.credit),
+        mode, checkNo: Math.floor(checkNo), correct: r.correct, score: clamp01(r.score), credit: clamp01(r.credit),
         hintTier, revealed: r.revealed, timeMs, mistakes: mistakeList(r.mistakes),
       };
       const response = jsonValue(r.response, RESPONSE_MAX);
@@ -114,10 +119,11 @@ export function sanitizeEvent(raw: unknown): AppEvent | null {
       return idStr(r.qid) && typeof r.text === 'string' ? { ...base, type, qid: r.qid, text: cap(r.text, TEXT_MAX) } : null;
     case 'test_result': {
       const durationMs = nonNeg(r.durationMs);
-      if ((r.kind !== 'topic-test' && r.kind !== 'midsem') || !Array.isArray(r.topicIds) || !isNum(r.score) || !isNum(r.total)) return null;
+      const kind = typeof r.kind === 'string' ? (LEGACY_TEST_KIND[r.kind] ?? (TEST_KINDS.has(r.kind) ? (r.kind as TestKind) : null)) : null;
+      if (kind === null || !Array.isArray(r.topicIds) || !isNum(r.score) || !isNum(r.total)) return null;
       if (!isBool(r.passed) || durationMs === null || !Array.isArray(r.qids)) return null;
       return {
-        ...base, type, kind: r.kind, topicIds: [...new Set(r.topicIds.filter(topic))], score: r.score, total: r.total, passed: r.passed,
+        ...base, type, kind, topicIds: [...new Set(r.topicIds.filter(topic))], score: r.score, total: r.total, passed: r.passed,
         durationMs, qids: r.qids.filter(idStr).slice(0, 200),
       };
     }

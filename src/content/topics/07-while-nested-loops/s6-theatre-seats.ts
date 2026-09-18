@@ -209,6 +209,114 @@ print(pairs)`,
       },
       selfExplain: 'What would the function return for [[1, 1], [0, 0]] if return None were indented to sit inside the for loop?',
     },
+    {
+      id: 't07-s6-q4',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 15,
+      examSlot: 'combinations',
+      diff: 'hard',
+      core: true,
+      title: 'Ticket lines on sale (exam style)',
+      prompt:
+        '*Exam style, 15 marks. Write it by hand first, then submit once.*\n\n' +
+        'The box office sells one ticket line for each show, seating zone and ticket type. A few zones are closed for a particular show, ' +
+        'because a set blocks the view or the seats are held back; those pairs are listed in `unavailable` as `(show, zone)` tuples.\n\n' +
+        'Write `ticket_options(shows, zones, ticket_types, unavailable)` that returns a **list of tuples** `(show, zone, ticket_type)`, one for every line that is on sale.\n\n' +
+        '- Build the list in loop order: shows in the outer loop, then zones, then ticket types, each list in the order given.\n' +
+        '- Leave out a line when its `(show, zone)` pair appears in `unavailable`.\n' +
+        '- Return an empty list when nothing is on sale, or when `shows`, `zones` or `ticket_types` is empty.\n' +
+        '- Return the list of tuples. Do not print anything.\n\n' +
+        'Example:\n\n' +
+        '```python\n' +
+        "ticket_options(['Macbeth', 'Cats'], ['Stalls', 'Balcony'], ['Adult', 'Concession'], [('Cats', 'Balcony')])\n" +
+        "# [('Macbeth', 'Stalls', 'Adult'), ('Macbeth', 'Stalls', 'Concession'),\n" +
+        "#  ('Macbeth', 'Balcony', 'Adult'), ('Macbeth', 'Balcony', 'Concession'),\n" +
+        "#  ('Cats', 'Stalls', 'Adult'), ('Cats', 'Stalls', 'Concession')]\n" +
+        '```',
+      fnName: 'ticket_options',
+      starter: `def ticket_options(shows, zones, ticket_types, unavailable):
+    pass`,
+      tests: [
+        {
+          id: 'v1',
+          call: "ticket_options(['Macbeth', 'Cats'], ['Stalls', 'Balcony'], ['Adult', 'Concession'], [('Cats', 'Balcony')])",
+          expect: "[('Macbeth', 'Stalls', 'Adult'), ('Macbeth', 'Stalls', 'Concession'), ('Macbeth', 'Balcony', 'Adult'), ('Macbeth', 'Balcony', 'Concession'), ('Cats', 'Stalls', 'Adult'), ('Cats', 'Stalls', 'Concession')]",
+          label: 'the example from the question', hidden: false,
+        },
+        {
+          id: 'v2',
+          call: "ticket_options(['Macbeth'], ['Stalls'], ['Adult', 'Child'], [])",
+          expect: "[('Macbeth', 'Stalls', 'Adult'), ('Macbeth', 'Stalls', 'Child')]",
+          label: 'nothing unavailable', hidden: false,
+        },
+        {
+          id: 'h1',
+          call: "ticket_options(['Hamlet'], ['Stalls'], ['Adult'], [])",
+          expect: "[('Hamlet', 'Stalls', 'Adult')]",
+          label: 'one show, one zone, one ticket type', hidden: true,
+        },
+        {
+          id: 'h2',
+          call: "ticket_options(['Macbeth'], ['Stalls', 'Balcony'], ['Adult'], [('Macbeth', 'Stalls'), ('Macbeth', 'Balcony')])",
+          expect: '[]',
+          label: 'every zone closed for the only show', hidden: true, tag: 'return_type_wrong',
+        },
+        {
+          id: 'h3',
+          call: "ticket_options(['Macbeth'], [], ['Adult'], [])",
+          expect: '[]',
+          label: 'no zones at all', hidden: true,
+        },
+        {
+          id: 'h4',
+          call: "ticket_options([], ['Stalls'], ['Adult'], [])",
+          expect: '[]',
+          label: 'no shows at all', hidden: true,
+        },
+        {
+          id: 'h5',
+          call: "ticket_options(['Macbeth', 'Cats', 'Hamlet'], ['Stalls', 'Circle'], ['Adult'], [('Cats', 'Stalls')])",
+          expect: "[('Macbeth', 'Stalls', 'Adult'), ('Macbeth', 'Circle', 'Adult'), ('Cats', 'Circle', 'Adult'), ('Hamlet', 'Stalls', 'Adult'), ('Hamlet', 'Circle', 'Adult')]",
+          label: 'one closed zone in the middle of the list', hidden: true, tag: 'early_return_in_loop',
+        },
+        {
+          id: 'h6',
+          call: "ticket_options(['Swan Lake', 'Cats'], ['Stalls', 'Dress Circle'], ['Adult', 'Concession', 'Child'], [('Swan Lake', 'Dress Circle')])",
+          expect: "[('Swan Lake', 'Stalls', 'Adult'), ('Swan Lake', 'Stalls', 'Concession'), ('Swan Lake', 'Stalls', 'Child'), ('Cats', 'Stalls', 'Adult'), ('Cats', 'Stalls', 'Concession'), ('Cats', 'Stalls', 'Child'), ('Cats', 'Dress Circle', 'Adult'), ('Cats', 'Dress Circle', 'Concession'), ('Cats', 'Dress Circle', 'Child')]",
+          label: 'three ticket types, in loop order', hidden: true, tag: 'accumulator_init',
+        },
+      ],
+      concepts: ['nested-loop', 'combinations', 'tuple', 'list', 'membership'],
+      detects: ['accumulator_init', 'early_return_in_loop', 'return_type_wrong', 'print_vs_return', 'type_error_other'],
+      expectedSec: 660,
+      hints: [
+        'Three lists means three loops, one inside the other. The only extra work is asking whether this show and this zone are on sale.',
+        'Plan: make an empty result list before any loop. Loop over the shows, inside that the zones, inside that the ticket types. Check that the `(show, zone)` pair is not in `unavailable`, and if it is not, append the three-part tuple. Return the list after all three loops.',
+        'The check is `if (show, zone) not in unavailable:`, and the line that records a sale is `options.append((show, zone, ticket))`. The inner brackets matter: `append` takes one value.',
+      ],
+      solution: {
+        code: `def ticket_options(shows, zones, ticket_types, unavailable):
+    options = []
+    for show in shows:
+        for zone in zones:
+            for ticket in ticket_types:
+                if (show, zone) not in unavailable:
+                    options.append((show, zone, ticket))
+    return options`,
+        explanation:
+          '- `options = []` is set once, before the outer loop, so the lines found under every show are kept.\n' +
+          '- The three loops sit in the order the spec gives, so the tuples come out shows first, then zones, then ticket types. That order is what the example shows: both Stalls lines for Macbeth, then both Balcony lines, then Cats.\n' +
+          '- `(show, zone)` builds a tuple on the spot, and `not in unavailable` compares it against each pair in the list. Two tuples are equal when both of their parts are equal, so no loop of your own is needed.\n' +
+          '- The check only involves the show and the zone, so it can also go one level out, above the ticket-type loop; the result is the same list.\n' +
+          '- `options.append((show, zone, ticket))` appends one tuple. Without the inner brackets `append` is given three arguments and raises `TypeError`.\n' +
+          '- `return options` comes after all three loops. A `return` inside them would hand back only the first line, and printing instead of returning gives the caller `None`.\n' +
+          '- An empty `shows`, `zones` or `ticket_types` makes that loop run zero times, so `[]` comes back with no special case.\n\n' +
+          'Marking guide (15): result list set up once (2), three correctly nested loops in the right order (4), the `(show, zone)` pair tested against `unavailable` (4), the three-part tuple appended (2), return the list after the loops and print nothing (3).',
+      },
+      selfExplain: 'Why does moving the unavailable check out of the innermost loop give the same list?',
+    },
   ],
 };
 

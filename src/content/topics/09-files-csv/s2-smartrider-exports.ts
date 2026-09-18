@@ -2,6 +2,13 @@ import type { Scenario } from '../../schema.ts';
 
 const MAY = 'Card,Stop,Zone,Fare\n0412,Elizabeth Quay,1,3.20\n0977,Cottesloe,2,4.90\n1150,Perth,1,N/A\n';
 
+const WEEK = 'Card,Stop,Zone,Fare\n' +
+  '0412,Elizabeth Quay,1,3.20\n' +
+  '0977,Cottesloe,2,4.90\n' +
+  '0412,Elizabeth Quay,1,3.20\n' +
+  '1150,Cottesloe,2,4.90\n' +
+  '0977,Perth,1,N/A\n';
+
 const s2: Scenario = {
   id: 't09-s2',
   title: 'SmartRider fare exports',
@@ -356,6 +363,172 @@ const s2: Scenario = {
           'After the loop, `count == 0` means no valid values, so return `None` instead of dividing by zero. Otherwise the mean is rounded to 4 decimal places once, only when it is returned.',
       },
       selfExplain: 'Why is the value checked for N/A before it is passed to float?',
+    },
+    {
+      id: 't09-s2-q5',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 20,
+      examSlot: 'file-report',
+      diff: 'hard',
+      core: false,
+      title: 'One summary line per stop',
+      prompt:
+        'Exam practice: write your answer as you would on paper, without running it.\n\n' +
+        'The planner does not want one line per tap, but one summary per stop. The first line of `filename` is a header containing `Stop` and `Fare` in an ' +
+        '**unknown order and with unknown capitals**, and there may be other columns, such as `Card`, `Zone` or `Route`, which you ignore. Each later line is one trip.\n\n' +
+        'Write `stop_summary(filename)` that returns a **dictionary**. Each key is a stop name in **lower case** with spaces at both ends removed, so `Cottesloe`, `COTTESLOE` ' +
+        'and ` cottesloe ` are all the same stop. Each value is a **list** `[trips, total]`, where\n\n' +
+        '- `trips` is how many usable trips that stop has, as an **int**, and\n' +
+        '- `total` is the sum of their fares, **rounded to 2 decimal places** once at the end, not while you are adding them up.\n\n' +
+        'Skip a line if it is blank, if it does not have one value for every header column, if its stop name is empty once spaces are stripped, or if its fare is not a number. ' +
+        'The only values in the fare column that are not numbers are the empty string and `N/A` in any capitals.\n\n' +
+        'Return `{}` if the header does not contain both `Stop` and `Fare`, if the file has nothing in it at all, or if no line can be used.\n\n' +
+        'Open `filename` exactly as it is given; do not add `.csv`. No imports, and no recursion. ' +
+        'You may assume the file itself opens, so you do not need `try` / `except` here (catching errors from `open` is the next topic).\n\n' +
+        'Example: the file `taps_week` contains\n\n' +
+        '```\n' + WEEK + '```\n\n' +
+        "`stop_summary('taps_week')` returns `{'elizabeth quay': [2, 6.4], 'cottesloe': [2, 9.8]}`. Perth has no usable trip, so it is not a key at all.",
+      fnName: 'stop_summary',
+      starter: `def stop_summary(filename):
+    """Return {stop in lower case: [trips, total fare rounded to 2 dp]}."""
+    pass`,
+      rules: ['noImport', 'noCsvExt', 'roundAtEnd'],
+      tests: [
+        {
+          id: 'v1',
+          files: [{ name: 'taps_week', content: WEEK }],
+          call: "stop_summary('taps_week')",
+          expect: "{'elizabeth quay': [2, 6.4], 'cottesloe': [2, 9.8]}",
+          cmp: 'float',
+          label: 'the example file',
+          hidden: false,
+        },
+        {
+          id: 'v2',
+          files: [{ name: 'taps_nov', content: 'Fare,Zone,Card,Stop\n2.50,1,1150,Perth Underground\n3.30,1,0412,Perth Underground\n' }],
+          call: "stop_summary('taps_nov')",
+          expect: "{'perth underground': [2, 5.8]}",
+          cmp: 'float',
+          label: 'columns in another order',
+          hidden: false,
+          tag: 'header_order_assumed',
+        },
+        {
+          id: 'h1',
+          files: [{ name: 'taps_dec', content: 'FARE,ROUTE,CARD,STOP\n4.90,Fremantle Line,0977,Claremont\n3.20,Joondalup Line,1150,Perth\n4.90,Fremantle Line,2231,Claremont\n' }],
+          call: "stop_summary('taps_dec')",
+          expect: "{'claremont': [2, 9.8], 'perth': [1, 3.2]}",
+          cmp: 'float',
+          label: 'header in capitals with an extra column',
+          hidden: true,
+          tag: 'header_order_assumed',
+        },
+        {
+          id: 'h2',
+          files: [{ name: 'taps_jan', content: 'Stop,Fare\nCottesloe,4.90\nCOTTESLOE,4.90\n cottesloe ,2.15\n' }],
+          call: "stop_summary('taps_jan')",
+          expect: "{'cottesloe': [3, 11.95]}",
+          cmp: 'float',
+          label: 'one stop typed in three different ways',
+          hidden: true,
+          tag: 'case_sensitive_compare',
+        },
+        {
+          id: 'h3',
+          files: [{ name: 'taps_feb', content: 'Card,Stop,Zone,Fare\n0412,Perth,1,3.20\n\n0977,Perth,1\n1150,Perth,1,n/a\n2231,,1,4.90\n0412,Perth,1,2.30\n' }],
+          call: "stop_summary('taps_feb')",
+          expect: "{'perth': [2, 5.5]}",
+          cmp: 'float',
+          label: 'blank line, short row, lower-case n/a and a missing stop name',
+          hidden: true,
+          tag: 'invalid_row_not_skipped',
+        },
+        {
+          id: 'h4',
+          files: [{ name: 'taps_mar', content: 'Stop,Fare\nSubiaco,4.90\nKarrakatta,4.90\n' }],
+          call: "stop_summary('taps_mar')",
+          expect: "{'subiaco': [1, 4.9], 'karrakatta': [1, 4.9]}",
+          cmp: 'float',
+          label: 'two stops with the same total',
+          hidden: true,
+        },
+        {
+          id: 'h5',
+          files: [{ name: 'taps_apr', content: '' }],
+          call: "stop_summary('taps_apr')",
+          expect: '{}',
+          label: 'a file with nothing in it',
+          hidden: true,
+          tag: 'no_graceful_exit',
+        },
+        {
+          id: 'h6',
+          files: [{ name: 'taps_jun', content: 'Card,Stop,Zone\n0412,Perth,1\n' }],
+          call: "stop_summary('taps_jun')",
+          expect: '{}',
+          label: 'the header does not name a fare column',
+          hidden: true,
+          tag: 'no_graceful_exit',
+        },
+      ],
+      concepts: ['header-lookup', 'validation', 'grouping', 'dict-of-lists', 'case-insensitive', 'round-at-output'],
+      detects: [
+        'header_order_assumed', 'case_sensitive_compare', 'invalid_row_not_skipped', 'no_graceful_exit',
+        'dict_keyerror', 'round_mid_calc', 'return_type_wrong', 'csv_ext_assumed',
+      ],
+      expectedSec: 900,
+      hints: [
+        'Each stop needs two answers, a count and a total, and both grow one trip at a time. A dictionary can hold either one; think about what its values should be while you are still reading.',
+        'Plan: (1) read the header, strip it, lower-case it and split it, and return `{}` unless both column names are in it; (2) find the two positions with `index`; ' +
+          '(3) for each later line, strip and split, and skip it unless the field count matches, the cleaned stop name is not empty and the fare is neither empty nor `N/A`; ' +
+          '(4) keep one dictionary of counts and one of totals, keyed by the cleaned stop name; (5) after reading, build the answer, one `[trips, total]` list per stop.',
+        'Adding to a key that may not exist yet: `trips[stop] = trips.get(stop, 0) + 1` and `totals[stop] = totals.get(stop, 0) + float(value)`. ' +
+          'The rounding belongs in the last loop: `summary[stop] = [trips[stop], round(totals[stop], 2)]`.',
+      ],
+      solution: {
+        code: `def stop_summary(filename):
+    trips = {}
+    totals = {}
+    with open(filename) as f:
+        header = f.readline().strip().lower().split(',')
+        if 'stop' not in header or 'fare' not in header:
+            return {}
+        stop_col = header.index('stop')
+        fare_col = header.index('fare')
+        for line in f:
+            fields = line.strip().split(',')
+            if len(fields) != len(header):
+                continue
+            stop = fields[stop_col].strip().lower()
+            value = fields[fare_col].strip()
+            if stop == '' or value == '' or value.upper() == 'N/A':
+                continue
+            trips[stop] = trips.get(stop, 0) + 1
+            totals[stop] = totals.get(stop, 0) + float(value)
+    summary = {}
+    for stop in trips:
+        summary[stop] = [trips[stop], round(totals[stop], 2)]
+    return summary`,
+        explanation:
+          'A marker would look for these steps (20 marks):\n\n' +
+          '1. Open `filename` with `with open(filename)` (nothing added to the name) and read the header once, stripped, lower-cased and split on commas (2 marks).\n' +
+          "2. Guard the header: `if 'stop' not in header or 'fare' not in header: return {}`. A file with nothing in it gives `readline() == ''`, so the header list is `['']` and " +
+          'the same guard covers it. Without the guard, `index` raises ValueError and the function crashes instead of returning an empty dictionary (3 marks).\n' +
+          '3. Find both positions with `index`, once, before the loop, so any column order, any capitals and extra columns such as `Route` all work (3 marks).\n' +
+          "4. Check every row before using it: `len(fields) != len(header)` drops blank lines (which split into `['']`) and short rows before any `fields[...]` could raise IndexError, " +
+          "and an empty stop name or a fare of `''` or `N/A` is skipped so `float` never crashes (4 marks).\n" +
+          '5. Clean each stop name once, on the way in, with `strip().lower()`, so `Cottesloe`, `COTTESLOE` and ` cottesloe ` all land on the same key, already in the lower case the ' +
+          'task asks for (3 marks).\n' +
+          '6. Count and total with `dict.get(key, 0)`, which supplies the starting value the first time a stop is seen. Reading `trips[stop]` directly would raise KeyError on that ' +
+          'first trip (3 marks).\n' +
+          '7. Build the answer at the end, one `[trips, total]` list per stop, rounding the total to 2 decimal places only there. Rounding each fare, or the running total, as it is ' +
+          'added would drift on a month of taps (2 marks).\n\n' +
+          'One dictionary whose value is a two-item list, updated in place as you read, is just as good an answer. A stop with no usable trip never becomes a key at all, which is ' +
+          'why Perth is missing from the example answer rather than mapped to `[0, 0]`.',
+      },
+      selfExplain: 'Why does a stop with only an N/A fare not appear in the answer with a total of 0?',
     },
   ],
 };

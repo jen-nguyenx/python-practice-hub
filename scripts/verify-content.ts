@@ -120,6 +120,8 @@ for (const { info, topic } of loaded) {
         if (q.mode === 'paper') meta.paper = true;
         meta.kind = q.kind;
         if (q.rules?.length) meta.rules = q.rules;
+        if (q.examSlot) meta.examSlot = q.examSlot;
+        if (typeof q.marks === 'number') meta.marks = q.marks;
       }
       index.push(meta);
     }

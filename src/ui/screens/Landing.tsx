@@ -1,13 +1,13 @@
-// Home (#/), docs/build/DESIGN.md "Home": mono eyebrow with the week, today's numbers, the Continue and Mid-sem
+// Home (#/), docs/build/DESIGN.md "Home": mono eyebrow with the week, today's numbers, the Continue and mock exam
 // practice test cards in one row, then the 13-tile ladder. Nothing else.
 import { useMemo } from 'preact/hooks';
 import { store } from '../../app/services.ts';
 import { QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { TOPICS } from '../../content/topics.ts';
 import { Skeleton } from '../components/Skeleton.tsx';
-import { continueInfo, hasAnyAttempt, midsemSummary, todayNumbers } from '../shell/homeData.ts';
+import { continueInfo, examSummary, hasAnyAttempt, todayNumbers } from '../shell/homeData.ts';
 import { safeTopicProgress } from '../shell/progressData.ts';
-import { ContinueCard, MidsemCard } from '../shell/landing/HomeCards.tsx';
+import { ContinueCard, ExamCard } from '../shell/landing/HomeCards.tsx';
 import type { ContinuePosition } from '../shell/landing/HomeCards.tsx';
 import { Ladder, LadderSkeleton } from '../shell/landing/Ladder.tsx';
 import { useSemester } from '../shell/StatusBar.tsx';
@@ -36,7 +36,7 @@ export function Landing() {
 
   const progress = useMemo(() => safeTopicProgress(events, settings), [events, settings]);
   const info = useMemo(() => continueInfo(events, settings, progress), [events, settings, progress]);
-  const midsem = useMemo(() => midsemSummary(progress), [events, progress]);
+  const exam = useMemo(() => examSummary(), [events]);
 
   const eyebrow = <p class="home-eyebrow num">CITS1401 · {sem.label}</p>;
 
@@ -71,7 +71,7 @@ export function Landing() {
       </header>
       <div class="home-hero">
         <ContinueCard info={info} position={position} fresh={fresh} />
-        <MidsemCard summary={midsem} />
+        <ExamCard summary={exam} />
       </div>
       <Ladder progress={progress} currentTopic={progress[info.topic.id]?.state === 'locked' ? null : info.topic.id} />
     </div>

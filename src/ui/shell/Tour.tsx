@@ -9,9 +9,8 @@ import { LogoMark } from './LogoMark.tsx';
 import { tourOpen } from './uiState.ts';
 
 const first = TOPICS[0];
-const midsemTopics = TOPICS.filter((t) => t.midsem);
-const midsemRange = midsemTopics.length
-  ? `topics ${Number(midsemTopics[0].num)} to ${Number(midsemTopics[midsemTopics.length - 1].num)}`
+const examRange = TOPICS.length
+  ? `topics ${Number(TOPICS[0].num)} to ${Number(TOPICS[TOPICS.length - 1].num)}`
   : 'the early topics';
 
 const STEPS: { icon: IconName; title: string; body: string[] }[] = [
@@ -43,10 +42,10 @@ const STEPS: { icon: IconName; title: string; body: string[] }[] = [
   },
   {
     icon: 'chart',
-    title: 'Reports and the mid-sem test',
+    title: 'Reports and exams',
     body: [
       'Report shows your strengths, your weak spots and the mistakes you repeat.',
-      `Mid-sem test is a timed practice test on ${midsemRange}. You get one check per question and see the answers at the end.`,
+      `Exams has a mock final paper, closed book like the real thing, and a timed practice test over any of ${examRange}.`,
       'Your progress stays in this browser. Export a backup from Settings now and then.',
     ],
   },

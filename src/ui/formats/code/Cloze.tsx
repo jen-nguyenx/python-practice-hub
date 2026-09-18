@@ -38,7 +38,7 @@ function draftAnswers(draft: unknown): Answers {
 
 export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
   const { q, revealed, locked, mode, checksLeft, topicId } = props;
-  const testMode = mode === 'topic-test' || mode === 'midsem';
+  const testMode = mode === 'topic-test' || mode === 'exam';
   const [answers, setAnswers] = useState<Answers>(() => draftAnswers(props.draft));
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);

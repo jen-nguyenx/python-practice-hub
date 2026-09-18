@@ -6,7 +6,7 @@ const NOW = 1_800_000_000_000;
 
 function sample(): TestProgress {
   return {
-    v: 1, kind: 'midsem', key: 'midsem', title: 'Mid-sem practice', qids: ['t01-s1-q1', 't02-s1-q2', 't03-s1-q3'],
+    v: 1, kind: 'practice-test', key: 'practice', title: 'Practice test', qids: ['t01-s1-q1', 't02-s1-q2', 't03-s1-q3'],
     durationMin: 20, startedAt: NOW - 5 * 60_000, savedAt: NOW - 1000, current: 2,
     answers: [[0, { result: { correct: true, score: 1, mistakes: [] }, response: 'b', timeMs: 30_000 }],
       [1, { result: { correct: false, score: 0, mistakes: [{ id: 'off_by_one_range', channel: 'distractor' }] }, response: 'a', timeMs: 20_000 }]],
@@ -17,7 +17,7 @@ function sample(): TestProgress {
 describe('parseProgress', () => {
   it('round-trips a saved test', () => {
     const p = sample();
-    expect(parseProgress(JSON.stringify(p), 'midsem', 'midsem', NOW)).toEqual({
+    expect(parseProgress(JSON.stringify(p), 'practice-test', 'practice', NOW)).toEqual({
       ...p,
       answers: [[0, { ...p.answers[0][1], result: { ...p.answers[0][1].result, feedback: undefined } }],
         [1, { ...p.answers[1][1], result: { ...p.answers[1][1].result, feedback: undefined } }]],
@@ -26,12 +26,12 @@ describe('parseProgress', () => {
 
   it('rejects other kinds, keys, junk and stale progress', () => {
     const raw = JSON.stringify(sample());
-    expect(parseProgress(raw, 'topic-test', 'midsem', NOW)).toBeNull();
-    expect(parseProgress(raw, 'midsem', 'strings', NOW)).toBeNull();
-    expect(parseProgress('not json', 'midsem', 'midsem', NOW)).toBeNull();
-    expect(parseProgress(null, 'midsem', 'midsem', NOW)).toBeNull();
-    expect(parseProgress(JSON.stringify({ ...sample(), qids: [] }), 'midsem', 'midsem', NOW)).toBeNull();
-    expect(parseProgress(raw, 'midsem', 'midsem', NOW + PROGRESS_MAX_AGE_MS + 5000)).toBeNull();
+    expect(parseProgress(raw, 'topic-test', 'practice', NOW)).toBeNull();
+    expect(parseProgress(raw, 'practice-test', 'strings', NOW)).toBeNull();
+    expect(parseProgress('not json', 'practice-test', 'practice', NOW)).toBeNull();
+    expect(parseProgress(null, 'practice-test', 'practice', NOW)).toBeNull();
+    expect(parseProgress(JSON.stringify({ ...sample(), qids: [] }), 'practice-test', 'practice', NOW)).toBeNull();
+    expect(parseProgress(raw, 'practice-test', 'practice', NOW + PROGRESS_MAX_AGE_MS + 5000)).toBeNull();
   });
 
   it('drops out-of-range indexes, unknown mistakes and malformed answers', () => {
@@ -41,7 +41,7 @@ describe('parseProgress', () => {
     p.flagged = [0, 9, -1];
     p.current = 12;
     p.timeSpent = [1, 'x'];
-    const out = parseProgress(JSON.stringify(p), 'midsem', 'midsem', NOW)!;
+    const out = parseProgress(JSON.stringify(p), 'practice-test', 'practice', NOW)!;
     expect(out.answers).toEqual([[2, { result: { correct: false, score: 0.5, mistakes: [{ id: 'zero_division', channel: 'runtime' }], feedback: undefined }, response: undefined, timeMs: 0 }]]);
     expect(out.flagged).toEqual([0]);
     expect(out.current).toBe(0);

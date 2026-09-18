@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { TopicId } from '../../content/ids.ts';
 import { TOPICS } from '../../content/topics.ts';
-import { defaultMidsemTopics, lockCopy, openTopicIds, unlockingTopic } from './lock.ts';
+import { lockCopy, openTopicIds, unlockingTopic } from './lock.ts';
 
 function states(openCount: number) {
   return Object.fromEntries(TOPICS.map((t, i) => [t.id, { state: i < openCount ? 'open' : 'locked' }])) as Record<TopicId, { state: string }>;
@@ -49,23 +49,10 @@ describe('lockCopy', () => {
   });
 });
 
-describe('default test topics', () => {
-  const midsem = TOPICS.filter((t) => t.midsem).map((t) => t.id);
-
+describe('open topics', () => {
   it('open topics are never empty', () => {
     expect(openTopicIds({})).toEqual([TOPICS[0].id]);
     expect(openTopicIds(states(3))).toEqual(TOPICS.slice(0, 3).map((t) => t.id));
   });
 
-  it('starts a new student on the topics they can practise', () => {
-    expect(defaultMidsemTopics(states(1))).toEqual([TOPICS[0].id]);
-    expect(defaultMidsemTopics(states(3))).toEqual(TOPICS.slice(0, 3).map((t) => t.id));
-  });
-
-  it('uses the whole mid-sem set once all of it is open', () => {
-    expect(defaultMidsemTopics(states(midsem.length))).toEqual(midsem);
-    expect(defaultMidsemTopics(states(TOPICS.length))).toEqual(midsem);
-    // Nothing known yet (the event log has not loaded): the first topic is the only safe assumption.
-    expect(defaultMidsemTopics({})).toEqual([TOPICS[0].id]);
-  });
 });

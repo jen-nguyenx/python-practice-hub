@@ -11,7 +11,7 @@ import { useWorkbench } from '../../workbench/context.ts';
 import { isCodeLike } from './logic.ts';
 import './read.css';
 
-export const isTestMode = (mode: Mode): boolean => mode === 'topic-test' || mode === 'midsem';
+export const isTestMode = (mode: Mode): boolean => mode === 'topic-test' || mode === 'exam';
 
 /** What a read-format component may show, derived once from the controller's props. */
 export interface Visibility {

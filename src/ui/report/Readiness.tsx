@@ -12,7 +12,7 @@ import { href } from '../../app/router.ts';
 import { Icon } from '../components/Icon.tsx';
 import { lockCopy } from '../testmode/lock.ts';
 import { eventsInRange } from './overrides.ts';
-import { MIDSEM_DEFAULT_COUNT } from '../testmode/select.ts';
+import { MOCK_EXAM_MINUTES, MOCK_EXAM_TOTAL_MARKS } from '../testmode/select.ts';
 import { pct, plural } from './format.ts';
 import { RULE_LABEL } from './words.ts';
 
@@ -31,7 +31,7 @@ const RECURSION_QIDS = new Set(QUESTION_INDEX.filter((q) => q.topicId === 'recur
 export function Readiness({ data, topicId, events = [], range = 'all' }: {
   data: ReportData['readiness']; topicId?: TopicId; events?: readonly AppEvent[]; range?: ReportRange;
 }) {
-  const showMidsem = !topicId;
+  const showExam = !topicId;
   const showRecursion = !topicId || topicId === 'recursion';
   const rules = data.projectRules.filter((r) => r.ok + r.broken > 0);
   const unchecked = data.projectRules.length - rules.length;
@@ -50,21 +50,29 @@ export function Readiness({ data, topicId, events = [], range = 'all' }: {
   return (
     <div class="rp-card rp-flush">
       <div class="rp-figures">
-        {showMidsem ? (
+        {showExam ? (
           <div class="rp-figure">
-            <span class="rp-figure-label">Mid-sem practice test</span>
-            {data.midsem.attempts > 0 ? (
+            <span class="rp-figure-label">Mock final exam</span>
+            {data.mockExam.attempts > 0 ? (
               <>
-                <span class="rp-figure-num">{pct(data.midsem.best)} <span class="rp-figure-unit">best</span></span>
-                <span class="rp-figure-sub">Last {pct(data.midsem.last)} · {plural(data.midsem.attempts, 'attempt')}</span>
+                <span class="rp-figure-num">{pct(data.mockExam.best)} <span class="rp-figure-unit">best</span></span>
+                <span class="rp-figure-sub">Last {pct(data.mockExam.last)} · {plural(data.mockExam.attempts, 'paper')}</span>
               </>
             ) : (
               <>
-                <span class="rp-figure-num is-empty">Not taken</span>
-                <span class="rp-figure-sub">{MIDSEM_DEFAULT_COUNT} questions, timed, no hints</span>
+                <span class="rp-figure-num is-empty">Not sat</span>
+                <span class="rp-figure-sub">8 questions, {MOCK_EXAM_TOTAL_MARKS} marks, {MOCK_EXAM_MINUTES / 60} hours</span>
               </>
             )}
-            <a class="rp-figure-link" href={href.midsem()}>{data.midsem.attempts > 0 ? 'Take another' : 'Take the test'}</a>
+            <a class="rp-figure-link" href={href.exam()}>{data.mockExam.attempts > 0 ? 'Sit another paper' : 'Sit a paper'}</a>
+          </div>
+        ) : null}
+        {showExam && data.practiceTest.attempts > 0 ? (
+          <div class="rp-figure">
+            <span class="rp-figure-label">Practice tests</span>
+            <span class="rp-figure-num">{pct(data.practiceTest.best)} <span class="rp-figure-unit">best</span></span>
+            <span class="rp-figure-sub">Last {pct(data.practiceTest.last)} · {plural(data.practiceTest.attempts, 'attempt')}</span>
+            <a class="rp-figure-link" href={href.exam()}>Take another</a>
           </div>
         ) : null}
         <div class="rp-figure">

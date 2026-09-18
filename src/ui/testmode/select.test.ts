@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import type { Diff, Format, TopicId } from '../../content/ids.ts';
-import { FORMAT_LADDER, OFFLINE_FORMATS } from '../../content/ids.ts';
+import type { Diff, ExamSlot, Format, TopicId } from '../../content/ids.ts';
+import { EXAM_SLOT_IDS, EXAM_SLOT_MARKS, FORMAT_LADDER, OFFLINE_FORMATS } from '../../content/ids.ts';
 import type { Candidate } from './select.ts';
 import type { GeneratedQuestion, Question } from '../../content/schema.ts';
 import {
-  estimatedMinutes, isGradable, midsemEligible, recentlyUsedQids, seededRng, selectMidsem, selectTopicTest,
-  topicTestPassMark, waterFill,
+  buildMockExam, estimatedMinutes, isGradable, marksByQid, MOCK_EXAM_TOTAL_MARKS, practiceEligible,
+  recentlyUsedQids, seededRng, selectPracticeTest, selectTopicTest, topicTestPassMark, waterFill,
 } from './select.ts';
 
 let n = 0;
@@ -171,12 +171,12 @@ describe('waterFill', () => {
   });
 });
 
-describe('selectMidsem', () => {
+describe('selectPracticeTest', () => {
   const eight: TopicId[] = ['variables-expressions', 'if-elif-else', 'for-loops-range', 'functions-basics', 'strings', 'lists-tuples', 'while-nested-loops', 'dictionaries'];
 
   it('returns the requested count of distinct questions from chosen topics only', () => {
     for (const count of [10, 15, 20, 30]) {
-      const picks = selectMidsem(bigPool(), { topicIds: eight.slice(0, 7), count, includeCoding: true }, seededRng(count));
+      const picks = selectPracticeTest(bigPool(), { topicIds: eight.slice(0, 7), count, includeCoding: true }, seededRng(count));
       expect(picks).toHaveLength(count);
       expect(new Set(picks.map((p) => p.id)).size).toBe(count);
       expect(picks.every((p) => eight.slice(0, 7).includes(p.topicId))).toBe(true);
@@ -185,7 +185,7 @@ describe('selectMidsem', () => {
 
   it('balances across topics (within one) and across read/repair/write (within one)', () => {
     for (let seed = 1; seed <= 20; seed++) {
-      const picks = selectMidsem(bigPool(), { topicIds: eight.slice(0, 5), count: 15, includeCoding: true }, seededRng(seed));
+      const picks = selectPracticeTest(bigPool(), { topicIds: eight.slice(0, 5), count: 15, includeCoding: true }, seededRng(seed));
       const perTopic = eight.slice(0, 5).map((t) => picks.filter((p) => p.topicId === t).length);
       expect(Math.max(...perTopic) - Math.min(...perTopic)).toBeLessThanOrEqual(1);
       const perRung = (['read', 'repair', 'write'] as const).map((r) => picks.filter((p) => FORMAT_LADDER[p.format] === r).length);
@@ -194,7 +194,7 @@ describe('selectMidsem', () => {
   });
 
   it('orders read, then repair, then write', () => {
-    const picks = selectMidsem(bigPool(), { topicIds: eight, count: 20, includeCoding: true }, seededRng(4));
+    const picks = selectPracticeTest(bigPool(), { topicIds: eight, count: 20, includeCoding: true }, seededRng(4));
     const rungIdx = picks.map((p) => ['read', 'repair', 'write'].indexOf(FORMAT_LADDER[p.format]));
     expect(rungIdx).toEqual(rungIdx.slice().sort((a, b) => a - b));
   });
@@ -204,7 +204,7 @@ describe('selectMidsem', () => {
     let total = 0;
     const sizes = new Set<number>();
     for (let seed = 1; seed <= 60; seed++) {
-      const picks = selectMidsem(bigPool(), { topicIds: eight, count: 16, includeCoding: true }, seededRng(seed));
+      const picks = selectPracticeTest(bigPool(), { topicIds: eight, count: 16, includeCoding: true }, seededRng(seed));
       medium += picks.filter((p) => p.diff === 'medium').length;
       total += picks.length;
       sizes.add(picks.filter((p) => p.diff === 'medium').length);
@@ -221,8 +221,8 @@ describe('selectMidsem', () => {
     let worst = 0;
     for (let seed = 1; seed <= 40; seed++) {
       const opts = { topicIds: eight, count: 10, includeCoding: true };
-      const a = selectMidsem(pool, opts, seededRng(seed * 2 - 1));
-      const b = selectMidsem(pool, opts, seededRng(seed * 2));
+      const a = selectPracticeTest(pool, opts, seededRng(seed * 2 - 1));
+      const b = selectPracticeTest(pool, opts, seededRng(seed * 2));
       const ids = new Set(a.map((p) => p.id));
       const same = b.filter((p) => ids.has(p.id)).length;
       overlap += same;
@@ -237,8 +237,8 @@ describe('selectMidsem', () => {
     const pool = bigPool();
     const opts = { topicIds: eight, count: 10, includeCoding: true };
     for (let seed = 1; seed <= 20; seed++) {
-      const first = selectMidsem(pool, opts, seededRng(seed));
-      const again = selectMidsem(pool, opts, seededRng(seed + 500), new Set(first.map((p) => p.id)));
+      const first = selectPracticeTest(pool, opts, seededRng(seed));
+      const again = selectPracticeTest(pool, opts, seededRng(seed + 500), new Set(first.map((p) => p.id)));
       expect(again).toHaveLength(10);
       expect(again.some((p) => first.some((f) => f.id === p.id))).toBe(false);
     }
@@ -247,7 +247,7 @@ describe('selectMidsem', () => {
   it('reuses questions once the whole pool has been seen', () => {
     const pool = bigPool();
     const all = new Set(pool.map((p) => p.id));
-    const picks = selectMidsem(pool, { topicIds: eight, count: 12, includeCoding: true }, seededRng(7), all);
+    const picks = selectPracticeTest(pool, { topicIds: eight, count: 12, includeCoding: true }, seededRng(7), all);
     expect(picks).toHaveLength(12);
     expect(new Set(picks.map((p) => p.id)).size).toBe(12);
   });
@@ -262,24 +262,24 @@ describe('selectMidsem', () => {
   });
 
   it('with coding off: read formats only, never paper write', () => {
-    const picks = selectMidsem(bigPool(), { topicIds: eight, count: 30, includeCoding: false }, seededRng(2));
+    const picks = selectPracticeTest(bigPool(), { topicIds: eight, count: 30, includeCoding: false }, seededRng(2));
     expect(picks).toHaveLength(30);
     expect(picks.every((p) => OFFLINE_FORMATS.includes(p.format) && !p.paper)).toBe(true);
-    expect(midsemEligible(bigPool(), { topicIds: eight, includeCoding: false }).some((p) => p.paper)).toBe(false);
+    expect(practiceEligible(bigPool(), { topicIds: eight, includeCoding: false }).some((p) => p.paper)).toBe(false);
   });
 
   it('with coding on: paper write is allowed', () => {
-    expect(midsemEligible(bigPool(), { topicIds: eight, includeCoding: true }).some((p) => p.paper)).toBe(true);
+    expect(practiceEligible(bigPool(), { topicIds: eight, includeCoding: true }).some((p) => p.paper)).toBe(true);
   });
 
   it('caps at what exists and redistributes from thin topics', () => {
     const pool = [...bigPool(), c('recursion', 'mcq'), c('recursion', 'predict')];
-    const picks = selectMidsem(pool, { topicIds: ['recursion', 'strings'], count: 10, includeCoding: true }, seededRng(5));
+    const picks = selectPracticeTest(pool, { topicIds: ['recursion', 'strings'], count: 10, includeCoding: true }, seededRng(5));
     expect(picks).toHaveLength(10);
     expect(picks.filter((p) => p.topicId === 'recursion')).toHaveLength(2);
-    const small = selectMidsem([c('recursion', 'mcq')], { topicIds: ['recursion'], count: 10, includeCoding: true }, seededRng(5));
+    const small = selectPracticeTest([c('recursion', 'mcq')], { topicIds: ['recursion'], count: 10, includeCoding: true }, seededRng(5));
     expect(small).toHaveLength(1);
-    expect(selectMidsem(bigPool(), { topicIds: [], count: 10, includeCoding: true })).toEqual([]);
+    expect(selectPracticeTest(bigPool(), { topicIds: [], count: 10, includeCoding: true })).toEqual([]);
   });
 
   it('keeps rung balance when a topic has no code questions', () => {
@@ -287,7 +287,7 @@ describe('selectMidsem', () => {
       ...bigPool().filter((p) => p.topicId === 'strings'),
       c('variables-expressions', 'mcq'), c('variables-expressions', 'predict'), c('variables-expressions', 'trace'), c('variables-expressions', 'multi'),
     ];
-    const picks = selectMidsem(pool, { topicIds: ['strings', 'variables-expressions'], count: 9, includeCoding: true }, seededRng(8));
+    const picks = selectPracticeTest(pool, { topicIds: ['strings', 'variables-expressions'], count: 9, includeCoding: true }, seededRng(8));
     expect(picks).toHaveLength(9);
     const perRung = (['read', 'repair', 'write'] as const).map((r) => picks.filter((p) => FORMAT_LADDER[p.format] === r).length);
     expect(perRung).toEqual([3, 3, 3]);
@@ -322,7 +322,7 @@ describe('estimatedMinutes', () => {
   });
 });
 
-describe('selectMidsem difficulty across cells', () => {
+describe('selectPracticeTest difficulty across cells', () => {
   it('takes the medium question of a cell far more often than an even draw would', () => {
     // One medium write against four hard ones in the same topic and rung.
     const pool: Candidate[] = [
@@ -331,7 +331,7 @@ describe('selectMidsem difficulty across cells', () => {
     ];
     let medium = 0;
     for (let seed = 1; seed <= 200; seed++) {
-      const picks = selectMidsem(pool, { topicIds: ['strings'], count: 2, includeCoding: true }, seededRng(seed));
+      const picks = selectPracticeTest(pool, { topicIds: ['strings'], count: 2, includeCoding: true }, seededRng(seed));
       const write = picks.find((p) => p.format === 'write');
       if (write?.diff === 'medium') medium++;
     }
@@ -347,11 +347,50 @@ describe('selectMidsem difficulty across cells', () => {
     ];
     let withMedium = 0;
     for (let seed = 1; seed <= 100; seed++) {
-      const picks = selectMidsem(pool, { topicIds: ['strings', 'lists-tuples'], count: 3, includeCoding: true }, seededRng(seed));
+      const picks = selectPracticeTest(pool, { topicIds: ['strings', 'lists-tuples'], count: 3, includeCoding: true }, seededRng(seed));
       const writes = picks.filter((p) => p.format === 'write');
       expect(writes.length).toBeGreaterThanOrEqual(1);
       if (writes.some((w) => w.diff === 'medium')) withMedium++;
     }
     expect(withMedium).toBeGreaterThan(30);
+  });
+});
+
+describe('buildMockExam', () => {
+  const paperQ = (id: string, slot: ExamSlot, topicId: TopicId = 'strings'): Candidate => ({
+    id, topicId, format: 'write', diff: 'hard', paper: true, expectedSec: 600, examSlot: slot, marks: EXAM_SLOT_MARKS[slot],
+  });
+  const fullPool = () => EXAM_SLOT_IDS.flatMap((slot) => [paperQ(`${slot}-a`, slot), paperQ(`${slot}-b`, slot)]);
+
+  it('builds one question per slot, in the paper order, worth 100 marks', () => {
+    const paper = buildMockExam(fullPool(), seededRng(7));
+    expect(paper).not.toBeNull();
+    expect(paper!.map((p) => p.examSlot)).toEqual([...EXAM_SLOT_IDS]);
+    expect(paper!.reduce((sum, p) => sum + (p.marks ?? 0), 0)).toBe(MOCK_EXAM_TOTAL_MARKS);
+    expect(MOCK_EXAM_TOTAL_MARKS).toBe(100);
+  });
+
+  it('returns null when a slot has no question written for it', () => {
+    const short = fullPool().filter((c) => c.examSlot !== 'file-report');
+    expect(buildMockExam(short, seededRng(1))).toBeNull();
+  });
+
+  it('avoids questions from a recent paper while a slot has an alternative', () => {
+    const pool = fullPool();
+    const first = buildMockExam(pool, seededRng(3))!;
+    const again = buildMockExam(pool, seededRng(9), new Set(first.map((p) => p.id)))!;
+    expect(again.some((p) => first.some((f) => f.id === p.id))).toBe(false);
+  });
+
+  it('falls back to a seen question rather than failing when a slot has only one', () => {
+    const pool = EXAM_SLOT_IDS.map((slot) => paperQ(`${slot}-only`, slot));
+    const paper = buildMockExam(pool, seededRng(2), new Set(pool.map((p) => p.id)));
+    expect(paper?.length).toBe(EXAM_SLOT_IDS.length);
+  });
+
+  it('marksByQid maps each question to its slot marks', () => {
+    const paper = buildMockExam(fullPool(), seededRng(5))!;
+    const marks = marksByQid(paper);
+    expect(Object.values(marks).reduce((a, b) => a + b, 0)).toBe(100);
   });
 });

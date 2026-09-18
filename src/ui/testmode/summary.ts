@@ -2,10 +2,15 @@
 import type { Diff, Format, TopicId } from '../../content/ids.ts';
 import type { GeneratedQuestion, Question } from '../../content/schema.ts';
 import { TOPICS } from '../../content/topics.ts';
-import type { AppEvent, GradeResult, NewEvent } from '../../engine/types.ts';
-import { MIDSEM_PASS_PERCENT, topicTestPassMark } from './select.ts';
+import type { AppEvent, GradeResult, Mode, NewEvent, TestKind } from '../../engine/types.ts';
+import { TIMED_TEST_PASS_PERCENT, topicTestPassMark } from './select.ts';
 
-export type TestKind = 'topic-test' | 'midsem';
+export type { TestKind };
+
+/** How a question component should behave for a given test: every timed test hides hints and answers. */
+export function questionMode(kind: TestKind): Mode {
+  return kind === 'topic-test' ? 'topic-test' : 'exam';
+}
 
 export interface TestItem {
   q: Question;
@@ -60,12 +65,14 @@ export interface TestSummary {
   perTopic: TopicBreakdown[];
   outcomes: QuestionOutcome[];
   finishedAt: number;
+  /** Mock exam only: marks earned out of the paper's total, using each question's partial credit. */
+  marks?: { earned: number; total: number };
 }
 
-/** Correct answers needed to pass: topic test 4 of 5; mid-sem 50%. */
+/** Correct answers needed to pass: topic test 4 of 5; every timed test 50%. */
 export function passMarkFor(kind: TestKind, total: number): number {
   if (kind === 'topic-test') return topicTestPassMark(total);
-  return Math.max(1, Math.ceil((total * MIDSEM_PASS_PERCENT) / 100));
+  return Math.max(1, Math.ceil((total * TIMED_TEST_PASS_PERCENT) / 100));
 }
 
 const TOPIC_ORDER: Record<string, number> = Object.fromEntries(TOPICS.map((t, i) => [t.id, i]));
@@ -81,6 +88,8 @@ export function summarizeTest(args: {
   limitMs: number;
   timedOut: boolean;
   finishedAt: number;
+  /** Mock exam only: marks per question id. Present means the paper is scored out of marks, not questions. */
+  marks?: Readonly<Record<string, number>>;
 }): TestSummary {
   const outcomes: QuestionOutcome[] = args.items.map((it, i) => {
     const a = args.answers.get(i);
@@ -98,12 +107,22 @@ export function summarizeTest(args: {
     const os = outcomes.filter((o) => o.topicId === topicId);
     return { topicId, total: os.length, correct: os.filter((o) => o.correct).length, answered: os.filter((o) => o.answered).length };
   });
+  // A mock exam is marked like the real paper: each question's partial credit times its marks.
+  let marks: TestSummary['marks'];
+  if (args.marks) {
+    const marksTotal = outcomes.reduce((sum, o) => sum + (args.marks![o.qid] ?? 0), 0);
+    const earned = outcomes.reduce((sum, o) => sum + o.score * (args.marks![o.qid] ?? 0), 0);
+    marks = { earned: Math.round(earned), total: marksTotal };
+  }
+  const percent = marks
+    ? (marks.total ? Math.round((marks.earned / marks.total) * 100) : 0)
+    : (total ? Math.round((correct / total) * 100) : 0);
   return {
     kind: args.kind, title: args.title, total, correct, answered: outcomes.filter((o) => o.answered).length,
-    percent: total ? Math.round((correct / total) * 100) : 0,
-    passed: total > 0 && correct >= passMark, passMark,
+    percent,
+    passed: marks ? percent >= TIMED_TEST_PASS_PERCENT : total > 0 && correct >= passMark, passMark,
     durationMs: Math.max(0, Math.round(args.durationMs)), limitMs: args.limitMs, timedOut: args.timedOut,
-    topicIds, qids: outcomes.map((o) => o.qid), perTopic, outcomes, finishedAt: args.finishedAt,
+    topicIds, qids: outcomes.map((o) => o.qid), perTopic, outcomes, finishedAt: args.finishedAt, marks,
   };
 }
 
@@ -119,10 +138,10 @@ export function weakTopics(summary: TestSummary): TopicBreakdown[] {
  * never for a topic test (it has one topic and its own pass message), and not once the test was already the longest
  * size and covered every mid-sem topic.
  */
-export function strongNextStep(summary: TestSummary, opts: { maxCount: number; midsemTopics: number }): string | null {
-  if (summary.kind !== 'midsem' || summary.total === 0 || weakTopics(summary).length > 0) return null;
+export function strongNextStep(summary: TestSummary, opts: { maxCount: number; topicCount: number }): string | null {
+  if (summary.kind !== 'practice-test' || summary.total === 0 || weakTopics(summary).length > 0) return null;
   const longer = summary.total < opts.maxCount;
-  const wider = summary.topicIds.length < opts.midsemTopics;
+  const wider = summary.topicIds.length < opts.topicCount;
   if (!longer && !wider) return null;
   const what = longer && wider ? 'more questions or more topics' : longer ? 'more questions' : 'more topics';
   return `Every topic scored 70% or more. Next time, try ${what}.`;
@@ -152,7 +171,7 @@ export function buildTestEvents(summary: TestSummary, items: readonly TestItem[]
     const score = clamp01(a.result.score);
     const mistakes = uniq(a.result.mistakes.map((m) => m.id));
     out.push({
-      type: 'attempt', qid: it.q.id, topicId: it.topicId, format: it.q.format, diff: it.q.diff, mode: summary.kind,
+      type: 'attempt', qid: it.q.id, topicId: it.topicId, format: it.q.format, diff: it.q.diff, mode: questionMode(summary.kind),
       checkNo: 1, correct: a.result.correct, score, credit: score, hintTier: 0, revealed: false,
       timeMs: Math.max(0, Math.round(a.timeMs)), mistakes, response: compactResponse(a.response),
     });
@@ -161,7 +180,8 @@ export function buildTestEvents(summary: TestSummary, items: readonly TestItem[]
     }
   });
   out.push({
-    type: 'test_result', kind: summary.kind, topicIds: summary.topicIds, score: summary.correct, total: summary.total,
+    type: 'test_result', kind: summary.kind, topicIds: summary.topicIds,
+    score: summary.marks ? summary.marks.earned : summary.correct, total: summary.marks ? summary.marks.total : summary.total,
     passed: summary.passed, durationMs: summary.durationMs, qids: summary.qids,
   });
   return out;

@@ -6,7 +6,7 @@ import { QuestionPage } from '../ui/screens/QuestionPage.tsx';
 import { Playground } from '../ui/screens/Playground.tsx';
 import { Report } from '../ui/screens/Report.tsx';
 import { TopicTest } from '../ui/screens/TopicTest.tsx';
-import { MidsemTest } from '../ui/screens/MidsemTest.tsx';
+import { ExamPractice } from '../ui/screens/ExamPractice.tsx';
 import { Settings } from '../ui/screens/Settings.tsx';
 import { AppShell } from '../ui/shell/AppShell.tsx';
 
@@ -20,7 +20,7 @@ export function App() {
     case 'playground': screen = <Playground />; break;
     case 'report': screen = <Report topicId={r.topicId} />; break;
     case 'topic-test': screen = <TopicTest topicId={r.topicId} />; break;
-    case 'midsem': screen = <MidsemTest />; break;
+    case 'exam': screen = <ExamPractice />; break;
     case 'settings': screen = <Settings />; break;
     default:
       screen = (

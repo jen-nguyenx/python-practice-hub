@@ -137,6 +137,7 @@ print(count, total)`,
       kind: 'function',
       mode: 'paper',
       marks: 15,
+      examSlot: 'series-tolerance',
       diff: 'hard',
       core: true,
       title: 'The e series (exam style)',
@@ -247,6 +248,74 @@ print(count, total)`,
           '- When `tol` is above 1 the body never runs and `total` stays 0, which is why it must be set before the loop.',
       },
       selfExplain: 'Why does the buggy version still stop at the right time even though it adds the wrong terms?',
+    },
+    {
+      id: 't07-s2-q5',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 15,
+      examSlot: 'series-tolerance',
+      diff: 'hard',
+      core: true,
+      title: 'Cosine from its series (exam style)',
+      prompt:
+        '*Exam style, 15 marks. Write it by hand first, then submit once.*\n\n' +
+        'One demo shows how a calculator finds the cosine of an angle `x` in radians with no table and no maths library. It adds up the series\n\n' +
+        '1 - x²/2! + x⁴/4! - x⁶/6! + ...\n\n' +
+        'where k! = 1 × 2 × ... × k. The signs alternate and the terms get smaller.\n\n' +
+        'Write a function `cos_series(x, tol)` that adds up the terms of this series, starting with 1, ' +
+        '**while the size of the current term is greater than or equal to `tol`**, and returns the sum **rounded to 6 decimal places**.\n\n' +
+        '- The size of a term ignores its sign, so use `abs`. Stop as soon as a term is smaller than `tol` in size, and do **not** add that term.\n' +
+        '- Do not use `import`. Build each term from the one before it: multiply the previous term by `-x * x`, then divide by `(2 * k - 1) * (2 * k)`, ' +
+        'where `k` is 1 for the second term, 2 for the third, and so on.\n' +
+        '- Round only the final answer, never inside the loop.\n' +
+        '- If the first term is already smaller than `tol`, return `0`.\n\n' +
+        'Example: `cos_series(1, 0.01)` adds 1 - 0.5 + 0.041666... and returns `0.541667`. The term after that is 1/720, which is below 0.01, so it is left out.',
+      fnName: 'cos_series',
+      starter: `def cos_series(x, tol):
+    pass`,
+      rules: ['noImport'],
+      tests: [
+        { id: 'v1', call: 'cos_series(1, 0.01)', expect: '0.541667', cmp: 'float', tol: 1e-9, label: 'x = 1, tol = 0.01', hidden: false },
+        { id: 'v2', call: 'cos_series(0.5, 0.0001)', expect: '0.877604', cmp: 'float', tol: 1e-9, label: 'x = 0.5, tol = 0.0001', hidden: false },
+        { id: 'h1', call: 'cos_series(1, 0.5)', expect: '0.5', cmp: 'float', tol: 1e-9, label: 'a term exactly the size of tol is still added', hidden: true, tag: 'off_by_one_range' },
+        { id: 'h2', call: 'cos_series(1, 0.6)', expect: '1.0', cmp: 'float', tol: 1e-9, label: 'the tolerance stops the loop after one term', hidden: true },
+        { id: 'h3', call: 'cos_series(1, 2)', expect: '0.0', cmp: 'float', tol: 1e-9, label: 'the first term is already below tol', hidden: true, tag: 'accumulator_init' },
+        { id: 'h4', call: 'cos_series(2, 1e-6)', expect: '-0.416147', cmp: 'float', tol: 5e-7, label: 'rounding only at the end (x = 2)', hidden: true, tag: 'round_mid_calc' },
+        { id: 'h5', call: 'cos_series(0, 0.001)', expect: '1.0', cmp: 'float', tol: 1e-9, label: 'an angle of 0', hidden: true },
+        { id: 'h6', call: 'cos_series(3, 1e-9)', expect: '-0.989992', cmp: 'float', tol: 1e-9, label: 'a large angle and a very small tolerance', hidden: true },
+      ],
+      concepts: ['while', 'series', 'tolerance', 'alternating-signs', 'round'],
+      detects: ['off_by_one_range', 'round_mid_calc', 'float_equality', 'infinite_while', 'import_used', 'accumulator_init'],
+      expectedSec: 660,
+      hints: [
+        'You cannot tell in advance how many terms are needed, so the loop has to watch the current term. Every second term is negative, so think about what the test should measure.',
+        'Plan: before the loop set `total` to 0, `term` to 1.0 (the first term) and `k` to 0. While the size of `term` is at least `tol`: add `term` to `total`, add 1 to `k`, then turn `term` into the next term. After the loop, return `total` rounded to 6 places.',
+        'The header is `while abs(term) >= tol:`. The step that makes the next term is `term = term * (-x * x) / ((2 * k - 1) * (2 * k))`, and it must come after `k` has been increased.',
+      ],
+      solution: {
+        code: `def cos_series(x, tol):
+    total = 0
+    term = 1.0
+    k = 0
+    while abs(term) >= tol:
+        total = total + term
+        k = k + 1
+        term = term * (-x * x) / ((2 * k - 1) * (2 * k))
+    return round(total, 6)`,
+        explanation:
+          '- `total = 0` holds the running sum, `term = 1.0` is the first term of the series, and `k = 0` counts the terms already added.\n' +
+          '- `while abs(term) >= tol:` measures the **size** of the term. Without `abs` the loop would stop at the second term, which is negative: `cos_series(1, 0.01)` would return 1.0 instead of 0.541667.\n' +
+          '- `>=` matches "greater than or equal to" in the spec, so a term exactly the size of `tol` is still added.\n' +
+          '- `total = total + term` adds the term the condition has just approved, before the next one is worked out.\n' +
+          '- `k = k + 1` then `term = term * (-x * x) / ((2 * k - 1) * (2 * k))` turns the term with x^(2k-2) on top into the one with x^(2k) on top. ' +
+          'Multiplying by `-x * x` supplies both the next power and the sign flip, and dividing by `(2k - 1) * (2k)` grows the factorial. No `import math` and no separate factorial loop are needed.\n' +
+          '- Each term is much smaller than the last once `k` is past `x`, so the size always drops below `tol` and the loop ends.\n' +
+          '- `return round(total, 6)` rounds once, outside the loop. Rounding the running total on every pass gives -0.416146 instead of -0.416147 for `cos_series(2, 1e-6)`.\n\n' +
+          'Marking guide (15): set-up before the loop (3), `while abs(term) >= tol` (3), add the term then build the next one from it (5), round once and return (2), no import and no print (2).',
+      },
+      selfExplain: 'Why does the loop test abs(term) rather than term?',
     },
   ],
 };

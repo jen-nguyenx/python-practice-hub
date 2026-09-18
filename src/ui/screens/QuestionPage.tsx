@@ -423,7 +423,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   // Once the question is solved there is nothing left to lose, so the model answer opens without the confirm and
   // the link says plainly what it does.
   const freeReveal = solved || failed >= 2 || (mode === 'paper' && checkNo > 0);
-  const testMode = mode === 'topic-test' || mode === 'midsem';
+  const testMode = mode === 'topic-test' || mode === 'exam';
   const revealControl = (
     <RevealControl
       revealed={revealed}

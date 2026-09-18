@@ -1,4 +1,4 @@
-// "Test in progress" card on the topic test and mid-sem screens: carry on after a reload, a closed tab or leaving the page.
+// "Test in progress" card on the topic test and exam screens: carry on after a reload, a closed tab or leaving the page.
 // Discarding asks first, because it deletes saved answers.
 import { useState } from 'preact/hooks';
 import { Button } from '../components/Button.tsx';

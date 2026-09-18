@@ -13,7 +13,15 @@ export interface GradeResult {
   feedback?: string;
 }
 
-export type Mode = 'practice' | 'paper' | 'topic-test' | 'midsem';
+/** Which timed test produced a result. Legacy 'midsem' results are read back as 'practice-test'. */
+export type TestKind = 'topic-test' | 'practice-test' | 'mock-exam';
+
+/**
+ * How a question was answered. 'exam' covers both timed tests on the exam page (a custom practice test
+ * and a mock final paper); only 'practice' and 'paper' count toward a topic's unlock minimum.
+ * Events written before the app was refocused on the final exam stored 'midsem'; the store maps those to 'exam'.
+ */
+export type Mode = 'practice' | 'paper' | 'topic-test' | 'exam';
 
 // ---------- event log (append-only, stored in IndexedDB) ----------
 
@@ -46,7 +54,7 @@ export type AppEvent =
   | (EventBase & { type: 'mistake'; qid: string | null; topicId: TopicId | null; mistake: MistakeId; channel: DetectionChannel })
   | (EventBase & { type: 'run'; qid: string | null; topicId: TopicId | null; ok: boolean; errorType?: string; timedOut: boolean; durationMs: number })
   | (EventBase & { type: 'self_explain'; qid: string; text: string })
-  | (EventBase & { type: 'test_result'; kind: 'topic-test' | 'midsem'; topicIds: TopicId[]; score: number; total: number; passed: boolean; durationMs: number; qids: string[] })
+  | (EventBase & { type: 'test_result'; kind: TestKind; topicIds: TopicId[]; score: number; total: number; passed: boolean; durationMs: number; qids: string[] })
   | (EventBase & { type: 'override'; what: 'unlockAll'; value: boolean })
   | (EventBase & { type: 'flag'; qid: string; reason: 'wrong-answer' | 'unclear' | 'too-hard' | 'other'; note: string });
 

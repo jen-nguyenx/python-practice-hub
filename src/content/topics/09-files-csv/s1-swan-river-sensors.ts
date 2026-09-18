@@ -1,5 +1,12 @@
 import type { Scenario } from '../../schema.ts';
 
+const RIVER_WEEK = 'time,site,temp_c\n' +
+  '06:00,Maylands,18.4\n' +
+  '06:00,Nedlands,19.2\n' +
+  '07:00,Maylands,19.0\n' +
+  '07:00,Point Walter,17.6\n' +
+  '08:00,Nedlands,19.4\n';
+
 const s1: Scenario = {
   id: 't09-s1',
   title: 'Swan River sensor logs',
@@ -379,6 +386,189 @@ print(len(header.strip()))`,
           'If you track the lowest value with a variable instead, start it from the first reading, not from 0, or it would stay 0.',
       },
       selfExplain: 'Why must the length check come before fields[2] in the same condition?',
+    },
+    {
+      id: 't09-s1-q5',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 20,
+      examSlot: 'file-report',
+      diff: 'hard',
+      core: true,
+      title: 'Warmest sites of the week',
+      prompt:
+        'Exam practice: write your answer as you would on paper, without running it.\n\n' +
+        'A week of logging is saved in one file and the honours student wants a single ranking table. The first line of `filename` is a header ' +
+        'containing `site` and `temp_c` in an **unknown order and with unknown capitals**, and there may be other columns, such as `time` or `depth_m`, which you ignore. ' +
+        'Each later line is one reading.\n\n' +
+        'Write `site_ranking(filename)` that returns a **list of tuples** `(site, mean)`, one tuple for each site that has at least one usable reading:\n\n' +
+        '- `site` is the site name in **upper case** with spaces at both ends removed, so two spellings that differ only in capitals or in surrounding spaces are the same site;\n' +
+        '- `mean` is the mean of that site\'s usable temperatures, **rounded to 2 decimal places**;\n' +
+        '- the list is ordered by `mean`, **largest first**, and if two sites have the same rounded mean the one whose upper-case name comes **first alphabetically** goes first.\n\n' +
+        'Skip a line if it is blank, if it does not have one value for every header column, if its site name is empty once spaces are stripped, ' +
+        'or if its temperature is not a number. The only values in the temperature column that are not numbers are the empty string and `N/A` in any capitals.\n\n' +
+        'Return `[]` if the header does not contain both `site` and `temp_c`, if the file has nothing in it at all, or if no line can be used.\n\n' +
+        'Open `filename` exactly as it is given; do not add `.csv`. No imports, and no recursion. ' +
+        'You may assume the file itself opens, so you do not need `try` / `except` here (catching errors from `open` is the next topic).\n\n' +
+        'Example: the file `river_week` contains\n\n' +
+        '```\n' + RIVER_WEEK + '```\n\n' +
+        "`site_ranking('river_week')` returns `[('NEDLANDS', 19.3), ('MAYLANDS', 18.7), ('POINT WALTER', 17.6)]`.",
+      fnName: 'site_ranking',
+      starter: `def site_ranking(filename):
+    """Return [(SITE, mean temperature), ...] warmest first, or []."""
+    pass`,
+      rules: ['noImport', 'noCsvExt', 'roundAtEnd'],
+      tests: [
+        {
+          id: 'v1',
+          files: [{ name: 'river_week', content: RIVER_WEEK }],
+          call: "site_ranking('river_week')",
+          expect: "[('NEDLANDS', 19.3), ('MAYLANDS', 18.7), ('POINT WALTER', 17.6)]",
+          cmp: 'float',
+          label: 'the example file',
+          hidden: false,
+        },
+        {
+          id: 'v2',
+          files: [{ name: 'river_week2', content: 'time,site,temp_c\n06:00,Nedlands,20.4\n07:00,Maylands,21.1\n08:00,Nedlands,20.0\n' }],
+          call: "site_ranking('river_week2')",
+          expect: "[('MAYLANDS', 21.1), ('NEDLANDS', 20.2)]",
+          cmp: 'float',
+          label: 'one site logged twice',
+          hidden: false,
+        },
+        {
+          id: 'h1',
+          files: [{ name: 'deep_log', content: 'temp_c,depth_m,site,time\n21.0,0.5,Blackwall Reach,1200\n19.6,1.5,Claremont,1300\n20.4,0.5,Blackwall Reach,1400\n' }],
+          call: "site_ranking('deep_log')",
+          expect: "[('BLACKWALL REACH', 20.7), ('CLAREMONT', 19.6)]",
+          cmp: 'float',
+          label: 'columns in another order and an extra column',
+          hidden: true,
+          tag: 'header_order_assumed',
+        },
+        {
+          id: 'h2',
+          files: [{ name: 'typed_by_hand', content: 'site,temp_c\nnedlands,18.0\nNEDLANDS,19.0\n Nedlands ,20.0\nmaylands,21.0\n' }],
+          call: "site_ranking('typed_by_hand')",
+          expect: "[('MAYLANDS', 21.0), ('NEDLANDS', 19.0)]",
+          cmp: 'float',
+          label: 'one site typed in three different ways',
+          hidden: true,
+          tag: 'case_sensitive_compare',
+        },
+        {
+          id: 'h3',
+          files: [{ name: 'patchy_log', content: 'time,site,temp_c\n06:00,Maylands,18.0\n\n07:00,Maylands\n08:00,Maylands,N/A\n09:00,,19.5\n10:00,Maylands,20.0\n11:00,Nedlands,\n' }],
+          call: "site_ranking('patchy_log')",
+          expect: "[('MAYLANDS', 19.0)]",
+          cmp: 'float',
+          label: 'blank line, short row, N/A, missing site and an empty temperature',
+          hidden: true,
+          tag: 'invalid_row_not_skipped',
+        },
+        {
+          id: 'h4',
+          files: [{ name: 'calm_day', content: 'site,temp_c\nPoint Walter,18.0\nMaylands,18.0\n' }],
+          call: "site_ranking('calm_day')",
+          expect: "[('MAYLANDS', 18.0), ('POINT WALTER', 18.0)]",
+          cmp: 'float',
+          label: 'two sites with the same mean',
+          hidden: true,
+          tag: 'sort_tiebreak',
+        },
+        {
+          id: 'h5',
+          files: [{ name: 'logger_failed', content: '' }],
+          call: "site_ranking('logger_failed')",
+          expect: '[]',
+          label: 'a file with nothing in it',
+          hidden: true,
+          tag: 'no_graceful_exit',
+        },
+        {
+          id: 'h6',
+          files: [{ name: 'depths_only', content: 'time,site,depth_m\n06:00,Maylands,0.5\n' }],
+          call: "site_ranking('depths_only')",
+          expect: '[]',
+          label: 'the header does not name a temperature column',
+          hidden: true,
+          tag: 'no_graceful_exit',
+        },
+        {
+          id: 'h7',
+          files: [{ name: 'fine_log', content: 'site,temp_c\nMaylands,18.1\nMaylands,18.2\nMaylands,18.4' }],
+          call: "site_ranking('fine_log')",
+          expect: "[('MAYLANDS', 18.23)]",
+          cmp: 'float',
+          label: 'a mean that needs rounding, and no newline at the end',
+          hidden: true,
+        },
+      ],
+      concepts: ['header-lookup', 'validation', 'grouping', 'mean', 'ranking', 'sort-tiebreak'],
+      detects: [
+        'header_order_assumed', 'case_sensitive_compare', 'invalid_row_not_skipped', 'sort_tiebreak',
+        'no_graceful_exit', 'round_mid_calc', 'return_type_wrong', 'csv_ext_assumed',
+      ],
+      expectedSec: 900,
+      hints: [
+        'Three jobs hide inside this one: decide which rows are usable, add each site up as you go, and only then put the sites in order. Which of the three needs a dictionary?',
+        'Plan: (1) read the header, strip it, lower-case it and split it, and return `[]` unless both column names are in it; (2) find the two positions with `index`; ' +
+          '(3) for each later line, strip and split, skip it unless the field count matches, the cleaned site name is not empty and the temperature is neither empty nor `N/A`; ' +
+          "(4) keep two dictionaries, one of totals and one of counts, keyed by the upper-case site name; (5) work out each site's rounded mean; (6) order the sites and build the list of tuples.",
+        'Work out `means[site] = round(totals[site] / counts[site], 2)` first. A short way to get the order right is then to sort pairs that hold the **negative** mean first: ' +
+          '`pairs.append((-means[site], site))`, then `pairs.sort()`. ' +
+          'Sorting puts the largest mean first (because its negative is the smallest) and settles a tie by the site name, A to Z. Turn each pair back into `(site, -value)`.',
+      ],
+      solution: {
+        code: `def site_ranking(filename):
+    totals = {}
+    counts = {}
+    with open(filename) as f:
+        header = f.readline().strip().lower().split(',')
+        if 'site' not in header or 'temp_c' not in header:
+            return []
+        site_col = header.index('site')
+        temp_col = header.index('temp_c')
+        for line in f:
+            fields = line.strip().split(',')
+            if len(fields) != len(header):
+                continue
+            site = fields[site_col].strip().upper()
+            value = fields[temp_col].strip()
+            if site == '' or value == '' or value.upper() == 'N/A':
+                continue
+            totals[site] = totals.get(site, 0) + float(value)
+            counts[site] = counts.get(site, 0) + 1
+    means = {}
+    for site in totals:
+        means[site] = round(totals[site] / counts[site], 2)
+    pairs = []
+    for site in means:
+        pairs.append((-means[site], site))
+    pairs.sort()
+    ranking = []
+    for value, site in pairs:
+        ranking.append((site, -value))
+    return ranking`,
+        explanation:
+          'A marker would look for these steps (20 marks):\n\n' +
+          "1. Open `filename` with `with open(filename)` (nothing added to the name) and read the header once, stripped, lower-cased and split on commas (2 marks).\n" +
+          "2. Guard the header: `if 'site' not in header or 'temp_c' not in header: return []`. This is what makes the file with nothing in it safe, because `readline` gives `''` there and " +
+          "the header list is `['']`. Without the guard, `index` raises ValueError and the function crashes instead of returning an empty list (3 marks).\n" +
+          '3. Find both positions with `index`, once, before the loop, so any column order, any capitals and extra columns such as `depth_m` all work (3 marks).\n' +
+          "4. Check every row before using it: `len(fields) != len(header)` drops blank lines (which split into `['']`) and short rows before any `fields[...]` could raise IndexError, " +
+          "and an empty site name or a temperature of `''` or `N/A` is skipped so `float` never crashes (4 marks).\n" +
+          '5. Clean each site name once, on the way in, with `strip().upper()`, so `nedlands`, `NEDLANDS` and ` Nedlands ` all land on the same dictionary key and the key is already ' +
+          'in the upper case the task asks for (3 marks).\n' +
+          '6. Keep a total and a count per site with `dict.get(key, 0)` while reading, then work out each mean afterwards and round it to 2 decimal places there, not on the way in (3 marks).\n' +
+          '7. Order the result. Each pair holds the **negative** mean first, so `pairs.sort()` puts the largest mean first and, when two means are equal, falls back to comparing the ' +
+          'site names A to Z. Each pair is turned back into `(site, -value)`, giving a list of tuples (2 marks).\n\n' +
+          'Sorting is not the only way. You could loop over `sorted(totals)` and insert each site into the result in front of the first site with a smaller mean; going through the ' +
+          'names alphabetically is what keeps a tie in the right order. A bare `ranking.sort()` on `(site, mean)` pairs would sort by name instead, which is not what was asked.',
+      },
+      selfExplain: 'Why is the header checked for both column names before index is called on it?',
     },
   ],
 };

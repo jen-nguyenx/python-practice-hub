@@ -5,7 +5,8 @@ const s3: Scenario = {
   title: 'Perth Scorchers rankings',
   story:
     "The Perth Scorchers' analyst keeps each batter's season runs and every match result in Python. " +
-    'The coaches want ranked lists, and when two entries are level the order must be the same every time: A to Z by name.',
+    'The coaches want ranked lists, and when two entries are level the order must be the same every time: A to Z by name. ' +
+    'The catering office at Optus Stadium has heard about the ranking code and wants its food vans ordered the same way.',
   questions: [
     {
       id: 't08-s3-q1',
@@ -213,6 +214,112 @@ const s3: Scenario = {
           'With no results the loop never runs, `wins` stays empty and the function returns `[]`.',
       },
       selfExplain: 'Which tests fail if the loser line is wins[loser] = 0 without the if, and why?',
+    },
+    {
+      id: 't08-s3-q4',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 10,
+      examSlot: 'dict-sort',
+      diff: 'hard',
+      core: false,
+      title: 'Food vans ranked by average takings',
+      prompt:
+        'Exam practice: write your answer as you would on paper, without running it. This question is worth 10 marks.\n\n' +
+        'The catering office at Optus Stadium records what each food van takes on each match night. ' +
+        '`takings` is a dictionary mapping a van name (a string) to a **list of ints**, the dollars that van took on each night. Every van has at least one night recorded.\n\n' +
+        'Write `rank_vans(takings)` that returns a **list of tuples** `(van, average)`, one tuple per van. ' +
+        '`average` is that van\'s mean takings **rounded to 2 decimal places** using `round`, so it is a float such as `330.0` or `200.33`. ' +
+        'Sort the list by average from highest to lowest; vans on the same average go in A to Z order by name. ' +
+        'An empty dictionary gives `[]`. Do not change `takings`.\n\n' +
+        "Example: `rank_vans({'Dosa Cart': [300, 360], 'Swan Pies': [500, 400, 450]})` returns `[('Swan Pies', 450.0), ('Dosa Cart', 330.0)]`.",
+      fnName: 'rank_vans',
+      starter: `def rank_vans(takings):
+    pass`,
+      tests: [
+        {
+          id: 'v1',
+          call: "rank_vans({'Dosa Cart': [300, 360], 'Swan Pies': [500, 400, 450]})",
+          expect: "[('Swan Pies', 450.0), ('Dosa Cart', 330.0)]",
+          cmp: 'float',
+          label: 'two vans',
+          hidden: false,
+        },
+        {
+          id: 'v2',
+          call: "rank_vans({'Noodle Bar': [220, 221], 'Taco Cart': [400], 'Burger Shed': [100, 200, 301]})",
+          expect: "[('Taco Cart', 400.0), ('Noodle Bar', 220.5), ('Burger Shed', 200.33)]",
+          cmp: 'float',
+          label: 'three vans, one average rounded',
+          hidden: false,
+        },
+        { id: 'h1', call: 'rank_vans({})', expect: '[]', label: 'no vans', hidden: true },
+        {
+          id: 'h2',
+          call: "rank_vans({'Zesty Wraps': [200, 400], 'Ace Donuts': [300], 'Mega Chips': [150]})",
+          expect: "[('Ace Donuts', 300.0), ('Zesty Wraps', 300.0), ('Mega Chips', 150.0)]",
+          cmp: 'float',
+          label: 'two vans on the same average',
+          hidden: true,
+          tag: 'sort_tiebreak',
+        },
+        {
+          id: 'h3',
+          call: "rank_vans({'Pier Fish': [125]})",
+          expect: "[('Pier Fish', 125.0)]",
+          cmp: 'float',
+          label: 'one van, one night',
+          hidden: true,
+          tag: 'return_type_wrong',
+        },
+        {
+          id: 'h4',
+          call: "rank_vans({'Gelato Cart': [100, 100, 101], 'Sushi Stop': [7, 8]})",
+          expect: "[('Gelato Cart', 100.33), ('Sushi Stop', 7.5)]",
+          cmp: 'float',
+          label: 'averages that are not whole dollars',
+          hidden: true,
+          tag: 'int_vs_float_division',
+        },
+        {
+          id: 'h5',
+          setup: "takings = {'Dumpling Hut': [90, 110]}",
+          call: 'rank_vans(takings)',
+          expect: "[('Dumpling Hut', 100.0)]",
+          cmp: 'float',
+          argsUnchanged: ['takings'],
+          label: 'the takings dictionary is not changed',
+          hidden: true,
+          tag: 'mutated_input',
+        },
+      ],
+      concepts: ['dict-items', 'average', 'rounding', 'sort-key', 'tie-break'],
+      detects: ['sort_tiebreak', 'int_vs_float_division', 'return_type_wrong', 'mutated_input'],
+      expectedSec: 600,
+      hints: [
+        'Two jobs, one after the other: turn each van into a single (name, average) tuple, then put those tuples in order. Nothing can be sorted until every average exists.',
+        'Plan: start with an empty list. For each van and its list of nights, work out the mean with `sum` and `len`, round it to 2 decimal places, and append the pair to the list. After the loop, sort the list so the largest average is first and equal averages fall A to Z by name, then return the list.',
+        '`round(sum(nights) / len(nights), 2)` gives one average. Two sort orders at once come from a key that returns a tuple: `ranked.sort(key=lambda pair: (-pair[1], pair[0]))`.',
+      ],
+      solution: {
+        code: `def rank_vans(takings):
+    ranked = []
+    for van, nights in takings.items():
+        average = round(sum(nights) / len(nights), 2)
+        ranked.append((van, average))
+    ranked.sort(key=lambda pair: (-pair[1], pair[0]))
+    return ranked`,
+        explanation:
+          'A marker would look for these steps (10 marks):\n\n' +
+          '1. `ranked = []` before the loop and `for van, nights in takings.items():` to get each van with its list of nights (2 marks).\n' +
+          '2. `sum(nights) / len(nights)` for the mean. A single slash is needed: `//` would throw away the cents and turn 200.33 into 200 (2 marks).\n' +
+          '3. `round(..., 2)` for the 2 decimal places the question asks for, and `ranked.append((van, average))` to store a **tuple**, not two separate values (3 marks).\n' +
+          '4. One sort with a key that returns a tuple: `(-pair[1], pair[0])`. The minus sign puts the big averages first, while `pair[0]` leaves names A to Z when two averages are equal. Writing `reverse=True` instead would also reverse the names and put Zesty Wraps before Ace Donuts (2 marks).\n' +
+          '5. `return ranked` after the loop and the sort (1 mark). `ranked.sort()` sorts in place and returns None, so `return ranked.sort()` would hand back None.\n\n' +
+          'With an empty dictionary the loop never runs, the sort does nothing and the empty list is returned. The function only reads `takings`, so the caller\'s dictionary is unchanged.',
+      },
+      selfExplain: 'Why is the key (-pair[1], pair[0]) rather than (pair[1], pair[0]) with reverse=True?',
     },
   ],
 };

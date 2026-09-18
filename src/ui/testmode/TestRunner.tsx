@@ -6,7 +6,8 @@ import type { ComponentChildren } from 'preact';
 import { useEffect, useLayoutEffect, useReducer, useRef, useState } from 'preact/hooks';
 import { CODE_FORMATS, FORMAT_LABEL, FORMAT_LADDER } from '../../content/ids.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
-import type { GradeResult } from '../../engine/types.ts';
+import type { GradeResult, TestKind } from '../../engine/types.ts';
+import { questionMode } from './summary.ts';
 import { py, store } from '../../app/services.ts';
 import { FORMAT_COMPONENTS } from '../formats/registry.ts';
 import { Button } from '../components/Button.tsx';
@@ -30,14 +31,16 @@ export interface TestRunnerProps {
   title: string;
   questions: TestItem[];
   durationMin: number;
-  mode: 'topic-test' | 'midsem';
+  mode: TestKind;
+  /** Mock exam only: marks per question id, so the paper is scored out of 100 rather than out of 8. */
+  marks?: Readonly<Record<string, number>>;
   onFinish: (summary: TestSummary) => void;
   /** One quiet line under the score on the results view (for example the unlock message or a best score). */
   resultExtra?: (summary: TestSummary) => ComponentChildren;
   /** The results view's actions (one primary). */
   resultActions?: (summary: TestSummary) => ComponentChildren;
   /**
-   * Save progress under this key (topic id, or "midsem") after every answer, flag, move and draft change,
+   * Save progress under this key (topic id, or the test kind) after every answer, flag, move and draft change,
    * so the test can be resumed after a reload or a discarded tab. Cleared when the test finishes.
    */
   persistKey?: string;
@@ -45,10 +48,12 @@ export interface TestRunnerProps {
   resume?: TestProgress;
 }
 
+const KIND_LABEL: Record<TestKind, string> = { 'topic-test': 'Topic test', 'practice-test': 'Practice test', 'mock-exam': 'Mock final exam' };
+
 const WARN_MS = 5 * 60 * 1000;
 const LEAVE_MESSAGE = 'Leave the test? The timer keeps running. Your saved answers are kept, and you can carry on from the test page until time is up.';
 
-export function TestRunner({ title, questions, durationMin, mode, onFinish, resultExtra, resultActions, persistKey, resume }: TestRunnerProps) {
+export function TestRunner({ title, questions, durationMin, mode, marks, onFinish, resultExtra, resultActions, persistKey, resume }: TestRunnerProps) {
   const limitMs = Math.max(1, durationMin) * 60 * 1000;
   const [, rerender] = useReducer((x: number) => x + 1, 0);
   const [phase, setPhase] = useState<'running' | 'results'>('running');
@@ -141,7 +146,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
     const finishedAt = Date.now();
     const s = summarizeTest({
       kind: mode, title, items: questions, answers: answers.current, flagged: flagged.current, timeSpent: timeSpent.current,
-      durationMs: Math.min(limitMs, finishedAt - startedAt.current), limitMs, timedOut, finishedAt,
+      durationMs: Math.min(limitMs, finishedAt - startedAt.current), limitMs, timedOut, finishedAt, marks,
     });
     const events = buildTestEvents(s, questions, answers.current);
     store.ready
@@ -271,7 +276,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
     <div class="tr" data-kind={mode}>
       <header class="tr-bar">
         <div class="tr-bar-title">
-          <span class="tr-bar-kind">{mode === 'midsem' ? 'Practice test' : 'Topic test'}</span>
+          <span class="tr-bar-kind">{KIND_LABEL[mode]}</span>
           <span class="tr-bar-sep" aria-hidden="true" />
           <h1>{title}</h1>
         </div>
@@ -311,7 +316,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
           <section class="tr-card" aria-labelledby="tr-q-heading" data-qid={item.q.id}>
             <div class="tr-meta">
               <span class="tx-eyebrow">
-                Question {current + 1}{mode === 'midsem' && topic ? ` · ${topic.short}` : ''}
+                Question {current + 1}{mode !== 'topic-test' && topic ? ` · ${topic.short}` : ''}
               </span>
               <span class={`tr-fmt${isRead ? '' : ' build'}`}>{FORMAT_LABEL[item.q.format]}</span>
               <span class="tx-pips" title={`Difficulty: ${item.q.diff}`}>
@@ -333,7 +338,7 @@ export function TestRunner({ title, questions, durationMin, mode, onFinish, resu
                 q={item.q}
                 topicId={item.topicId}
                 generated={item.generated}
-                mode={mode}
+                mode={questionMode(mode)}
                 checksLeft={1}
                 revealed={false}
                 locked={answered}

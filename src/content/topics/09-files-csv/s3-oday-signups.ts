@@ -263,7 +263,8 @@ const s3: Scenario = {
       format: 'write',
       kind: 'function',
       mode: 'paper',
-      marks: 15,
+      marks: 20,
+      examSlot: 'file-report',
       diff: 'hard',
       core: true,
       title: 'Mailing list for volunteers',
@@ -274,7 +275,9 @@ const s3: Scenario = {
         '- the header line `name,email`, then\n' +
         '- one line per volunteer, in the same order as `infile`, of the form `First Last,NNNNNNNN@student.uwa.edu.au`, where each name and the student number have any spaces around them removed.\n\n' +
         'Skip blank lines, and skip volunteers whose student number is empty once its spaces are removed. Every line written ends with a newline. ' +
-        'Return the number of volunteers written (an int). You do not need to handle a missing file.\n\n' +
+        'Return the number of volunteers written (an int); return `0` and write a file holding only the header line when no volunteer can be used.\n\n' +
+        'Open both names exactly as they are given; do not add `.csv`. No imports, and no recursion. ' +
+        'You may assume `infile` opens, so you do not need `try` / `except` here (catching errors from `open` is the next topic).\n\n' +
         'Example: if `infile` contains\n\n' +
         '```\nLast name,First name,Student number\nNgata,Aroha,23456789\nTran,Minh,\n```\n\n' +
         'then `outfile` must contain\n\n' +
@@ -374,13 +377,13 @@ const s3: Scenario = {
             out.write(name + ',' + email + '\\n')
     return len(rows)`,
         explanation:
-          'A marker would look for these steps (15 marks):\n\n' +
-          "1. Open `infile` with `with open(infile)` (no `.csv` added), read the header once, and strip, lower-case and split it (2 marks).\n" +
-          "2. Find the three columns by name with `header.index('first name')` and so on, so any column order, capitals or extra columns work (3 marks). A space inside `'first name'` is fine: `split(',')` only splits at commas.\n" +
-          "3. For each remaining line, strip and split, and skip blank lines (`['']` has the wrong length) and rows whose stripped student number is `''`. Keep the valid rows in a list (3 marks).\n" +
+          'A marker would look for these steps (20 marks):\n\n' +
+          "1. Open `infile` with `with open(infile)` (no `.csv` added), read the header once, and strip, lower-case and split it (3 marks).\n" +
+          "2. Find the three columns by name with `header.index('first name')` and so on, so any column order, capitals or extra columns work (4 marks). A space inside `'first name'` is fine: `split(',')` only splits at commas.\n" +
+          "3. For each remaining line, strip and split, and skip blank lines (`['']` has the wrong length) and rows whose stripped student number is `''`. Keep the valid rows in a list (4 marks).\n" +
           "4. Open `outfile` with `'w'` and write the header `name,email\\n` (2 marks).\n" +
-          "5. For each kept row, build `First Last` and the email from the stripped values and write them joined by a comma, ending with `'\\n'` because `write` adds no newline (3 marks).\n" +
-          '6. Return the number of volunteers written, `len(rows)`, as an int, not a printed message (2 marks).\n\n' +
+          "5. For each kept row, build `First Last` and the email from the stripped values and write them joined by a comma, ending with `'\\n'` because `write` adds no newline (4 marks).\n" +
+          '6. Return the number of volunteers written, `len(rows)`, as an int, not a printed message (3 marks).\n\n' +
           'Reading everything first and writing afterwards keeps the two files apart. Writing inside the reading loop, with both files open, is also correct.',
       },
       selfExplain: "Why does the check for an empty student number have to use the stripped value?",

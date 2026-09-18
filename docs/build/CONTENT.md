@@ -1,6 +1,6 @@
 # Writing PyLadder content
 
-You are writing practice material for first-year UWA students in CITS1401 (Computational Thinking with Python) who are revising for the **mid-semester test** and later the closed-book final exam. Read `src/content/schema.ts` (the type contract) and `src/content/ids.ts` (allowed ids) first. Unit research: `docs/plan/research/cits1401-curriculum.json`, `docs/plan/research/curriculum-design.json` (your topic's objectives, sample questions, mistakes), `docs/plan/research/pedagogy.json`.
+You are writing practice material for first-year UWA students in CITS1401 (Computational Thinking with Python) who are studying Python generally and preparing for the **closed-book final exam**. Read `src/content/schema.ts` (the type contract) and `src/content/ids.ts` (allowed ids) first. Unit research: `docs/plan/research/cits1401-curriculum.json`, `docs/plan/research/curriculum-design.json` (your topic's objectives, sample questions, mistakes), `docs/plan/research/pedagogy.json`.
 
 ## Files
 Your folder: `src/content/topics/NN-<topic-id>/`.
@@ -41,6 +41,20 @@ A topic may hold more than the table says (extra practice is welcome); the verif
 - **Prompts state the exact return type and format**: "return a tuple (lowest, highest)", "round to 2 decimal places", "return None for an empty list", "print each on its own line".
 - **Tests**: every code question has at least 2 visible and 2 hidden tests. Hidden tests cover edge cases (empty input, zero, negative, boundary, duplicate, single element, uppercase) and carry a `tag` when they expose a specific mistake. Use `cmp: 'float'` whenever the expected value contains a float. Use `argsUnchanged` with `setup` when the function must not mutate its input.
 - **Paper items** (`write` with `mode: 'paper'`, `marks` 5-20) mimic the closed-book final: a function spec, no Run button. Keep them solvable by hand in 5-15 minutes.
+- **Exam slots.** A paper item may also claim one of the eight slots of a real CITS1401 paper by setting `examSlot` (see `EXAM_SLOT_IDS` in `src/content/ids.ts`). The mock exam draws one question per slot, so `marks` MUST equal that slot's marks (the verifier errors otherwise) and the eight slots add to 100:
+
+| slot | marks | what it is | past-paper examples |
+|---|---|---|---|
+| `short-string` | 5 | a small string function | insert spaces into a run-together name; case-insensitive palindrome |
+| `short-list` | 5 | a small list or number function | filter and sort two lists; a short numeric scan |
+| `dict-sort` | 10 | a dict turned into a sorted list of tuples, or banded into a dict | `sortdict`, `sortStaff`, `marksdistribution` |
+| `recursion-simple` | 10 | recursion on a number or string, looping not allowed | `sumdigits`, recursive `pow`, recursive reverse |
+| `series-tolerance` | 15 | a series summed with a while loop until `abs(term) < tol`, rounded only at the end | `seriesexp`, `log_cosh` |
+| `recursion-nested` | 20 | recursion over arbitrarily nested lists | `multiply_lists`, `extract_strings` |
+| `combinations` | 15 | all combinations via nested loops | `team_maker`, `team` |
+| `file-report` | 20 | read a file whose header order is unknown, compute, fail gracefully | `user_account`, `donors` |
+
+  Aim for at least three questions per slot so a student can sit several different papers. A slot with no question means no mock exam can be built at all.
 - **Project items** (`kind: 'project'`, topics 09, 11, 12): `fnName: 'main'`, tests call `main('data_a', ...)` with `files` (no `.csv` extension, shuffled header order, an extra column, a blank or invalid row, mixed case), `rules: ['noImport','noInput','noPrint','roundAtEnd','noCsvExt']`, results rounded to 4 dp only at output.
 - **Difficulty** follows the rubric in `docs/plan/research/curriculum-design.json` (`difficultyRubric`): easy = one idea as taught, ≤ 2 min; medium = two ideas or a twist, 2-6 min; hard = planning or hidden edge cases, 6-15 min. `expectedSec` must agree.
 - **Concept order**: use only constructs taught up to your topic. Before topic 04 (functions), code questions may use exactly one `def` line that is given in the starter/template/buggy code/Parsons lines (students fill in the body). No comprehensions required anywhere. No `import` anywhere except where a question is explicitly about the no-import rule. Recursion only in topic 13 (and not required elsewhere). `while` from topic 07, dicts from 08, files from 09, try/except from 10.

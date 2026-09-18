@@ -1178,9 +1178,11 @@
       "shadow_builtin"
     ],
     "diff": "hard",
-    "expectedSec": 600,
+    "examSlot": "short-list",
+    "expectedSec": 420,
     "format": "write",
     "kind": "function",
+    "marks": 5,
     "paper": true,
     "qid": "t03-s4-q3",
     "scenarioId": "t03-s4",
@@ -2067,9 +2069,11 @@
       "accumulator_init"
     ],
     "diff": "hard",
-    "expectedSec": 660,
+    "examSlot": "short-string",
+    "expectedSec": 420,
     "format": "write",
     "kind": "function",
+    "marks": 5,
     "paper": true,
     "qid": "t05-s4-q4",
     "rules": [
@@ -2078,6 +2082,37 @@
     "scenarioId": "t05-s4",
     "scenarioTitle": "Kings Park treasure hunt",
     "title": "Anagram lock (exam style)",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "string-building",
+      "loop-over-string",
+      "case",
+      "methods"
+    ],
+    "core": false,
+    "detects": [
+      "off_by_one_range",
+      "case_sensitive_compare",
+      "accumulator_init",
+      "string_immutability",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "examSlot": "short-string",
+    "expectedSec": 360,
+    "format": "write",
+    "kind": "function",
+    "marks": 5,
+    "paper": true,
+    "qid": "t05-s4-q5",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t05-s4",
+    "scenarioTitle": "Kings Park treasure hunt",
+    "title": "Space out a checkpoint name (exam style)",
     "topicId": "strings"
   },
   {
@@ -2225,6 +2260,37 @@
     "scenarioId": "t05-s6",
     "scenarioTitle": "The Reid Library catalogue",
     "title": "Break the field reader",
+    "topicId": "strings"
+  },
+  {
+    "concepts": [
+      "string-building",
+      "loop-over-string",
+      "case",
+      "word-boundary"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "case_sensitive_compare",
+      "index_out_of_range",
+      "off_by_one_range",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "examSlot": "short-string",
+    "expectedSec": 360,
+    "format": "write",
+    "kind": "function",
+    "marks": 5,
+    "paper": true,
+    "qid": "t05-s6-q4",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t05-s6",
+    "scenarioTitle": "The Reid Library catalogue",
+    "title": "Initials for a spine label (exam style)",
     "topicId": "strings"
   },
   {
@@ -2546,9 +2612,11 @@
       "accumulator_init"
     ],
     "diff": "hard",
-    "expectedSec": 720,
+    "examSlot": "short-list",
+    "expectedSec": 420,
     "format": "write",
     "kind": "function",
+    "marks": 5,
     "paper": true,
     "qid": "t06-s4-q3",
     "rules": [
@@ -2715,6 +2783,37 @@
   },
   {
     "concepts": [
+      "average",
+      "sorted",
+      "tuple-return",
+      "list-build"
+    ],
+    "core": false,
+    "detects": [
+      "zero_division",
+      "int_vs_float_division",
+      "mutated_input",
+      "none_from_inplace",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "examSlot": "short-list",
+    "expectedSec": 420,
+    "format": "write",
+    "kind": "function",
+    "marks": 5,
+    "paper": true,
+    "qid": "t06-s6-q4",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t06-s6",
+    "scenarioTitle": "Rottnest Island ferry office",
+    "title": "Busy and quiet spotting points (exam style)",
+    "topicId": "lists-tuples"
+  },
+  {
+    "concepts": [
       "while",
       "digits",
       "binary",
@@ -2866,9 +2965,11 @@
       "int_vs_float_division"
     ],
     "diff": "hard",
+    "examSlot": "series-tolerance",
     "expectedSec": 660,
     "format": "write",
     "kind": "function",
+    "marks": 15,
     "paper": true,
     "qid": "t07-s2-q3",
     "rules": [
@@ -2900,6 +3001,39 @@
     "scenarioId": "t07-s2",
     "scenarioTitle": "Perth Observatory maths night",
     "title": "The demo that loses its first term",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "series",
+      "tolerance",
+      "alternating-signs",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "round_mid_calc",
+      "float_equality",
+      "infinite_while",
+      "import_used",
+      "accumulator_init"
+    ],
+    "diff": "hard",
+    "examSlot": "series-tolerance",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "marks": 15,
+    "paper": true,
+    "qid": "t07-s2-q5",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t07-s2",
+    "scenarioTitle": "Perth Observatory maths night",
+    "title": "Cosine from its series (exam style)",
     "topicId": "while-nested-loops"
   },
   {
@@ -2983,9 +3117,11 @@
       "print_vs_return"
     ],
     "diff": "hard",
+    "examSlot": "combinations",
     "expectedSec": 600,
     "format": "write",
     "kind": "function",
+    "marks": 15,
     "paper": true,
     "qid": "t07-s3-q4",
     "scenarioId": "t07-s3",
@@ -3085,6 +3221,7 @@
     "expectedSec": 600,
     "format": "write",
     "kind": "function",
+    "marks": 12,
     "paper": true,
     "qid": "t07-s4-q4",
     "rules": [
@@ -3093,6 +3230,39 @@
     "scenarioId": "t07-s4",
     "scenarioTitle": "Kalamunda rain gauge logger",
     "title": "Longest dry spell (exam style)",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "while",
+      "series",
+      "tolerance",
+      "alternating-signs",
+      "round"
+    ],
+    "core": true,
+    "detects": [
+      "off_by_one_range",
+      "round_mid_calc",
+      "float_equality",
+      "infinite_while",
+      "import_used",
+      "accumulator_init"
+    ],
+    "diff": "hard",
+    "examSlot": "series-tolerance",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "marks": 15,
+    "paper": true,
+    "qid": "t07-s4-q5",
+    "rules": [
+      "noImport"
+    ],
+    "scenarioId": "t07-s4",
+    "scenarioTitle": "Kalamunda rain gauge logger",
+    "title": "Calibration logarithm (exam style)",
     "topicId": "while-nested-loops"
   },
   {
@@ -3166,6 +3336,35 @@
   {
     "concepts": [
       "nested-loop",
+      "combinations",
+      "string-building",
+      "list",
+      "accumulator"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "early_return_in_loop",
+      "return_type_wrong",
+      "print_vs_return",
+      "off_by_one_range"
+    ],
+    "diff": "hard",
+    "examSlot": "combinations",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "marks": 15,
+    "paper": true,
+    "qid": "t07-s5-q4",
+    "scenarioId": "t07-s5",
+    "scenarioTitle": "Rottnest ferry boarding",
+    "title": "Crews for a sailing (exam style)",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "nested-loop",
       "break",
       "counting",
       "for-each"
@@ -3226,6 +3425,35 @@
     "scenarioId": "t07-s6",
     "scenarioTitle": "His Majesty's Theatre seat map",
     "title": "The first two seats together",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "concepts": [
+      "nested-loop",
+      "combinations",
+      "tuple",
+      "list",
+      "membership"
+    ],
+    "core": true,
+    "detects": [
+      "accumulator_init",
+      "early_return_in_loop",
+      "return_type_wrong",
+      "print_vs_return",
+      "type_error_other"
+    ],
+    "diff": "hard",
+    "examSlot": "combinations",
+    "expectedSec": 660,
+    "format": "write",
+    "kind": "function",
+    "marks": 15,
+    "paper": true,
+    "qid": "t07-s6-q4",
+    "scenarioId": "t07-s6",
+    "scenarioTitle": "His Majesty's Theatre seat map",
+    "title": "Ticket lines on sale (exam style)",
     "topicId": "while-nested-loops"
   },
   {
@@ -3380,6 +3608,34 @@
   },
   {
     "concepts": [
+      "banding",
+      "dict-items",
+      "max-per-key",
+      "tie-break",
+      "elif"
+    ],
+    "core": false,
+    "detects": [
+      "elif_vs_if",
+      "sort_tiebreak",
+      "dict_keyerror",
+      "mutated_input"
+    ],
+    "diff": "hard",
+    "examSlot": "dict-sort",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "marks": 10,
+    "paper": true,
+    "qid": "t08-s2-q4",
+    "scenarioId": "t08-s2",
+    "scenarioTitle": "SmartRider tap-ons",
+    "title": "The fullest sailing in each band",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
       "dict-items",
       "sort-key",
       "tie-break"
@@ -3445,6 +3701,34 @@
   },
   {
     "concepts": [
+      "dict-items",
+      "average",
+      "rounding",
+      "sort-key",
+      "tie-break"
+    ],
+    "core": false,
+    "detects": [
+      "sort_tiebreak",
+      "int_vs_float_division",
+      "return_type_wrong",
+      "mutated_input"
+    ],
+    "diff": "hard",
+    "examSlot": "dict-sort",
+    "expectedSec": 600,
+    "format": "write",
+    "kind": "function",
+    "marks": 10,
+    "paper": true,
+    "qid": "t08-s3-q4",
+    "scenarioId": "t08-s3",
+    "scenarioTitle": "Perth Scorchers rankings",
+    "title": "Food vans ranked by average takings",
+    "topicId": "dictionaries"
+  },
+  {
+    "concepts": [
       "grouping",
       "dict-of-lists",
       "tuple-keys",
@@ -3504,9 +3788,11 @@
       "mutated_input"
     ],
     "diff": "hard",
+    "examSlot": "dict-sort",
     "expectedSec": 660,
     "format": "write",
     "kind": "function",
+    "marks": 10,
     "paper": true,
     "qid": "t08-s4-q3",
     "scenarioId": "t08-s4",
@@ -3782,6 +4068,44 @@
   },
   {
     "concepts": [
+      "header-lookup",
+      "validation",
+      "grouping",
+      "mean",
+      "ranking",
+      "sort-tiebreak"
+    ],
+    "core": true,
+    "detects": [
+      "header_order_assumed",
+      "case_sensitive_compare",
+      "invalid_row_not_skipped",
+      "sort_tiebreak",
+      "no_graceful_exit",
+      "round_mid_calc",
+      "return_type_wrong",
+      "csv_ext_assumed"
+    ],
+    "diff": "hard",
+    "examSlot": "file-report",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "function",
+    "marks": 20,
+    "paper": true,
+    "qid": "t09-s1-q5",
+    "rules": [
+      "noImport",
+      "noCsvExt",
+      "roundAtEnd"
+    ],
+    "scenarioId": "t09-s1",
+    "scenarioTitle": "Swan River sensor logs",
+    "title": "Warmest sites of the week",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
       "header",
       "index",
       "strip-split"
@@ -3878,6 +4202,44 @@
   },
   {
     "concepts": [
+      "header-lookup",
+      "validation",
+      "grouping",
+      "dict-of-lists",
+      "case-insensitive",
+      "round-at-output"
+    ],
+    "core": false,
+    "detects": [
+      "header_order_assumed",
+      "case_sensitive_compare",
+      "invalid_row_not_skipped",
+      "no_graceful_exit",
+      "dict_keyerror",
+      "round_mid_calc",
+      "return_type_wrong",
+      "csv_ext_assumed"
+    ],
+    "diff": "hard",
+    "examSlot": "file-report",
+    "expectedSec": 900,
+    "format": "write",
+    "kind": "function",
+    "marks": 20,
+    "paper": true,
+    "qid": "t09-s2-q5",
+    "rules": [
+      "noImport",
+      "noCsvExt",
+      "roundAtEnd"
+    ],
+    "scenarioId": "t09-s2",
+    "scenarioTitle": "SmartRider fare exports",
+    "title": "One summary line per stop",
+    "topicId": "files-csv"
+  },
+  {
+    "concepts": [
       "file-name",
       "validation",
       "header",
@@ -3944,9 +4306,11 @@
       "csv_ext_assumed"
     ],
     "diff": "hard",
+    "examSlot": "file-report",
     "expectedSec": 780,
     "format": "write",
     "kind": "function",
+    "marks": 20,
     "paper": true,
     "qid": "t09-s3-q3",
     "rules": [
@@ -5634,9 +5998,11 @@
       "print_vs_return"
     ],
     "diff": "hard",
+    "examSlot": "recursion-simple",
     "expectedSec": 480,
     "format": "write",
     "kind": "function",
+    "marks": 10,
     "paper": true,
     "qid": "t13-s2-q3",
     "rules": [
@@ -5803,9 +6169,11 @@
       "index_out_of_range"
     ],
     "diff": "hard",
+    "examSlot": "recursion-nested",
     "expectedSec": 780,
     "format": "write",
     "kind": "function",
+    "marks": 20,
     "paper": true,
     "qid": "t13-s4-q3",
     "rules": [
@@ -5880,6 +6248,8 @@
   {
     "concepts": [
       "base-case",
+      "nested-list",
+      "isinstance",
       "tuple-return",
       "no-loops"
     ],
@@ -5889,12 +6259,15 @@
       "recursion_result_ignored",
       "loop_in_recursion",
       "return_type_wrong",
-      "index_out_of_range"
+      "index_out_of_range",
+      "mutated_input"
     ],
     "diff": "hard",
-    "expectedSec": 660,
+    "examSlot": "recursion-nested",
+    "expectedSec": 780,
     "format": "write",
     "kind": "function",
+    "marks": 20,
     "paper": true,
     "qid": "t13-s5-q4",
     "rules": [
@@ -5931,6 +6304,100 @@
     "scenarioId": "t13-s5",
     "scenarioTitle": "Royal Show showbags",
     "title": "Swapping a line of stock",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "base-case",
+      "recursive-case",
+      "counting",
+      "no-loops"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "loop_in_recursion",
+      "off_by_one_range",
+      "print_vs_return"
+    ],
+    "diff": "hard",
+    "examSlot": "recursion-simple",
+    "expectedSec": 480,
+    "format": "write",
+    "kind": "function",
+    "marks": 10,
+    "paper": true,
+    "qid": "t13-s6-q1",
+    "rules": [
+      "noLoops"
+    ],
+    "scenarioId": "t13-s6",
+    "scenarioTitle": "Closed-book practice",
+    "title": "Ways up Jacob's Ladder (exam style)",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "string-recursion",
+      "base-case",
+      "slicing",
+      "no-loops"
+    ],
+    "core": true,
+    "detects": [
+      "missing_base_case",
+      "index_out_of_range",
+      "recursion_result_ignored",
+      "loop_in_recursion",
+      "return_type_wrong"
+    ],
+    "diff": "hard",
+    "examSlot": "recursion-simple",
+    "expectedSec": 420,
+    "format": "write",
+    "kind": "function",
+    "marks": 10,
+    "paper": true,
+    "qid": "t13-s6-q2",
+    "rules": [
+      "noLoops"
+    ],
+    "scenarioId": "t13-s6",
+    "scenarioTitle": "Closed-book practice",
+    "title": "Squash the gate log (exam style)",
+    "topicId": "recursion"
+  },
+  {
+    "concepts": [
+      "nested-list",
+      "isinstance",
+      "tuple-return",
+      "no-loops"
+    ],
+    "core": false,
+    "detects": [
+      "missing_base_case",
+      "recursion_result_ignored",
+      "return_type_wrong",
+      "loop_in_recursion",
+      "mutated_input",
+      "index_out_of_range"
+    ],
+    "diff": "hard",
+    "examSlot": "recursion-nested",
+    "expectedSec": 780,
+    "format": "write",
+    "kind": "function",
+    "marks": 20,
+    "paper": true,
+    "qid": "t13-s6-q3",
+    "rules": [
+      "noLoops"
+    ],
+    "scenarioId": "t13-s6",
+    "scenarioTitle": "Closed-book practice",
+    "title": "Crate stocktake (exam style)",
     "topicId": "recursion"
   }
 ]

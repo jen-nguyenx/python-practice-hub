@@ -1,4 +1,4 @@
-/* Home (#/): eyebrow, today's numbers, hero row (Continue + Mid-sem test, equal height), 13 equal ladder tiles.
+/* Home (#/): eyebrow, today's numbers, hero row (Continue + mock final exam, equal height), 13 equal ladder tiles.
    docs/build/DESIGN.md "Home" and docs/build/reference/approved-mock-home.png, monochrome. Tokens only. */
 .page.home { max-width: 1080px; display: grid; gap: 40px; }
 

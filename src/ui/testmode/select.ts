@@ -1,7 +1,7 @@
-// Pure question selection for the topic test and the mid-semester practice test.
+// Pure question selection for the topic test, the custom practice test and the mock final exam.
 // No DOM, no store: unit-tested in select.test.ts.
-import type { Diff, Format, Ladder, TopicId } from '../../content/ids.ts';
-import { FORMAT_LADDER, OFFLINE_FORMATS } from '../../content/ids.ts';
+import type { Diff, ExamSlot, Format, Ladder, TopicId } from '../../content/ids.ts';
+import { EXAM_SLOT_IDS, EXAM_SLOT_MARKS, FORMAT_LADDER, OFFLINE_FORMATS } from '../../content/ids.ts';
 import { TOPICS } from '../../content/topics.ts';
 import type { GeneratedQuestion, Question } from '../../content/schema.ts';
 
@@ -14,6 +14,9 @@ export interface Candidate {
   /** write question in paper (exam) mode */
   paper: boolean;
   expectedSec: number;
+  /** paper questions only: which slot of a final paper this question can fill, and what it is worth */
+  examSlot?: ExamSlot;
+  marks?: number;
 }
 
 export type Rng = () => number;
@@ -63,7 +66,9 @@ export function isGradable(q: Question, generated: GeneratedQuestion | undefined
 }
 
 export function toCandidate(q: Question, topicId: TopicId): Candidate {
-  return { id: q.id, topicId, format: q.format, diff: q.diff, paper: isPaper(q), expectedSec: q.expectedSec };
+  const c: Candidate = { id: q.id, topicId, format: q.format, diff: q.diff, paper: isPaper(q), expectedSec: q.expectedSec };
+  if (q.format === 'write' && q.examSlot) { c.examSlot = q.examSlot; c.marks = q.marks; }
+  return c;
 }
 
 // ---------------------------------------------------------------- topic test
@@ -174,24 +179,24 @@ export function selectTopicTest<T extends Candidate>(
   return picks.filter((p): p is T => p !== undefined);
 }
 
-// ---------------------------------------------------------------- mid-semester practice test
+// ---------------------------------------------------------------- custom timed practice test
 
-export const MIDSEM_COUNTS = [10, 15, 20, 30] as const;
-export const MIDSEM_MINUTES = [20, 30, 45, 60, 90] as const;
-export const MIDSEM_PASS_PERCENT = 50;
+export const PRACTICE_COUNTS = [10, 15, 20, 30] as const;
+export const PRACTICE_MINUTES = [20, 30, 45, 60, 90] as const;
+export const TIMED_TEST_PASS_PERCENT = 50;
 /** Shipped defaults. 10 questions take about 40 minutes of the expected solving times, so 45 minutes is a fair run. */
-export const MIDSEM_DEFAULT_COUNT = 10;
-export const MIDSEM_DEFAULT_MINUTES = 45;
+export const PRACTICE_DEFAULT_COUNT = 10;
+export const PRACTICE_DEFAULT_MINUTES = 45;
 
-export interface MidsemOptions {
+export interface PracticeTestOptions {
   topicIds: readonly TopicId[];
   count: number;
   /** Off: read formats only (no Python needed). On: every format, including paper-mode write. */
   includeCoding: boolean;
 }
 
-/** Questions allowed in a mid-sem test with these options (before balancing). */
-export function midsemEligible<T extends Candidate>(pool: readonly T[], opts: Pick<MidsemOptions, 'topicIds' | 'includeCoding'>): T[] {
+/** Questions allowed in a practice test with these options (before balancing). */
+export function practiceEligible<T extends Candidate>(pool: readonly T[], opts: Pick<PracticeTestOptions, 'topicIds' | 'includeCoding'>): T[] {
   return pool.filter((c) => opts.topicIds.includes(c.topicId) && (opts.includeCoding || (OFFLINE_FORMATS.includes(c.format) && !c.paper)));
 }
 
@@ -222,7 +227,7 @@ export function waterFill(capacities: readonly number[], n: number): number[] {
 }
 
 /** Medium first; read questions treat easy and hard alike; repair and write prefer easy over hard (time). */
-function midsemDiffRank(c: Candidate): number {
+function practiceDiffRank(c: Candidate): number {
   if (c.diff === 'medium') return 0;
   if (FORMAT_LADDER[c.format] === 'read') return 1;
   return c.diff === 'easy' ? 1 : 2;
@@ -255,10 +260,10 @@ const TOPIC_ORDER: Record<string, number> = Object.fromEntries(TOPICS.map((t, i)
  * questions, weighted towards the preferred difficulty, and questions in `avoid` (the ones used in recent attempts)
  * are only used when a cell has nothing else left.
  */
-export function selectMidsem<T extends Candidate>(
-  pool: readonly T[], opts: MidsemOptions, rng: Rng = Math.random, avoid: ReadonlySet<string> = new Set(),
+export function selectPracticeTest<T extends Candidate>(
+  pool: readonly T[], opts: PracticeTestOptions, rng: Rng = Math.random, avoid: ReadonlySet<string> = new Set(),
 ): T[] {
-  const eligible = shuffle(midsemEligible(pool, opts), rng);
+  const eligible = shuffle(practiceEligible(pool, opts), rng);
   const n = Math.min(Math.max(0, Math.floor(opts.count)), eligible.length);
   if (n === 0) return [];
 
@@ -289,7 +294,7 @@ export function selectMidsem<T extends Candidate>(
         const rDef = rungTargets[ri] - rungCount[ri];
         const bothOpen = (tDef > 0 ? 1 : 0) + (rDef > 0 ? 1 : 0);
         const relative = (topicTargets[ti] ? tDef / topicTargets[ti] : -1) + (rungTargets[ri] ? rDef / rungTargets[ri] : -1);
-        const bestDiff = Math.min(...choices.map(midsemDiffRank));
+        const bestDiff = Math.min(...choices.map(practiceDiffRank));
         // Higher is better: both deficits open, larger relative deficit, a medium question available,
         // then the scarcer cell first (so it is not starved later).
         const key = [bothOpen, relative, -bestDiff, -choices.length];
@@ -298,7 +303,7 @@ export function selectMidsem<T extends Candidate>(
     }
     if (!best) break;
     const { ti, ri } = best;
-    const choice = weightedPick(best.choices, midsemDiffRank, rng);
+    const choice = weightedPick(best.choices, practiceDiffRank, rng);
     used.add(choice.id);
     picked.push(choice);
     topicCount[ti]++;
@@ -320,4 +325,49 @@ function compareKeys(a: number[], b: number[]): number {
 /** Sum of expected solving time, in minutes, rounded up. */
 export function estimatedMinutes(items: readonly Candidate[]): number {
   return Math.ceil(items.reduce((s, c) => s + c.expectedSec, 0) / 60);
+}
+
+
+// ---------------------------------------------------------------- mock final exam
+
+/**
+ * The shape of a CITS1401 closed-book final: eight questions, one per slot, 100 marks, two hours.
+ * A paper is only worth sitting if every slot can be filled, so `buildMockExam` returns null otherwise.
+ */
+export const MOCK_EXAM_MINUTES = 120;
+export const MOCK_EXAM_TOTAL_MARKS = EXAM_SLOT_IDS.reduce((sum, slot) => sum + EXAM_SLOT_MARKS[slot], 0);
+export const MOCK_EXAM_PASS_PERCENT = 50;
+
+/** Every question that could fill each slot, in slot order. */
+export function slotCandidates<T extends Candidate>(pool: readonly T[]): Map<ExamSlot, T[]> {
+  const out = new Map<ExamSlot, T[]>();
+  for (const slot of EXAM_SLOT_IDS) out.set(slot, pool.filter((c) => c.examSlot === slot));
+  return out;
+}
+
+/**
+ * One question per slot, in the paper's order. Questions in `avoid` (recent papers) are skipped while a
+ * slot still has an unseen alternative, so sitting the exam twice gives a genuinely different paper.
+ */
+export function buildMockExam<T extends Candidate>(pool: readonly T[], rng: Rng, avoid: ReadonlySet<string> = new Set()): T[] | null {
+  const bySlot = slotCandidates(pool);
+  const picks: T[] = [];
+  const used = new Set<string>();
+  for (const slot of EXAM_SLOT_IDS) {
+    const all = (bySlot.get(slot) ?? []).filter((c) => !used.has(c.id));
+    if (all.length === 0) return null;
+    const fresh = all.filter((c) => !avoid.has(c.id));
+    const from = fresh.length > 0 ? fresh : all;
+    const pick = shuffle(from, rng)[0];
+    picks.push(pick);
+    used.add(pick.id);
+  }
+  return picks;
+}
+
+/** Marks for each question of a built paper, keyed by question id. */
+export function marksByQid(items: readonly Candidate[]): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const c of items) if (c.examSlot) out[c.id] = EXAM_SLOT_MARKS[c.examSlot];
+  return out;
 }

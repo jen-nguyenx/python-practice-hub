@@ -7,7 +7,7 @@ import type { SavedAnswer, TestKind } from './summary.ts';
 export interface TestProgress {
   v: 1;
   kind: TestKind;
-  /** topic id for a topic test, "midsem" for the mid-sem test */
+  /** topic id for a topic test, or the test kind for a practice test or mock exam */
   key: string;
   title: string;
   qids: string[];

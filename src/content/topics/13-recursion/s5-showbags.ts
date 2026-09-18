@@ -219,31 +219,39 @@ print(worth([5, [3, [2]], 4]))`,
       format: 'write',
       kind: 'function',
       mode: 'paper',
-      marks: 12,
+      marks: 20,
+      examSlot: 'recursion-nested',
       diff: 'hard',
       core: true,
       title: 'Cheapest and dearest (exam style)',
       prompt:
-        '*Exam style, 12 marks. Write it by hand first, then submit once.*\n\n' +
-        'The stall wants the price range of a flat list of showbag prices.\n\n' +
-        'Write a function `price_range(prices)` that returns the **tuple** `(lowest, highest)` for a list of numbers, and `None` when the list is empty. A one-item list gives that item twice, for example `price_range([9])` returns `(9, 9)`.\n\n' +
+        '*Exam style, 20 marks. Write it by hand first, then submit once.*\n\n' +
+        'The stall\'s price list has the same shape as its bags: the prices of a bag are a list, and a smaller bag inside it is a list of its own, nested to any depth.\n\n' +
+        'Write a function `price_range(prices)` that returns the **tuple** `(lowest, highest)` for every price in `prices`, at any depth, and `None` when there are no prices at all.\n\n' +
+        '- `prices` is a list whose items are prices (ints or floats) or smaller lists of the same kind, nested to any depth. Any list may be empty.\n' +
+        '- `price_range([])` returns `None`, and so does a list that holds nothing but empty lists.\n' +
+        '- A single price is both the lowest and the highest, so `price_range([9])` returns `(9, 9)`.\n' +
+        '- Do not change `prices`.\n\n' +
         '**Recursion must be used. Looping is not allowed** (no `for`, `while` or comprehensions), and neither are `min`, `max` and `sorted`.\n\n' +
-        'Example: `price_range([12, 5, 30, 7])` returns `(5, 30)`.',
+        'Example: `price_range([12, [5, [30]], 7])` returns `(5, 30)`.',
       fnName: 'price_range',
       starter: `def price_range(prices):
     pass`,
       rules: ['noLoops'],
       tests: [
-        { id: 'v1', call: 'price_range([12, 5, 30, 7])', expect: '(5, 30)', label: 'four prices', hidden: false },
+        { id: 'v1', call: 'price_range([12, [5, [30]], 7])', expect: '(5, 30)', label: 'bags inside bags', hidden: false },
         { id: 'v2', call: 'price_range([])', expect: 'None', label: 'no prices', hidden: false, tag: 'missing_base_case' },
         { id: 'h1', call: 'price_range([9])', expect: '(9, 9)', label: 'one price', hidden: true, tag: 'index_out_of_range' },
-        { id: 'h2', call: 'price_range([4, 4, 4])', expect: '(4, 4)', label: 'every price the same', hidden: true },
-        { id: 'h3', call: 'price_range([-3, 0, 2])', expect: '(-3, 2)', label: 'a refund and a zero', hidden: true },
-        { id: 'h4', call: 'price_range([2.5, 1.25, 8.0])', expect: '(1.25, 8.0)', cmp: 'float', label: 'prices in dollars and cents', hidden: true },
-        { id: 'h5', call: 'price_range([3, 1, 4, 1, 5, 9])', expect: '(1, 9)', label: 'the smallest price appears twice', hidden: true },
+        { id: 'h2', call: 'price_range([[[[4, 18]]], 11])', expect: '(4, 18)', label: 'four bags deep', hidden: true, tag: 'recursion_result_ignored' },
+        { id: 'h3', call: 'price_range([[[[7]]]])', expect: '(7, 7)', label: 'one price, several bags down', hidden: true, tag: 'return_type_wrong' },
+        { id: 'h4', call: 'price_range([[], [6, []], []])', expect: '(6, 6)', label: 'empty bags around one price', hidden: true, tag: 'missing_base_case' },
+        { id: 'h5', call: 'price_range([[], [[]]])', expect: 'None', label: 'only empty bags', hidden: true, tag: 'missing_base_case' },
+        { id: 'h6', call: 'price_range([[-3, 0], 2])', expect: '(-3, 2)', label: 'a refund and a zero', hidden: true },
+        { id: 'h7', call: 'price_range([2.5, [1.25, 8.0]])', expect: '(1.25, 8.0)', cmp: 'float', label: 'prices in dollars and cents', hidden: true },
+        { id: 'h8', call: 'price_range([3, [1, 4], [1, [5, 9]]])', expect: '(1, 9)', label: 'the smallest price appears twice', hidden: true },
         {
-          id: 'h6',
-          setup: 'prices = [12, 5, 30, 7]',
+          id: 'h9',
+          setup: 'prices = [12, [5, [30]], 7]',
           call: 'price_range(prices)',
           expect: '(5, 30)',
           argsUnchanged: ['prices'],
@@ -252,39 +260,49 @@ print(worth([5, [3, [2]], 4]))`,
           tag: 'mutated_input',
         },
       ],
-      concepts: ['base-case', 'tuple-return', 'no-loops'],
-      detects: ['missing_base_case', 'recursion_result_ignored', 'loop_in_recursion', 'return_type_wrong', 'index_out_of_range'],
-      expectedSec: 660,
+      concepts: ['base-case', 'nested-list', 'isinstance', 'tuple-return', 'no-loops'],
+      detects: ['missing_base_case', 'recursion_result_ignored', 'loop_in_recursion', 'return_type_wrong', 'index_out_of_range', 'mutated_input'],
+      expectedSec: 780,
       hints: [
-        'There are two cases you can answer without any recursion at all. What are they, and what does each return?',
-        'Plan: an empty list gives `None`; a list of one price gives that price twice. Otherwise ask the same function for the range of everything after the first price, then compare the first price with the two values that come back and return the better pair.',
-        'The recursive step is `rest = price_range(prices[1:])`, which is a tuple. Take `rest[0]` and `rest[1]` apart, compare them with `prices[0]`, and return a new tuple.',
+        'Deal with `prices[0]` on its own and let a recursive call deal with `prices[1:]`. Either of those two answers can come back empty-handed, so decide first what "no prices here" looks like.',
+        'Plan: an empty list has no prices at all, so it gives `None`. Otherwise work out a pair for the first item — a price is its own lowest and highest, and a smaller bag gets a recursive call — and a pair for the rest of the list with a second recursive call on `prices[1:]`. ' +
+          'If one of the two is `None`, the answer is the other one. When both are real tuples, keep the smaller of the two lowest values and the larger of the two highest values.',
+        'Use `found = price_range(first)` when `isinstance(first, list)` and `found = (first, first)` when it is a price, then `rest = price_range(prices[1:])`. Check `if found is None: return rest` and `if rest is None: return found` before comparing `found[0]` with `rest[0]` and `found[1]` with `rest[1]`.',
       ],
       solution: {
         code: `def price_range(prices):
     if prices == []:
         return None
-    if len(prices) == 1:
-        return (prices[0], prices[0])
-    rest = price_range(prices[1:])
     first = prices[0]
-    low = rest[0]
-    high = rest[1]
-    if first < low:
-        low = first
-    if first > high:
-        high = first
+    if isinstance(first, list):
+        found = price_range(first)
+    else:
+        found = (first, first)
+    rest = price_range(prices[1:])
+    if found is None:
+        return rest
+    if rest is None:
+        return found
+    low = found[0]
+    if rest[0] < low:
+        low = rest[0]
+    high = found[1]
+    if rest[1] > high:
+        high = rest[1]
     return (low, high)`,
         explanation:
-          '- `if prices == []: return None` answers the empty list. It must come first, because every other line reads `prices[0]`.\n' +
-          '- `if len(prices) == 1: return (prices[0], prices[0])` is the case that stops the recursion for a real list. A single price is both the lowest and the highest, and returning a tuple here keeps the return type the same on every path.\n' +
-          '- `rest = price_range(prices[1:])` is the one recursive call. `prices[1:]` is a new, shorter list, so the original list is never changed and the calls always get closer to length 1.\n' +
-          '- `rest` is a tuple, so `rest[0]` is the lowest of everything after the first price and `rest[1]` is the highest. Storing the call in a variable is what stops the result being thrown away.\n' +
-          '- The two `if` statements compare the first price with those two values, and the new tuple is returned to the call that is waiting for it.\n' +
-          '- For `[12, 5, 30, 7]`: `[7]` gives `(7, 7)`, then 30 gives `(7, 30)`, then 5 gives `(5, 30)`, then 12 changes nothing, so `(5, 30)` comes out.\n\n' +
-          'Marking guide (12): empty list returns None (2), single-item base case returning a tuple (3), one recursive call on `prices[1:]` (2), result stored and compared rather than ignored (3), tuple returned on every path with no loops and no `min`/`max` (2).',
+          '- `if prices == []: return None` is the base case. It must come first, because every other line reads `prices[0]`, and it is reached twice over: once at the end of every list, and again for every empty bag inside one.\n' +
+          '- `first = prices[0]` is the only item this call decides about.\n' +
+          '- A smaller bag can hold prices at any depth, so it gets its own call: `found = price_range(first)`. That call returns a tuple, or `None` if the bag turned out to hold no prices. Storing it is what stops the result being thrown away.\n' +
+          '- A price is its own range, so `found = (first, first)`. Both branches leave `found` in the same shape, which is what makes the two results comparable further down.\n' +
+          '- `rest = price_range(prices[1:])` is the second recursive call, the one that walks along the list. `prices[1:]` is a new, shorter list, so the original is never changed and every chain of calls reaches `[]`.\n' +
+          '- `if found is None: return rest` and `if rest is None: return found` deal with the halves that hold nothing. Without them, `found[0]` on a `None` raises `TypeError` for a list such as `[[], 6]`. If both are `None`, the first line returns `rest`, which is `None`, and that is the right answer.\n' +
+          '- The two comparisons keep the lower of the two lowest prices and the higher of the two highest, and the new tuple is returned to the call waiting for it. No `min`, no `max`, no loop: the repetition is the two recursive calls.\n' +
+          '- For `[12, [5, [30]], 7]`: the inner `[30]` gives `(30, 30)`, so `[5, [30]]` gives `(5, 30)`; the rest of the outer list, `[7]`, gives `(7, 7)`; those combine to `(5, 30)`, and the 12 at the front changes neither end.\n\n' +
+          'Marking guide (20): empty list returns None (3), first item split into a price and a smaller list with `isinstance` (3), nested list handled by a recursive call whose result is kept (4), second recursive call on `prices[1:]` (3), ' +
+          'a `None` from either side handled before the comparisons (4), lowest and highest compared and returned as a tuple, with no loops and no `min`/`max` (3).',
       },
-      selfExplain: 'Why does the single-item case return a tuple rather than just the price?',
+      selfExplain: 'Why must the two None checks come before found[0] and rest[0] are read?',
     },
     {
       id: 't13-s5-q5',

@@ -96,3 +96,30 @@ export const FORMAT_LABEL: Record<Format, string> = {
 
 export type Diff = 'easy' | 'medium' | 'hard';
 export const DIFFS: readonly Diff[] = ['easy', 'medium', 'hard'];
+
+/**
+ * The eight question slots of a CITS1401 closed-book final paper, in the order and with the marks the
+ * 2021 and 2022 papers used (5 + 5 + 10 + 10 + 15 + 20 + 15 + 20 = 100 marks over two hours).
+ * A `write` question in `paper` mode may claim a slot; the mock exam draws one question per slot.
+ */
+export const EXAM_SLOT_IDS = [
+  'short-string', 'short-list', 'dict-sort', 'recursion-simple',
+  'series-tolerance', 'recursion-nested', 'combinations', 'file-report',
+] as const;
+export type ExamSlot = (typeof EXAM_SLOT_IDS)[number];
+
+export const EXAM_SLOT_MARKS: Record<ExamSlot, number> = {
+  'short-string': 5, 'short-list': 5, 'dict-sort': 10, 'recursion-simple': 10,
+  'series-tolerance': 15, 'recursion-nested': 20, 'combinations': 15, 'file-report': 20,
+};
+
+export const EXAM_SLOT_LABEL: Record<ExamSlot, string> = {
+  'short-string': 'Short string function',
+  'short-list': 'Short list or number function',
+  'dict-sort': 'Dictionary to a sorted list',
+  'recursion-simple': 'Recursion, no loops allowed',
+  'series-tolerance': 'Series summed to a tolerance',
+  'recursion-nested': 'Recursion over nested lists',
+  'combinations': 'Combinations with nested loops',
+  'file-report': 'Read a file and report',
+};

@@ -385,6 +385,20 @@
   .trs-review { padding: 8px 4px 24px; }
   .trs-bar-link { min-width: 0; }
 }
+/* ---------- Mock exam: the paper's eight slots ---------- */
+/* One row per question, so the shape of the paper reads at a glance before the student commits two hours.
+   The question itself is never named here: seeing the titles in advance would spoil the paper. */
+.ex-slots { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-2); overflow: hidden; }
+.ex-slot { display: grid; grid-template-columns: 2.5rem 1fr auto auto; align-items: baseline; gap: 12px; padding: 10px 14px; background: var(--surface); }
+.ex-slot-num { color: var(--text-muted); font-size: var(--fs-13); }
+.ex-slot-name { color: var(--text); font-size: var(--fs-15); min-width: 0; }
+.ex-slot-topic { color: var(--text-faint); font-size: var(--fs-12); white-space: nowrap; }
+.ex-slot-marks { color: var(--text-muted); font-size: var(--fs-13); white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 600px) {
+  .ex-slot { grid-template-columns: 2.2rem 1fr auto; row-gap: 2px; }
+  .ex-slot-topic { grid-column: 2 / -1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tt-how summary svg, .trs-chev, .tr-nav-btn::before, .ms-tile, .trs-row { transition: none; }
 }

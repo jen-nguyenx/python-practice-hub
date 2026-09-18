@@ -7,7 +7,7 @@ export type Route =
   | { name: 'playground' }
   | { name: 'report'; topicId?: string }
   | { name: 'topic-test'; topicId: string }
-  | { name: 'midsem' }
+  | { name: 'exam' }
   | { name: 'settings' }
   | { name: 'not-found'; path: string };
 
@@ -21,7 +21,9 @@ export function parseHash(hash: string): Route {
     case 'playground': return { name: 'playground' };
     case 'report': return { name: 'report', topicId: parts[1] };
     case 'test': return parts[1] ? { name: 'topic-test', topicId: parts[1] } : { name: 'not-found', path };
-    case 'midsem': return { name: 'midsem' };
+    case 'exam': return { name: 'exam' };
+    // The mid-semester test became the exam page; old links and bookmarks still work.
+    case 'midsem': return { name: 'exam' };
     case 'settings': return { name: 'settings' };
     default: return { name: 'not-found', path };
   }
@@ -49,6 +51,6 @@ export const href = {
   playground: () => '#/playground',
   report: (topicId?: string) => (topicId ? `#/report/${topicId}` : '#/report'),
   topicTest: (id: string) => `#/test/${id}`,
-  midsem: () => '#/midsem',
+  exam: () => '#/exam',
   settings: () => '#/settings',
 };

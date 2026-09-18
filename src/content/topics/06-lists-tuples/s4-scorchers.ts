@@ -190,13 +190,14 @@ def leaderboard(scores):
       format: 'write',
       kind: 'function',
       mode: 'paper',
-      marks: 10,
+      marks: 5,
+      examSlot: 'short-list',
       rules: ['noImport'],
       diff: 'hard',
       core: false,
       title: 'Streaks in a bowling spell (exam style)',
       prompt:
-        '**Exam practice, 10 marks. No imports.**\n\n' +
+        '**Exam practice, 5 marks. No imports.**\n\n' +
         'In the WACA nets a scorer records each ball as a string: `\'.\'` for a dot ball, `\'1\'`, `\'4\'` or `\'6\'` for runs, and `\'W\'` for a wicket. ' +
         'Write a function `streaks(balls)` that returns a list of `(outcome, count)` tuples, one for each streak of identical outcomes in a row, in the order they happened. ' +
         'Return an empty list if `balls` is empty.\n\n' +
@@ -254,7 +255,7 @@ def leaderboard(scores):
       ],
       concepts: ['list-of-tuples', 'run-length', 'accumulator', 'tuple'],
       detects: ['index_out_of_range', 'off_by_one_range', 'return_type_wrong', 'accumulator_init'],
-      expectedSec: 720,
+      expectedSec: 420,
       hints: [
         'Walk through the balls remembering two things: the outcome of the current streak and how long it is so far. Something must happen when the outcome changes, and once more when the balls run out.',
         'Plan: return `[]` straight away for an empty list. Start `current` at the first ball and `count` at 0. For each ball: if it matches `current`, add 1 to `count`; otherwise append `(current, count)`, then start a new streak with `current = ball` and `count = 1`. After the loop, append the final streak and return the list.',
@@ -281,7 +282,7 @@ def leaderboard(scores):
           '`current` holds the outcome of the streak in progress and `count` its length. `count` starts at 0 because the loop also visits the first ball and counts it.\n\n' +
           'When a ball matches `current`, the streak grows. When it differs, the finished streak is appended as a tuple `(current, count)` and a new streak starts at this ball with a count of 1.\n\n' +
           'A streak is only appended when the next streak starts, so the last streak is still waiting when the loop ends. Line 14 appends it; without that line a maiden over returns `[]`.\n\n' +
-          'Marking guide (10): empty list handled (1), correct loop and comparison with the current streak (3), appending tuples when the outcome changes (3), resetting for the new streak (1), appending the final streak (2).',
+          'Marking guide (5): empty list handled (1), loop compares each ball with the current streak (1), a tuple is appended when the outcome changes (1), the new streak is started correctly (1), the final streak is appended after the loop (1).',
       },
       selfExplain: "If you forget the append after the loop, what does streaks(['W']) return, and why?",
     },

@@ -48,7 +48,7 @@ try {
   await page.waitForFunction(() => /ready/i.test(document.body.innerText), null, { timeout: 90000 });
 } catch { failures.push('Python runtime never showed ready'); }
 
-for (const hash of ['#/playground', '#/report', '#/midsem', '#/settings']) await visit(page, hash, hash.replace(/[#/]/g, '') || 'root');
+for (const hash of ['#/playground', '#/report', '#/exam', '#/settings']) await visit(page, hash, hash.replace(/[#/]/g, '') || 'root');
 
 // One question per (topic, format).
 const seen = new Set<string>();

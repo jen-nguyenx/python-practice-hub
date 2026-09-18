@@ -6,6 +6,22 @@ A practice app for CITS1401 Python students. **Status: awaiting approval (Checkp
 
 ## 0. Amendments after review (these override the sections below)
 
+### 0.0 Change of purpose, 18 September 2026 (overrides everything below)
+
+The student has sat the mid-semester test. The app is now for **general Python study and closed-book final exam
+practice**, not mid-semester revision.
+
+- The `midsem` flag on topics is gone: every topic is examinable.
+- `#/midsem` became `#/exam` (the old hash still resolves). That page now offers two things: a **mock final exam**
+  and a **custom practice test** over any topics.
+- The mock exam copies the real paper's shape from `docs/plan/research/cits1401-curriculum.json`: eight questions,
+  one per slot in `EXAM_SLOT_IDS`, 100 marks, two hours, closed book. It is marked in marks, not question count,
+  so a result reads "62 of 100". A paper can only be built when every slot has a question written for it.
+- Event names follow: attempt `mode` 'midsem' became 'exam', and `test_result.kind` is now
+  'topic-test' | 'practice-test' | 'mock-exam'. The store maps the old stored values on read, so existing
+  progress survives.
+- Reports lead on the mock exam rather than the mid-semester test.
+
 ### 0.1 Decisions for the user at Checkpoint 0
 
 1. **Timing and content order.** Today is week 8 of UWA Semester 2 2026. Exams run 26 October to the week of 2 November (askUWA 2026 dates). If the app is for a student sitting CITS1401 now, author content in urgency order after the engine is ready: recursion (T13), files and CSV (T9), project simulator (T12) with paper mode, then the rest. Otherwise use the topic order.

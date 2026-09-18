@@ -42,7 +42,10 @@ export interface ReportData {
   patterns: { id: PatternId; status: 'recommended' | 'using' | 'later'; triggerCount: number }[];
   readiness: {
     paperAccuracy: number | null;
-    midsem: { best: number | null; last: number | null; attempts: number };
+    /** Custom timed practice tests over chosen topics. */
+    practiceTest: { best: number | null; last: number | null; attempts: number };
+    /** Full mock final papers: eight questions, 100 marks, two hours. */
+    mockExam: { best: number | null; last: number | null; attempts: number };
     recursionAccuracy: number | null;
     projectRules: { rule: RuleId; ok: number; broken: number }[];
   };
@@ -390,16 +393,21 @@ export function buildReport(events: readonly AppEvent[], index: readonly Questio
 
   // ---- readiness ----
   const paperQs = qs.filter((q) => q.paper);
-  const midsemTests = inRange.filter((e): e is Extract<AppEvent, { type: 'test_result' }> => e.type === 'test_result' && e.kind === 'midsem');
   const frac = (e: { score: number; total: number }) => clamp01(e.total > 0 ? e.score / e.total : e.score);
-  const midsemFracs = midsemTests.map(frac);
+  const testsOfKind = (kind: 'practice-test' | 'mock-exam') =>
+    inRange.filter((e): e is Extract<AppEvent, { type: 'test_result' }> => e.type === 'test_result' && e.kind === kind);
+  const summarise = (kind: 'practice-test' | 'mock-exam') => {
+    const fracs = testsOfKind(kind).map(frac);
+    return {
+      best: fracs.length ? Math.max(...fracs) : null,
+      last: fracs.length ? fracs[fracs.length - 1] : null,
+      attempts: fracs.length,
+    };
+  };
   const readiness: ReportData['readiness'] = {
     paperAccuracy: meanCredit(paperQs),
-    midsem: {
-      best: midsemFracs.length ? Math.max(...midsemFracs) : null,
-      last: midsemFracs.length ? midsemFracs[midsemFracs.length - 1] : null,
-      attempts: midsemTests.length,
-    },
+    practiceTest: summarise('practice-test'),
+    mockExam: summarise('mock-exam'),
     recursionAccuracy: meanCredit(qs.filter((q) => q.topicId === 'recursion')),
     projectRules: projectRuleChecks(attempts, metaById),
   };
@@ -459,10 +467,10 @@ export function buildReport(events: readonly AppEvent[], index: readonly Questio
       pushWork(`${TOPIC_BY_ID[row.topicId].short}: you read code well (${pct(row.read)}) but writing lands at ${pct(row.write)}. Try a coding question there.`, `#/topic/${row.topicId}`);
     }
   }
-  if (readiness.midsem.last !== null && readiness.midsem.last < 0.6) {
-    pushWork(`Retry the mid-semester practice test (last score ${pct(readiness.midsem.last)}).`, '#/midsem');
-  } else if (readiness.midsem.attempts === 0 && totals.questions >= 10) {
-    pushWork('Try the mid-semester practice test to check your readiness.', '#/midsem');
+  if (readiness.mockExam.last !== null && readiness.mockExam.last < 0.6) {
+    pushWork(`Sit another mock final exam (last paper ${pct(readiness.mockExam.last)}).`, '#/exam');
+  } else if (readiness.mockExam.attempts === 0 && totals.questions >= 10) {
+    pushWork('Sit a mock final exam to see where you stand under exam conditions.', '#/exam');
   }
   if (workOn.length === 0) {
     const next = TOPICS.find((t) => unlocked.has(t.id) && topics.find((x) => x.topicId === t.id)?.label === 'not-started');

@@ -57,7 +57,7 @@ const EMPTY_FLAGS: AstFinding[] = [];
 export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTaskConfig }) {
   const { q, mode, revealed, locked, topicId } = fp;
   const wb = useWorkbench();
-  const testMode = mode === 'topic-test' || mode === 'midsem';
+  const testMode = mode === 'topic-test' || mode === 'exam';
   const paper = cfg.paper;
   const oneShot = paper || testMode;
   const ctx = { qid: q.id, topicId };

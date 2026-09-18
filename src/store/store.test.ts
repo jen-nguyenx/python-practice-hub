@@ -294,9 +294,9 @@ describe('store: export and import', () => {
     s.updateSettings({ theme: 'dark', unlockAll: true });
     s.append({ type: 'topic_open', topicId: 'strings' });
     // Keys written straight to localStorage by the test, topic, Playground and report screens.
-    storage.map.set('pyladder:test-progress:midsem:midsem', '{"v":1,"kind":"midsem"}');
+    storage.map.set('pyladder:test-progress:mock-exam:mock-exam', '{"v":1,"kind":"mock-exam"}');
     storage.map.set('pyladder:test-progress:topic-test:strings', '{"v":1,"kind":"topic-test"}');
-    storage.map.set('pyladder:midsem-setup', '{"count":15}');
+    storage.map.set('pyladder:practice-setup', '{"count":15}');
     storage.map.set('pyladder:topic-filters:strings', '{}');
     storage.map.set('pyladder:playground-active', 'f1');
     storage.map.set('pyladder:report-range', 'week');
@@ -310,8 +310,8 @@ describe('store: export and import', () => {
     expect(s.events.value).toEqual([]);
 
     // A test screen that was still running saves its progress on unmount, just after the reset: it must not come back.
-    storage.map.set('pyladder:test-progress:midsem:midsem', '{"v":1,"kind":"midsem"}');
-    storage.map.set('pyladder:midsem-setup', '{"count":15}');
+    storage.map.set('pyladder:test-progress:mock-exam:mock-exam', '{"v":1,"kind":"mock-exam"}');
+    storage.map.set('pyladder:practice-setup', '{"count":15}');
     await until(() => pyKeys(storage.map).length === 1);
     expect(pyKeys(storage.map)).toEqual([SETTINGS_KEY]);
 

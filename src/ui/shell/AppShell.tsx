@@ -24,7 +24,7 @@ import '../../styles/shell.css';
 export const FILL_ROUTES: Route['name'][] = ['playground'];
 
 /** Routes where a tour popping up would get in the way (timed tests). */
-const NO_TOUR_ROUTES: Route['name'][] = ['topic-test', 'midsem'];
+const NO_TOUR_ROUTES: Route['name'][] = ['topic-test', 'exam'];
 
 /** True when the browser says the student is on data saver or a slow mobile connection. */
 function savingData(): boolean {

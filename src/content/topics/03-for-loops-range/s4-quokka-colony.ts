@@ -110,12 +110,13 @@ const scenario: Scenario = {
       format: 'write',
       kind: 'function',
       mode: 'paper',
-      marks: 10,
+      marks: 5,
+      examSlot: 'short-list',
       diff: 'hard',
       core: true,
       title: 'Filtered Fibonacci sum',
       prompt:
-        'Exam-style question, 10 marks. There is no Run button: write your answer as you would on paper, then submit it once.\n\n' +
+        'Exam-style question, 5 marks. There is no Run button: write your answer as you would on paper, then submit it once.\n\n' +
         'The Fibonacci numbers start 1, 1, 2, 3, 5, 8, 13, 21, 34, 55 ... (each number after the first two is the sum of the two before it). ' +
         'Write a function `fib_filter_sum(n)` that looks at the first `n` Fibonacci numbers and **returns** the sum of the ones that are divisible by **neither** 2 nor 5. Use a `for` loop.\n\n' +
         'For example, of the first 10 numbers, the ones divisible by neither 2 nor 5 are 1, 1, 3, 13 and 21, so `fib_filter_sum(10)` returns 39. ' +
@@ -135,7 +136,7 @@ const scenario: Scenario = {
       ],
       concepts: ['fibonacci', 'loop-if', 'accumulator', 'modulo'],
       detects: ['accumulator_init', 'off_by_one_range', 'early_return_in_loop', 'print_vs_return', 'shadow_builtin'],
-      expectedSec: 600,
+      expectedSec: 420,
       hints: [
         'Split the job in two: produce the Fibonacci numbers one at a time, and decide for each one whether to add it to the total.',
         'Plan: start two variables at 1 and 1, and a total at 0. Loop `n` times. On each pass, if the current number is not divisible by 2 and not divisible by 5, add it to the total; then move both variables along one step. Return the total after the loop.',
@@ -160,7 +161,7 @@ const scenario: Scenario = {
           '4. "Divisible by neither 2 nor 5" means not divisible by 2 **and** not divisible by 5. Writing `or` would only skip numbers divisible by both 2 and 5 (multiples of 10, such as 610), so `fib_filter_sum(10)` would wrongly return 143, the sum of all ten.\n' +
           '5. `this_fib, next_fib = next_fib, this_fib + next_fib` moves both numbers one step along using the old values. It is outside the `if`, so it runs on every pass.\n' +
           '6. `return total` is after the loop, lined up with `for`, and returns the value rather than printing it.\n\n' +
-          '**Marking guide (10):** accumulator set up before the loop (2), loop runs n times (2), Fibonacci update correct (2), divisibility test with `and` (2), returns the total after the loop (2).',
+          '**Marking guide (5):** accumulator set up before the loop (1), loop runs n times (1), Fibonacci update correct (1), divisibility test with `and` (1), returns the total after the loop (1).',
       },
       selfExplain: 'Why is this_fib % 2 != 0 or this_fib % 5 != 0 the wrong test here?',
     },

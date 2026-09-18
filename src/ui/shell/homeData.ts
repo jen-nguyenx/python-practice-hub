@@ -6,8 +6,8 @@ import type { QuestionMeta } from '../../content/questionIndex.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
 import type { TopicMeta } from '../../content/topics.ts';
 import { continueTarget, sessionSummaries } from '../../engine/progress.ts';
-import { defaultMidsemTopics } from '../testmode/lock.ts';
-import { MIDSEM_DEFAULT_COUNT, MIDSEM_DEFAULT_MINUTES } from '../testmode/select.ts';
+import { MOCK_EXAM_MINUTES, MOCK_EXAM_TOTAL_MARKS } from '../testmode/select.ts';
+import { EXAM_SLOT_IDS } from '../../content/ids.ts';
 import type { TopicProgress } from '../../engine/progress.ts';
 import type { AppEvent, Settings } from '../../engine/types.ts';
 import { readProgress } from '../testmode/progress.ts';
@@ -69,32 +69,16 @@ export function hasAnyAttempt(events: readonly AppEvent[]) {
   return false;
 }
 
-export interface MidsemSummary { count: number; minutes: number; scope: string; resumable: boolean }
+export interface ExamSummary { questions: number; marks: number; minutes: number; resumable: boolean }
 
 /**
-  * Reads the mid-sem setup the test screen remembers, falling back to the SAME defaults that screen uses
-  * (including its topic choice for the student's progress), so the home card never promises a different test.
-  */
-export function midsemSummary(progress?: Parameters<typeof defaultMidsemTopics>[0]): MidsemSummary {
-  let count = MIDSEM_DEFAULT_COUNT;
-  let minutes = MIDSEM_DEFAULT_MINUTES;
-  let ids: string[] = defaultMidsemTopics(progress ?? {});
-  try {
-    const raw = JSON.parse(localStorage.getItem('pyladder:midsem-setup') ?? 'null') as { count?: unknown; minutes?: unknown; topicIds?: unknown } | null;
-    if (raw) {
-      if (typeof raw.count === 'number' && raw.count > 0) count = raw.count;
-      if (typeof raw.minutes === 'number' && raw.minutes > 0) minutes = raw.minutes;
-      if (Array.isArray(raw.topicIds)) ids = raw.topicIds.filter((t): t is string => typeof t === 'string' && !!TOPIC_BY_ID[t]);
-    }
-  } catch { /* defaults */ }
-  const orders = ids.map((id) => TOPIC_BY_ID[id].order).sort((a, b) => a - b);
-  let scope = 'your chosen topics';
-  if (orders.length === 1) scope = `topic ${orders[0]}`;
-  else if (orders.length > 1 && orders[orders.length - 1] - orders[0] === orders.length - 1) scope = `topics ${orders[0]} to ${orders[orders.length - 1]}`;
-  else if (orders.length > 1) scope = `${orders.length} topics`;
+ * The mock final paper the exam page will build: a fixed shape, so the home card can describe it without
+ * loading any topic content. `resumable` is true when a paper is saved part-way through.
+ */
+export function examSummary(): ExamSummary {
   let resumable = false;
-  try { resumable = readProgress('midsem', 'midsem') !== null; } catch { resumable = false; }
-  return { count, minutes, scope, resumable };
+  try { resumable = readProgress('mock-exam', 'mock-exam') !== null; } catch { resumable = false; }
+  return { questions: EXAM_SLOT_IDS.length, marks: MOCK_EXAM_TOTAL_MARKS, minutes: MOCK_EXAM_MINUTES, resumable };
 }
 
 const BACKUP_AFTER_ATTEMPTS = 10;

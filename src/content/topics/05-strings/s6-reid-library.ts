@@ -5,7 +5,7 @@ const scenario: Scenario = {
   id: 't05-s6',
   title: 'The Reid Library catalogue',
   story:
-    'Every book in the Reid Library catalogue is one line of text: a call number, a title, and an ISBN as it was typed off the back cover. The search box has to ignore capital letters, the label printer wants only the digits of the ISBN, and the year has to be pulled out from between two brackets.',
+    'Every book in the Reid Library catalogue is one line of text: a call number, a title, and an ISBN as it was typed off the back cover. The search box has to ignore capital letters, the label printer wants only the digits of the ISBN and the initials of the author, and the year has to be pulled out from between two brackets.',
   questions: [
     {
       id: 't05-s6-q1',
@@ -202,6 +202,97 @@ const scenario: Scenario = {
           'When a function searches for something *after* a position, always test a string that has an earlier copy of what you are searching for.',
       },
       selfExplain: 'What one change to the buggy version would make it match the reference?',
+    },
+    {
+      id: 't05-s6-q4',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 5,
+      examSlot: 'short-string',
+      diff: 'hard',
+      core: true,
+      title: 'Initials for a spine label (exam style)',
+      prompt:
+        "Exam-style question, 5 marks. No imports, and there is no Run button: write your answer as you would on paper, then submit it once.\n\n" +
+        "A spine label has room for the author's initials but not the whole name. Write `author_initials(name)` that returns a **string**: the first character of every word in `name`, in upper case, each one followed by a full stop.\n\n" +
+        "- `author_initials('ursula kroeber le guin')` returns `'U.K.L.G.'`.\n" +
+        "- Words are separated by one or more spaces, and `name` may also start or end with spaces: `author_initials('  Sally   Morgan ')` returns `'S.M.'`.\n" +
+        "- Return `''` when `name` holds no words at all.\n\n" +
+        'Use a loop over the characters. No lists, no `split` and no `join`.',
+      concepts: ['string-building', 'loop-over-string', 'case', 'word-boundary'],
+      detects: ['accumulator_init', 'case_sensitive_compare', 'index_out_of_range', 'off_by_one_range', 'print_vs_return'],
+      expectedSec: 360,
+      fnName: 'author_initials',
+      rules: ['noImport'],
+      starter: `def author_initials(name):
+    """Return the initial of every word in name, upper case, each followed by a full stop."""
+    pass
+`,
+      tests: [
+        {
+          id: 'v1',
+          call: "author_initials('ursula kroeber le guin')",
+          expect: "'U.K.L.G.'",
+          label: 'four words',
+          hidden: false,
+        },
+        { id: 'v2', call: "author_initials('Tim Winton')", expect: "'T.W.'", label: 'two words', hidden: false },
+        { id: 'h1', call: "author_initials('')", expect: "''", label: 'nothing typed', hidden: true, tag: 'accumulator_init' },
+        {
+          id: 'h2',
+          call: "author_initials('   ')",
+          expect: "''",
+          label: 'spaces but no words',
+          hidden: true,
+          tag: 'off_by_one_range',
+        },
+        {
+          id: 'h3',
+          call: "author_initials('  Sally   Morgan ')",
+          expect: "'S.M.'",
+          label: 'extra spaces at the start, middle and end',
+          hidden: true,
+          tag: 'index_out_of_range',
+        },
+        {
+          id: 'h4',
+          call: "author_initials('MARGARET river')",
+          expect: "'M.R.'",
+          label: 'one name in capitals, one in lower case',
+          hidden: true,
+          tag: 'case_sensitive_compare',
+        },
+        { id: 'h5', call: "author_initials('x')", expect: "'X.'", label: 'a one-letter name', hidden: true },
+      ],
+      hints: [
+        'A word starts at a character that is not a space and either opens the name or follows a space. Walk through the characters and keep track of whether the next character you meet will start a word.',
+        "Plan: start `result` at `''` and a True/False flag at True, because the very first character starts a word. For each character: if it is a space, set the flag back to True; otherwise, if the flag is True, add the upper-case character and a full stop to `result`, and turn the flag off. Return `result` after the loop.",
+        "Two branches do the whole job:\n\n```python\nif ch == ' ':\n    new_word = True\nelif new_word:\n    result = result + ch.upper() + '.'\n```\n\nThe `elif` branch also has to turn the flag off, or every letter of the word is treated as an initial.",
+      ],
+      solution: {
+        code: `def author_initials(name):
+    """Return the initial of every word in name, upper case, each followed by a full stop."""
+    result = ''
+    new_word = True
+    for ch in name:
+        if ch == ' ':
+            new_word = True
+        elif new_word:
+            result = result + ch.upper() + '.'
+            new_word = False
+    return result
+`,
+        explanation:
+          "`result` starts as `''` before the loop, so a name with no words returns `''` rather than crashing or returning None.\n\n" +
+          '`new_word` remembers one thing: whether the next character to arrive begins a word. It starts as True because the first character of the name, if there is one, does begin a word. That single flag is what removes the need to count spaces or to look at the character before or after the current one.\n\n' +
+          "Every space sets `new_word` back to True. A run of spaces sets it True several times over, which is harmless, and that is why `'  Sally   Morgan '` gives `'S.M.'` and not `'S..M..'`. Counting spaces instead would report five words in that name.\n\n" +
+          "The `elif` branch runs only for the first character of a word. It appends `ch.upper()` so `'ursula'` gives `'U.'` and `'MARGARET'` still gives `'M.'`, then a `'.'`, then turns the flag off so the rest of the word is skipped.\n\n" +
+          "A common attempt is to look for spaces and then take `name[i + 1]`. That crashes with an IndexError on a name ending in a space, and misses the first word, which has no space in front of it.\n\n" +
+          '`return result` sits after the loop, lined up with `for`, and returns the string rather than printing it.\n\n' +
+          'Marking guide (5): result started as an empty string before the loop (1), a flag that marks the start of a word and starts as True (1), the flag reset at every space (1), the upper-case initial and full stop appended once per word (1), the string returned rather than printed (1).',
+      },
+      selfExplain: "What does the function return for 'Sally Morgan' if new_word starts as False instead of True?",
     },
   ],
 };

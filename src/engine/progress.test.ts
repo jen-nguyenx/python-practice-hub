@@ -66,7 +66,7 @@ describe('topicProgressAll: unlock chain', () => {
 
   it('correct answers given in a mid-sem or topic test do not count toward the minimum', () => {
     const practice = topic1Solved(T0);
-    const asTests = practice.map((e) => (e.type === 'attempt' ? { ...e, mode: 'midsem' as const } : e));
+    const asTests = practice.map((e) => (e.type === 'attempt' ? { ...e, mode: 'exam' as const } : e));
     const p = topicProgressAll([open('variables-expressions', T0 - MIN), ...asTests], index, settings);
     expect(p['variables-expressions']).toMatchObject({ solved: 0, codeSolved: 0, minimumMet: false });
     expect(p['if-elif-else'].state).toBe('locked');

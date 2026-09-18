@@ -5,7 +5,8 @@ const s2: Scenario = {
   title: 'SmartRider tap-ons',
   story:
     'A Transperth analyst has one morning of SmartRider data: a tap-on log of station names from different ticket readers, ' +
-    'and a list of trips with the fare each card was charged. Dictionaries turn both into totals.',
+    'and a list of trips with the fare each card was charged. Dictionaries turn both into totals. ' +
+    'A weekend of Rottnest ferry bookings lands on the same desk, and it needs the same treatment.',
   questions: [
     {
       id: 't08-s2-q1',
@@ -199,6 +200,117 @@ print(len(counts))`,
           'An empty list skips both loops and returns `{}`.',
       },
       selfExplain: 'What would the result be for the first example if the loop body were totals[card] = fare?',
+    },
+    {
+      id: 't08-s2-q4',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 10,
+      examSlot: 'dict-sort',
+      diff: 'hard',
+      core: false,
+      title: 'The fullest sailing in each band',
+      prompt:
+        'Exam practice: write your answer as you would on paper, without running it. This question is worth 10 marks.\n\n' +
+        'The Rottnest ferry operator sends over one weekend of bookings. `sailings` is a dictionary mapping a sailing code ' +
+        "(a string such as `'RT0930'`) to the number of passengers booked on it (an int, 0 or more).\n\n" +
+        'Band each sailing by its passenger count: **Full** for 400 and above, **Busy** for 250 to 399, **Steady** for 100 to 249, and **Quiet** below 100.\n\n' +
+        'Write `fullest_sailings(sailings)` that returns a **dictionary** mapping each band to a **tuple** `(code, passengers)` for the fullest sailing in that band. ' +
+        'If two sailings in the same band carry the same number of passengers, keep the one whose code comes first A to Z. ' +
+        'Only bands that at least one sailing falls into appear as keys, so an empty dictionary gives `{}`. Do not change `sailings`.\n\n' +
+        "Example: `fullest_sailings({'RT0930': 412, 'RT1130': 260, 'RT1400': 305})` returns `{'Full': ('RT0930', 412), 'Busy': ('RT1400', 305)}`.",
+      fnName: 'fullest_sailings',
+      starter: `def fullest_sailings(sailings):
+    pass`,
+      tests: [
+        {
+          id: 'v1',
+          call: "fullest_sailings({'RT0930': 412, 'RT1130': 260, 'RT1400': 305})",
+          expect: "{'Full': ('RT0930', 412), 'Busy': ('RT1400', 305)}",
+          label: 'full and busy sailings',
+          hidden: false,
+        },
+        {
+          id: 'v2',
+          call: "fullest_sailings({'RT0700': 45, 'RT0830': 180, 'RT1015': 96})",
+          expect: "{'Quiet': ('RT1015', 96), 'Steady': ('RT0830', 180)}",
+          label: 'two quiet sailings and one steady',
+          hidden: false,
+        },
+        { id: 'h1', call: 'fullest_sailings({})', expect: '{}', label: 'no sailings', hidden: true },
+        {
+          id: 'h2',
+          call: "fullest_sailings({'RT1600': 300, 'RT1200': 300, 'RT0800': 120})",
+          expect: "{'Busy': ('RT1200', 300), 'Steady': ('RT0800', 120)}",
+          label: 'two sailings level in the same band',
+          hidden: true,
+          tag: 'sort_tiebreak',
+        },
+        {
+          id: 'h3',
+          call: "fullest_sailings({'RT1730': 400})",
+          expect: "{'Full': ('RT1730', 400)}",
+          label: 'one sailing, exactly on a boundary',
+          hidden: true,
+          tag: 'elif_vs_if',
+        },
+        {
+          id: 'h4',
+          call: "fullest_sailings({'RT0600': 0, 'RT0900': 99, 'RT1000': 100, 'RT1300': 249, 'RT1500': 250, 'RT1800': 399})",
+          expect: "{'Quiet': ('RT0900', 99), 'Steady': ('RT1300', 249), 'Busy': ('RT1800', 399)}",
+          label: 'sailings on every band boundary',
+          hidden: true,
+          tag: 'elif_vs_if',
+        },
+        {
+          id: 'h5',
+          setup: "sailings = {'RT1100': 260, 'RT1300': 260}",
+          call: 'fullest_sailings(sailings)',
+          expect: "{'Busy': ('RT1100', 260)}",
+          argsUnchanged: ['sailings'],
+          label: 'the sailings dictionary is not changed',
+          hidden: true,
+          tag: 'mutated_input',
+        },
+      ],
+      concepts: ['banding', 'dict-items', 'max-per-key', 'tie-break', 'elif'],
+      detects: ['elif_vs_if', 'sort_tiebreak', 'dict_keyerror', 'mutated_input'],
+      expectedSec: 600,
+      hints: [
+        'Each sailing answers two questions in turn: which band am I in, and am I fuller than the best sailing recorded for that band so far?',
+        'Plan: start with an empty dictionary. For each code and count, use an if/elif/else chain from Full down to Quiet to set `band`. If that band has no entry yet, store `(code, count)`. Otherwise compare with the tuple already stored and replace it when this sailing has more passengers, or the same number and a code earlier in the alphabet. Return the dictionary after the loop.',
+        'Unpack what is stored with `best_code, best_count = fullest[band]`, then decide with `if count > best_count or (count == best_count and code < best_code):` before storing the new tuple.',
+      ],
+      solution: {
+        code: `def fullest_sailings(sailings):
+    fullest = {}
+    for code, passengers in sailings.items():
+        if passengers >= 400:
+            band = 'Full'
+        elif passengers >= 250:
+            band = 'Busy'
+        elif passengers >= 100:
+            band = 'Steady'
+        else:
+            band = 'Quiet'
+        if band not in fullest:
+            fullest[band] = (code, passengers)
+        else:
+            best_code, best_passengers = fullest[band]
+            if passengers > best_passengers or (passengers == best_passengers and code < best_code):
+                fullest[band] = (code, passengers)
+    return fullest`,
+        explanation:
+          'A marker would look for these steps (10 marks):\n\n' +
+          '1. `fullest = {}` before the loop and `for code, passengers in sailings.items():` to get each code with its count (2 marks).\n' +
+          '2. An `if`/`elif`/`else` chain working **down** from the highest band, with `>=` so that 400, 250 and 100 land in the higher band. Four separate `if`s would let 412 match Full, then Busy, then Steady, and the last match would win (3 marks).\n' +
+          '3. `if band not in fullest:` then `fullest[band] = (code, passengers)`, so the first sailing in a band is always kept and a band nobody reaches never becomes a key. Reading `fullest[band]` without that check would raise `KeyError` (2 marks).\n' +
+          '4. The comparison for every later sailing in the band: strictly more passengers wins, and an equal count only wins when the code is earlier in the alphabet, which is what `code < best_code` asks. Using `>=` alone would let a later equal sailing take the place unfairly (2 marks).\n' +
+          '5. `return fullest` after the loop, with each value a two-part tuple rather than a bare code or a list (1 mark).\n\n' +
+          'With an empty dictionary the loop never runs and `{}` is returned. Nothing is written back into `sailings`, so the caller\'s dictionary is unchanged.',
+      },
+      selfExplain: 'Which test would start failing if the tie-break used code > best_code instead?',
     },
   ],
 };

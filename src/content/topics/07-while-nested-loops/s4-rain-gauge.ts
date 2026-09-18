@@ -8,7 +8,8 @@ const scenario: Scenario = {
   title: 'Kalamunda rain gauge logger',
   story:
     'A volunteer rainfall observer in Kalamunda has a small data logger that sends daily readings in millimetres. ' +
-    'The logger marks the end of a batch with the sentinel value `-1`, so these loops walk through lists with `while` and an index instead of `for`.',
+    'The logger marks the end of a batch with the sentinel value `-1`, so these loops walk through lists with `while` and an index instead of `for`. ' +
+    'Its firmware carries no maths library either, so anything it cannot look up it works out with a loop of its own.',
   questions: [
     {
       id: 't07-s4-q1',
@@ -260,6 +261,77 @@ const scenario: Scenario = {
           'On `[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1]` the run reaches 3, drops to 0 at the wet day, climbs back to 2, and `longest` stays 3.',
       },
       selfExplain: 'Why must longest be updated inside the loop rather than after it?',
+    },
+    {
+      id: 't07-s4-q5',
+      format: 'write',
+      kind: 'function',
+      mode: 'paper',
+      marks: 15,
+      examSlot: 'series-tolerance',
+      diff: 'hard',
+      core: true,
+      title: 'Calibration logarithm (exam style)',
+      prompt:
+        '*Exam style, 15 marks. Write it by hand first, then submit once.*\n\n' +
+        'The logger turns a raw humidity reading `x` into a calibrated value with a natural logarithm. It has no maths library, so it sums the series\n\n' +
+        'ln(1 + x) = x - x²/2 + x³/3 - x⁴/4 + ...\n\n' +
+        'The kth term is x to the power k divided by k, and the signs alternate, starting positive. Readings are at least 0 and below 1, so the terms get smaller.\n\n' +
+        'Write `ln_one_plus(x, tol)` that adds up the terms of this series, starting with `x`, ' +
+        '**while the size of the current term is greater than or equal to `tol`**, and returns the sum **rounded to 6 decimal places**.\n\n' +
+        '- The size of a term ignores its sign, so use `abs`. Stop as soon as a term is smaller than `tol` in size, and do **not** add that term.\n' +
+        '- Do not use `import`. Keep the power of `x` going in a variable of its own, multiplying it by `x` once per pass, rather than working the power out again each time.\n' +
+        '- Round only the final answer, never inside the loop.\n' +
+        '- If the first term is already smaller than `tol`, return `0`. A reading of `0` therefore returns `0`.\n\n' +
+        'Example: `ln_one_plus(0.5, 0.01)` adds 0.5 - 0.125 + 0.041666... - 0.015625 and returns `0.401042`. The term after that is 0.00625, which is below 0.01, so it is left out.',
+      fnName: 'ln_one_plus',
+      starter: `def ln_one_plus(x, tol):
+    pass`,
+      rules: ['noImport'],
+      tests: [
+        { id: 'v1', call: 'ln_one_plus(0.5, 0.01)', expect: '0.401042', cmp: 'float', tol: 1e-9, label: 'x = 0.5, tol = 0.01', hidden: false },
+        { id: 'v2', call: 'ln_one_plus(0.2, 0.0001)', expect: '0.182267', cmp: 'float', tol: 1e-9, label: 'x = 0.2, tol = 0.0001', hidden: false },
+        { id: 'h1', call: 'ln_one_plus(0.25, 0.25)', expect: '0.25', cmp: 'float', tol: 1e-9, label: 'a term exactly the size of tol is still added', hidden: true, tag: 'off_by_one_range' },
+        { id: 'h2', call: 'ln_one_plus(0.5, 0.3)', expect: '0.5', cmp: 'float', tol: 1e-9, label: 'the tolerance stops the loop after one term', hidden: true },
+        { id: 'h3', call: 'ln_one_plus(0.5, 0.6)', expect: '0.0', cmp: 'float', tol: 1e-9, label: 'the first term is already below tol', hidden: true, tag: 'accumulator_init' },
+        { id: 'h4', call: 'ln_one_plus(0, 0.1)', expect: '0.0', cmp: 'float', tol: 1e-9, label: 'a reading of 0', hidden: true },
+        { id: 'h5', call: 'ln_one_plus(0.8, 1e-7)', expect: '0.587787', cmp: 'float', tol: 5e-7, label: 'rounding only at the end (x = 0.8)', hidden: true, tag: 'round_mid_calc' },
+        { id: 'h6', call: 'ln_one_plus(0.9, 1e-6)', expect: '0.641853', cmp: 'float', tol: 1e-9, label: 'a slowly shrinking series', hidden: true },
+        { id: 'h7', call: 'ln_one_plus(0.05, 0.001)', expect: '0.04875', cmp: 'float', tol: 1e-9, label: 'a small reading, two terms', hidden: true },
+      ],
+      concepts: ['while', 'series', 'tolerance', 'alternating-signs', 'round'],
+      detects: ['off_by_one_range', 'round_mid_calc', 'float_equality', 'infinite_while', 'import_used', 'accumulator_init'],
+      expectedSec: 660,
+      hints: [
+        'Three things change on every pass: the power of `x`, the number underneath, and the sign. Work out how each of them moves, then write one line for each.',
+        'Plan: before the loop set `total` to 0, `k` to 1, `power` to `x`, `sign` to 1 and `term` to `x`. While the size of `term` is at least `tol`: add `term` to `total`, add 1 to `k`, multiply `power` by `x`, flip `sign` with `sign = -sign`, and rebuild `term` as `sign * power / k`. After the loop, return `total` rounded to 6 places.',
+        'The header is `while abs(term) >= tol:`, the sign flips with `sign = -sign`, and the new term is `term = sign * power / k` once `k` and `power` have both moved on. The final line is `return round(total, 6)`.',
+      ],
+      solution: {
+        code: `def ln_one_plus(x, tol):
+    total = 0
+    k = 1
+    power = x
+    sign = 1
+    term = x
+    while abs(term) >= tol:
+        total = total + term
+        k = k + 1
+        power = power * x
+        sign = -sign
+        term = sign * power / k
+    return round(total, 6)`,
+        explanation:
+          '- Everything is set up before the loop: `total` starts empty, and `k`, `power`, `sign` and `term` describe the first term, which is `x` over 1.\n' +
+          '- `while abs(term) >= tol:` measures the size of the term, so a negative term that is still large keeps the loop going. Comparing `term` itself would stop at the second term, and `ln_one_plus(0.5, 0.01)` would return 0.5 instead of 0.401042.\n' +
+          '- `>=` matches "greater than or equal to", so a term exactly the size of `tol` is still added.\n' +
+          '- The body adds the approved term first, then moves all three parts on one step: `k` counts up, `power` gains another factor of `x`, and `sign` flips between 1 and -1. ' +
+          '`term = sign * power / k` puts them back together. Building the term with `x ** k` works too but repeats the multiplying; `-term * x * (k - 1) / k` is a shorter version of the same step.\n' +
+          '- Because `x` is below 1, `power` shrinks on every pass, so the size of the term always falls under `tol` and the loop ends. A reading of `0` makes the first term 0, so the loop runs no passes at all and the answer is 0.\n' +
+          '- `return round(total, 6)` rounds once, after the loop. Rounding the running total on every pass gives 0.587791 instead of 0.587787 for `ln_one_plus(0.8, 1e-7)`.\n\n' +
+          'Marking guide (15): set-up before the loop (3), `while abs(term) >= tol` (3), add the term then move power, sign and k on (5), round once and return (2), no import and no print (2).',
+      },
+      selfExplain: 'Why is the answer for a reading of 0 handled by the loop condition rather than by an if statement?',
     },
   ],
 };

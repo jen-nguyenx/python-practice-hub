@@ -26,7 +26,7 @@ function draftArgs(d: unknown): string {
 
 export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
   const { q, revealed, locked, mode, checksLeft } = props;
-  const testMode = mode === 'topic-test' || mode === 'midsem';
+  const testMode = mode === 'topic-test' || mode === 'exam';
   const [args, setArgs] = useState(() => draftArgs(props.draft));
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Question } from '../../content/schema.ts';
 import type { AppEvent } from '../../engine/types.ts';
 import type { SavedAnswer, TestItem } from './summary.ts';
+import type { TestKind } from '../../engine/types.ts';
 import { bestResult, buildTestEvents, compactResponse, passMarkFor, strongNextStep, summarizeTest, testHistory, weakTopics } from './summary.ts';
 
 function q(id: string, format: Question['format'], diff: Question['diff'] = 'medium'): Question {
@@ -28,7 +29,7 @@ function answers(): Map<number, SavedAnswer> {
   ]);
 }
 
-function summary(kind: 'topic-test' | 'midsem' = 'midsem') {
+function summary(kind: TestKind = 'practice-test') {
   return summarizeTest({
     kind, title: 'T', items, answers: answers(), flagged: new Set([3]), timeSpent: [30000, 20000, 60000, 300000, 12000],
     durationMs: 422000, limitMs: 900000, timedOut: false, finishedAt: 1000,
@@ -53,10 +54,10 @@ describe('summarizeTest', () => {
 
   it('applies pass marks: topic test 4 of 5, mid-sem 50%', () => {
     expect(passMarkFor('topic-test', 5)).toBe(4);
-    expect(passMarkFor('midsem', 15)).toBe(8);
-    expect(passMarkFor('midsem', 10)).toBe(5);
+    expect(passMarkFor('practice-test', 15)).toBe(8);
+    expect(passMarkFor('practice-test', 10)).toBe(5);
     expect(summary('topic-test').passed).toBe(false);
-    expect(summary('midsem').passed).toBe(false);
+    expect(summary('practice-test').passed).toBe(false);
   });
 
   it('weak topics are below 70%, weakest first', () => {
@@ -65,18 +66,18 @@ describe('summarizeTest', () => {
 
   it('suggests a bigger test only for a strong mid-sem result that was not already the biggest', () => {
     const allRight = new Map<number, SavedAnswer>(items.map((_, i) => [i, { result: { correct: true, score: 1, mistakes: [] }, response: null, timeMs: 1000 }]));
-    const strong = (kind: 'topic-test' | 'midsem') => summarizeTest({
+    const strong = (kind: TestKind) => summarizeTest({
       kind, title: 'T', items, answers: allRight, flagged: new Set(), timeSpent: [0, 0, 0, 0, 0],
       durationMs: 1000, limitMs: 900000, timedOut: false, finishedAt: 1000,
     });
     // Weak topics exist: the Practise links are the next step.
-    expect(strongNextStep(summary('midsem'), { maxCount: 30, midsemTopics: 7 })).toBeNull();
+    expect(strongNextStep(summary('practice-test'), { maxCount: 30, topicCount: 7 })).toBeNull();
     // A topic test never suggests adding topics.
-    expect(strongNextStep(strong('topic-test'), { maxCount: 30, midsemTopics: 7 })).toBeNull();
-    expect(strongNextStep(strong('midsem'), { maxCount: 30, midsemTopics: 7 })).toMatch(/more questions or more topics/);
-    expect(strongNextStep(strong('midsem'), { maxCount: 5, midsemTopics: 7 })).toMatch(/more topics\.$/);
-    expect(strongNextStep(strong('midsem'), { maxCount: 30, midsemTopics: 2 })).toMatch(/more questions\.$/);
-    expect(strongNextStep(strong('midsem'), { maxCount: 5, midsemTopics: 2 })).toBeNull();
+    expect(strongNextStep(strong('topic-test'), { maxCount: 30, topicCount: 7 })).toBeNull();
+    expect(strongNextStep(strong('practice-test'), { maxCount: 30, topicCount: 7 })).toMatch(/more questions or more topics/);
+    expect(strongNextStep(strong('practice-test'), { maxCount: 5, topicCount: 7 })).toMatch(/more topics\.$/);
+    expect(strongNextStep(strong('practice-test'), { maxCount: 30, topicCount: 2 })).toMatch(/more questions\.$/);
+    expect(strongNextStep(strong('practice-test'), { maxCount: 5, topicCount: 2 })).toBeNull();
   });
 });
 
@@ -107,15 +108,15 @@ describe('buildTestEvents', () => {
 describe('testHistory', () => {
   const base = { v: 1 as const, sessionId: 's', durationMs: 60000, qids: [] };
   const events: AppEvent[] = [
-    { ...base, eid: '1', ts: 100, type: 'test_result', kind: 'midsem', topicIds: ['strings'], score: 6, total: 10, passed: true },
+    { ...base, eid: '1', ts: 100, type: 'test_result', kind: 'practice-test', topicIds: ['strings'], score: 6, total: 10, passed: true },
     { ...base, eid: '2', ts: 200, type: 'test_result', kind: 'topic-test', topicIds: ['strings'], score: 5, total: 5, passed: true },
-    { ...base, eid: '3', ts: 300, type: 'test_result', kind: 'midsem', topicIds: ['strings', 'recursion'], score: 12, total: 15, passed: true },
-    { ...base, eid: '4', ts: 400, type: 'test_result', kind: 'midsem', topicIds: ['strings'], score: 8, total: 10, passed: true },
+    { ...base, eid: '3', ts: 300, type: 'test_result', kind: 'practice-test', topicIds: ['strings', 'recursion'], score: 12, total: 15, passed: true },
+    { ...base, eid: '4', ts: 400, type: 'test_result', kind: 'practice-test', topicIds: ['strings'], score: 8, total: 10, passed: true },
     { eid: '5', v: 1, ts: 50, sessionId: 's', type: 'session_start' },
   ];
 
   it('lists one kind newest first and finds the best', () => {
-    const h = testHistory(events, 'midsem');
+    const h = testHistory(events, 'practice-test');
     expect(h.map((x) => x.ts)).toEqual([400, 300, 100]);
     expect(h[0].percent).toBe(80);
     // 80% twice: the one with more questions wins.
@@ -123,5 +124,37 @@ describe('testHistory', () => {
     expect(testHistory(events, 'topic-test', 'strings')).toHaveLength(1);
     expect(testHistory(events, 'topic-test', 'recursion')).toHaveLength(0);
     expect(bestResult([])).toBeNull();
+  });
+});
+
+describe('mock exam marking', () => {
+  // Marks per question, as a real paper weights them: the half-credit answer is on the 20-mark question.
+  const marks = { 't05-s1-q1': 5, 't05-s1-q2': 5, 't03-s1-q3': 10, 't03-s2-q1': 20, 't03-s2-q2': 15 };
+  const examSummary = () => summarizeTest({
+    kind: 'mock-exam', title: 'Mock final exam', items, answers: answers(), flagged: new Set(),
+    timeSpent: [0, 0, 0, 0, 0], durationMs: 1000, limitMs: 7_200_000, timedOut: false, finishedAt: 1000, marks,
+  });
+
+  it('scores out of marks, giving partial credit its share', () => {
+    const s = examSummary();
+    // 5 (full) + 0 + 10 (full) + 10 (half of 20) + 0 (unanswered) = 25 of 55 marks on the questions sat.
+    expect(s.marks).toEqual({ earned: 25, total: 55 });
+    expect(s.percent).toBe(45);
+  });
+
+  it('passes on the marks percentage, not the number of questions right', () => {
+    expect(examSummary().passed).toBe(false);
+  });
+
+  it('records the marks, not the question count, in the stored result', () => {
+    const s = examSummary();
+    const result = buildTestEvents(s, items, answers()).find((e) => e.type === 'test_result');
+    expect(result).toMatchObject({ kind: 'mock-exam', score: 25, total: 55 });
+  });
+
+  it('leaves a test with no marks scored by question count', () => {
+    const s = summary('practice-test');
+    expect(s.marks).toBeUndefined();
+    expect(s.percent).toBe(40);
   });
 });

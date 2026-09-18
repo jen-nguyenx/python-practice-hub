@@ -5,9 +5,9 @@ Python practice for first-year UWA students taking **CITS1401 Computational Thin
 **Live site: https://jen-nguyenx.github.io/python-practice-hub/**
 
 - 13 topics from variables and if/else up to files, project rules and recursion, unlocked one after another.
-- 264 questions in 12 formats: multiple choice, select all, predict the output, trace tables, spot the difference, error translator, fill in the blank, Parsons puzzles, fix the bug, write code (including paper-exam and CSV project styles), refactor, and break the code.
+- 278 questions in 12 formats: multiple choice, select all, predict the output, trace tables, spot the difference, error translator, fill in the blank, Parsons puzzles, fix the bug, write code (including paper-exam and CSV project styles), refactor, and break the code.
 - A VS Code-style editor (Monaco) running real Python 3.14 in the browser (Pyodide). Nothing is sent to a server.
-- Hints in three steps, full answers with explanations, a free-coding Playground, a mid-semester practice test and topic tests.
+- Hints in three steps, full answers with explanations, a free-coding Playground, topic tests, a custom timed practice test, and a mock final exam built to the shape of the real CITS1401 paper: eight questions, 100 marks, two hours, closed book.
 - Reports on strengths, weak spots, repeated mistakes and the best-practice patterns to work on.
 
 Progress is stored only in your browser. Use Settings → Export progress to back it up.

@@ -50,15 +50,3 @@ export function openTopicIds(progress: States): TopicId[] {
   const open = TOPICS.filter((t) => progress[t.id] && progress[t.id]!.state !== 'locked').map((t) => t.id);
   return open.length > 0 ? open : [TOPICS[0].id];
 }
-
-/**
- * The topics a mid-semester practice test starts from: the whole mid-sem set once the student can practise all of it,
- * otherwise only the part they can practise, so every result on the page leads somewhere they can work.
- * The "Mid-sem topics" button still offers the full set for revision.
- */
-export function defaultMidsemTopics(progress: States): TopicId[] {
-  const midsem = TOPICS.filter((t) => t.midsem).map((t) => t.id);
-  const open = new Set(openTopicIds(progress));
-  const openMidsem = midsem.filter((t) => open.has(t));
-  return openMidsem.length === 0 || openMidsem.length === midsem.length ? midsem : openMidsem;
-}

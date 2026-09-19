@@ -1,0 +1,112 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "stock = {'flat white': 12, 'muffin': 3}",
+        "stdout": ""
+      },
+      {
+        "source": "stock['muffin']",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "len(stock)",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "'muffin' in stock",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "12 in stock",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "stock['chai'] = 8",
+        "stdout": ""
+      },
+      {
+        "source": "stock['muffin'] = stock['muffin'] + 10",
+        "stdout": ""
+      },
+      {
+        "source": "stock",
+        "stdout": "",
+        "value": "{'flat white': 12, 'muffin': 13, 'chai': 8}"
+      },
+      {
+        "source": "del stock['chai']",
+        "stdout": ""
+      },
+      {
+        "source": "stock",
+        "stdout": "",
+        "value": "{'flat white': 12, 'muffin': 13}"
+      }
+    ]
+  },
+  "s1-b1": {
+    "error": {
+      "line": 5,
+      "message": "'latte'",
+      "type": "KeyError"
+    },
+    "stdout": "None\n0\n{'flat white': 12, 'muffin': 3}\n"
+  },
+  "s2-b1": {
+    "left": {
+      "error": {
+        "line": 4,
+        "message": "'Cosmic'",
+        "type": "KeyError"
+      },
+      "stdout": ""
+    },
+    "right": {
+      "stdout": "{'Cosmic': 2, 'Bluff': 1}\n"
+    }
+  },
+  "s2-b3": {
+    "stdout": "{'SR001': 2, 'SR002': 1}\n{'SR001': 5.300000000000001, 'SR002': 4.8}\n"
+  },
+  "s2-b7": {
+    "stdout": "{'Perth': 1, 'perth': 1, 'Perth ': 1, 'Joondalup': 1}\n4\n{'perth': 3, 'joondalup': 1}\n2\n"
+  },
+  "s3-b1": {
+    "left": {
+      "stdout": "{'Mon': ['Ava', 'Kai', 'Noor'], 'Tue': ['Ava', 'Kai', 'Noor']}\n"
+    },
+    "right": {
+      "stdout": "{'Mon': ['Ava', 'Noor'], 'Tue': ['Kai']}\n"
+    }
+  },
+  "s4-b1": {
+    "stdout": "key: Ava\nkey: Kai\nkey: Noor\nvalue: 72\nvalue: 41\nvalue: 63\npair: Ava 72\npair: Kai 41\npair: Noor 63\n"
+  },
+  "s4-b5": {
+    "error": {
+      "line": 2,
+      "message": "dictionary changed size during iteration",
+      "type": "RuntimeError"
+    },
+    "stdout": ""
+  },
+  "s4-b7": {
+    "stdout": "{'Ava': 72, 'Noor': 63}\n{'Ava': 72, 'Kai': 41, 'Noor': 63}\n"
+  },
+  "s5-b1": {
+    "error": {
+      "line": 2,
+      "message": "'dict' object has no attribute 'sort'",
+      "type": "AttributeError"
+    },
+    "stdout": ""
+  },
+  "s5-b3": {
+    "stdout": "dict_items([('Tane', 312), ('Mei', 405), ('Grace', 312)])\n['Grace', 'Mei', 'Tane']\n[('Grace', 312), ('Mei', 405), ('Tane', 312)]\n[('Mei', 405), ('Tane', 312), ('Grace', 312)]\n[('Mei', 405), ('Grace', 312), ('Tane', 312)]\n"
+  }
+}

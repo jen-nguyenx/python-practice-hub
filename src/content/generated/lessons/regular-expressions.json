@@ -1,0 +1,282 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "import re",
+        "stdout": ""
+      },
+      {
+        "source": "line = 'order 66 shipped on 2024-03-01'",
+        "stdout": ""
+      },
+      {
+        "source": "'66' in line",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "re.search(r'\\d+', line)",
+        "stdout": "",
+        "value": "<re.Match object; span=(6, 8), match='66'>"
+      },
+      {
+        "source": "re.search(r'\\d+', line).group()",
+        "stdout": "",
+        "value": "'66'"
+      },
+      {
+        "source": "re.findall(r'\\d+', line)",
+        "stdout": "",
+        "value": "['66', '2024', '03', '01']"
+      },
+      {
+        "source": "re.search(r'\\d+', 'nothing numeric here')",
+        "stdout": ""
+      },
+      {
+        "source": "re.findall(r'\\d{4}-\\d{2}-\\d{2}', line)",
+        "stdout": "",
+        "value": "['2024-03-01']"
+      }
+    ]
+  },
+  "s0-b4": {
+    "shell": [
+      {
+        "source": "len('\\n'), len(r'\\n')",
+        "stdout": "",
+        "value": "(1, 2)"
+      },
+      {
+        "source": "r'\\d' == '\\\\d'",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "print(r'C:\\temp\\new')",
+        "stdout": "C:\\temp\\new\n"
+      },
+      {
+        "source": "print('C:\\temp\\new')",
+        "stdout": "C:\temp\new\n"
+      },
+      {
+        "source": "import re",
+        "stdout": ""
+      },
+      {
+        "source": "re.findall(r'\\\\', r'a\\b')",
+        "stdout": "",
+        "value": "['\\\\']"
+      }
+    ]
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "import re",
+        "stdout": ""
+      },
+      {
+        "source": "re.findall(r'\\d+', 'a1 bb22 ccc333')",
+        "stdout": "",
+        "value": "['1', '22', '333']"
+      },
+      {
+        "source": "re.findall(r'[aeiou]', 'regular expressions')",
+        "stdout": "",
+        "value": "['e', 'u', 'a', 'e', 'e', 'i', 'o']"
+      },
+      {
+        "source": "re.findall(r'\\w+', 'hello, world! 42')",
+        "stdout": "",
+        "value": "['hello', 'world', '42']"
+      },
+      {
+        "source": "re.findall(r'\\b\\w{4}\\b', 'this is a test of four char words')",
+        "stdout": "",
+        "value": "['this', 'test', 'four', 'char']"
+      },
+      {
+        "source": "re.findall(r'colou?r', 'color colour colouur')",
+        "stdout": "",
+        "value": "['color', 'colour']"
+      },
+      {
+        "source": "re.findall(r'a.c', 'abc a c axc ac')",
+        "stdout": "",
+        "value": "['abc', 'a c', 'axc']"
+      },
+      {
+        "source": "re.findall(r'\\bcat\\b', 'the cat in concatenate')",
+        "stdout": "",
+        "value": "['cat']"
+      },
+      {
+        "source": "re.findall(r'cat|dog', 'a dog, a cat, a catalogue')",
+        "stdout": "",
+        "value": "['dog', 'cat', 'cat']"
+      },
+      {
+        "source": "re.findall(r'[^,]+', 'ada,bob,cleo')",
+        "stdout": "",
+        "value": "['ada', 'bob', 'cleo']"
+      }
+    ]
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "import re",
+        "stdout": ""
+      },
+      {
+        "source": "text = 'order 66 shipped'",
+        "stdout": ""
+      },
+      {
+        "source": "re.search(r'\\d+', text)",
+        "stdout": "",
+        "value": "<re.Match object; span=(6, 8), match='66'>"
+      },
+      {
+        "source": "re.match(r'\\d+', text)",
+        "stdout": ""
+      },
+      {
+        "source": "re.match(r'order', text)",
+        "stdout": "",
+        "value": "<re.Match object; span=(0, 5), match='order'>"
+      },
+      {
+        "source": "re.fullmatch(r'\\d+', '66')",
+        "stdout": "",
+        "value": "<re.Match object; span=(0, 2), match='66'>"
+      },
+      {
+        "source": "re.fullmatch(r'\\d+', '66 shipped')",
+        "stdout": ""
+      },
+      {
+        "source": "re.findall(r'\\d+', 'a1 b22 c333')",
+        "stdout": "",
+        "value": "['1', '22', '333']"
+      },
+      {
+        "source": "bool(re.search(r'\\d', 'abc'))",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "[m.span() for m in re.finditer(r'\\d+', 'a1 b22')]",
+        "stdout": "",
+        "value": "[(1, 2), (4, 6)]"
+      }
+    ]
+  },
+  "s2-b3": {
+    "error": {
+      "line": 17,
+      "message": "'NoneType' object has no attribute 'group'",
+      "type": "AttributeError"
+    },
+    "stdout": "2024\nno year found\n2024 11 15 (11, 15)\nNone\n"
+  },
+  "s3-b1": {
+    "stdout": "2024-03-01\n2024 03 01\n('2024', '03', '01')\n2025 03 01\n2024 01\n{'year': '2024', 'month': '03', 'day': '01'}\n"
+  },
+  "s3-b3": {
+    "stdout": "['ada@example.com', 'bob@school.edu']\n[('ada', 'example'), ('bob', 'school')]\n['ada', 'bob']\nada@example.com -> ada at example (0, 15)\nbob@school.edu -> bob at school (20, 34)\n"
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "import re",
+        "stdout": ""
+      },
+      {
+        "source": "tags = '<b>bold</b> and <i>italic</i>'",
+        "stdout": ""
+      },
+      {
+        "source": "re.findall(r'<.+>', tags)",
+        "stdout": "",
+        "value": "['<b>bold</b> and <i>italic</i>']"
+      },
+      {
+        "source": "re.findall(r'<.+?>', tags)",
+        "stdout": "",
+        "value": "['<b>', '</b>', '<i>', '</i>']"
+      },
+      {
+        "source": "re.findall(r'<[^>]+>', tags)",
+        "stdout": "",
+        "value": "['<b>', '</b>', '<i>', '</i>']"
+      },
+      {
+        "source": "re.search(r'\".*\"', 'say \"one\" and \"two\"').group()",
+        "stdout": "",
+        "value": "'\"one\" and \"two\"'"
+      },
+      {
+        "source": "re.search(r'\".*?\"', 'say \"one\" and \"two\"').group()",
+        "stdout": "",
+        "value": "'\"one\"'"
+      }
+    ]
+  },
+  "s4-b3": {
+    "stdout": "['Ada; unit=CITS1401']\n['Ada', 'CITS1401']\n['Ada', 'CITS1401', '2024']\n{'name': 'Ada', 'unit': 'CITS1401', 'year': '2024'}\n"
+  },
+  "s5-b1": {
+    "shell": [
+      {
+        "source": "import re",
+        "stdout": ""
+      },
+      {
+        "source": "re.sub(r'\\s+', ' ', 'too   many     spaces')",
+        "stdout": "",
+        "value": "'too many spaces'"
+      },
+      {
+        "source": "re.sub(r'\\d', '#', 'call 9876 now')",
+        "stdout": "",
+        "value": "'call #### now'"
+      },
+      {
+        "source": "re.sub(r'\\bcat\\b', 'dog', 'the cat in concatenate')",
+        "stdout": "",
+        "value": "'the dog in concatenate'"
+      },
+      {
+        "source": "re.split(r'[;,]\\s*', 'ada, bob;cleo , dan')",
+        "stdout": "",
+        "value": "['ada', 'bob', 'cleo ', 'dan']"
+      },
+      {
+        "source": "'ada, bob;cleo , dan'.split(',')",
+        "stdout": "",
+        "value": "['ada', ' bob;cleo ', ' dan']"
+      },
+      {
+        "source": "re.subn(r'o', '0', 'foo boo')",
+        "stdout": "",
+        "value": "('f00 b00', 4)"
+      },
+      {
+        "source": "re.sub(r'(\\w+)@(\\w+)', r'\\2 at \\1', 'ada@example')",
+        "stdout": "",
+        "value": "'example at ada'"
+      }
+    ]
+  },
+  "s6-b1": {
+    "left": {
+      "stdout": "marks.csv True\nnotes.txt False\ndataXcsv True\nsummary.csv.bak False\n"
+    },
+    "right": {
+      "stdout": "marks.csv True\nnotes.txt False\ndataXcsv False\nsummary.csv.bak False\n"
+    }
+  }
+}

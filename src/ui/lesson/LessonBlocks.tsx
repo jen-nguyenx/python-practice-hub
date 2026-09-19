@@ -5,7 +5,7 @@ import type { GeneratedBlock, LessonBlock, LessonError, ShellLine } from '../../
 import type { Experiment, GeneratedExperiments, Topic } from '../../content/schema.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
-import { Markdown } from '../components/Markdown.tsx';
+import { InlineMd, Markdown } from '../components/Markdown.tsx';
 import { MistakesTab, WorkedExampleTab } from '../shell/topic/ReadTabs.tsx';
 import { ExperimentCard } from '../shell/topic/WhatIf.tsx';
 
@@ -123,7 +123,9 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
     case 'callout':
       return (
         <aside class={`lb-callout is-${block.tone}`}>
-          <p class="lb-callout-title">{block.title ?? CALLOUT_TITLE[block.tone]}</p>
+          <p class={`lb-callout-title${block.title ? ' is-custom' : ''}`}>
+            {block.title ? <InlineMd text={block.title} /> : CALLOUT_TITLE[block.tone]}
+          </p>
           <Markdown text={block.body} class="lb-md" />
         </aside>
       );
@@ -150,11 +152,11 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
           <div class="lb-table-wrap">
             <table class="lb-table">
               <thead>
-                <tr>{block.head.map((h) => <th key={h} scope="col">{h}</th>)}</tr>
+                <tr>{block.head.map((h) => <th key={h} scope="col"><InlineMd text={h} /></th>)}</tr>
               </thead>
               <tbody>
                 {block.rows.map((row, i) => (
-                  <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>
+                  <tr key={i}>{row.map((cell, j) => <td key={j}><InlineMd text={cell} /></td>)}</tr>
                 ))}
               </tbody>
             </table>

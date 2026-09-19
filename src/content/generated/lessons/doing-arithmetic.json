@@ -1,0 +1,238 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "4 + 3",
+        "stdout": "",
+        "value": "7"
+      },
+      {
+        "source": "4 - 3",
+        "stdout": "",
+        "value": "1"
+      },
+      {
+        "source": "4 * 3",
+        "stdout": "",
+        "value": "12"
+      },
+      {
+        "source": "4 / 3",
+        "stdout": "",
+        "value": "1.3333333333333333"
+      }
+    ]
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "10 / 2",
+        "stdout": "",
+        "value": "5.0"
+      },
+      {
+        "source": "9 / 3",
+        "stdout": "",
+        "value": "3.0"
+      },
+      {
+        "source": "100 / 10",
+        "stdout": "",
+        "value": "10.0"
+      },
+      {
+        "source": "type(10 / 2)",
+        "stdout": "",
+        "value": "<class 'float'>"
+      },
+      {
+        "source": "7 / 2",
+        "stdout": "",
+        "value": "3.5"
+      },
+      {
+        "source": "1 / 3",
+        "stdout": "",
+        "value": "0.3333333333333333"
+      }
+    ]
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "7 // 2",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "7 % 2",
+        "stdout": "",
+        "value": "1"
+      },
+      {
+        "source": "17 // 5",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "17 % 5",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "8 % 2",
+        "stdout": "",
+        "value": "0"
+      },
+      {
+        "source": "9 % 2",
+        "stdout": "",
+        "value": "1"
+      },
+      {
+        "source": "20 % 5",
+        "stdout": "",
+        "value": "0"
+      }
+    ]
+  },
+  "s2-b3": {
+    "stdout": "8\n20\n"
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "2 ** 3",
+        "stdout": "",
+        "value": "8"
+      },
+      {
+        "source": "2 ** 10",
+        "stdout": "",
+        "value": "1024"
+      },
+      {
+        "source": "9 ** 0.5",
+        "stdout": "",
+        "value": "3.0"
+      },
+      {
+        "source": "2 ** 0.5",
+        "stdout": "",
+        "value": "1.4142135623730951"
+      },
+      {
+        "source": "3 ^ 2",
+        "stdout": "",
+        "value": "1"
+      }
+    ]
+  },
+  "s4-b2": {
+    "shell": [
+      {
+        "source": "2 + 3 * 4",
+        "stdout": "",
+        "value": "14"
+      },
+      {
+        "source": "(2 + 3) * 4",
+        "stdout": "",
+        "value": "20"
+      },
+      {
+        "source": "10 - 2 - 3",
+        "stdout": "",
+        "value": "5"
+      },
+      {
+        "source": "100 / 10 / 2",
+        "stdout": "",
+        "value": "5.0"
+      },
+      {
+        "source": "2 * 3 ** 2",
+        "stdout": "",
+        "value": "18"
+      },
+      {
+        "source": "(2 * 3) ** 2",
+        "stdout": "",
+        "value": "36"
+      }
+    ]
+  },
+  "s4-b4": {
+    "left": {
+      "stdout": "9.0\n"
+    },
+    "right": {
+      "stdout": "5.0\n"
+    }
+  },
+  "s5-b1": {
+    "shell": [
+      {
+        "error": {
+          "line": 1,
+          "message": "division by zero",
+          "type": "ZeroDivisionError"
+        },
+        "source": "10 / 0",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "division by zero",
+          "type": "ZeroDivisionError"
+        },
+        "source": "10 // 0",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "division by zero",
+          "type": "ZeroDivisionError"
+        },
+        "source": "10 % 0",
+        "stdout": ""
+      },
+      {
+        "source": "0 / 10",
+        "stdout": "",
+        "value": "0.0"
+      }
+    ]
+  },
+  "s6-b1": {
+    "shell": [
+      {
+        "source": "0.1 + 0.2",
+        "stdout": "",
+        "value": "0.30000000000000004"
+      },
+      {
+        "source": "0.1 + 0.2 == 0.3",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "1.1 * 3",
+        "stdout": "",
+        "value": "3.3000000000000003"
+      },
+      {
+        "source": "round(0.1 + 0.2, 2)",
+        "stdout": "",
+        "value": "0.3"
+      },
+      {
+        "source": "round(0.1 + 0.2, 2) == 0.3",
+        "stdout": "",
+        "value": "True"
+      }
+    ]
+  }
+}

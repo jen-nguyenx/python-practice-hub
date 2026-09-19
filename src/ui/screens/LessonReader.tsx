@@ -13,6 +13,7 @@ import { blockKey, TRACK_LABEL } from '../../content/lessonSchema.ts';
 import type { GeneratedExperiments, Topic } from '../../content/schema.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
 import { Icon } from '../components/Icon.tsx';
+import { InlineMd } from '../components/Markdown.tsx';
 import { ProgressBar } from '../components/ProgressBar.tsx';
 import { Skeleton } from '../components/Skeleton.tsx';
 import { Block } from '../lesson/LessonBlocks.tsx';
@@ -37,7 +38,7 @@ function Outcomes({ lesson }: { lesson: Lesson }) {
       <p class="tp-label">By the end you can</p>
       <ul>
         {lesson.outcomes.map((o) => (
-          <li key={o}><Icon name="check" size={14} /><span>{o}</span></li>
+          <li key={o}><Icon name="check" size={14} /><span><InlineMd text={o} /></span></li>
         ))}
       </ul>
       {lesson.prereqs?.length ? (
@@ -157,7 +158,7 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
                   onClick={() => go(i)}
                 >
                   <span class="ls-step-n" aria-hidden="true">{i + 1}</span>
-                  <span class="ls-step-l">{s.title}</span>
+                  <span class="ls-step-l"><InlineMd text={s.title} /></span>
                 </button>
               </li>
             ))}
@@ -170,7 +171,7 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
           <div class="ls-skel" aria-busy="true"><Skeleton w="40%" h={20} /><Skeleton h={160} /></div>
         ) : (
           <>
-            <h2 class="ls-step-title">{section.title}</h2>
+            <h2 class="ls-step-title"><InlineMd text={section.title} /></h2>
             {at === 0 ? <Outcomes lesson={lesson} /> : null}
             <div class="lb-flow">
               {section.blocks.map((b, bi) => (

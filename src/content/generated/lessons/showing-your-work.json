@@ -1,0 +1,193 @@
+{
+  "s0-b1": {
+    "stdout": "15\n"
+  },
+  "s1-b1": {
+    "stdout": "Hello\nSam\n42\nname\n"
+  },
+  "s1-b3": {
+    "shell": [
+      {
+        "source": "greeting = \"Hello\"",
+        "stdout": ""
+      },
+      {
+        "source": "greeting",
+        "stdout": "",
+        "value": "'Hello'"
+      },
+      {
+        "source": "print(greeting)",
+        "stdout": "Hello\n"
+      },
+      {
+        "source": "\"Hello\"",
+        "stdout": "",
+        "value": "'Hello'"
+      }
+    ]
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "print(\"Total:\", 42)",
+        "stdout": "Total: 42\n"
+      },
+      {
+        "source": "print(\"a\", \"b\", \"c\")",
+        "stdout": "a b c\n"
+      },
+      {
+        "source": "print(1, 2, 3, sep=\" - \")",
+        "stdout": "1 - 2 - 3\n"
+      },
+      {
+        "source": "print(\"a\", \"b\", sep=\"\")",
+        "stdout": "ab\n"
+      },
+      {
+        "source": "print()",
+        "stdout": "\n"
+      },
+      {
+        "source": "print(\"done\")",
+        "stdout": "done\n"
+      }
+    ]
+  },
+  "s2-b4": {
+    "error": {
+      "line": 2,
+      "message": "can only concatenate str (not \"int\") to str",
+      "type": "TypeError"
+    },
+    "stdout": ""
+  },
+  "s2-b6": {
+    "stdout": "Total: 42\nTotal: 42\n"
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "name = \"Sam\"",
+        "stdout": ""
+      },
+      {
+        "source": "score = 87",
+        "stdout": ""
+      },
+      {
+        "source": "f\"{name} scored {score}\"",
+        "stdout": "",
+        "value": "'Sam scored 87'"
+      },
+      {
+        "source": "print(f\"{name} scored {score}.\")",
+        "stdout": "Sam scored 87.\n"
+      },
+      {
+        "source": "print(f\"{name} scored {score} out of 100, which is {score / 100}\")",
+        "stdout": "Sam scored 87 out of 100, which is 0.87\n"
+      },
+      {
+        "source": "print(f\"Twice {score} is {score * 2}\")",
+        "stdout": "Twice 87 is 174\n"
+      }
+    ]
+  },
+  "s3-b4": {
+    "left": {
+      "stdout": "Hello, {name}\n"
+    },
+    "right": {
+      "stdout": "Hello, Sam\n"
+    }
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "price = 2 / 3",
+        "stdout": ""
+      },
+      {
+        "source": "price",
+        "stdout": "",
+        "value": "0.6666666666666666"
+      },
+      {
+        "source": "round(price, 2)",
+        "stdout": "",
+        "value": "0.67"
+      },
+      {
+        "source": "price",
+        "stdout": "",
+        "value": "0.6666666666666666"
+      },
+      {
+        "source": "f\"{price:.2f}\"",
+        "stdout": "",
+        "value": "'0.67'"
+      },
+      {
+        "source": "price",
+        "stdout": "",
+        "value": "0.6666666666666666"
+      },
+      {
+        "source": "print(f\"That is {price:.2f} each\")",
+        "stdout": "That is 0.67 each\n"
+      }
+    ]
+  },
+  "s4-b4": {
+    "shell": [
+      {
+        "source": "round(2.5)",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "round(3.5)",
+        "stdout": "",
+        "value": "4"
+      },
+      {
+        "source": "round(4.5)",
+        "stdout": "",
+        "value": "4"
+      },
+      {
+        "source": "round(2.4)",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "round(2.6)",
+        "stdout": "",
+        "value": "3"
+      }
+    ]
+  },
+  "s5-b2": {
+    "shell": [
+      {
+        "source": "x = print(\"hello\")",
+        "stdout": "hello\n"
+      },
+      {
+        "source": "x",
+        "stdout": ""
+      },
+      {
+        "source": "print(x)",
+        "stdout": "None\n"
+      },
+      {
+        "source": "type(x)",
+        "stdout": "",
+        "value": "<class 'NoneType'>"
+      }
+    ]
+  }
+}

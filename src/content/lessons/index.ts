@@ -3,12 +3,15 @@
 // Lessons are discovered by their path rather than listed in a registry, so adding a file under
 // src/content/lessons/<track>/ is all it takes: the verifier finds it the same way and writes both the
 // library index and the lesson's generated output.
+import { TOPICS } from '../topics.ts';
 import type { GeneratedLesson, Lesson, Track } from '../lessonSchema.ts';
 import LESSON_INDEX_JSON from '../generated/lesson-index.json';
 
 /** What the library page needs about a lesson without loading the lesson itself. */
 export interface LessonMeta {
   id: string;
+  /** Place in the track's reading order; core lessons get their topic's order instead. */
+  order?: number;
   title: string;
   summary: string;
   track: Track;
@@ -54,6 +57,20 @@ export function loadLessonOutputs(id: string): Promise<GeneratedLesson> {
   return loader ? loader() : Promise.resolve({});
 }
 
+/**
+ * Reading order, which is the whole point of a library: a beginner must meet "What a program is" before
+ * "Doing arithmetic". Core lessons follow the unit's topic order; the other tracks use their own `order`.
+ */
 export function lessonsInTrack(track: Track): LessonMeta[] {
-  return LESSON_INDEX.filter((l) => l.track === track);
+  const place = (l: LessonMeta): number => {
+    if (l.topicId) {
+      const i = TOPICS.findIndex((t) => t.id === l.topicId);
+      if (i >= 0) return i;
+    }
+    return l.order ?? Number.MAX_SAFE_INTEGER;
+  };
+  return LESSON_INDEX
+    .filter((l) => l.track === track)
+    .slice()
+    .sort((a, b) => place(a) - place(b) || a.title.localeCompare(b.title));
 }

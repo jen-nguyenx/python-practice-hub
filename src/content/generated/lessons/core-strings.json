@@ -1,0 +1,215 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "plate = '1ABC234'",
+        "stdout": ""
+      },
+      {
+        "source": "plate[0]",
+        "stdout": "",
+        "value": "'1'"
+      },
+      {
+        "source": "plate[3]",
+        "stdout": "",
+        "value": "'C'"
+      },
+      {
+        "source": "plate[-1]",
+        "stdout": "",
+        "value": "'4'"
+      },
+      {
+        "source": "len(plate)",
+        "stdout": "",
+        "value": "7"
+      },
+      {
+        "source": "plate[6]",
+        "stdout": "",
+        "value": "'4'"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "string index out of range",
+          "type": "IndexError"
+        },
+        "source": "plate[7]",
+        "stdout": ""
+      }
+    ]
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "word = 'FREMANTLE'",
+        "stdout": ""
+      },
+      {
+        "source": "word[0:4]",
+        "stdout": "",
+        "value": "'FREM'"
+      },
+      {
+        "source": "len(word[0:4])",
+        "stdout": "",
+        "value": "4"
+      },
+      {
+        "source": "word[4:9]",
+        "stdout": "",
+        "value": "'ANTLE'"
+      },
+      {
+        "source": "word[0:4] + word[4:9]",
+        "stdout": "",
+        "value": "'FREMANTLE'"
+      },
+      {
+        "source": "word[:4]",
+        "stdout": "",
+        "value": "'FREM'"
+      },
+      {
+        "source": "word[4:]",
+        "stdout": "",
+        "value": "'ANTLE'"
+      },
+      {
+        "source": "word[-3:]",
+        "stdout": "",
+        "value": "'TLE'"
+      },
+      {
+        "source": "word[5:100]",
+        "stdout": "",
+        "value": "'NTLE'"
+      },
+      {
+        "source": "word[::-1]",
+        "stdout": "",
+        "value": "'ELTNAMERF'"
+      }
+    ]
+  },
+  "s2-b1": {
+    "stdout": "[  nedlands ]\n[Nedlands]\n"
+  },
+  "s2-b3": {
+    "left": {
+      "error": {
+        "line": 2,
+        "message": "'str' object does not support item assignment",
+        "type": "TypeError"
+      },
+      "stdout": ""
+    },
+    "right": {
+      "stdout": "Perth\n"
+    }
+  },
+  "s3-b2": {
+    "shell": [
+      {
+        "source": "label = 'Fresh Mangoes  $4.50 a kilo'",
+        "stdout": ""
+      },
+      {
+        "source": "label.find('$')",
+        "stdout": "",
+        "value": "15"
+      },
+      {
+        "source": "label.find('@')",
+        "stdout": "",
+        "value": "-1"
+      },
+      {
+        "source": "label.count('e')",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "label.split()",
+        "stdout": "",
+        "value": "['Fresh', 'Mangoes', '$4.50', 'a', 'kilo']"
+      },
+      {
+        "source": "label.split('$')",
+        "stdout": "",
+        "value": "['Fresh Mangoes  ', '4.50 a kilo']"
+      },
+      {
+        "source": "'-'.join(['CITS', '1401'])",
+        "stdout": "",
+        "value": "'CITS-1401'"
+      },
+      {
+        "source": "'4.50'.isdigit()",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "'450'.isdigit()",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "label.replace(' ', '')",
+        "stdout": "",
+        "value": "'FreshMangoes$4.50akilo'"
+      }
+    ]
+  },
+  "s4-b1": {
+    "stdout": "712\n712712\n1424\n"
+  },
+  "s4-b3": {
+    "stdout": "[Kings Park Lookout ]\n[Kings Park Lookout]\n[Kings Park Lookout]\n"
+  },
+  "s5-b1": {
+    "shell": [
+      {
+        "source": "'Perth' == 'perth'",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "'perth ' == 'perth'",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "'Perth'.lower() == 'perth'",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "'  Perth '.lower() == 'perth'",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "'  Perth '.strip().lower() == 'perth'",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "word = 'Madam'",
+        "stdout": ""
+      },
+      {
+        "source": "word == word[::-1]",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "word.lower() == word.lower()[::-1]",
+        "stdout": "",
+        "value": "True"
+      }
+    ]
+  }
+}

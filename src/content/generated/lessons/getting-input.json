@@ -1,0 +1,195 @@
+{
+  "s0-b1": {
+    "stdout": "What is your name? Ada\nHello, Ada\n"
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "input(\"Favourite colour? \")",
+        "stdout": "Favourite colour? blue\n",
+        "value": "'blue'"
+      },
+      {
+        "source": "colour = input(\"And again? \")",
+        "stdout": "And again? blue\n"
+      },
+      {
+        "source": "colour",
+        "stdout": "",
+        "value": "'blue'"
+      },
+      {
+        "source": "len(colour)",
+        "stdout": "",
+        "value": "4"
+      }
+    ]
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "age = input(\"Age? \")",
+        "stdout": "Age? 21\n"
+      },
+      {
+        "source": "age",
+        "stdout": "",
+        "value": "'21'"
+      },
+      {
+        "source": "type(age)",
+        "stdout": "",
+        "value": "<class 'str'>"
+      },
+      {
+        "source": "age == 21",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "age == \"21\"",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "can only concatenate str (not \"int\") to str",
+          "type": "TypeError"
+        },
+        "source": "age + 1",
+        "stdout": ""
+      }
+    ]
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "age = input(\"Age? \")",
+        "stdout": "Age? 21\n"
+      },
+      {
+        "source": "type(age)",
+        "stdout": "",
+        "value": "<class 'str'>"
+      },
+      {
+        "source": "int(age) + 1",
+        "stdout": "",
+        "value": "22"
+      },
+      {
+        "source": "age",
+        "stdout": "",
+        "value": "'21'"
+      },
+      {
+        "source": "age = int(age)",
+        "stdout": ""
+      },
+      {
+        "source": "type(age)",
+        "stdout": "",
+        "value": "<class 'int'>"
+      },
+      {
+        "source": "age + 1",
+        "stdout": "",
+        "value": "22"
+      }
+    ]
+  },
+  "s3-b4": {
+    "stdout": "Age? 21\nNext year you will be 22\n"
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "int(\"21\")",
+        "stdout": "",
+        "value": "21"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "invalid literal for int() with base 10: 'hello'",
+          "type": "ValueError"
+        },
+        "source": "int(\"hello\")",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "invalid literal for int() with base 10: ''",
+          "type": "ValueError"
+        },
+        "source": "int(\"\")",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "invalid literal for int() with base 10: '21 years'",
+          "type": "ValueError"
+        },
+        "source": "int(\"21 years\")",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "invalid literal for int() with base 10: '3.5'",
+          "type": "ValueError"
+        },
+        "source": "int(\"3.5\")",
+        "stdout": ""
+      },
+      {
+        "source": "float(\"3.5\")",
+        "stdout": "",
+        "value": "3.5"
+      }
+    ]
+  },
+  "s4-b3": {
+    "shell": [
+      {
+        "source": "int(float(\"3.5\"))",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "int(float(\"3.9\"))",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "round(float(\"3.5\"))",
+        "stdout": "",
+        "value": "4"
+      },
+      {
+        "source": "round(float(\"3.9\"))",
+        "stdout": "",
+        "value": "4"
+      },
+      {
+        "source": "int(\" 7 \")",
+        "stdout": "",
+        "value": "7"
+      }
+    ]
+  },
+  "s4-b6": {
+    "error": {
+      "line": 1,
+      "message": "invalid literal for int() with base 10: 'twenty'",
+      "type": "ValueError"
+    },
+    "stdout": "Age? twenty\n"
+  },
+  "s5-b2": {
+    "stdout": "Price of one: 4.50\nHow many? 3\n3 at 4.50 each comes to 13.50\n"
+  }
+}

@@ -24,6 +24,14 @@ function inline(text: string, keyBase: string): ComponentChildren[] {
   return out;
 }
 
+/**
+ * Inline marks only (code, bold, italic, links) with no block wrapper, for places that are already an
+ * element: a heading, a list item, a table cell. `Markdown` would put a <p> inside them.
+ */
+export function InlineMd({ text }: { text: string }): JSX.Element {
+  return <>{inline(text ?? '', 'i')}</>;
+}
+
 export function Markdown({ text, class: cls }: { text: string; class?: string }): JSX.Element {
   const blocks: JSX.Element[] = [];
   const lines = (text ?? '').replace(/\r\n/g, '\n').split('\n');

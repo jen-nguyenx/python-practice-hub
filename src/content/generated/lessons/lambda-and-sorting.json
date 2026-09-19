@@ -1,0 +1,241 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "nums = [3, 1, 2]",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(nums)",
+        "stdout": "",
+        "value": "[1, 2, 3]"
+      },
+      {
+        "source": "nums",
+        "stdout": "",
+        "value": "[3, 1, 2]"
+      },
+      {
+        "source": "nums.sort()",
+        "stdout": ""
+      },
+      {
+        "source": "nums",
+        "stdout": "",
+        "value": "[1, 2, 3]"
+      },
+      {
+        "source": "print(nums.sort())",
+        "stdout": "None\n"
+      },
+      {
+        "source": "sorted(\"cab\")",
+        "stdout": "",
+        "value": "['a', 'b', 'c']"
+      },
+      {
+        "source": "sorted({\"b\": 1, \"a\": 2})",
+        "stdout": "",
+        "value": "['a', 'b']"
+      }
+    ]
+  },
+  "s0-b3": {
+    "left": {
+      "error": {
+        "line": 4,
+        "message": "object of type 'NoneType' has no len()",
+        "type": "TypeError"
+      },
+      "stdout": "None\n"
+    },
+    "right": {
+      "stdout": "[55, 70, 92]\n3\n"
+    }
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "words = [\"fig\", \"Apple\", \"kiwi\", \"plum\", \"banana\"]",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(words)",
+        "stdout": "",
+        "value": "['Apple', 'banana', 'fig', 'kiwi', 'plum']"
+      },
+      {
+        "source": "sorted(words, key=len)",
+        "stdout": "",
+        "value": "['fig', 'kiwi', 'plum', 'Apple', 'banana']"
+      },
+      {
+        "source": "sorted(words, key=str.lower)",
+        "stdout": "",
+        "value": "['Apple', 'banana', 'fig', 'kiwi', 'plum']"
+      },
+      {
+        "source": "sorted(words, key=len, reverse=True)",
+        "stdout": "",
+        "value": "['banana', 'Apple', 'kiwi', 'plum', 'fig']"
+      },
+      {
+        "source": "max(words, key=len)",
+        "stdout": "",
+        "value": "'banana'"
+      },
+      {
+        "source": "min(words, key=len)",
+        "stdout": "",
+        "value": "'fig'"
+      }
+    ]
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "double = lambda n: n * 2",
+        "stdout": ""
+      },
+      {
+        "source": "double(5)",
+        "stdout": "",
+        "value": "10"
+      },
+      {
+        "source": "rows = [(\"cy\", 71), (\"bo\", 88), (\"ana\", 71)]",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(rows, key=lambda r: r[1])",
+        "stdout": "",
+        "value": "[('cy', 71), ('ana', 71), ('bo', 88)]"
+      },
+      {
+        "source": "sorted(rows, key=lambda r: len(r[0]))",
+        "stdout": "",
+        "value": "[('cy', 71), ('bo', 88), ('ana', 71)]"
+      },
+      {
+        "source": "people = [{\"name\": \"cy\", \"age\": 30}, {\"name\": \"ana\", \"age\": 24}]",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(people, key=lambda p: p[\"age\"])",
+        "stdout": "",
+        "value": "[{'name': 'ana', 'age': 24}, {'name': 'cy', 'age': 30}]"
+      },
+      {
+        "source": "(lambda a, b: a + b)(2, 3)",
+        "stdout": "",
+        "value": "5"
+      }
+    ]
+  },
+  "s2-b3": {
+    "error": {
+      "line": 1,
+      "message": "cannot assign to lambda",
+      "type": "SyntaxError"
+    },
+    "stdout": ""
+  },
+  "s2-b5": {
+    "left": {
+      "stdout": "[('cy', None), ('ana', 71), ('bo', 88)]\n"
+    },
+    "right": {
+      "stdout": "[('cy', None), ('ana', 71), ('bo', 88)]\n-1\n"
+    }
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "(71, \"ana\") < (71, \"cy\")",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "(71, \"zz\") < (88, \"aa\")",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "rows = [(\"cy\", 71), (\"bo\", 88), (\"ana\", 71)]",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(rows, key=lambda r: r[1])",
+        "stdout": "",
+        "value": "[('cy', 71), ('ana', 71), ('bo', 88)]"
+      },
+      {
+        "source": "sorted(rows, key=lambda r: (r[1], r[0]))",
+        "stdout": "",
+        "value": "[('ana', 71), ('cy', 71), ('bo', 88)]"
+      },
+      {
+        "source": "sorted(rows, key=lambda r: (-r[1], r[0]))",
+        "stdout": "",
+        "value": "[('bo', 88), ('ana', 71), ('cy', 71)]"
+      }
+    ]
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "from operator import itemgetter",
+        "stdout": ""
+      },
+      {
+        "source": "rows = [(\"cy\", 71), (\"bo\", 88), (\"ana\", 71)]",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(rows, key=itemgetter(1))",
+        "stdout": "",
+        "value": "[('cy', 71), ('ana', 71), ('bo', 88)]"
+      },
+      {
+        "source": "sorted(rows, key=itemgetter(1, 0))",
+        "stdout": "",
+        "value": "[('ana', 71), ('cy', 71), ('bo', 88)]"
+      },
+      {
+        "source": "people = [{\"name\": \"cy\", \"age\": 30}, {\"name\": \"ana\", \"age\": 24}]",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(people, key=itemgetter(\"age\"))",
+        "stdout": "",
+        "value": "[{'name': 'ana', 'age': 24}, {'name': 'cy', 'age': 30}]"
+      },
+      {
+        "source": "second = itemgetter(1)",
+        "stdout": ""
+      },
+      {
+        "source": "second([\"a\", \"b\", \"c\"])",
+        "stdout": "",
+        "value": "'b'"
+      }
+    ]
+  },
+  "s4-b3": {
+    "stdout": "ana 71\ncy 71\nbo 88\n"
+  },
+  "s5-b1": {
+    "stdout": "after pass 1: [('ana', 71), ('bo', 88), ('cy', 71)]\nafter pass 2: [('ana', 71), ('cy', 71), ('bo', 88)]\ntuple key:    [('ana', 71), ('cy', 71), ('bo', 88)]\n"
+  },
+  "s5-b4": {
+    "left": {
+      "stdout": "[('bo', 88), ('ana', 71), ('cy', 71)]\n"
+    },
+    "right": {
+      "stdout": "[('bo', 88), ('cy', 71), ('ana', 71)]\n"
+    }
+  },
+  "s6-b1": {
+    "stdout": "1. Eli  95\n2. bo   88\n3. Ana  71\n4. Cy   71\n5. di   no score\n"
+  }
+}

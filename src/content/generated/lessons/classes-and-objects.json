@@ -1,0 +1,195 @@
+{
+  "s0-b1": {
+    "left": {
+      "error": {
+        "line": 9,
+        "message": "list index out of range",
+        "type": "IndexError"
+      },
+      "stdout": ""
+    },
+    "right": {
+      "stdout": "Alan 0.0\n150.0\n"
+    }
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "class Dog: pass",
+        "stdout": ""
+      },
+      {
+        "source": "d = Dog()",
+        "stdout": ""
+      },
+      {
+        "source": "vars(d)",
+        "stdout": "",
+        "value": "{}"
+      },
+      {
+        "source": "d.name = 'Rex'",
+        "stdout": ""
+      },
+      {
+        "source": "d.age = 4",
+        "stdout": ""
+      },
+      {
+        "source": "vars(d)",
+        "stdout": "",
+        "value": "{'name': 'Rex', 'age': 4}"
+      },
+      {
+        "source": "d.name",
+        "stdout": "",
+        "value": "'Rex'"
+      },
+      {
+        "source": "type(d)",
+        "stdout": "",
+        "value": "<class '__main__.Dog'>"
+      },
+      {
+        "source": "isinstance(d, Dog)",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "e = Dog()",
+        "stdout": ""
+      },
+      {
+        "source": "vars(e)",
+        "stdout": "",
+        "value": "{}"
+      },
+      {
+        "source": "d is e",
+        "stdout": "",
+        "value": "False"
+      }
+    ]
+  },
+  "s2-b1": {
+    "stdout": "Ada 120.0\nGrace 40.0\n{'name': 'Ada', 'balance': 120.0}\n{'name': 'Grace', 'balance': 40.0}\nFalse True\n"
+  },
+  "s2-b4": {
+    "error": {
+      "line": 7,
+      "message": "'Account' object has no attribute 'name'",
+      "type": "AttributeError"
+    },
+    "stdout": ""
+  },
+  "s3-b1": {
+    "stdout": "110.0\n120.0\n120.0\nTrue False\nmethod function\n"
+  },
+  "s3-b3": {
+    "error": {
+      "line": 9,
+      "message": "Account.deposit() takes 1 positional argument but 2 were given",
+      "type": "TypeError"
+    },
+    "stdout": ""
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "class Dog: legs = 4",
+        "stdout": ""
+      },
+      {
+        "source": "a = Dog()",
+        "stdout": ""
+      },
+      {
+        "source": "b = Dog()",
+        "stdout": ""
+      },
+      {
+        "source": "a.legs, b.legs, Dog.legs",
+        "stdout": "",
+        "value": "(4, 4, 4)"
+      },
+      {
+        "source": "vars(a)",
+        "stdout": "",
+        "value": "{}"
+      },
+      {
+        "source": "a.legs = 3",
+        "stdout": ""
+      },
+      {
+        "source": "a.legs, b.legs, Dog.legs",
+        "stdout": "",
+        "value": "(3, 4, 4)"
+      },
+      {
+        "source": "vars(a)",
+        "stdout": "",
+        "value": "{'legs': 3}"
+      },
+      {
+        "source": "Dog.legs = 5",
+        "stdout": ""
+      },
+      {
+        "source": "a.legs, b.legs",
+        "stdout": "",
+        "value": "(3, 5)"
+      }
+    ]
+  },
+  "s4-b3": {
+    "left": {
+      "stdout": "['apple', 'pear']\n['apple', 'pear']\nTrue\n"
+    },
+    "right": {
+      "stdout": "['apple']\n['pear']\nFalse\n"
+    }
+  },
+  "s5-b1": {
+    "stdout": "5.0\n5.0\n5.0\n"
+  },
+  "s5-b4": {
+    "shell": [
+      {
+        "source": "row = {'name': 'Ada', 'mark': 72}",
+        "stdout": ""
+      },
+      {
+        "source": "row['mark']",
+        "stdout": "",
+        "value": "72"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "'marc'",
+          "type": "KeyError"
+        },
+        "source": "row['marc']",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(row)",
+        "stdout": "",
+        "value": "['mark', 'name']"
+      },
+      {
+        "source": "row['grade'] = 'D'",
+        "stdout": ""
+      },
+      {
+        "source": "row",
+        "stdout": "",
+        "value": "{'name': 'Ada', 'mark': 72, 'grade': 'D'}"
+      }
+    ]
+  },
+  "s6-b1": {
+    "stdout": "0.0 0\n[62, 78, 55]\n65.0\n78\n{'unit': 'OTHER', 'scores': []}\n"
+  }
+}

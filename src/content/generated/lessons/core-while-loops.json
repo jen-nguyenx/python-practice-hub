@@ -1,0 +1,86 @@
+{
+  "s0-b1": {
+    "stdout": "digits: 4\nn finished at 0\n"
+  },
+  "s1-b1": {
+    "stdout": "digits in 0 by this loop: 0\nstill hot at 45\nstill hot at 43\nstill hot at 41\nthe loop ended with temperature = 39\n"
+  },
+  "s2-b1": {
+    "stdout": "pass 1   i = 0   reading = 0\npass 2   i = 1   reading = 0\npass 3   i = 2   reading = 3\npass 4   i = 2   reading = 3\npass 5   i = 2   reading = 3\npass 6   i = 2   reading = 3\ngave up after 6 passes, with i stuck at 2\n"
+  },
+  "s2-b3": {
+    "stdout": "readings before the marker: 4\ndry readings: 3\n"
+  },
+  "s3-b1": {
+    "left": {
+      "error": {
+        "line": 3,
+        "message": "list index out of range",
+        "type": "IndexError"
+      },
+      "stdout": ""
+    },
+    "right": {
+      "stdout": "read 3 values\n"
+    }
+  },
+  "s3-b4": {
+    "stdout": "70\n65\n81\ndone\nreadings: 3\ntotal: 216\naverage: 72.0\n"
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "n = 4096",
+        "stdout": ""
+      },
+      {
+        "source": "n % 10",
+        "stdout": "",
+        "value": "6"
+      },
+      {
+        "source": "n // 10",
+        "stdout": "",
+        "value": "409"
+      },
+      {
+        "source": "n / 10",
+        "stdout": "",
+        "value": "409.6"
+      },
+      {
+        "source": "n % 2",
+        "stdout": "",
+        "value": "0"
+      },
+      {
+        "source": "n // 2",
+        "stdout": "",
+        "value": "2048"
+      },
+      {
+        "source": "0 // 10",
+        "stdout": "",
+        "value": "0"
+      }
+    ]
+  },
+  "s4-b3": {
+    "stdout": "digit sum: 19\n13 in binary: 1101\n"
+  },
+  "s4-b6": {
+    "stdout": "[]\nlength: 0\n"
+  },
+  "s5-b1": {
+    "stdout": "after 400 halvings the term is 3.8725919148493183e-121\nis it exactly zero? False\n"
+  },
+  "s5-b3": {
+    "stdout": "2.666667\n2.718254\n2.718282\n0\n"
+  },
+  "s6-b1": {
+    "stdout": "['Pie and Tea', 'Pie and Juice', 'Pie and Water', 'Roll and Tea', 'Roll and Juice', 'Roll and Water']\ndeals: 6\nmains times drinks: 6\n"
+  },
+  "s6-b5": {
+    "stdout": "Bread + Fruit\nBread + Coffee\nBread + Flowers\nFruit + Coffee\nFruit + Flowers\nCoffee + Flowers\npairs: 6\n"
+  }
+}

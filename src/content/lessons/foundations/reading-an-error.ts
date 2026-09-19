@@ -6,6 +6,7 @@ const lesson: Lesson = {
   title: 'Reading an error message',
   summary: 'Python tells you what went wrong and where. Most beginners never read it',
   track: 'foundations',
+  order: 7,
   minutes: 12,
   outcomes: [
     'Read a traceback from the bottom up and say what went wrong',

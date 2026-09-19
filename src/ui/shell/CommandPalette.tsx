@@ -40,6 +40,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
   const progress = safeTopicProgress(events, settings);
   const actions: Item[] = [
     { id: 'a-home', group: 'Pages and actions', label: 'Topics', detail: 'Home', icon: 'ladder', search: 'home ladder', href: href.landing(), run: go(href.landing()) },
+    { id: 'a-lessons', group: 'Pages and actions', label: 'Lessons', detail: 'Explanations from the beginning to beyond the unit', icon: 'book', search: 'learn teach read tutorial guide', href: href.lessons(), run: go(href.lessons()) },
     { id: 'a-play', group: 'Pages and actions', label: 'Playground', detail: 'Write and run any Python', icon: 'code', search: 'editor run python', href: href.playground(), run: go(href.playground()) },
     { id: 'a-exam', group: 'Pages and actions', label: 'Exams', detail: 'Mock final paper or a timed practice test', icon: 'clock', search: 'exam final mock practice test timed', href: href.exam(), run: go(href.exam()) },
     { id: 'a-report', group: 'Pages and actions', label: 'Report', detail: 'Strengths and weak spots', icon: 'chart', search: 'progress mistakes stats', href: href.report(), run: go(href.report()) },

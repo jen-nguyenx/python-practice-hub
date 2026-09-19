@@ -1,0 +1,54 @@
+{
+  "s0-b1": {
+    "left": {
+      "stdout": "64.4\n88.7\n104.8\n"
+    },
+    "right": {
+      "stdout": "64.4\n88.7\n105.8\n"
+    }
+  },
+  "s1-b1": {
+    "stdout": "5.0\n12.5\nReturn the SmartRider fare in dollars for a trip through this many zones.\n"
+  },
+  "s1-b2": {
+    "stdout": "the program finished\n"
+  },
+  "s1-b4": {
+    "stdout": "<function welcome at 0x...>\nKaya, welcome to UWA\n"
+  },
+  "s2-b1": {
+    "left": {
+      "error": {
+        "line": 5,
+        "message": "unsupported operand type(s) for +: 'NoneType' and 'NoneType'",
+        "type": "TypeError"
+      },
+      "stdout": "12\n10\n"
+    },
+    "right": {
+      "stdout": "22\n"
+    }
+  },
+  "s3-b1": {
+    "stdout": "big\nNone\n"
+  },
+  "s4-b1": {
+    "error": {
+      "line": 8,
+      "message": "trip_cost() missing 1 required positional argument: 'children'",
+      "type": "TypeError"
+    },
+    "stdout": "16\n19\n"
+  },
+  "s5-b1": {
+    "error": {
+      "line": 8,
+      "message": "name 'fahrenheit' is not defined",
+      "type": "NameError"
+    },
+    "stdout": ""
+  },
+  "s5-b3": {
+    "stdout": "101.3\n38.5 C is 101.3 F\nover the century\nFalse\n"
+  }
+}

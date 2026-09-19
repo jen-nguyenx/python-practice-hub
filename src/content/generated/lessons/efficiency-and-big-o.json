@@ -1,0 +1,23 @@
+{
+  "s0-b3": {
+    "stdout": "10 10 20 100\n20 20 40 400\n40 40 80 1600\n80 80 160 6400\n"
+  },
+  "s1-b1": {
+    "stdout": "list last item: True comparisons: 1000\nlist absent: False comparisons: 1000\nset last item: True comparisons: 1\nset absent: False comparisons: 0\n"
+  },
+  "s1-b3": {
+    "stdout": "100 scanning: 4950  set: 100\n200 scanning: 19900  set: 200\n400 scanning: 79800  set: 400\n[2, 1] [2, 1]\n"
+  },
+  "s2-b1": {
+    "stdout": "n     plus      join\n100 4950 100\n200 19900 200\n400 79800 400\n800 319600 800\nplus, doubling n: 4.005012531328321\njoin, doubling n: 2.0\n"
+  },
+  "s2-b3": {
+    "stdout": "'apples,5\\npears,2\\nplums,9\\n'\n'apples,5\\npears,2\\nplums,9\\n'\nTrue\n"
+  },
+  "s3-b1": {
+    "stdout": "n    all_pairs  later_pairs  fixed_inner\n10 100 45 30\n20 400 190 60\n40 1600 780 120\n80 6400 3160 240\n"
+  },
+  "s4-b2": {
+    "stdout": "50 1275 50\n100 5050 100\n200 20100 200\nTrue\n"
+  }
+}

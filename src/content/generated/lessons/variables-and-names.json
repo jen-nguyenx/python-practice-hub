@@ -1,0 +1,201 @@
+{
+  "s0-b1": {
+    "stdout": "54.0\n48.6\n"
+  },
+  "s0-b3": {
+    "stdout": "60.0\n54.0\n"
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "price = 4.50",
+        "stdout": ""
+      },
+      {
+        "source": "price",
+        "stdout": "",
+        "value": "4.5"
+      },
+      {
+        "source": "price * 2",
+        "stdout": "",
+        "value": "9.0"
+      },
+      {
+        "source": "count = 3",
+        "stdout": ""
+      },
+      {
+        "source": "total = price * count",
+        "stdout": ""
+      },
+      {
+        "source": "total",
+        "stdout": "",
+        "value": "13.5"
+      },
+      {
+        "source": "price",
+        "stdout": "",
+        "value": "4.5"
+      }
+    ]
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "count = 3",
+        "stdout": ""
+      },
+      {
+        "source": "count",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "count == 3",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "count == 4",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "count",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "count = 4",
+        "stdout": ""
+      },
+      {
+        "source": "count",
+        "stdout": "",
+        "value": "4"
+      }
+    ]
+  },
+  "s2-b4": {
+    "error": {
+      "line": 2,
+      "message": "cannot assign to literal here. Maybe you meant '==' instead of '='?",
+      "type": "SyntaxError"
+    },
+    "stdout": ""
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "score = 0",
+        "stdout": ""
+      },
+      {
+        "source": "score = score + 10",
+        "stdout": ""
+      },
+      {
+        "source": "score",
+        "stdout": "",
+        "value": "10"
+      },
+      {
+        "source": "score = score + 10",
+        "stdout": ""
+      },
+      {
+        "source": "score",
+        "stdout": "",
+        "value": "20"
+      },
+      {
+        "source": "score = score * 2",
+        "stdout": ""
+      },
+      {
+        "source": "score",
+        "stdout": "",
+        "value": "40"
+      }
+    ]
+  },
+  "s3-b4": {
+    "shell": [
+      {
+        "source": "answer = 42",
+        "stdout": ""
+      },
+      {
+        "source": "type(answer)",
+        "stdout": "",
+        "value": "<class 'int'>"
+      },
+      {
+        "source": "answer = \"forty two\"",
+        "stdout": ""
+      },
+      {
+        "source": "type(answer)",
+        "stdout": "",
+        "value": "<class 'str'>"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "can only concatenate str (not \"int\") to str",
+          "type": "TypeError"
+        },
+        "source": "answer + 1",
+        "stdout": ""
+      }
+    ]
+  },
+  "s4-b2": {
+    "error": {
+      "line": 1,
+      "message": "invalid decimal literal",
+      "type": "SyntaxError"
+    },
+    "stdout": ""
+  },
+  "s4-b4": {
+    "shell": [
+      {
+        "source": "Total = 10",
+        "stdout": ""
+      },
+      {
+        "source": "total = 3",
+        "stdout": ""
+      },
+      {
+        "source": "Total",
+        "stdout": "",
+        "value": "10"
+      },
+      {
+        "source": "total",
+        "stdout": "",
+        "value": "3"
+      }
+    ]
+  },
+  "s5-b1": {
+    "error": {
+      "line": 2,
+      "message": "name 'totl' is not defined. Did you mean: 'total'?",
+      "type": "NameError"
+    },
+    "stdout": ""
+  },
+  "s5-b3": {
+    "error": {
+      "line": 1,
+      "message": "name 'count' is not defined. Did you mean: 'round'?",
+      "type": "NameError"
+    },
+    "stdout": ""
+  }
+}

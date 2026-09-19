@@ -1,7 +1,537 @@
 [
   {
+    "id": "classes-and-objects",
+    "minutes": 25,
+    "order": 8,
+    "outcomes": [
+      "Say what a class gives you that a pile of variables does not",
+      "Write `__init__`, store state on `self`, and add methods that use it",
+      "Tell an instance attribute from a class attribute, and avoid the shared-mutable trap",
+      "Decide when a function, a dict or a tuple is the better answer"
+    ],
+    "sections": 7,
+    "summary": "Keeping data and the behaviour that belongs to it in one place, and knowing when not to",
+    "title": "Classes and objects",
+    "track": "advanced"
+  },
+  {
+    "id": "comprehensions",
+    "minutes": 24,
+    "order": 1,
+    "outcomes": [
+      "Rewrite a three-line build-a-list loop as a comprehension",
+      "Filter with a trailing `if`, and choose values with a leading `if ... else`",
+      "Write dict and set comprehensions, and flatten a nested list",
+      "Say when a loop is the better choice and defend it"
+    ],
+    "sections": 7,
+    "summary": "Turning a build-a-list loop into one expression, and knowing when that is the wrong move",
+    "title": "Comprehensions",
+    "track": "advanced"
+  },
+  {
+    "id": "dunder-methods",
+    "minutes": 25,
+    "order": 9,
+    "outcomes": [
+      "Explain why `__repr__` is the first method to write and how `__str__` differs",
+      "Give an object a length, an equality test and an order",
+      "Say why defining `__eq__` costs you the ability to put the object in a set, and fix it",
+      "Use `__contains__` to give `in` a meaning of your own"
+    ],
+    "prereqs": [
+      "classes-and-objects"
+    ],
+    "sections": 7,
+    "summary": "Teaching your own objects to print, compare, measure and answer `in`",
+    "title": "Dunder methods",
+    "track": "advanced"
+  },
+  {
+    "id": "efficiency-and-big-o",
+    "minutes": 28,
+    "order": 14,
+    "outcomes": [
+      "Say how the work a piece of code does grows as its input grows",
+      "Explain why `in` on a list costs more as the list grows and `in` on a set does not",
+      "Recognise the quadratic string-building loop and replace it with `join`",
+      "Read a nested loop and state its cost without running it"
+    ],
+    "sections": 6,
+    "summary": "Counting the work a loop does, and seeing which choices make it grow faster than the data",
+    "title": "Efficiency and big O",
+    "track": "advanced"
+  },
+  {
+    "id": "generators",
+    "minutes": 26,
+    "order": 6,
+    "outcomes": [
+      "Write a function with `yield` and say what calling it does",
+      "Explain why a generator can be endless when a list cannot",
+      "Choose between a list comprehension and a generator expression",
+      "Recognise the bug where a generator has already been used up"
+    ],
+    "prereqs": [
+      "comprehensions"
+    ],
+    "sections": 6,
+    "summary": "Producing values one at a time, why that lets a sequence be endless, and the trap of using one twice",
+    "title": "Generators",
+    "track": "advanced"
+  },
+  {
+    "id": "json-and-csv",
+    "minutes": 24,
+    "order": 12,
+    "outcomes": [
+      "Turn Python data into JSON text and back with `dumps` and `loads`",
+      "Say which Python types survive a JSON round trip and which change",
+      "Read and write CSV with `csv.DictReader` and `csv.writer` instead of `split(\",\")`",
+      "Choose the right format for a given piece of data"
+    ],
+    "sections": 6,
+    "summary": "Two ways to put data in a text file, and the standard-library modules that get the details right",
+    "title": "JSON and CSV",
+    "track": "advanced"
+  },
+  {
+    "id": "lambda-and-sorting",
+    "minutes": 26,
+    "order": 3,
+    "outcomes": [
+      "Sort by something other than the value itself using `key`",
+      "Break ties deliberately with a tuple key",
+      "Write a `lambda` and say when a named function is the better choice",
+      "Explain what a stable sort guarantees and use it on purpose"
+    ],
+    "sections": 7,
+    "summary": "Telling sorted what to sort by, breaking ties on purpose, and the stability that makes it possible",
+    "title": "Sorting by a key",
+    "track": "advanced"
+  },
+  {
+    "id": "modules-and-imports",
+    "minutes": 22,
+    "order": 11,
+    "outcomes": [
+      "Say what a module is and what `import` actually does",
+      "Choose between `import x` and `from x import y`, and avoid `import *`",
+      "Explain what `if __name__ == \"__main__\":` is for",
+      "Name a dozen standard-library modules and what each is for"
+    ],
+    "sections": 7,
+    "summary": "Splitting a program across files, and borrowing the thousands of files Python ships with",
+    "title": "Modules and imports",
+    "track": "advanced"
+  },
+  {
+    "id": "mutability-and-copying",
+    "minutes": 26,
+    "order": 5,
+    "outcomes": [
+      "Say which types can be changed in place and which cannot",
+      "Explain why changing one name changed another",
+      "Choose between a shallow copy and `copy.deepcopy`",
+      "Recognise the mutable default argument trap and fix it"
+    ],
+    "sections": 6,
+    "summary": "Why two names can share one list, what a copy really copies, and the default argument that remembers",
+    "title": "Mutability and copying",
+    "track": "advanced"
+  },
+  {
+    "id": "regular-expressions",
+    "minutes": 28,
+    "order": 13,
+    "outcomes": [
+      "Read a pattern made of the common metacharacters and say what it matches",
+      "Choose between `search`, `match`, `fullmatch`, `findall` and `finditer`",
+      "Pull pieces out of a match with numbered and named groups",
+      "Tell greedy from lazy repetition and fix a pattern that swallows too much",
+      "Recognise the jobs where `in`, `split` or `startswith` is the better tool"
+    ],
+    "sections": 7,
+    "summary": "Describing the shape of text instead of the exact characters, and knowing when not to",
+    "title": "Regular expressions",
+    "track": "advanced"
+  },
+  {
+    "id": "scope-and-closures",
+    "minutes": 28,
+    "order": 7,
+    "outcomes": [
+      "Work out which name a piece of code will find, in order",
+      "Explain why assigning to a name makes it local for the whole function",
+      "Use `nonlocal` and say why `global` is usually the wrong answer",
+      "Say what a closure captures, and write a decorator that uses it"
+    ],
+    "prereqs": [
+      "lambda-and-sorting"
+    ],
+    "sections": 6,
+    "summary": "Where Python looks for a name, what a nested function keeps hold of, and how a decorator is built from that",
+    "title": "Scope and closures",
+    "track": "advanced"
+  },
+  {
+    "id": "sets",
+    "minutes": 22,
+    "order": 2,
+    "outcomes": [
+      "Choose a set over a list when the question is \"is this in there\"",
+      "Use union, intersection, difference and subset to compare two collections",
+      "Deduplicate a list, with or without keeping the original order",
+      "Say which values can go in a set and why the others cannot"
+    ],
+    "sections": 7,
+    "summary": "The collection built for membership and overlap, and the two rules that come with it",
+    "title": "Sets",
+    "track": "advanced"
+  },
+  {
+    "id": "testing-your-code",
+    "minutes": 26,
+    "order": 15,
+    "outcomes": [
+      "Say what a test buys you that reading the code does not",
+      "Write checks with `assert`, including the message that explains a failure",
+      "Write the failing test first, then the fix",
+      "List the edge cases worth trying on almost any function",
+      "Read and write a small `unittest.TestCase`"
+    ],
+    "sections": 6,
+    "summary": "Turning \"it looked right\" into something the computer checks for you every time",
+    "title": "Testing your code",
+    "track": "advanced"
+  },
+  {
+    "id": "type-hints-and-dataclasses",
+    "minutes": 24,
+    "order": 10,
+    "outcomes": [
+      "Annotate parameters, returns and variables with the common types",
+      "Show that Python does not check annotations while it runs, and say who does",
+      "Turn a hand-written class into a `@dataclass` and know what it generated",
+      "Use `field(default_factory=...)`, `frozen=True` and `order=True` for the right reasons"
+    ],
+    "prereqs": [
+      "classes-and-objects"
+    ],
+    "sections": 6,
+    "summary": "Writing down what a function expects, and letting Python write the boilerplate class",
+    "title": "Type hints and dataclasses",
+    "track": "advanced"
+  },
+  {
+    "id": "unpacking-and-args",
+    "minutes": 24,
+    "order": 4,
+    "outcomes": [
+      "Unpack tuples, lists and nested structures into named variables",
+      "Use a starred name to take \"all the rest\" on either side of an assignment",
+      "Write and call functions using `*args` and `**kwargs`",
+      "Make a parameter keyword-only and say why that helps the caller"
+    ],
+    "sections": 6,
+    "summary": "Pulling a structure apart into names, and writing functions that take however many arguments arrive",
+    "title": "Unpacking and star arguments",
+    "track": "advanced"
+  },
+  {
+    "id": "core-decisions",
+    "minutes": 20,
+    "outcomes": [
+      "Read a comparison as a value that is True or False",
+      "Choose between an elif chain and separate ifs, and say what breaks if you pick wrong",
+      "Join conditions with and, or and not without falling into the \"or with a literal\" trap",
+      "Test a cutoff at the three values that can expose an off-by-one",
+      "Return a condition directly instead of returning True or False"
+    ],
+    "prereqs": [
+      "core-variables-expressions"
+    ],
+    "sections": 8,
+    "summary": "Comparisons, and or not, and why an elif chain is not a run of ifs",
+    "title": "Making decisions",
+    "topicId": "if-elif-else",
+    "track": "core"
+  },
+  {
+    "id": "core-dictionaries",
+    "minutes": 24,
+    "outcomes": [
+      "Store and look up values by a key of your own choosing",
+      "Handle a key that might not be there without crashing",
+      "Count and total things with a dictionary built inside a loop",
+      "Group items into lists under a shared key",
+      "Turn a dictionary into a ranked list of tuples with a tie-break"
+    ],
+    "prereqs": [
+      "core-lists-tuples"
+    ],
+    "sections": 8,
+    "summary": "Looking things up by name instead of by position, counting, grouping and ranking",
+    "title": "Dictionaries",
+    "topicId": "dictionaries",
+    "track": "core"
+  },
+  {
+    "id": "core-exceptions",
+    "minutes": 22,
+    "outcomes": [
+      "Say what an exception is and read the message Python gives you",
+      "Catch a specific exception with try / except and carry on",
+      "Explain what a bare except hides, and why that is worse than a crash",
+      "Choose between checking first with an if and catching afterwards",
+      "Return the empty result a task asks for instead of crashing"
+    ],
+    "prereqs": [
+      "reading-an-error",
+      "core-files-csv"
+    ],
+    "sections": 7,
+    "summary": "Handle the one thing that can really go wrong, and let your own bugs stay visible",
+    "title": "Exceptions and try / except",
+    "topicId": "exceptions",
+    "track": "core"
+  },
+  {
+    "id": "core-files-csv",
+    "minutes": 24,
+    "outcomes": [
+      "Open a file safely and read it one line at a time",
+      "Turn a line into fields with strip and split, and convert the ones you need",
+      "Find a column by its header name instead of counting positions",
+      "Skip a row that cannot be used instead of crashing on it",
+      "Write a results file, header line and all"
+    ],
+    "prereqs": [
+      "reading-an-error"
+    ],
+    "sections": 8,
+    "summary": "Open a file, cut each line into fields, and survive the rows that are broken",
+    "title": "Files and CSV data",
+    "topicId": "files-csv",
+    "track": "core"
+  },
+  {
+    "id": "core-for-loops",
+    "minutes": 22,
+    "outcomes": [
+      "Say exactly which values a range() produces, including the empty ones",
+      "Write the accumulator pattern: set up before the loop, update inside, use after",
+      "Put an if inside a loop to count or total only some of the values",
+      "Decide from the indentation whether a line runs every pass or once at the end",
+      "Trace a loop on paper, one row per pass, and check it against what Python does"
+    ],
+    "prereqs": [
+      "core-decisions"
+    ],
+    "sections": 8,
+    "summary": "Where a range starts and stops, the accumulator pattern, and how to trace a loop by hand",
+    "title": "Repeating with for and range",
+    "topicId": "for-loops-range",
+    "track": "core"
+  },
+  {
+    "id": "core-functions",
+    "minutes": 24,
+    "outcomes": [
+      "Write a function with a def line, a docstring and a return, and call it",
+      "Say what the caller ends up holding, and why print and return are not interchangeable",
+      "Tell a parameter from an argument, and predict what a wrong-order call does",
+      "Explain why a name created inside a function cannot be used outside it",
+      "Use a returned value in a sum, a condition, an f-string or another call"
+    ],
+    "prereqs": [
+      "core-for-loops"
+    ],
+    "sections": 8,
+    "summary": "def, parameters, and the difference between showing an answer and handing it back",
+    "title": "Writing your own functions",
+    "topicId": "functions-basics",
+    "track": "core"
+  },
+  {
+    "id": "core-lists-tuples",
+    "minutes": 24,
+    "outcomes": [
+      "Build up a list with append and take items back off it",
+      "Choose between sort() and sorted() and say what each one gives back",
+      "Sort by a rule of your own, including a tie-break",
+      "Spot when two names refer to one list and know what to do about it",
+      "Return several values from a function as a tuple and unpack them"
+    ],
+    "prereqs": [
+      "core-strings"
+    ],
+    "sections": 8,
+    "summary": "Collections that change and collections that cannot, sorting with a rule, and the copy that is not a copy",
+    "title": "Lists and tuples",
+    "topicId": "lists-tuples",
+    "track": "core"
+  },
+  {
+    "id": "core-project-simulator",
+    "minutes": 25,
+    "outcomes": [
+      "Turn a specification into a checklist you can tick off",
+      "Break a task into helpers with one job each, called from main()",
+      "Read a file once and answer every part of the task from what you kept",
+      "Validate rows in an order that cannot crash, and handle duplicates",
+      "Keep full precision until the result is built, and rank with a proper tie-break",
+      "Test your own program the way the marker will"
+    ],
+    "prereqs": [
+      "core-scope-and-main"
+    ],
+    "sections": 7,
+    "summary": "How to turn a specification into a program that answers exactly what was asked",
+    "title": "Building a whole project",
+    "topicId": "project-simulator",
+    "track": "core"
+  },
+  {
+    "id": "core-recursion",
+    "minutes": 24,
+    "outcomes": [
+      "Say what happens when a function calls itself, and why each call has its own variables",
+      "Write a base case that every input reaches",
+      "Combine the result of a recursive call with the part this call handled",
+      "Make an input smaller with slices, and with remainder and integer division",
+      "Say when recursion is a better fit than a loop, and when it is not",
+      "Diagnose a RecursionError in one of three places"
+    ],
+    "prereqs": [
+      "core-scope-and-main"
+    ],
+    "sections": 7,
+    "summary": "A function that calls itself, the base case that stops it, and what the answer is built from",
+    "title": "Recursion",
+    "topicId": "recursion",
+    "track": "core"
+  },
+  {
+    "id": "core-scope-and-main",
+    "minutes": 24,
+    "outcomes": [
+      "Say which names a function can see and which disappear when it ends",
+      "Explain why assigning inside a function cannot change the caller's variable",
+      "Tell the difference between reassigning a list and changing the list itself",
+      "Use default parameters safely, including the shared-mutable-default trap",
+      "Split a task into helpers called from main(), and follow the project rules"
+    ],
+    "prereqs": [
+      "core-exceptions"
+    ],
+    "sections": 6,
+    "summary": "Where a variable lives, what a function can change, and the contract a project is marked on",
+    "title": "Scope, helpers and main()",
+    "topicId": "functions-project",
+    "track": "core"
+  },
+  {
+    "id": "core-strings",
+    "minutes": 22,
+    "outcomes": [
+      "Pick out one character or a run of characters by position",
+      "Say how many characters a slice takes without counting them",
+      "Explain why a string method has to have its result saved",
+      "Build a new string one character at a time inside a loop",
+      "Compare what somebody typed with what you expected, whatever case they used"
+    ],
+    "prereqs": [
+      "reading-an-error"
+    ],
+    "sections": 8,
+    "summary": "Positions, slices that stop one early, and why a string method never changes the string",
+    "title": "Strings",
+    "topicId": "strings",
+    "track": "core"
+  },
+  {
+    "id": "core-variables-expressions",
+    "minutes": 22,
+    "outcomes": [
+      "Say what kind a value is, and convert it on purpose rather than by accident",
+      "Choose between /, // and % for the question you are actually asking",
+      "Work out the order Python applies operators in, and use brackets when it matters",
+      "Build output with an f-string instead of gluing text to numbers",
+      "Explain why a float is an approximation, and handle money without losing a cent"
+    ],
+    "prereqs": [
+      "reading-an-error"
+    ],
+    "sections": 8,
+    "summary": "What kind a value is, the three ways to divide, and why money in floats goes wrong",
+    "title": "Variables and expressions",
+    "topicId": "variables-expressions",
+    "track": "core"
+  },
+  {
+    "id": "core-while-loops",
+    "minutes": 25,
+    "outcomes": [
+      "Decide whether a job needs a while loop or a for loop",
+      "Write a condition that stops, and find the update that makes it stop",
+      "Stop at a sentinel value without reading past the end of a list",
+      "Take a number apart digit by digit with % and //",
+      "Sum a series until the terms are small enough, and round once at the end",
+      "Work out how many times the inside of a nested loop runs"
+    ],
+    "prereqs": [
+      "core-lists-tuples"
+    ],
+    "sections": 8,
+    "summary": "Repeating until something becomes true, and what happens when two loops sit inside each other",
+    "title": "While loops and nested loops",
+    "topicId": "while-nested-loops",
+    "track": "core"
+  },
+  {
+    "id": "doing-arithmetic",
+    "minutes": 16,
+    "order": 4,
+    "outcomes": [
+      "Use `+`, `-`, `*` and `/` on numbers",
+      "Say what `//`, `%` and `**` do and when each is useful",
+      "Explain why `/` gives a decimal even when it divides evenly",
+      "Work out which part of an expression happens first, and add brackets when it is not what you wanted",
+      "Recognise what happens when you divide by zero"
+    ],
+    "prereqs": [
+      "values-and-types"
+    ],
+    "sections": 7,
+    "summary": "The seven operators, the order they happen in, and the three that surprise people",
+    "title": "Doing arithmetic",
+    "track": "foundations"
+  },
+  {
+    "id": "getting-input",
+    "minutes": 15,
+    "order": 6,
+    "outcomes": [
+      "Ask a person for a value with `input()` and store what they typed",
+      "Say what type `input()` hands back, whatever was typed",
+      "Convert typed text to a number with `int()` or `float()`",
+      "Recognise the error a conversion raises when the text is not a number",
+      "Write the usual shape of a program that reads a number"
+    ],
+    "prereqs": [
+      "values-and-types",
+      "showing-your-work"
+    ],
+    "sections": 6,
+    "summary": "Asking a person for something, and dealing with the fact that it always arrives as text",
+    "title": "Getting input",
+    "track": "foundations"
+  },
+  {
     "id": "reading-an-error",
     "minutes": 12,
+    "order": 7,
     "outcomes": [
       "Read a traceback from the bottom up and say what went wrong",
       "Point at the line that caused an error",
@@ -11,6 +541,78 @@
     "sections": 5,
     "summary": "Python tells you what went wrong and where. Most beginners never read it",
     "title": "Reading an error message",
+    "track": "foundations"
+  },
+  {
+    "id": "showing-your-work",
+    "minutes": 15,
+    "order": 5,
+    "outcomes": [
+      "Explain why a value can exist without ever appearing",
+      "Print several values on one line and control what goes between them",
+      "Build a line of text from values with an f-string",
+      "Round a number for display without changing what is stored",
+      "Work out why a program printed nothing"
+    ],
+    "prereqs": [
+      "variables-and-names"
+    ],
+    "sections": 6,
+    "summary": "How to get what your program knows onto the screen, in a shape a person can read",
+    "title": "Showing your work",
+    "track": "foundations"
+  },
+  {
+    "id": "values-and-types",
+    "minutes": 15,
+    "order": 2,
+    "outcomes": [
+      "Name the four kinds of value you meet first",
+      "Explain why `5` and `\"5\"` are not the same thing",
+      "Use `type()` to find out what a value is",
+      "Recognise the error that comes from mixing text and numbers",
+      "Convert between text and numbers with `int()`, `float()` and `str()`"
+    ],
+    "prereqs": [
+      "what-a-program-is"
+    ],
+    "sections": 7,
+    "summary": "Every value is a kind of thing, and the kind decides what you can do with it",
+    "title": "Values and types",
+    "track": "foundations"
+  },
+  {
+    "id": "variables-and-names",
+    "minutes": 14,
+    "order": 3,
+    "outcomes": [
+      "Store a value under a name and use it later",
+      "Read an assignment right to left",
+      "Tell `=` and `==` apart and say what each one does",
+      "Change what a name holds, including using its own old value",
+      "Recognise `NameError` and find the cause"
+    ],
+    "prereqs": [
+      "values-and-types"
+    ],
+    "sections": 6,
+    "summary": "A name is a label you attach to a value so you can use it again",
+    "title": "Variables and names",
+    "track": "foundations"
+  },
+  {
+    "id": "what-a-program-is",
+    "minutes": 12,
+    "order": 1,
+    "outcomes": [
+      "Say what a program is in one sentence",
+      "Predict the order the lines of a short program run in",
+      "Use `print()` to see what your program did",
+      "Tell the difference between what you meant and what you wrote"
+    ],
+    "sections": 6,
+    "summary": "A list of instructions, carried out in order, exactly as written",
+    "title": "What a program is",
     "track": "foundations"
   }
 ]

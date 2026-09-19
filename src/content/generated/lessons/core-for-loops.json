@@ -1,0 +1,84 @@
+{
+  "s0-b1": {
+    "stdout": "Day 1\nDay 2\nDay 3\nDone\n"
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "list(range(5))",
+        "stdout": "",
+        "value": "[0, 1, 2, 3, 4]"
+      },
+      {
+        "source": "list(range(2, 6))",
+        "stdout": "",
+        "value": "[2, 3, 4, 5]"
+      },
+      {
+        "source": "list(range(1, 10, 3))",
+        "stdout": "",
+        "value": "[1, 4, 7]"
+      },
+      {
+        "source": "list(range(10, 0, -2))",
+        "stdout": "",
+        "value": "[10, 8, 6, 4, 2]"
+      },
+      {
+        "source": "list(range(5, 5))",
+        "stdout": "",
+        "value": "[]"
+      },
+      {
+        "source": "list(range(5, 1))",
+        "stdout": "",
+        "value": "[]"
+      },
+      {
+        "source": "len(range(2, 6))",
+        "stdout": "",
+        "value": "4"
+      },
+      {
+        "source": "n = 4",
+        "stdout": ""
+      },
+      {
+        "source": "list(range(1, n + 1))",
+        "stdout": "",
+        "value": "[1, 2, 3, 4]"
+      }
+    ]
+  },
+  "s2-b1": {
+    "stdout": "P\ne\nr\nt\nh\n"
+  },
+  "s2-b2": {
+    "stdout": "31.5 False\n42.0 True\n28.3 False\n"
+  },
+  "s3-b1": {
+    "stdout": "19.4\n"
+  },
+  "s3-b3": {
+    "left": {
+      "stdout": "6.4\n"
+    },
+    "right": {
+      "stdout": "19.4\n"
+    }
+  },
+  "s4-b1": {
+    "stdout": "3 210\n"
+  },
+  "s4-b4": {
+    "error": {
+      "line": 8,
+      "message": "division by zero",
+      "type": "ZeroDivisionError"
+    },
+    "stdout": ""
+  },
+  "s5-b3": {
+    "stdout": "pass with k = 1 total is now 1\npass with k = 2 total is now 3\npass with k = 3 total is now 6\npass with k = 4 total is now 10\nanswer 10\n"
+  }
+}

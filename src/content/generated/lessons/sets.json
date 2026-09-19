@@ -1,0 +1,301 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "seen = {\"fig\", \"apple\", \"fig\", \"kiwi\"}",
+        "stdout": ""
+      },
+      {
+        "source": "len(seen)",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "sorted(seen)",
+        "stdout": "",
+        "value": "['apple', 'fig', 'kiwi']"
+      },
+      {
+        "source": "\"apple\" in seen",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "\"plum\" in seen",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "seen.add(\"plum\")",
+        "stdout": ""
+      },
+      {
+        "source": "seen.add(\"plum\")",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(seen)",
+        "stdout": "",
+        "value": "['apple', 'fig', 'kiwi', 'plum']"
+      }
+    ]
+  },
+  "s0-b4": {
+    "shell": [
+      {
+        "source": "tags = {\"red\", \"blue\"}",
+        "stdout": ""
+      },
+      {
+        "source": "tags.discard(\"green\")",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(tags)",
+        "stdout": "",
+        "value": "['blue', 'red']"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "'green'",
+          "type": "KeyError"
+        },
+        "source": "tags.remove(\"green\")",
+        "stdout": ""
+      }
+    ]
+  },
+  "s1-b1": {
+    "stdout": "found in list: True\ncomparisons: 500\nfound in set:  True\ncomparisons: 1\n"
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "monday = {\"ana\", \"bo\", \"cy\", \"di\"}",
+        "stdout": ""
+      },
+      {
+        "source": "tuesday = {\"cy\", \"di\", \"eli\"}",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(monday | tuesday)",
+        "stdout": "",
+        "value": "['ana', 'bo', 'cy', 'di', 'eli']"
+      },
+      {
+        "source": "sorted(monday & tuesday)",
+        "stdout": "",
+        "value": "['cy', 'di']"
+      },
+      {
+        "source": "sorted(monday - tuesday)",
+        "stdout": "",
+        "value": "['ana', 'bo']"
+      },
+      {
+        "source": "sorted(tuesday - monday)",
+        "stdout": "",
+        "value": "['eli']"
+      },
+      {
+        "source": "sorted(monday ^ tuesday)",
+        "stdout": "",
+        "value": "['ana', 'bo', 'eli']"
+      }
+    ]
+  },
+  "s2-b4": {
+    "shell": [
+      {
+        "source": "core = {\"ana\", \"bo\"}",
+        "stdout": ""
+      },
+      {
+        "source": "monday = {\"ana\", \"bo\", \"cy\", \"di\"}",
+        "stdout": ""
+      },
+      {
+        "source": "core <= monday",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "monday <= core",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "core.isdisjoint({\"eli\"})",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "core < core",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "core <= core",
+        "stdout": "",
+        "value": "True"
+      }
+    ]
+  },
+  "s3-b1": {
+    "left": {
+      "stdout": "['ana', 'bo', 'cy', 'di']\n"
+    },
+    "right": {
+      "stdout": "['di', 'ana', 'cy', 'bo']\n"
+    }
+  },
+  "s3-b3": {
+    "shell": [
+      {
+        "source": "names = [\"di\", \"ana\", \"cy\", \"ana\", \"bo\", \"di\"]",
+        "stdout": ""
+      },
+      {
+        "source": "len(names)",
+        "stdout": "",
+        "value": "6"
+      },
+      {
+        "source": "len(set(names))",
+        "stdout": "",
+        "value": "4"
+      },
+      {
+        "source": "sorted(set(names))",
+        "stdout": "",
+        "value": "['ana', 'bo', 'cy', 'di']"
+      },
+      {
+        "source": "dict.fromkeys(names)",
+        "stdout": "",
+        "value": "{'di': None, 'ana': None, 'cy': None, 'bo': None}"
+      },
+      {
+        "source": "list(dict.fromkeys(names))",
+        "stdout": "",
+        "value": "['di', 'ana', 'cy', 'bo']"
+      },
+      {
+        "source": "len(names) != len(set(names))",
+        "stdout": "",
+        "value": "True"
+      }
+    ]
+  },
+  "s4-b1": {
+    "error": {
+      "line": 8,
+      "message": "cannot use 'list' as a set element (unhashable type: 'list')",
+      "type": "TypeError"
+    },
+    "stdout": "2\n[(0, 0), (1, 2)]\n4\n"
+  },
+  "s4-b3": {
+    "shell": [
+      {
+        "source": "True == 1",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "hash(True) == hash(1)",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "sorted({1, True, 2})",
+        "stdout": "",
+        "value": "[1, 2]"
+      },
+      {
+        "source": "len({1, True, 2})",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "{(1, 2)} == {(1, 2)}",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "hash((1, 2)) == hash((1, 2))",
+        "stdout": "",
+        "value": "True"
+      }
+    ]
+  },
+  "s4-b5": {
+    "shell": [
+      {
+        "source": "pairs = {frozenset({\"ana\", \"bo\"}), frozenset({\"bo\", \"ana\"}), frozenset({\"cy\", \"di\"})}",
+        "stdout": ""
+      },
+      {
+        "source": "len(pairs)",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "sorted(sorted(p) for p in pairs)",
+        "stdout": "",
+        "value": "[['ana', 'bo'], ['cy', 'di']]"
+      },
+      {
+        "source": "frozenset({\"ana\", \"bo\"}) in pairs",
+        "stdout": "",
+        "value": "True"
+      }
+    ]
+  },
+  "s5-b1": {
+    "shell": [
+      {
+        "source": "list({10, 1, 5, 3})",
+        "stdout": "",
+        "value": "[1, 10, 3, 5]"
+      },
+      {
+        "source": "list({3, 5, 1, 10})",
+        "stdout": "",
+        "value": "[1, 10, 3, 5]"
+      },
+      {
+        "source": "{10, 1, 5, 3} == {3, 5, 1, 10}",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "nums = {10, 1, 5, 3}",
+        "stdout": ""
+      },
+      {
+        "source": "nums.pop()",
+        "stdout": "",
+        "value": "1"
+      },
+      {
+        "source": "sorted(nums)",
+        "stdout": "",
+        "value": "[3, 5, 10]"
+      }
+    ]
+  },
+  "s5-b5": {
+    "error": {
+      "line": 3,
+      "message": "'set' object is not subscriptable",
+      "type": "TypeError"
+    },
+    "stdout": "3\n"
+  },
+  "s6-b3": {
+    "stdout": "['di', 'ana', 'cy', 'bo']\n['ana', 'bo', 'cy', 'di']\n3 repeats dropped\n"
+  }
+}

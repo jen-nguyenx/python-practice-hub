@@ -1,0 +1,195 @@
+{
+  "s0-b1": {
+    "error": {
+      "line": 1,
+      "message": "can only concatenate str (not \"int\") to str",
+      "type": "TypeError"
+    },
+    "stdout": ""
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "12",
+        "stdout": "",
+        "value": "12"
+      },
+      {
+        "source": "12 + 30",
+        "stdout": "",
+        "value": "42"
+      },
+      {
+        "source": "3.5",
+        "stdout": "",
+        "value": "3.5"
+      },
+      {
+        "source": "3.5 + 1",
+        "stdout": "",
+        "value": "4.5"
+      },
+      {
+        "source": "2.0",
+        "stdout": "",
+        "value": "2.0"
+      },
+      {
+        "source": "10 / 4",
+        "stdout": "",
+        "value": "2.5"
+      }
+    ]
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "\"hello\"",
+        "stdout": "",
+        "value": "'hello'"
+      },
+      {
+        "source": "'hello'",
+        "stdout": "",
+        "value": "'hello'"
+      },
+      {
+        "source": "\"hello\" + \" there\"",
+        "stdout": "",
+        "value": "'hello there'"
+      },
+      {
+        "source": "\"ha\" * 3",
+        "stdout": "",
+        "value": "'hahaha'"
+      },
+      {
+        "source": "len(\"hello\")",
+        "stdout": "",
+        "value": "5"
+      },
+      {
+        "source": "print(\"hello\")",
+        "stdout": "hello\n"
+      }
+    ]
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "True",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "False",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "5 > 3",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "5 < 3",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "10 == 10",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "\"cat\" == \"Cat\"",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "\"cat\" == \"cat\"",
+        "stdout": "",
+        "value": "True"
+      }
+    ]
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "type(12)",
+        "stdout": "",
+        "value": "<class 'int'>"
+      },
+      {
+        "source": "type(3.5)",
+        "stdout": "",
+        "value": "<class 'float'>"
+      },
+      {
+        "source": "type(\"hello\")",
+        "stdout": "",
+        "value": "<class 'str'>"
+      },
+      {
+        "source": "type(True)",
+        "stdout": "",
+        "value": "<class 'bool'>"
+      },
+      {
+        "source": "type(\"12\")",
+        "stdout": "",
+        "value": "<class 'str'>"
+      }
+    ]
+  },
+  "s5-b1": {
+    "left": {
+      "stdout": "53\n"
+    },
+    "right": {
+      "stdout": "8\n"
+    }
+  },
+  "s6-b1": {
+    "shell": [
+      {
+        "error": {
+          "line": 1,
+          "message": "can only concatenate str (not \"int\") to str",
+          "type": "TypeError"
+        },
+        "source": "\"5\" + 3",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "unsupported operand type(s) for +: 'int' and 'str'",
+          "type": "TypeError"
+        },
+        "source": "5 + \"3\"",
+        "stdout": ""
+      },
+      {
+        "source": "int(\"5\") + 3",
+        "stdout": "",
+        "value": "8"
+      },
+      {
+        "source": "5 + int(\"3\")",
+        "stdout": "",
+        "value": "8"
+      },
+      {
+        "source": "\"5\" + str(3)",
+        "stdout": "",
+        "value": "'53'"
+      },
+      {
+        "source": "5 + 3.0",
+        "stdout": "",
+        "value": "8.0"
+      }
+    ]
+  }
+}

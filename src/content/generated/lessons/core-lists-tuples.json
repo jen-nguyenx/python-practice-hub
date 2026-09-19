@@ -1,0 +1,217 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "stops = ['Perth', 'Leederville', 'Glendalough']",
+        "stdout": ""
+      },
+      {
+        "source": "stops[0]",
+        "stdout": "",
+        "value": "'Perth'"
+      },
+      {
+        "source": "stops[-1]",
+        "stdout": "",
+        "value": "'Glendalough'"
+      },
+      {
+        "source": "len(stops)",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "stops[1:3]",
+        "stdout": "",
+        "value": "['Leederville', 'Glendalough']"
+      },
+      {
+        "source": "'Perth' in stops",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "stops[1] = 'City West'",
+        "stdout": ""
+      },
+      {
+        "source": "stops",
+        "stdout": "",
+        "value": "['Perth', 'City West', 'Glendalough']"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "list index out of range",
+          "type": "IndexError"
+        },
+        "source": "stops[3]",
+        "stdout": ""
+      }
+    ]
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "queue = ['Ava', 'Kai']",
+        "stdout": ""
+      },
+      {
+        "source": "queue.append('Noor')",
+        "stdout": ""
+      },
+      {
+        "source": "queue",
+        "stdout": "",
+        "value": "['Ava', 'Kai', 'Noor']"
+      },
+      {
+        "source": "queue.pop()",
+        "stdout": "",
+        "value": "'Noor'"
+      },
+      {
+        "source": "queue",
+        "stdout": "",
+        "value": "['Ava', 'Kai']"
+      },
+      {
+        "source": "queue.pop(0)",
+        "stdout": "",
+        "value": "'Ava'"
+      },
+      {
+        "source": "queue",
+        "stdout": "",
+        "value": "['Kai']"
+      },
+      {
+        "source": "len(queue)",
+        "stdout": "",
+        "value": "1"
+      }
+    ]
+  },
+  "s1-b3": {
+    "stdout": "[4, 7, 2]\n3\n13\n"
+  },
+  "s2-b1": {
+    "error": {
+      "line": 3,
+      "message": "'NoneType' object is not subscriptable",
+      "type": "TypeError"
+    },
+    "stdout": ""
+  },
+  "s2-b3": {
+    "shell": [
+      {
+        "source": "times = [31.2, 29.8, 30.5]",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(times)",
+        "stdout": "",
+        "value": "[29.8, 30.5, 31.2]"
+      },
+      {
+        "source": "times",
+        "stdout": "",
+        "value": "[31.2, 29.8, 30.5]"
+      },
+      {
+        "source": "print(times.sort())",
+        "stdout": "None\n"
+      },
+      {
+        "source": "times",
+        "stdout": "",
+        "value": "[29.8, 30.5, 31.2]"
+      },
+      {
+        "source": "sorted(times, reverse=True)",
+        "stdout": "",
+        "value": "[31.2, 30.5, 29.8]"
+      },
+      {
+        "source": "times",
+        "stdout": "",
+        "value": "[29.8, 30.5, 31.2]"
+      }
+    ]
+  },
+  "s3-b1": {
+    "stdout": "[('Subiaco', 12), ('Joondalup', 12), ('Armadale', 30)]\n[('Armadale', 30), ('Subiaco', 12), ('Joondalup', 12)]\n[('Armadale', 30), ('Subiaco', 12), ('Joondalup', 12)]\n"
+  },
+  "s3-b4": {
+    "left": {
+      "stdout": "[('Armadale', 30), ('Subiaco', 12), ('Joondalup', 12)]\n"
+    },
+    "right": {
+      "stdout": "[('Armadale', 30), ('Joondalup', 12), ('Subiaco', 12)]\n"
+    }
+  },
+  "s4-b1": {
+    "stdout": "booked ['A1', 'A2', 'A3']\nsaved  ['A1', 'A2', 'A3']\ncopy   ['A1', 'A2']\n"
+  },
+  "s4-b3": {
+    "stdout": "[91, 72, 68]\n[91, 72, 68, 55]\n"
+  },
+  "s5-b1": {
+    "shell": [
+      {
+        "source": "ferry = ('Rottnest', 90)",
+        "stdout": ""
+      },
+      {
+        "source": "ferry[0]",
+        "stdout": "",
+        "value": "'Rottnest'"
+      },
+      {
+        "source": "len(ferry)",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "place, minutes = ferry",
+        "stdout": ""
+      },
+      {
+        "source": "minutes",
+        "stdout": "",
+        "value": "90"
+      },
+      {
+        "source": "single = (5,)",
+        "stdout": ""
+      },
+      {
+        "source": "len(single)",
+        "stdout": "",
+        "value": "1"
+      },
+      {
+        "source": "not_a_tuple = (5)",
+        "stdout": ""
+      },
+      {
+        "source": "type(not_a_tuple)",
+        "stdout": "",
+        "value": "<class 'int'>"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "'tuple' object does not support item assignment",
+          "type": "TypeError"
+        },
+        "source": "ferry[1] = 45",
+        "stdout": ""
+      }
+    ]
+  },
+  "s5-b3": {
+    "stdout": "Fremantle is close\nJoondalup is close\n('Ava', 'Noor')\nAva\nNoor\nNone\n"
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "point = (3, 7)",
+        "stdout": ""
+      },
+      {
+        "source": "x, y = point",
+        "stdout": ""
+      },
+      {
+        "source": "x",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "y",
+        "stdout": "",
+        "value": "7"
+      },
+      {
+        "source": "a, b, c = [1, 2, 3]",
+        "stdout": ""
+      },
+      {
+        "source": "first, second = \"hi\"",
+        "stdout": ""
+      },
+      {
+        "source": "name, score = (\"ana\", 71)",
+        "stdout": ""
+      },
+      {
+        "source": "(day, month), year = (14, 3), 2026",
+        "stdout": ""
+      },
+      {
+        "source": "day, month, year",
+        "stdout": "",
+        "value": "(14, 3, 2026)"
+      }
+    ]
+  },
+  "s0-b3": {
+    "error": {
+      "line": 1,
+      "message": "too many values to unpack (expected 2, got 3)",
+      "type": "ValueError"
+    },
+    "stdout": ""
+  },
+  "s0-b4": {
+    "error": {
+      "line": 1,
+      "message": "not enough values to unpack (expected 3, got 2)",
+      "type": "ValueError"
+    },
+    "stdout": ""
+  },
+  "s0-b6": {
+    "stdout": "('Ada', 'Lovelace') <class 'tuple'>\nAda\nLovelace\n"
+  },
+  "s0-b9": {
+    "shell": [
+      {
+        "source": "a, b = \"left\", \"right\"",
+        "stdout": ""
+      },
+      {
+        "source": "a, b = b, a",
+        "stdout": ""
+      },
+      {
+        "source": "(a, b)",
+        "stdout": "",
+        "value": "('right', 'left')"
+      },
+      {
+        "source": "nums = [1, 2, 3]",
+        "stdout": ""
+      },
+      {
+        "source": "nums[0], nums[2] = nums[2], nums[0]",
+        "stdout": ""
+      },
+      {
+        "source": "nums",
+        "stdout": "",
+        "value": "[3, 2, 1]"
+      }
+    ]
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "first, *rest = [10, 20, 30, 40]",
+        "stdout": ""
+      },
+      {
+        "source": "(first, rest)",
+        "stdout": "",
+        "value": "(10, [20, 30, 40])"
+      },
+      {
+        "source": "*most, last = [10, 20, 30, 40]",
+        "stdout": ""
+      },
+      {
+        "source": "(most, last)",
+        "stdout": "",
+        "value": "([10, 20, 30], 40)"
+      },
+      {
+        "source": "head, *middle, tail = [1, 2, 3, 4, 5]",
+        "stdout": ""
+      },
+      {
+        "source": "(head, middle, tail)",
+        "stdout": "",
+        "value": "(1, [2, 3, 4], 5)"
+      },
+      {
+        "source": "only, *nothing = [7]",
+        "stdout": ""
+      },
+      {
+        "source": "(only, nothing)",
+        "stdout": "",
+        "value": "(7, [])"
+      }
+    ]
+  },
+  "s1-b3": {
+    "shell": [
+      {
+        "source": "row = (\"ana\", 71, \"PASS\", \"2026-03-14\")",
+        "stdout": ""
+      },
+      {
+        "source": "name, score, *_ = row",
+        "stdout": ""
+      },
+      {
+        "source": "(name, score)",
+        "stdout": "",
+        "value": "('ana', 71)"
+      },
+      {
+        "source": "name, *_, when = row",
+        "stdout": ""
+      },
+      {
+        "source": "(name, when)",
+        "stdout": "",
+        "value": "('ana', '2026-03-14')"
+      },
+      {
+        "source": "pairs = [(\"ana\", 71), (\"bo\", 88)]",
+        "stdout": ""
+      },
+      {
+        "source": "[n for n, _ in pairs]",
+        "stdout": "",
+        "value": "['ana', 'bo']"
+      }
+    ]
+  },
+  "s1-b5": {
+    "left": {
+      "stdout": "ana scored PASS and 71\nbo scored FAIL and 48\n"
+    },
+    "right": {
+      "stdout": "ana scored 71 and pass\nbo scored 48 and fail\n"
+    }
+  },
+  "s1-b7": {
+    "stdout": "1 ana\n2 bo\n3 cy\nana 71\nbo 88\ncy 65\ntea 3\ncocoa 5\n0 ana 71\n1 bo 88\n2 cy 65\n"
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "def area(width, height): return width * height",
+        "stdout": ""
+      },
+      {
+        "source": "size = (3, 4)",
+        "stdout": ""
+      },
+      {
+        "source": "area(*size)",
+        "stdout": "",
+        "value": "12"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "area() missing 1 required positional argument: 'height'",
+          "type": "TypeError"
+        },
+        "source": "area(size)",
+        "stdout": ""
+      },
+      {
+        "source": "settings = {\"width\": 5, \"height\": 2}",
+        "stdout": ""
+      },
+      {
+        "source": "area(**settings)",
+        "stdout": "",
+        "value": "10"
+      },
+      {
+        "source": "nums = [3, 1, 2]",
+        "stdout": ""
+      },
+      {
+        "source": "max(nums)",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "max(*nums)",
+        "stdout": "",
+        "value": "3"
+      }
+    ]
+  },
+  "s2-b3": {
+    "error": {
+      "line": 9,
+      "message": "'int' object is not iterable",
+      "type": "TypeError"
+    },
+    "stdout": "3 3\nempty\n7\n"
+  },
+  "s2-b6": {
+    "shell": [
+      {
+        "source": "front = [1, 2]",
+        "stdout": ""
+      },
+      {
+        "source": "back = [3, 4]",
+        "stdout": ""
+      },
+      {
+        "source": "[*front, *back]",
+        "stdout": "",
+        "value": "[1, 2, 3, 4]"
+      },
+      {
+        "source": "[0, *front, 99]",
+        "stdout": "",
+        "value": "[0, 1, 2, 99]"
+      },
+      {
+        "source": "defaults = {\"colour\": \"red\", \"size\": 1}",
+        "stdout": ""
+      },
+      {
+        "source": "chosen = {\"size\": 3}",
+        "stdout": ""
+      },
+      {
+        "source": "{**defaults, **chosen}",
+        "stdout": "",
+        "value": "{'colour': 'red', 'size': 3}"
+      },
+      {
+        "source": "{**chosen, **defaults}",
+        "stdout": "",
+        "value": "{'size': 1, 'colour': 'red'}"
+      },
+      {
+        "source": "defaults",
+        "stdout": "",
+        "value": "{'colour': 'red', 'size': 1}"
+      }
+    ]
+  },
+  "s3-b1": {
+    "stdout": "args  : (1, 2, 3) tuple\nkwargs: {} dict\n-\nargs  : () tuple\nkwargs: {'mode': 'fast', 'tries': 2} dict\n-\nargs  : (1, 2) tuple\nkwargs: {'mode': 'fast'} dict\n-\nargs  : () tuple\nkwargs: {} dict\n-\n"
+  },
+  "s3-b3": {
+    "stdout": "item   : coffee\nextras : ()\ndetails: {}\n-\nitem   : coffee\nextras : ('milk', 'sugar')\ndetails: {}\n-\nitem   : coffee\nextras : ('milk',)\ndetails: {'size': 'large', 'hot': True}\n-\n"
+  },
+  "s3-b5": {
+    "stdout": "calling area with (3, 4) {}\n12\ncalling greet with ('ana',) {'loudly': True}\nHELLO, ANA\n"
+  },
+  "s4-b1": {
+    "error": {
+      "line": 7,
+      "message": "connect() takes 1 positional argument but 2 were given",
+      "type": "TypeError"
+    },
+    "stdout": "db timeout=5 retry=False\ndb timeout=30 retry=False\ndb timeout=1 retry=True\n"
+  },
+  "s4-b3": {
+    "shell": [
+      {
+        "source": "words = [\"bb\", \"a\", \"ccc\"]",
+        "stdout": ""
+      },
+      {
+        "source": "sorted(words, key=len)",
+        "stdout": "",
+        "value": "['a', 'bb', 'ccc']"
+      },
+      {
+        "source": "sorted(words, key=len, reverse=True)",
+        "stdout": "",
+        "value": "['ccc', 'bb', 'a']"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "sorted expected 1 argument, got 2",
+          "type": "TypeError"
+        },
+        "source": "sorted(words, len)",
+        "stdout": ""
+      }
+    ]
+  },
+  "s4-b5": {
+    "stdout": "a, b, c\na - b - c\nA - B - C\n\n"
+  },
+  "s5-b2": {
+    "stdout": "  morning: n=4 low=3.2 high=9.0 mean=6.3\n* evening: n=4 low=3.2 high=9.0 mean=6.28\nnight: nothing recorded\n"
+  }
+}

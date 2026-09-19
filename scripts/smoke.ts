@@ -37,7 +37,13 @@ async function visit(p: Page, hash: string, shot?: string) {
   await p.goto(base + hash, { waitUntil: 'load' });
   await p.waitForTimeout(700);
   const body = await p.textContent('body') ?? '';
-  for (const bad of ['is being built', 'not implemented', 'Grader not implemented', 'answer data is missing']) {
+  // Exact placeholder sentences, not fragments: lesson prose legitimately contains phrases like
+  // "what is being built", and a loose match turns real teaching into a false alarm.
+  for (const bad of [
+    'for this topic is being written', 'for this topic are being written',
+    'These lessons are being written', 'This experiment is being written',
+    'not implemented', 'Grader not implemented', 'answer data is missing',
+  ]) {
     if (body.includes(bad)) failures.push(`${hash}: page shows "${bad}"`);
   }
   if (shot) await p.screenshot({ path: `${SHOTS}/${shot}.png`, fullPage: false });
@@ -146,25 +152,45 @@ for (const topicId of withExperiments) {
 }
 console.log(`Checked "what if" controls on ${withExperiments.length} topic(s).`);
 
-// Lesson mode: every topic must give a walkable sequence that ends on the practise step, and every step
-// must render something. A step showing the "being written" placeholder means generated data is missing.
+// Every topic must lead somewhere readable. #/learn/:id resolves to that topic's authored lesson when
+// one exists and falls back to the derived path when it does not; either way it must render steps. The
+// library walk below is what checks the lesson content itself, so this only checks the resolution.
 for (const t of TOPICS) {
   await visit(page, `#/learn/${t.id}`);
-  const labels = await page.locator('.ls-step-l').allInnerTexts();
-  if (labels.length < 2) {
-    failures.push(`lesson: ${t.id} has ${labels.length} steps`);
+  const steps = await page.locator('.ls-step-l').count();
+  if (steps < 2) failures.push(`lesson: #/learn/${t.id} resolved to a page with ${steps} steps`);
+  const body = await page.locator('.ls-body').innerText();
+  if (body.includes('being written')) failures.push(`lesson: #/learn/${t.id} opens on a step with no content`);
+}
+console.log(`Resolved the lesson route for ${TOPICS.length} topics.`);
+
+// The lesson library: every lesson must open, walk to its last section, and render something in each one.
+// An empty section means generated output is missing for a block that needs it.
+const LESSONS: { id: string; title: string; sections: number }[] =
+  JSON.parse(readFileSync('src/content/generated/lesson-index.json', 'utf8'));
+await visit(page, '#/lessons', 'lessons');
+const cardCount = await page.locator('.lx-card').count();
+if (cardCount !== LESSONS.length) failures.push(`lessons: library shows ${cardCount} cards but the index has ${LESSONS.length}`);
+for (const l of LESSONS) {
+  await visit(page, `#/lesson/${l.id}`);
+  const steps = await page.locator('.ls-step-l').count();
+  if (steps !== l.sections) {
+    failures.push(`lesson ${l.id}: ${steps} steps shown but the index says ${l.sections} sections`);
     continue;
   }
-  for (let i = 1; i < labels.length; i++) {
-    await page.getByRole('button', { name: /^Next/ }).click();
-    await page.waitForTimeout(150);
-    const body = await page.locator('.ls-body').innerText();
-    if (body.includes('being written')) failures.push(`lesson: ${t.id} step ${i + 1} (${labels[i]}) has no content`);
+  for (let i = 0; i < steps; i++) {
+    if (i > 0) {
+      await page.getByRole('button', { name: /^Next/ }).click();
+      await page.waitForTimeout(120);
+    }
+    const body = (await page.locator('.ls-body').innerText()).trim();
+    if (body.length < 40) failures.push(`lesson ${l.id}: step ${i + 1} renders almost nothing`);
   }
-  const last = await page.locator('.ls-count').innerText();
-  if (!last.includes(`of ${labels.length}`)) failures.push(`lesson: ${t.id} did not reach the last step (${last})`);
+  // Every answer must be hidden until asked for, or the checkpoint teaches nothing.
+  const open = await page.locator('.lb-check-answer').count();
+  if (open > 0) failures.push(`lesson ${l.id}: a checkpoint answer is visible before it is asked for`);
 }
-console.log(`Walked the lesson for ${TOPICS.length} topics.`);
+console.log(`Walked ${LESSONS.length} lessons in the library.`);
 
 // The Python worker must not hand student code a route to JavaScript. With one, pasted code could read the
 // app's IndexedDB (same origin) and POST a student's whole progress log anywhere. The import denylist in

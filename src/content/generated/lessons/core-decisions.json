@@ -1,0 +1,132 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "mark = 72",
+        "stdout": ""
+      },
+      {
+        "source": "mark >= 50",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "type(mark >= 50)",
+        "stdout": "",
+        "value": "<class 'bool'>"
+      },
+      {
+        "source": "mark == 72",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "mark != 72",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "'Perth' == 'perth'",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "'12' > '8'",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "passed = mark >= 50",
+        "stdout": ""
+      },
+      {
+        "source": "passed",
+        "stdout": "",
+        "value": "True"
+      }
+    ]
+  },
+  "s1-b1": {
+    "stdout": "85 HD\n"
+  },
+  "s2-b1": {
+    "left": {
+      "stdout": "P\n"
+    },
+    "right": {
+      "stdout": "HD\n"
+    }
+  },
+  "s3-b3": {
+    "shell": [
+      {
+        "source": "day = 'Mon'",
+        "stdout": ""
+      },
+      {
+        "source": "day == 'Sat' or day == 'Sun'",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "day == 'Sat' or 'Sun'",
+        "stdout": "",
+        "value": "'Sun'"
+      },
+      {
+        "source": "bool('Sun')",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "bool('')",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "day in ('Sat', 'Sun')",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "True and False",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "False or True",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "not day == 'Mon'",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "True or False and False",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "(True or False) and False",
+        "stdout": "",
+        "value": "False"
+      }
+    ]
+  },
+  "s5-b1": {
+    "stdout": "True False\n"
+  },
+  "s5-b2": {
+    "stdout": "True False\n"
+  },
+  "s5-b4": {
+    "left": {
+      "stdout": "no name given\n"
+    },
+    "right": {
+      "stdout": "we have a name\n"
+    }
+  }
+}

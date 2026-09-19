@@ -1,0 +1,94 @@
+{
+  "s0-b1": {
+    "error": {
+      "line": 2,
+      "message": "invalid literal for int() with base 10: 'n/a'",
+      "type": "ValueError"
+    },
+    "stdout": ""
+  },
+  "s1-b2": {
+    "shell": [
+      {
+        "error": {
+          "line": 1,
+          "message": "invalid literal for int() with base 10: '2.5'",
+          "type": "ValueError"
+        },
+        "source": "int('2.5')",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "int() argument must be a string, a bytes-like object or a real number, not 'NoneType'",
+          "type": "TypeError"
+        },
+        "source": "int(None)",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "list index out of range",
+          "type": "IndexError"
+        },
+        "source": "['Mon', 'Tue'][2]",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "'broome'",
+          "type": "KeyError"
+        },
+        "source": "{'perth': 3}['broome']",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "division by zero",
+          "type": "ZeroDivisionError"
+        },
+        "source": "7 / 0",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "[Errno 44] No such file or directory: 'no_such_file'",
+          "type": "FileNotFoundError"
+        },
+        "source": "open('no_such_file')",
+        "stdout": ""
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "name 'totl' is not defined",
+          "type": "NameError"
+        },
+        "source": "totl",
+        "stdout": ""
+      }
+    ]
+  },
+  "s2-b1": {
+    "stdout": "(716, 3)\n"
+  },
+  "s4-b1": {
+    "left": {
+      "stdout": "[3.2, 1.5]\n"
+    },
+    "right": {
+      "stdout": "[3.2, 1.5, 4.0, 2.1]\n"
+    }
+  },
+  "s5-b1": {
+    "stdout": "first call:\n  converted '72'\n  finished with '72'\nresult: 72\nsecond call:\n  could not use 'n/a'\n  finished with 'n/a'\nresult: None\n"
+  },
+  "s6-b1": {
+    "stdout": "['a\\n', 'b\\n']\n[]\nthe program reached the end\n"
+  }
+}

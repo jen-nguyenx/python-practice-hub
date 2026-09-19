@@ -12,6 +12,7 @@ import { TRACK_BLURB, TRACK_LABEL, TRACKS } from '../../content/lessonSchema.ts'
 import type { Track } from '../../content/lessonSchema.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
 import { Icon } from '../components/Icon.tsx';
+import { InlineMd } from '../components/Markdown.tsx';
 import { lessonsDone, safeTopicProgress } from '../shell/progressData.ts';
 import { storeReady } from '../shell/storeReady.ts';
 import '../lesson/lesson.css';
@@ -24,7 +25,7 @@ function Card({ lesson, done, solved, total }: { lesson: LessonMeta; done: boole
         <h3 class="lx-card-title">{lesson.title}</h3>
         {done ? <span class="lx-done" title="You have read this"><Icon name="check" size={13} /></span> : null}
       </div>
-      <p class="lx-card-sum">{lesson.summary}</p>
+      <p class="lx-card-sum"><InlineMd text={lesson.summary} /></p>
       <p class="lx-card-meta num">
         <span>{lesson.minutes} min</span>
         <span>{lesson.sections} steps</span>

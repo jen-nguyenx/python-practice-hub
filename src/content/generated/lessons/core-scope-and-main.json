@@ -1,0 +1,40 @@
+{
+  "s0-b1": {
+    "error": {
+      "line": 10,
+      "message": "name 'cost' is not defined",
+      "type": "NameError"
+    },
+    "stdout": "6.4\n"
+  },
+  "s1-b1": {
+    "error": {
+      "line": 5,
+      "message": "cannot access local variable 'visitors' where it is not associated with a value",
+      "type": "UnboundLocalError"
+    },
+    "stdout": ""
+  },
+  "s2-b1": {
+    "left": {
+      "stdout": "['Perth', 'Claremont']\n"
+    },
+    "right": {
+      "stdout": "['Perth', 'Claremont', 'Cottesloe']\n"
+    }
+  },
+  "s3-b1": {
+    "stdout": "175.0\n180.0\n171.925\n"
+  },
+  "s3-b3": {
+    "left": {
+      "stdout": "['Down Under']\n['Down Under', 'Solid Rock']\n"
+    },
+    "right": {
+      "stdout": "['Down Under']\n['Solid Rock']\n"
+    }
+  },
+  "s5-b4": {
+    "stdout": "rounded once, at the end: 33.3333\nrounded on the way past: 33.33\n"
+  }
+}

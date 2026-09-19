@@ -28,6 +28,16 @@ const nonEmpty = (v: unknown): v is string => typeof v === 'string' && v.trim().
 const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const quote = (s: string) => JSON.stringify(s);
 
+/**
+ * Two fields are rendered as plain text and cannot carry marks: the lesson title, which also becomes a
+ * breadcrumb and a browser tab, and the small uppercase steps label. Everywhere else inline Md works.
+ */
+function plainText(sc: Scope, value: unknown, where: string): void {
+  if (typeof value === 'string' && value.includes('`')) {
+    sc.error(`${where} is rendered as plain text, so the backticks in ${quote(value)} would show literally; remove them`);
+  }
+}
+
 export interface LoadedLesson { file: string; lesson: Lesson }
 
 /** Every lesson file: src/content/lessons/<track>/<id>.ts, excluding index.ts. */
@@ -103,6 +113,7 @@ function checkBlock(sc: Scope, b: LessonBlock, where: string, topic: Topic | nul
       const items = arr(b.items);
       if (items.length < 2) sc.error(`${where}: steps needs at least 2 items`);
       if (!items.every(nonEmpty)) sc.error(`${where}: every step must be non-empty text`);
+      plainText(sc, b.title, `${where}: steps title`);
       return;
     }
     case 'table': {
@@ -148,11 +159,18 @@ function checkStatic(sc: Scope, x: Lesson, seen: Set<string>, topics: Map<string
   if (!nonEmpty(l.id) || !KEBAB.test(String(l.id))) sc.error('id must be kebab-case');
   else if (seen.has(x.id)) sc.error('duplicate lesson id');
   if (!nonEmpty(l.title)) sc.error('title is empty');
+  plainText(sc, l.title, 'title');
   if (!nonEmpty(l.summary)) sc.error('summary is empty (it is the whole card in the library)');
   if (String(l.summary ?? '').trim().endsWith('.')) sc.warn('summary reads better without a full stop');
   if (!TRACK_SET.has(String(l.track))) sc.error(`track must be one of ${TRACKS.join(', ')}`);
   if (typeof l.minutes !== 'number' || !Number.isFinite(l.minutes) || l.minutes < 2 || l.minutes > 90) {
     sc.error('minutes must be an honest reading time between 2 and 90');
+  }
+  // A core lesson is ordered by its topic; the other tracks have nothing else to go on.
+  if (l.track !== 'core' && typeof l.order !== 'number') {
+    sc.warn('has no order, so it falls to the end of its track in the library; give it a place in the reading order');
+  } else if (l.order !== undefined && (!Number.isInteger(l.order) || (l.order as number) < 1)) {
+    sc.error('order must be a whole number from 1 up');
   }
   const outcomes = arr(l.outcomes);
   if (outcomes.length < 2 || outcomes.length > 6) sc.error(`needs 2 to 6 outcomes (has ${outcomes.length})`);
@@ -191,8 +209,17 @@ function checkStatic(sc: Scope, x: Lesson, seen: Set<string>, topics: Map<string
   return topic;
 }
 
+/**
+ * An object's default repr carries its memory address, which differs on every run. Printing a function
+ * without calling it is worth teaching, so the address is normalised rather than banned: otherwise the
+ * generated file changes on every verify and CI's staleness check fails for no real reason.
+ */
+function stable(text: string): string {
+  return text.replace(/(<[^<>]*? at )0x[0-9a-fA-F]+(>)/g, '$10x...$2');
+}
+
 const toErr = (e: { type: string; message: string; line?: number } | undefined) =>
-  (e ? { type: e.type, message: e.message, line: e.line ?? 0 } : undefined);
+  (e ? { type: e.type, message: stable(e.message), line: e.line ?? 0 } : undefined);
 
 /** Run every runnable block and record what it really did. */
 function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
@@ -203,7 +230,7 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
       const where = `section ${section.id} block ${bi + 1}`;
       if (b.kind === 'code') {
         const r = h.runCapture(b.code, b.stdin ?? []);
-        const gen: GeneratedBlock = { stdout: r.stdout };
+        const gen: GeneratedBlock = { stdout: stable(r.stdout) };
         const err = toErr(r.error);
         if (err) gen.error = err;
         if (err?.type === 'TimeoutError') sc.error(`${where}: the code never finishes`);
@@ -214,8 +241,8 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
         out[key] = {
           shell: r.lines.map((line) => ({
             source: line.source,
-            stdout: line.stdout,
-            ...(line.value !== undefined ? { value: line.value } : {}),
+            stdout: stable(line.stdout),
+            ...(line.value !== undefined ? { value: stable(line.value) } : {}),
             ...(line.error ? { error: toErr(line.error) as NonNullable<ReturnType<typeof toErr>> } : {}),
           })),
         };
@@ -239,8 +266,8 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
         const left = h.runCapture(b.left.code, []);
         const right = h.runCapture(b.right.code, []);
         const gen: GeneratedBlock = {
-          left: { stdout: left.stdout, ...(toErr(left.error) ? { error: toErr(left.error) } : {}) },
-          right: { stdout: right.stdout, ...(toErr(right.error) ? { error: toErr(right.error) } : {}) },
+          left: { stdout: stable(left.stdout), ...(toErr(left.error) ? { error: toErr(left.error) } : {}) },
+          right: { stdout: stable(right.stdout), ...(toErr(right.error) ? { error: toErr(right.error) } : {}) },
         };
         out[key] = gen;
         const same = left.stdout === right.stdout && !!left.error === !!right.error
@@ -312,6 +339,7 @@ export async function checkLessons(
     index.push({
       id: lesson.id, title: lesson.title, summary: lesson.summary, track: lesson.track,
       minutes: lesson.minutes, ...(lesson.topicId ? { topicId: lesson.topicId } : {}),
+      ...(typeof lesson.order === 'number' ? { order: lesson.order } : {}),
       ...(lesson.prereqs?.length ? { prereqs: lesson.prereqs } : {}),
       outcomes: lesson.outcomes ?? [], sections: (lesson.sections ?? []).length,
     });

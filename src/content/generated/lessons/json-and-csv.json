@@ -1,0 +1,146 @@
+{
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "import json",
+        "stdout": ""
+      },
+      {
+        "source": "student = {'name': 'Ada', 'marks': [72, 65], 'passed': True, 'note': None}",
+        "stdout": ""
+      },
+      {
+        "source": "text = json.dumps(student)",
+        "stdout": ""
+      },
+      {
+        "source": "text",
+        "stdout": "",
+        "value": "'{\"name\": \"Ada\", \"marks\": [72, 65], \"passed\": true, \"note\": null}'"
+      },
+      {
+        "source": "type(text).__name__, len(text)",
+        "stdout": "",
+        "value": "('str', 64)"
+      },
+      {
+        "source": "back = json.loads(text)",
+        "stdout": ""
+      },
+      {
+        "source": "back",
+        "stdout": "",
+        "value": "{'name': 'Ada', 'marks': [72, 65], 'passed': True, 'note': None}"
+      },
+      {
+        "source": "back == student",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "back['marks'][0] + 1",
+        "stdout": "",
+        "value": "73"
+      },
+      {
+        "source": "json.loads('[1, 2, 3]')",
+        "stdout": "",
+        "value": "[1, 2, 3]"
+      },
+      {
+        "source": "json.dumps([1, 2, 3])",
+        "stdout": "",
+        "value": "'[1, 2, 3]'"
+      }
+    ]
+  },
+  "s1-b3": {
+    "stdout": "[\n  {\n    \"name\": \"Ada\",\n    \"mark\": 72\n  },\n  {\n    \"name\": \"Bob\",\n    \"mark\": 65\n  }\n]\nTrue\nAda 73\n"
+  },
+  "s2-b1": {
+    "stdout": "42                       -> 42                     -> 42                     int   same\n3.5                      -> 3.5                    -> 3.5                    float same\n'text'                   -> \"text\"                 -> 'text'                 str   same\nTrue                     -> true                   -> True                   bool  same\nNone                     -> null                   -> None                   NoneType same\n[1, 2]                   -> [1, 2]                 -> [1, 2]                 list  same\n(1, 2)                   -> [1, 2]                 -> [1, 2]                 list  CHANGED\n{'a': 1}                 -> {\"a\": 1}               -> {'a': 1}               dict  same\n{1: 'one'}               -> {\"1\": \"one\"}           -> {'1': 'one'}           dict  CHANGED\n{2.5: 'two and a half'}  -> {\"2.5\": \"two and a half\"} -> {'2.5': 'two and a half'} dict  CHANGED\n{True: 'yes'}            -> {\"true\": \"yes\"}        -> {'true': 'yes'}        dict  CHANGED\n"
+  },
+  "s2-b3": {
+    "shell": [
+      {
+        "source": "import json",
+        "stdout": ""
+      },
+      {
+        "source": "counts = {1: 'one', 2: 'two'}",
+        "stdout": ""
+      },
+      {
+        "source": "json.dumps(counts)",
+        "stdout": "",
+        "value": "'{\"1\": \"one\", \"2\": \"two\"}'"
+      },
+      {
+        "source": "back = json.loads(json.dumps(counts))",
+        "stdout": ""
+      },
+      {
+        "source": "back",
+        "stdout": "",
+        "value": "{'1': 'one', '2': 'two'}"
+      },
+      {
+        "source": "back == counts",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "sorted(back)",
+        "stdout": "",
+        "value": "['1', '2']"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "1",
+          "type": "KeyError"
+        },
+        "source": "back[1]",
+        "stdout": ""
+      },
+      {
+        "source": "back['1']",
+        "stdout": "",
+        "value": "'one'"
+      },
+      {
+        "source": "{int(k): v for k, v in back.items()} == counts",
+        "stdout": "",
+        "value": "True"
+      }
+    ]
+  },
+  "s2-b5": {
+    "error": {
+      "line": 6,
+      "message": "Object of type date is not JSON serializable\nwhen serializing dict item 'when'",
+      "type": "TypeError"
+    },
+    "stdout": "{\"when\": \"2024-03-01\"}\n{\"rows\": [1, 2], \"ok\": true}\n"
+  },
+  "s3-b1": {
+    "stdout": "\"Nguyen, Ada\",72,\"said \"\"hello\"\"\"\nsplit: ['\"Nguyen', ' Ada\"', '72', '\"said \"\"hello\"\"\"']\ncsv:   ['Nguyen, Ada', '72', 'said \"hello\"']\n"
+  },
+  "s3-b3": {
+    "stdout": "'name,mark,note\\n\"Nguyen, Ada\",72,\"said \"\"hello\"\"\"\\nBob,65,plain\\n'\n\n['name', 'mark', 'note']\n['Nguyen, Ada', '72', 'said \"hello\"']\n['Bob', '65', 'plain']\n"
+  },
+  "s4-b1": {
+    "stdout": "name,mark,unit\nAda,72,CITS1401\nBob,65,CITS1401\n\n{'name': 'Ada', 'mark': '72', 'unit': 'CITS1401'}\n  mark field: '72' str\n{'name': 'Bob', 'mark': '65', 'unit': 'CITS1401'}\n  mark field: '65' str\n"
+  },
+  "s4-b3": {
+    "error": {
+      "line": 15,
+      "message": "unsupported operand type(s) for +: 'int' and 'str'",
+      "type": "TypeError"
+    },
+    "stdout": "[{'name': 'Ada', 'mark': '9'}, {'name': 'Bob', 'mark': '65'}]\ntotal: 74\ntop by number: Bob\ntop by text:   Ada\n"
+  },
+  "s5-b1": {
+    "stdout": "{\n  \"name\": \"Ada\",\n  \"units\": [\n    {\n      \"code\": \"CITS1401\",\n      \"assessments\": [\n        {\n          \"name\": \"project 1\",\n          \"mark\": 18\n        }\n      ]\n    }\n  ]\n}\n'name,units\\nAda,\"[{\\'code\\': \\'CITS1401\\', \\'assessments\\': [{\\'name\\': \\'project 1\\', \\'mark\\': 18}]}]\"\\n'\nstr [{'code': 'CITS1401'\n"
+  }
+}

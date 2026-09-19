@@ -84,6 +84,13 @@ export interface Lesson {
   topicId?: TopicId;
   /** Lesson ids a reader should have done first. Shown as "Before this". */
   prereqs?: string[];
+  /**
+   * Where this sits in its track's reading order, lowest first. Required for foundations and advanced,
+   * where there is no other source of truth; core lessons are ordered by their topic instead, so they
+   * do not need it. A library sorted by filename teaches nothing: "Doing arithmetic" must not come
+   * before "What a program is".
+   */
+  order?: number;
   /** Two to five plain-words outcomes: "By the end you can ...". */
   outcomes: string[];
   sections: LessonSection[];

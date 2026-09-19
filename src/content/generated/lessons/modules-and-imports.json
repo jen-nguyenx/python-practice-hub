@@ -1,0 +1,163 @@
+{
+  "s0-b1": {
+    "stdout": "PASS_MARK = 50\n\n\ndef mean(values):\n    return sum(values) / len(values)\n\n\ndef passed(mark):\n    return mark >= PASS_MARK\n\n['PASS_MARK', 'mean', 'passed']\n50\n65.0\nFalse\n"
+  },
+  "s0-b3": {
+    "stdout": "module\nstatistics\n65\n['mean', 'median', 'median_grouped', 'median_high', 'median_low']\nTrue\n"
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "import statistics",
+        "stdout": ""
+      },
+      {
+        "source": "statistics.mean([1, 2, 3, 4])",
+        "stdout": "",
+        "value": "2.5"
+      },
+      {
+        "source": "from statistics import mean",
+        "stdout": ""
+      },
+      {
+        "source": "mean([1, 2, 3, 4])",
+        "stdout": "",
+        "value": "2.5"
+      },
+      {
+        "source": "mean is statistics.mean",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "import statistics as st",
+        "stdout": ""
+      },
+      {
+        "source": "st.median([3, 1, 2])",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "from statistics import median as middle",
+        "stdout": ""
+      },
+      {
+        "source": "middle([3, 1, 2])",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "sorted(n for n in dir(statistics) if n.startswith('me'))",
+        "stdout": "",
+        "value": "['mean', 'median', 'median_grouped', 'median_high', 'median_low']"
+      }
+    ]
+  },
+  "s1-b3": {
+    "stdout": "True\n2.5\nmy own mean\n2.5\nFalse\n"
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "pow(2, 10)",
+        "stdout": "",
+        "value": "1024"
+      },
+      {
+        "source": "before = set(dir()) | {'before'}",
+        "stdout": ""
+      },
+      {
+        "source": "from math import *",
+        "stdout": ""
+      },
+      {
+        "source": "pow(2, 10)",
+        "stdout": "",
+        "value": "1024.0"
+      },
+      {
+        "source": "len(set(dir()) - before)",
+        "stdout": "",
+        "value": "62"
+      },
+      {
+        "source": "sorted(n for n in set(dir()) - before if len(n) <= 3)",
+        "stdout": "",
+        "value": "['cos', 'e', 'erf', 'exp', 'fma', 'gcd', 'inf', 'lcm', 'log', 'nan', 'pi', 'pow', 'sin', 'tan', 'tau', 'ulp']"
+      },
+      {
+        "source": "e",
+        "stdout": "",
+        "value": "2.718281828459045"
+      },
+      {
+        "source": "'e' in before",
+        "stdout": "",
+        "value": "False"
+      }
+    ]
+  },
+  "s2-b3": {
+    "left": {
+      "stdout": "2\n"
+    },
+    "right": {
+      "stdout": "my own careful mean of 3 values\n2\n"
+    }
+  },
+  "s3-b1": {
+    "stdout": "--- what another file sees when it imports tools_lib ---\nthe body of this file just ran, and __name__ is tools_lib\nand the importer can now call: 3.0\n--- what happens when tools_lib.py is the program you run ---\nthe body of this file just ran, and __name__ is __main__\nself-test: 2.0\n"
+  },
+  "s4-b1": {
+    "stdout": "first import:\n  greet is new, so the file runs\n    the body of greet.py is running\nsecond import:\n  greet is already imported, so nothing runs\nthird import:\n  greet is already imported, so nothing runs\nTrue hello\n"
+  },
+  "s4-b3": {
+    "stdout": "True\nTrue\nFalse\n"
+  },
+  "s5-b1": {
+    "shell": [
+      {
+        "source": "import collections, itertools, statistics, datetime",
+        "stdout": ""
+      },
+      {
+        "source": "collections.Counter('mississippi').most_common(2)",
+        "stdout": "",
+        "value": "[('i', 4), ('s', 4)]"
+      },
+      {
+        "source": "list(itertools.pairwise([1, 4, 9, 16]))",
+        "stdout": "",
+        "value": "[(1, 4), (4, 9), (9, 16)]"
+      },
+      {
+        "source": "list(itertools.combinations('abc', 2))",
+        "stdout": "",
+        "value": "[('a', 'b'), ('a', 'c'), ('b', 'c')]"
+      },
+      {
+        "source": "statistics.median([3, 1, 2]), statistics.mode([1, 1, 2])",
+        "stdout": "",
+        "value": "(2, 1)"
+      },
+      {
+        "source": "datetime.date(2024, 3, 1) - datetime.date(2024, 2, 1)",
+        "stdout": "",
+        "value": "datetime.timedelta(days=29)"
+      },
+      {
+        "source": "(datetime.date(2024, 3, 1) - datetime.date(2024, 2, 1)).days",
+        "stdout": "",
+        "value": "29"
+      },
+      {
+        "source": "collections.defaultdict(list)[999]",
+        "stdout": "",
+        "value": "[]"
+      }
+    ]
+  }
+}

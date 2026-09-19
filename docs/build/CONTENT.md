@@ -143,6 +143,13 @@ functools, datetime, statistics, dataclasses, typing, enum and more all work).
 **Sections are the steps** a reader walks through, so each one should be a single idea with a title short
 enough for a rail ("Why it matters", not "Why this matters in practice"). Aim for 4 to 8 sections.
 
+**Plain text, not Md, in these fields:** `title`, `summary`, `outcomes`, section `title`, `callout.title`,
+`steps.title` and every `table` cell. Backticks there render as literal backticks. Md works in `prose`,
+`caption`, `callout.body`, `checkpoint.prompt`/`answer` and `steps.items`.
+
+**Order:** foundations and advanced lessons need an `order` (their place in the track's reading order,
+lowest first) or the library sorts them to the end. Core lessons are ordered by their topic and need none.
+
 **Blocks** are the body of a section:
 - `prose` is the workhorse. Md: `inline code`, **bold**, *italic*, lists, blank line for a paragraph.
 - `code` is a program plus the output the verifier recorded. Add `stdin` if it calls `input()`.
@@ -162,6 +169,17 @@ failed to set the name it uses (everything after that point is not real output).
 
 **Write for someone who is not sure they can do this.** Plain words, short sentences, and say why something
 matters before saying what it is. Never write "simply", "just" or "obviously".
+
+**Generated output must be the same on every run,** or `verify:check` fails in CI. Three things leak
+run-to-run variation into a block and must be avoided:
+- `hash()` of anything containing a string is randomised per run; compare `hash(x) == hash(x)` instead.
+- A set of strings iterates in a different order each run; show one through `sorted(...)`.
+- Writing a `.py` file and importing it in the same block is intermittently `ModuleNotFoundError`, because
+  Python's per-directory import cache goes stale against the recreated in-memory workdir. Model importing
+  with `exec` into a namespace dict, or use a real standard-library module.
+
+A default object `repr` carries a memory address; the verifier normalises those to `0x...` for you, so
+printing a function without calling it is safe to teach.
 
 Run `npm run verify:lessons` (fast: skips every topic) until it reports 0 errors and 0 warnings.
 

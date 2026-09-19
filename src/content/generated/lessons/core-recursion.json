@@ -1,0 +1,94 @@
+{
+  "s0-b1": {
+    "stdout": "  a call begins, with n = 3\n  a call begins, with n = 2\n  a call begins, with n = 1\n  a call begins, with n = 0\nlift off\n"
+  },
+  "s1-b1": {
+    "error": {
+      "line": 2,
+      "message": "maximum recursion depth exceeded",
+      "type": "RecursionError"
+    },
+    "stdout": ""
+  },
+  "s2-b1": {
+    "stdout": "down: PERTH\ndown: ERTH\ndown: RTH\ndown: TH\ndown: H\nup:   H\nup:   TH\nup:   RTH\nup:   ERTH\nup:   PERTH\n"
+  },
+  "s3-b1": {
+    "stdout": "18\n180\nPERTH\n[4, 12]\n"
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "text = 'PERTH'",
+        "stdout": ""
+      },
+      {
+        "source": "text[0]",
+        "stdout": "",
+        "value": "'P'"
+      },
+      {
+        "source": "text[1:]",
+        "stdout": "",
+        "value": "'ERTH'"
+      },
+      {
+        "source": "'H'[1:]",
+        "stdout": "",
+        "value": "''"
+      },
+      {
+        "source": "''[1:]",
+        "stdout": "",
+        "value": "''"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "string index out of range",
+          "type": "IndexError"
+        },
+        "source": "''[0]",
+        "stdout": ""
+      },
+      {
+        "source": "n = 4096",
+        "stdout": ""
+      },
+      {
+        "source": "n % 10",
+        "stdout": "",
+        "value": "6"
+      },
+      {
+        "source": "n // 10",
+        "stdout": "",
+        "value": "409"
+      },
+      {
+        "source": "n / 10",
+        "stdout": "",
+        "value": "409.6"
+      }
+    ]
+  },
+  "s4-b3": {
+    "stdout": "19\n7\n"
+  },
+  "s5-b1": {
+    "left": {
+      "stdout": "1999000\n"
+    },
+    "right": {
+      "error": {
+        "line": 5,
+        "message": "maximum recursion depth exceeded",
+        "type": "RecursionError"
+      },
+      "stdout": ""
+    }
+  },
+  "s5-b3": {
+    "stdout": "18\n0\n0\n"
+  }
+}

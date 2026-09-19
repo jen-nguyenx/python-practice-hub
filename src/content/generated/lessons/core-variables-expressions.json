@@ -1,0 +1,226 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "trips = input()",
+        "stdout": "7\n"
+      },
+      {
+        "source": "trips",
+        "stdout": "",
+        "value": "'7'"
+      },
+      {
+        "source": "type(trips)",
+        "stdout": "",
+        "value": "<class 'str'>"
+      },
+      {
+        "source": "trips * 2",
+        "stdout": "",
+        "value": "'77'"
+      },
+      {
+        "source": "int(trips) * 2",
+        "stdout": "",
+        "value": "14"
+      },
+      {
+        "source": "type(4.90)",
+        "stdout": "",
+        "value": "<class 'float'>"
+      },
+      {
+        "source": "type('Perth')",
+        "stdout": "",
+        "value": "<class 'str'>"
+      },
+      {
+        "source": "type(True)",
+        "stdout": "",
+        "value": "<class 'bool'>"
+      }
+    ]
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "int('42')",
+        "stdout": "",
+        "value": "42"
+      },
+      {
+        "source": "float('3.40')",
+        "stdout": "",
+        "value": "3.4"
+      },
+      {
+        "source": "str(950)",
+        "stdout": "",
+        "value": "'950'"
+      },
+      {
+        "source": "int(3.99)",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "round(3.99)",
+        "stdout": "",
+        "value": "4"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "invalid literal for int() with base 10: '12.0'",
+          "type": "ValueError"
+        },
+        "source": "int('12.0')",
+        "stdout": ""
+      },
+      {
+        "source": "int(float('12.0'))",
+        "stdout": "",
+        "value": "12"
+      }
+    ]
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "18 / 4",
+        "stdout": "",
+        "value": "4.5"
+      },
+      {
+        "source": "18 // 4",
+        "stdout": "",
+        "value": "4"
+      },
+      {
+        "source": "18 % 4",
+        "stdout": "",
+        "value": "2"
+      },
+      {
+        "source": "6 / 3",
+        "stdout": "",
+        "value": "2.0"
+      },
+      {
+        "source": "7.0 // 2",
+        "stdout": "",
+        "value": "3.0"
+      },
+      {
+        "source": "-7 // 2",
+        "stdout": "",
+        "value": "-4"
+      },
+      {
+        "source": "-7 % 2",
+        "stdout": "",
+        "value": "1"
+      }
+    ]
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "2 + 3 * 4",
+        "stdout": "",
+        "value": "14"
+      },
+      {
+        "source": "(2 + 3) * 4",
+        "stdout": "",
+        "value": "20"
+      },
+      {
+        "source": "4 + 6 / 2",
+        "stdout": "",
+        "value": "7.0"
+      },
+      {
+        "source": "(4 + 6) / 2",
+        "stdout": "",
+        "value": "5.0"
+      },
+      {
+        "source": "2 ** 3 ** 2",
+        "stdout": "",
+        "value": "512"
+      },
+      {
+        "source": "-3 ** 2",
+        "stdout": "",
+        "value": "-9"
+      },
+      {
+        "source": "(-3) ** 2",
+        "stdout": "",
+        "value": "9"
+      },
+      {
+        "source": "100 // 30 * 2",
+        "stdout": "",
+        "value": "6"
+      },
+      {
+        "source": "100 // (30 * 2)",
+        "stdout": "",
+        "value": "1"
+      }
+    ]
+  },
+  "s4-b1": {
+    "left": {
+      "error": {
+        "line": 2,
+        "message": "can only concatenate str (not \"float\") to str",
+        "type": "TypeError"
+      },
+      "stdout": ""
+    },
+    "right": {
+      "stdout": "Fare: $4.90\n"
+    }
+  },
+  "s4-b3": {
+    "stdout": "7 trips cost $34.30\n5:07\n34 dollars, near enough\n"
+  },
+  "s5-b1": {
+    "shell": [
+      {
+        "source": "0.1 + 0.2",
+        "stdout": "",
+        "value": "0.30000000000000004"
+      },
+      {
+        "source": "0.1 + 0.2 == 0.3",
+        "stdout": "",
+        "value": "False"
+      },
+      {
+        "source": "round(0.1 + 0.2, 2) == 0.3",
+        "stdout": "",
+        "value": "True"
+      },
+      {
+        "source": "4.35 * 100",
+        "stdout": "",
+        "value": "434.99999999999994"
+      },
+      {
+        "source": "int(4.35 * 100)",
+        "stdout": "",
+        "value": "434"
+      },
+      {
+        "source": "round(4.35 * 100)",
+        "stdout": "",
+        "value": "435"
+      }
+    ]
+  }
+}

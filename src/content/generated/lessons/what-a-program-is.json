@@ -1,0 +1,50 @@
+{
+  "s0-b2": {
+    "stdout": "Two coffees at 4.50 each cost:\n9.0\n"
+  },
+  "s1-b1": {
+    "stdout": "First instruction\nSecond instruction\nThird instruction\n"
+  },
+  "s2-b1": {
+    "stdout": "15\n"
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "2 + 3",
+        "stdout": "",
+        "value": "5"
+      },
+      {
+        "source": "print(2 + 3)",
+        "stdout": "5\n"
+      },
+      {
+        "source": "\"2 + 3\"",
+        "stdout": "",
+        "value": "'2 + 3'"
+      },
+      {
+        "source": "60 * 60 * 24",
+        "stdout": "",
+        "value": "86400"
+      }
+    ]
+  },
+  "s4-b1": {
+    "left": {
+      "stdout": "2 + 3\n"
+    },
+    "right": {
+      "stdout": "5\n"
+    }
+  },
+  "s5-b1": {
+    "error": {
+      "line": 3,
+      "message": "name 'prnt' is not defined. Did you mean: 'print'?",
+      "type": "NameError"
+    },
+    "stdout": "This line runs.\nSo does this one.\n"
+  }
+}

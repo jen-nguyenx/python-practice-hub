@@ -209,12 +209,16 @@ export interface Topic {
 
 // ---------- "what if" experiments (no grading; every outcome is generated, never typed) ----------
 
-/** One control: a labelled set of alternative code fragments for a single spot in the program. */
-export interface Knob {
+export interface KnobBase {
   /** Marker name used in the template as ⟦id⟧. Kebab-case, unique within the experiment. */
   id: string;
   /** What this control changes, in plain words, e.g. "where the counting starts". */
   label: string;
+}
+
+/** A control offering a few written-out alternatives, shown as buttons. */
+export interface ChoiceKnob extends KnobBase {
+  kind?: 'choices';
   /**
    * 2-4 alternatives. `value` is substituted into the template verbatim, so it must be a single line
    * (a fragment at the start of a line carries its own indentation). `caption` is the plain-words
@@ -222,6 +226,38 @@ export interface Knob {
    */
   choices: { value: string; caption?: string }[];
 }
+
+/**
+ * A control offering every whole number from `min` to `max`, shown as a slider. Dragging it redraws the
+ * program, the output and the picture on every step, because every value was run ahead of time.
+ */
+export interface RangeKnob extends KnobBase {
+  kind: 'range';
+  min: number;
+  max: number;
+  /** Where the slider sits when the card opens. Defaults to `min`. */
+  start?: number;
+}
+
+export type Knob = ChoiceKnob | RangeKnob;
+
+/**
+ * Python expressions evaluated after the program has run, in the namespace it left behind. Markers are
+ * filled in the same way as the template, so a probe can follow the controls. This is what keeps a
+ * picture honest: it is drawn from what Python really produced, not from a guess at Python's rules.
+ */
+export type Probes = Record<string, string>;
+
+/**
+ * An optional picture under the output, redrawn as the controls move.
+ * - `sequence` draws one box per item with its index underneath, highlighting the picked positions:
+ *   the shape of a slice or of what a loop visited.
+ * - `numberline` draws the whole numbers from `min` to `max` and marks the ones produced.
+ * Each field below names a probe id.
+ */
+export type Visual =
+  | { kind: 'sequence'; items: string; picked?: string; caption?: Md }
+  | { kind: 'numberline'; min: number; max: number; picked: string; caption?: Md };
 
 export interface Experiment {
   /** e.g. "t03-x1". */
@@ -239,6 +275,10 @@ export interface Experiment {
   anchorLine?: number;
   /** Optional plain-words note for one combination, keyed by choice indexes joined with "-", e.g. "1-0". */
   notes?: Record<string, Md>;
+  /** Expressions the verifier evaluates after each run, for the picture to draw from. */
+  probes?: Probes;
+  /** An optional picture under the output, redrawn as the controls move. */
+  visual?: Visual;
   /** The point of the experiment. Always visible under the output. */
   takeaway: Md;
 }
@@ -266,8 +306,17 @@ export interface GeneratedRun {
   error?: { type: string; message: string; line: number };
   /** Present when the experiment sets `watch`: one row per anchor-line execution, as Python reprs. */
   rows?: string[][];
+  /** Present when the experiment sets `probes`: what each expression evaluated to, by probe id. */
+  values?: Record<string, unknown>;
 }
-/** Combination key (choice indexes joined with "-") -> what happened. */
-export type GeneratedExperiment = Record<string, GeneratedRun>;
+export interface GeneratedExperiment {
+  /**
+   * Probe values that come out the same for every combination (the letters of the word a slice cuts up,
+   * say). Stored once here instead of repeated in every run, and merged under a run's own values.
+   */
+  shared?: Record<string, unknown>;
+  /** Combination key (choice indexes joined with "-") -> what happened. */
+  runs: Record<string, GeneratedRun>;
+}
 /** Experiment id -> its runs. Written to src/content/generated/experiments/<topic>.json. */
 export type GeneratedExperiments = Record<string, GeneratedExperiment>;

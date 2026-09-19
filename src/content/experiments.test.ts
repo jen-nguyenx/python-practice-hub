@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  allCombos, changedLines, comboCount, comboKey, defaultPicks, fillTemplate, markerIds, noteFor, outputLines,
+  allCombos, changedLines, comboCount, comboKey, defaultPicks, fillTemplate, isRange, knobChoices, markerIds,
+  noteFor, outputLines, startIndex,
 } from './experiments.ts';
 import type { Experiment, Knob } from './schema.ts';
 
@@ -101,5 +102,38 @@ describe('noteFor', () => {
     expect(noteFor(x, [1, 2])).toBe('the interesting one');
     expect(noteFor(x, [1, 1])).toBeUndefined();
     expect(noteFor({} as Experiment, [0])).toBeUndefined();
+  });
+});
+
+describe('slider knobs', () => {
+  const slider: Knob = { id: 'stop', kind: 'range', label: 'stop before', min: 2, max: 6, start: 5 };
+
+  it('is a knob whose choices are the whole numbers from min to max', () => {
+    expect(knobChoices(slider).map((c) => c.value)).toEqual(['2', '3', '4', '5', '6']);
+    expect(isRange(slider)).toBe(true);
+    expect(isRange(knobs[0])).toBe(false);
+  });
+
+  it('opens on `start`, counted from min', () => {
+    expect(startIndex(slider)).toBe(3);
+    expect(startIndex({ ...slider, start: undefined })).toBe(0);
+  });
+
+  it('clamps a start outside the range rather than picking a choice that is not there', () => {
+    expect(startIndex({ ...slider, start: 99 })).toBe(4);
+    expect(startIndex({ ...slider, start: -99 })).toBe(0);
+  });
+
+  it('refuses a backwards or non-finite range instead of looping forever', () => {
+    expect(knobChoices({ id: 'x', kind: 'range', label: 'x', min: 6, max: 2 })).toEqual([]);
+    expect(knobChoices({ id: 'x', kind: 'range', label: 'x', min: NaN, max: 3 })).toEqual([]);
+  });
+
+  it('mixes with choice knobs in combinations and in the template', () => {
+    const mixed: Knob[] = [slider, knobs[1]];
+    expect(comboCount(mixed)).toBe(15);
+    expect(allCombos(mixed).length).toBe(15);
+    expect(defaultPicks(mixed)).toEqual([3, 0]);
+    expect(fillTemplate('range(⟦stop⟧, 9, ⟦step⟧)', mixed, defaultPicks(mixed)).code).toBe('range(5, 9, 1)');
   });
 });

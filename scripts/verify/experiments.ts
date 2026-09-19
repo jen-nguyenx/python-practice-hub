@@ -1,13 +1,15 @@
 // Checks and generated data for "what if" experiments.
 //
-// Every combination of every knob is run in real Python here, so the browser can show a true output the
-// instant a student clicks a control. That is the same contract the read formats already have: answers
-// are generated, never typed.
+// Every combination of every control is run in real Python here, so the browser can show a true output the
+// instant a student clicks a button or drags a slider. That is the same contract the read formats already
+// have: answers are generated, never typed. Pictures are drawn from `probes`, expressions evaluated in the
+// namespace the program left behind, so a visualisation shows what Python really did rather than a
+// JavaScript guess at Python's rules.
 import {
-  allCombos, comboCount, comboKey, fillTemplate, markerIds, MAX_COMBOS,
+  allCombos, BUSY_COMBOS, comboCount, comboKey, fillTemplate, isRange, knobChoices, markerIds, MAX_COMBOS,
 } from '../../src/content/experiments.ts';
 import type {
-  Experiment, GeneratedExperiment, GeneratedExperiments, GeneratedRun, Knob, Topic,
+  Experiment, GeneratedExperiment, GeneratedExperiments, GeneratedRun, Knob, Topic, Visual,
 } from '../../src/content/schema.ts';
 import type { Harness } from './pyodide.ts';
 import type { Issues, Scope } from './report.ts';
@@ -16,6 +18,8 @@ import type { TopicInfo } from './static.ts';
 
 /** More rows than this and the variable table stops being readable at a glance. */
 const MAX_WATCH_ROWS = 16;
+/** A slider with more stops than this is a scrubber, not a control a beginner can reason about. */
+const MAX_SLIDER_STOPS = 100;
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 type Loose = Record<string, unknown>;
@@ -23,8 +27,61 @@ const isStr = (v: unknown): v is string => typeof v === 'string';
 const nonEmpty = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0;
 const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const quote = (s: string) => JSON.stringify(s);
+const isInt = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
 
-/** A fragment must stay on one line so the line numbers (and `anchorLine`) hold for every combination. */
+/** A run plus a verifier-only diagnostic, stripped again before the data is written for the browser. */
+type Diagnosed = GeneratedRun & { probeErrors?: Record<string, string> };
+
+/** How a combination reads in an error message, e.g. `start="0", stop="5"`. */
+function describe(knobs: readonly Knob[], picks: readonly number[]): string {
+  return knobs.map((k, i) => `${k.id}=${quote(knobChoices(k)[picks[i]]?.value ?? '')}`).join(', ');
+}
+
+function checkOneKnob(sc: Scope, k: Knob, where: string): boolean {
+  let ok = true;
+  if (!nonEmpty(k.label)) sc.error(`${where}: label is empty (it names the control in plain words)`);
+  if (isRange(k)) {
+    if (!isInt(k.min) || !isInt(k.max)) {
+      sc.error(`${where}: a slider needs whole-number min and max`);
+      return false;
+    }
+    const stops = k.max - k.min + 1;
+    if (stops < 2) {
+      sc.error(`${where}: max must be above min (a slider with one stop is not a control)`);
+      ok = false;
+    }
+    if (stops > MAX_SLIDER_STOPS) {
+      sc.error(`${where}: ${stops} stops; keep a slider to ${MAX_SLIDER_STOPS} or fewer`);
+      ok = false;
+    }
+    if (k.start !== undefined && (!isInt(k.start) || k.start < k.min || k.start > k.max)) {
+      sc.error(`${where}: start must be a whole number between min and max`);
+    }
+    return ok;
+  }
+  const choices = arr(k.choices) as Loose[];
+  if (choices.length < 2 || choices.length > 4) {
+    sc.error(`${where}: needs 2 to 4 choices (has ${choices.length})`);
+    ok = false;
+  }
+  const seen = new Set<string>();
+  for (const [j, c] of choices.entries()) {
+    if (!c || !isStr(c.value) || c.value.trim() === '') {
+      sc.error(`${where}: choice #${j + 1} has no value`);
+      ok = false;
+      continue;
+    }
+    if (c.value.includes('\n')) {
+      sc.error(`${where}: choice ${quote(c.value)} spans more than one line; fragments must stay on one line so line numbers do not move`);
+      ok = false;
+    }
+    if (seen.has(c.value)) sc.error(`${where}: choice ${quote(c.value)} appears twice`);
+    else seen.add(c.value);
+    if (c.caption !== undefined && !nonEmpty(c.caption)) sc.error(`${where}: choice ${quote(c.value)} has an empty caption`);
+  }
+  return ok;
+}
+
 function checkKnobs(sc: Scope, knobs: Knob[], template: string): boolean {
   let ok = true;
   const ids = new Set<string>();
@@ -42,27 +99,7 @@ function checkKnobs(sc: Scope, knobs: Knob[], template: string): boolean {
       sc.error(`${where}: duplicate knob id`);
       ok = false;
     } else ids.add(k.id);
-    if (!nonEmpty(k.label)) sc.error(`${where}: label is empty (it names the control in plain words)`);
-    const choices = arr(k.choices) as Loose[];
-    if (choices.length < 2 || choices.length > 4) {
-      sc.error(`${where}: needs 2 to 4 choices (has ${choices.length})`);
-      ok = false;
-    }
-    const seen = new Set<string>();
-    for (const [j, c] of choices.entries()) {
-      if (!c || !isStr(c.value) || c.value.trim() === '') {
-        sc.error(`${where}: choice #${j + 1} has no value`);
-        ok = false;
-        continue;
-      }
-      if (c.value.includes('\n')) {
-        sc.error(`${where}: choice ${quote(c.value)} spans more than one line; fragments must stay on one line so line numbers do not move`);
-        ok = false;
-      }
-      if (seen.has(c.value)) sc.error(`${where}: choice ${quote(c.value)} appears twice`);
-      else seen.add(c.value);
-      if (c.caption !== undefined && !nonEmpty(c.caption)) sc.error(`${where}: choice ${quote(c.value)} has an empty caption`);
-    }
+    if (!checkOneKnob(sc, k, where)) ok = false;
   }
   const markers = markerIds(template);
   for (const id of ids) {
@@ -82,6 +119,42 @@ function checkKnobs(sc: Scope, knobs: Knob[], template: string): boolean {
     }
   }
   return ok;
+}
+
+/** Probes must be expressions, and any marker inside one must name a real knob. */
+function checkProbes(sc: Scope, x: Experiment, knobIds: Set<string>): void {
+  for (const [id, expr] of Object.entries(x.probes ?? {})) {
+    if (!KEBAB.test(id)) sc.error(`probe ${quote(id)}: id must be kebab-case`);
+    if (!nonEmpty(expr)) {
+      sc.error(`probe ${quote(id)}: expression is empty`);
+      continue;
+    }
+    for (const m of markerIds(expr)) {
+      if (!knobIds.has(m)) sc.error(`probe ${quote(id)} uses ⟦${m}⟧ but there is no knob with that id`);
+    }
+  }
+}
+
+function checkVisual(sc: Scope, v: Visual, probeIds: Set<string>): void {
+  const needs = (id: unknown, field: string) => {
+    if (!nonEmpty(id)) {
+      sc.error(`visual: ${field} must name a probe`);
+      return;
+    }
+    if (!probeIds.has(id)) sc.error(`visual: ${field} names ${quote(id)} but there is no probe with that id`);
+  };
+  if (v.kind === 'sequence') {
+    needs(v.items, 'items');
+    if (v.picked !== undefined) needs(v.picked, 'picked');
+    return;
+  }
+  if (v.kind === 'numberline') {
+    if (!isInt(v.min) || !isInt(v.max) || v.max <= v.min) sc.error('visual: a number line needs whole-number min and max, with max above min');
+    else if (v.max - v.min > 60) sc.error(`visual: a number line from ${v.min} to ${v.max} has too many marks to read`);
+    needs(v.picked, 'picked');
+    return;
+  }
+  sc.error(`visual: unknown kind ${quote(String((v as Loose).kind))}`);
 }
 
 /** Schema and authoring checks. Returns false when the experiment cannot be run. */
@@ -110,8 +183,17 @@ function checkStatic(sc: Scope, x: Experiment, num: string): boolean {
 
   const total = comboCount(knobs);
   if (total > MAX_COMBOS) {
-    sc.error(`${total} combinations of choices; keep it to ${MAX_COMBOS} or fewer`);
+    sc.error(`${total} combinations of the controls; keep it to ${MAX_COMBOS} or fewer (every one is run and shipped)`);
     return false;
+  }
+  if (total > BUSY_COMBOS) sc.warn(`${total} combinations; consider a shorter slider or splitting this into two experiments`);
+
+  const knobIds = new Set(knobs.map((k) => k.id));
+  checkProbes(sc, x, knobIds);
+  const probeIds = new Set(Object.keys(x.probes ?? {}));
+  if (x.visual) {
+    if (probeIds.size === 0) sc.error('visual is set but there are no probes for it to draw from');
+    else checkVisual(sc, x.visual, probeIds);
   }
 
   const lineCount = x.template.replace(/\n$/, '').split('\n').length;
@@ -119,7 +201,7 @@ function checkStatic(sc: Scope, x: Experiment, num: string): boolean {
     const watch = arr(x.watch);
     if (watch.length === 0 || !watch.every(nonEmpty)) sc.error('watch must be a non-empty list of variable names');
     if (watch.length > 4) sc.error(`watch has ${watch.length} names; 4 columns is the most that stays readable`);
-    if (typeof x.anchorLine !== 'number' || !Number.isInteger(x.anchorLine) || x.anchorLine < 1 || x.anchorLine > lineCount) {
+    if (!isInt(x.anchorLine) || (x.anchorLine as number) < 1 || (x.anchorLine as number) > lineCount) {
       sc.error(`anchorLine must be a line number of the template (1 to ${lineCount}) when watch is set`);
       return false;
     }
@@ -130,49 +212,111 @@ function checkStatic(sc: Scope, x: Experiment, num: string): boolean {
   for (const key of Object.keys(x.notes ?? {})) {
     const parts = key.split('-');
     const valid = parts.length === knobs.length
-      && parts.every((p, i) => /^\d+$/.test(p) && Number(p) < (knobs[i].choices?.length ?? 0));
+      && parts.every((p, i) => /^\d+$/.test(p) && Number(p) < knobChoices(knobs[i]).length);
     if (!valid) sc.error(`notes key ${quote(key)} is not a combination of choice indexes (expected ${knobs.length} numbers joined with "-")`);
   }
   return true;
 }
 
-/** Run one combination. `trace` gives rows and stdout together, so it is one Python call either way. */
-function runCombo(h: Harness, x: Experiment, picks: number[]): GeneratedRun {
+/** Run one combination: the program, plus the variable table and the probe values it needs. */
+function runCombo(h: Harness, x: Experiment, picks: number[]): Diagnosed {
   const { code } = fillTemplate(x.template, x.knobs, picks);
   const watch = x.watch ?? [];
-  if (watch.length > 0 && typeof x.anchorLine === 'number') {
+  const probeEntries = Object.entries(x.probes ?? {});
+  const run: Diagnosed = { stdout: '' };
+
+  if (watch.length > 0 && isInt(x.anchorLine)) {
     const r = h.trace(code, watch as string[], x.anchorLine, []);
-    const run: GeneratedRun = { stdout: r.stdout, rows: r.rows };
+    run.stdout = r.stdout;
+    run.rows = r.rows;
     if (r.error) run.error = { type: r.error.type, message: r.error.message, line: r.error.line ?? 0 };
+  }
+  if (probeEntries.length > 0) {
+    // Probe expressions follow the controls too, so a picture can ask "which indexes did this slice take?".
+    const filled = Object.fromEntries(probeEntries.map(([id, expr]) => [id, fillTemplate(expr, x.knobs, picks).code]));
+    const r = h.probe(code, filled);
+    run.stdout = r.stdout;
+    run.values = r.values;
+    if (r.error) run.error = { type: r.error.type, message: r.error.message, line: r.error.line ?? 0 };
+    if (r.probeErrors) run.probeErrors = r.probeErrors;
     return run;
   }
+  if (watch.length > 0) return run;
+
   const r = h.runCapture(code, []);
-  const run: GeneratedRun = { stdout: r.stdout };
+  run.stdout = r.stdout;
   if (r.error) run.error = { type: r.error.type, message: r.error.message, line: r.error.line ?? 0 };
   return run;
 }
 
 /** What the student would see, as one string, for comparing combinations. */
-function shown(run: GeneratedRun): string {
-  const out = (run.stdout ?? '').replace(/\r\n?/g, '\n').replace(/\s+$/, '');
-  return run.error ? `${out}\n!${run.error.type}: ${run.error.message}` : out;
+function shown(run: GeneratedRun | undefined): string {
+  const out = (run?.stdout ?? '').replace(/\r\n?/g, '\n').replace(/\s+$/, '');
+  const pic = run?.values ? JSON.stringify(run.values) : '';
+  return run?.error ? `${out}\n!${run.error.type}: ${run.error.message}${pic}` : `${out}${pic}`;
 }
 
-function checkRuntime(sc: Scope, x: Experiment, runs: GeneratedExperiment): void {
+function checkProbeResults(sc: Scope, x: Experiment, runs: Record<string, Diagnosed>, combos: number[][]): void {
+  if (!x.probes) return;
+  for (const c of combos) {
+    const run = runs[comboKey(c)];
+    // A probe may legitimately fail when the program itself crashed; only a clean run must produce values.
+    if (!run || run.error) continue;
+    const errors = run.probeErrors;
+    if (errors) {
+      const [id, msg] = Object.entries(errors)[0];
+      sc.error(`with ${describe(x.knobs, c)} the probe ${quote(id)} failed (${msg})`);
+      return;
+    }
+  }
+  const v = x.visual;
+  if (!v) return;
+  const first = combos.find((c) => runs[comboKey(c)] && !runs[comboKey(c)].error);
+  if (!first) return;
+  const values = runs[comboKey(first)].values ?? {};
+  const wantList = (id: string, what: string) => {
+    if (!Array.isArray(values[id])) sc.error(`probe ${quote(id)} must evaluate to a list for ${what} (got ${quote(String(values[id]))}); wrap it in list(...)`);
+  };
+  if (v.kind === 'sequence') {
+    wantList(v.items, 'the boxes');
+    if (v.picked) wantList(v.picked, 'the highlighted positions');
+  } else if (v.kind === 'numberline') {
+    wantList(v.picked, 'the marked numbers');
+  }
+}
+
+/** Move probe values that never change into one shared block, so they ship once instead of per run. */
+function hoistShared(runs: Record<string, Diagnosed>): GeneratedExperiment {
+  const keys = Object.keys(runs);
+  const first = keys.length ? runs[keys[0]].values : undefined;
+  if (!first) return { runs };
+  const shared: Record<string, unknown> = {};
+  for (const [id, value] of Object.entries(first)) {
+    const asText = JSON.stringify(value);
+    if (keys.every((k) => JSON.stringify(runs[k].values?.[id]) === asText)) shared[id] = value;
+  }
+  if (Object.keys(shared).length === 0) return { runs };
+  for (const k of keys) {
+    const values = runs[k].values;
+    if (!values) continue;
+    for (const id of Object.keys(shared)) delete values[id];
+    if (Object.keys(values).length === 0) delete runs[k].values;
+  }
+  return { shared, runs };
+}
+
+function checkRuntime(sc: Scope, x: Experiment, runs: Record<string, Diagnosed>): void {
   const combos = allCombos(x.knobs);
   const outputs = new Map(combos.map((c) => [comboKey(c), shown(runs[comboKey(c)])]));
 
   // A fragment that does not fit the template is an authoring bug, not a lesson. A runtime error
   // (IndexError, ZeroDivisionError) often is the lesson, so only compile errors are fatal here.
   for (const c of combos) {
-    const run = runs[comboKey(c)];
-    const type = run?.error?.type;
+    const type = runs[comboKey(c)]?.error?.type;
     if (type === 'SyntaxError' || type === 'IndentationError' || type === 'TabError') {
-      const picked = x.knobs.map((k, i) => `${k.id}=${quote(k.choices[c[i]]?.value ?? '')}`).join(', ');
-      sc.error(`with ${picked} the program does not compile (${type}: ${run?.error?.message}); every combination must be valid Python`);
+      sc.error(`with ${describe(x.knobs, c)} the program does not compile (${type}: ${runs[comboKey(c)]?.error?.message}); every combination must be valid Python`);
     } else if (type === 'TimeoutError') {
-      const picked = x.knobs.map((k, i) => `${k.id}=${quote(k.choices[c[i]]?.value ?? '')}`).join(', ');
-      sc.error(`with ${picked} the program runs forever; every combination must finish`);
+      sc.error(`with ${describe(x.knobs, c)} the program runs forever; every combination must finish`);
     }
   }
 
@@ -181,16 +325,22 @@ function checkRuntime(sc: Scope, x: Experiment, runs: GeneratedExperiment): void
     return;
   }
 
-  // A knob nobody can see the effect of is a decoration. Vary it alone from every other setting.
+  // A control nobody can see the effect of is a decoration. Vary it alone from every other setting.
   x.knobs.forEach((k, ki) => {
-    const matters = combos.some((c) => k.choices.some((_, j) => {
-      if (j === c[ki]) return false;
-      const other = c.slice();
-      other[ki] = j;
-      return outputs.get(comboKey(other)) !== outputs.get(comboKey(c));
-    }));
+    const size = knobChoices(k).length;
+    const matters = combos.some((c) => {
+      for (let j = 0; j < size; j++) {
+        if (j === c[ki]) continue;
+        const other = c.slice();
+        other[ki] = j;
+        if (outputs.get(comboKey(other)) !== outputs.get(comboKey(c))) return true;
+      }
+      return false;
+    });
     if (!matters) sc.warn(`knob ${quote(k.id)} never changes what is shown, whatever the other controls are set to`);
   });
+
+  checkProbeResults(sc, x, runs, combos);
 
   if ((x.watch ?? []).length > 0) {
     for (const c of combos) {
@@ -200,8 +350,9 @@ function checkRuntime(sc: Scope, x: Experiment, runs: GeneratedExperiment): void
         break;
       }
     }
-    const anyRows = combos.some((c) => (runs[comboKey(c)]?.rows ?? []).length > 0);
-    if (!anyRows) sc.error(`line ${x.anchorLine} never runs, so the variable table is always empty`);
+    if (!combos.some((c) => (runs[comboKey(c)]?.rows ?? []).length > 0)) {
+      sc.error(`line ${x.anchorLine} never runs, so the variable table is always empty`);
+    }
   }
 }
 
@@ -223,10 +374,12 @@ export function checkTopicExperiments(
     seen.add(id);
     if (!checkStatic(sc, x, info.num)) continue;
     if (!h) continue;
-    const runs: GeneratedExperiment = {};
+    const runs: Record<string, Diagnosed> = {};
     for (const picks of allCombos(x.knobs)) runs[comboKey(picks)] = runCombo(h, x, picks);
     checkRuntime(sc, x, runs);
-    out[x.id] = runs;
+    // probeErrors is a verifier-only diagnostic; it must not reach the browser bundle.
+    for (const r of Object.values(runs)) delete r.probeErrors;
+    out[x.id] = hoistShared(runs);
   }
   return out;
 }

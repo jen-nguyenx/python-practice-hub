@@ -4,10 +4,42 @@
 // knob offers a few single-line fragments. Every combination is run once by the verifier and the real
 // output is written to src/content/generated/experiments/<topic>.json, so the browser never has to run
 // Python to answer "what happens if I change this" — it looks the answer up.
-import type { Experiment, GeneratedRun, Knob } from './schema.ts';
+import type { Experiment, GeneratedRun, Knob, RangeKnob } from './schema.ts';
 
-/** Ceiling on combinations per experiment. Keeps verify time sane and the controls comprehensible. */
-export const MAX_COMBOS = 48;
+/**
+ * Ceiling on combinations per experiment. Every one is run at verify time and shipped in the topic's
+ * generated file, so this trades bundle size for how far a slider can travel.
+ */
+export const MAX_COMBOS = 500;
+/** Above this a card is probably better split in two; the verifier warns rather than failing. */
+export const BUSY_COMBOS = 400;
+
+export function isRange(k: Knob): k is RangeKnob {
+  return (k as RangeKnob).kind === 'range';
+}
+
+/**
+ * The fragments a knob can put into the template. A slider is simply a knob whose choices are the whole
+ * numbers from min to max, which is what lets sliders reuse the whole precomputed-combination machinery.
+ */
+export function knobChoices(k: Knob): { value: string; caption?: string }[] {
+  if (!isRange(k)) return k.choices ?? [];
+  const min = Math.round(k.min);
+  const max = Math.round(k.max);
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max < min) return [];
+  const out: { value: string }[] = [];
+  for (let v = min; v <= max; v++) out.push({ value: String(v) });
+  return out;
+}
+
+/** Index of the choice a slider starts on. */
+export function startIndex(k: Knob): number {
+  if (!isRange(k)) return 0;
+  const size = knobChoices(k).length;
+  if (size === 0) return 0;
+  const want = Math.round(k.start ?? k.min) - Math.round(k.min);
+  return Math.min(Math.max(want, 0), size - 1);
+}
 
 const MARKER = /⟦([^⟧]*)⟧/g;
 
@@ -20,16 +52,17 @@ export function comboKey(picks: Picks): string {
 }
 
 export function defaultPicks(knobs: readonly Knob[]): number[] {
-  return knobs.map(() => 0);
+  return knobs.map(startIndex);
 }
 
 /** Every combination of choices, in a stable order (last knob varies fastest). */
 export function allCombos(knobs: readonly Knob[]): number[][] {
   let rows: number[][] = [[]];
   for (const k of knobs) {
+    const n = knobChoices(k).length;
     const next: number[][] = [];
     for (const row of rows) {
-      for (let i = 0; i < k.choices.length; i++) next.push([...row, i]);
+      for (let i = 0; i < n; i++) next.push([...row, i]);
     }
     rows = next;
   }
@@ -37,7 +70,7 @@ export function allCombos(knobs: readonly Knob[]): number[][] {
 }
 
 export function comboCount(knobs: readonly Knob[]): number {
-  return knobs.reduce((n, k) => n * Math.max(1, k.choices.length), 1);
+  return knobs.reduce((n, k) => n * Math.max(1, knobChoices(k).length), 1);
 }
 
 /** The substituted fragment's position in the filled code, so the UI can mark what changed. */
@@ -61,7 +94,7 @@ export function fillTemplate(template: string, knobs: readonly Knob[], picks: Pi
     if (ki === undefined) {
       out += m[0];
     } else {
-      const choices = knobs[ki].choices ?? [];
+      const choices = knobChoices(knobs[ki]);
       const value = (choices[picks[ki] ?? 0] ?? choices[0])?.value ?? '';
       const start = out.length;
       out += value;

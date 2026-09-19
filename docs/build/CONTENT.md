@@ -89,11 +89,26 @@ examples) and add `experiments` to the `Topic` in `index.ts`.
 - Every choice `value` is substituted verbatim and **must stay on one line**, so line numbers never move. A
   fragment at the start of a line carries its own indentation, which is how "inside the loop" versus "after
   the loop" is offered as a choice.
-- 1-3 knobs, 2-4 choices each, at most 48 combinations. Give a `caption` when the fragment alone would not
-  read as plain words; the fragment is then shown on hover.
+- 1-3 knobs and at most 500 combinations in total, since every one is run and shipped. Give a `caption`
+  when the fragment alone would not read as plain words; the fragment is then shown on hover.
+- A knob is either a set of 2-4 written-out `choices`, or `kind: 'range'` with whole-number `min` and `max`,
+  which is drawn as a **slider** the student can drag. A slider is just a knob whose choices are the whole
+  numbers in that span, so it costs one combination per stop: keep it to 100 stops, and remember two
+  sliders multiply. `start` says where the handle sits when the card opens.
 - `label` names the control the way a student would say it ("stop before", "each time round the loop"), not
   the way the language does.
 - Set `watch` and `anchorLine` to add a variable table that changes with the controls. Keep it under 16 rows.
+- Add a **picture** with `probes` and `visual`. A probe is a Python expression evaluated after the program
+  runs, in the namespace it left behind; markers work inside a probe too, so it can follow the controls.
+  The picture is drawn from what Python really returned, never from a JavaScript guess at Python's rules,
+  which is the whole reason probes exist. Two kinds:
+  - `sequence` draws one box per item with its position underneath and lights up the picked ones. `items`
+    and `picked` each name a probe returning a list, e.g. `items: 'list(word)'` and
+    `picked: 'list(range(len(word)))[⟦from⟧:⟦to⟧]'`. This is the one for slicing.
+  - `numberline` draws the whole numbers from `min` to `max` and marks the ones produced, e.g.
+    `picked: 'list(range(⟦start⟧, ⟦stop⟧, ⟦step⟧))'`. This is the one for `range()`.
+  A probe must return a list for either kind, so wrap it in `list(...)`. Probe values that come out the
+  same for every combination are stored once, so a constant probe like `list(word)` costs almost nothing.
 - `notes` explains one specific combination, keyed by choice indexes (`"1-0"`). Write notes for the
   combinations that teach something: the right answer, and the two or three wrong beliefs worth naming.
 - `takeaway` is always visible and is the point of the whole thing.
@@ -103,8 +118,9 @@ examples) and add `experiments` to the `Topic` in `index.ts`.
 
 The verifier runs every combination in real Python and writes
 `src/content/generated/experiments/<topic-id>.json`. It fails if a fragment does not compile, if every
-combination shows the same thing, or if `anchorLine` never runs, and warns if a control never changes
-anything whatever the others are set to.
+combination shows the same thing, if `anchorLine` never runs, if a probe raises on a run that otherwise
+succeeded, or if a probe a picture needs is not a list. It warns if a control never changes anything
+whatever the others are set to.
 
 ## Verify (mandatory)
 Run `npm run verify -- --topic <topic-id>` until it reports zero errors. It checks your content against the schema rules, runs every solution against its tests in real Python (Pyodide, Python 3.14), checks mutants/distractors/buggy versions fail as intended, and writes `src/content/generated/<topic-id>.json` (plus `generated/experiments/<topic-id>.json` if you wrote experiments). Also run `npx tsc --noEmit -p .` and fix type errors in your folder. If the verifier command does not exist yet, wait by working on content quality, then retry. Report the final verifier output summary in your last message.

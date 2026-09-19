@@ -87,9 +87,16 @@ for (const topicId of withExperiments) {
   for (let i = 0; i < n; i++) {
     const card = cards.nth(i);
     const before = await card.locator('.wi-out').innerText();
-    // Move the first control to its last choice; the verifier guarantees some control changes the result.
-    const opts = card.locator('.wi-knob').first().locator('[role="radio"]');
-    await opts.nth((await opts.count()) - 1).click();
+    // Move the first control to its far end; the verifier guarantees some control changes the result.
+    const slider = card.locator('.wi-slider').first();
+    if (await slider.count()) {
+      // End on a focused range input is a real drag to the maximum, and fires input the same way.
+      await slider.focus();
+      await page.keyboard.press('End');
+    } else {
+      const opts = card.locator('.wi-knob').first().locator('[role="radio"]');
+      await opts.nth((await opts.count()) - 1).click();
+    }
     await page.waitForTimeout(250);
     if (await card.locator('.wi-out').innerText() === before) {
       failures.push(`what if: ${topicId} experiment ${i + 1} shows the same output after changing a control`);

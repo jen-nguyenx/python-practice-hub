@@ -9,6 +9,7 @@ list/object arguments) and returns a JSON string whose shape matches src/runtime
     pair(reference, buggy, fn_name, args_repr)                        -> PairResult
     trace(code, watch, anchor_line, stdin_lines)                      -> {rows, stdout, error?}
     run_capture(code, stdin_lines)                                    -> {stdout, error?}
+    probe(code, probes_json)                                          -> {stdout, values, error?}
 
 Verifier helpers (not used by the browser): literal_info, defines, constructs.
 """
@@ -212,6 +213,81 @@ def run_capture(code, stdin_lines=None, budget_ms=None):
             res['error'] = runtime_error(out.exc)
             if isinstance(out.exc, StudentTimeout):
                 res['timedOut'] = True
+    return _dump(res)
+
+
+# ---------------- probe (verifier only) ----------------
+
+MAX_PROBE_ITEMS = 200
+MAX_PROBE_STR = 200
+
+
+def _jsonable(value, depth=0):
+    """Convert a probe result into something JSON can carry. Anything exotic becomes its repr."""
+    if value is None or isinstance(value, bool):  # bool before int: True is an int
+        return value
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return value if math.isfinite(value) else repr(value)
+    if isinstance(value, str):
+        return _truncate(value, MAX_PROBE_STR)
+    if depth >= 3:
+        return _truncate(repr(value), MAX_PROBE_STR)
+    if isinstance(value, (list, tuple, set, frozenset)):
+        items = list(value)
+        return [_jsonable(v, depth + 1) for v in items[:MAX_PROBE_ITEMS]]
+    if isinstance(value, dict):
+        return {str(k): _jsonable(v, depth + 1) for k, v in list(value.items())[:MAX_PROBE_ITEMS]}
+    return _truncate(repr(value), MAX_PROBE_STR)
+
+
+def probe(code, probes_json, budget_ms=None):
+    """Run content code, then evaluate expressions in the namespace it left behind (verifier only).
+
+    This is how a "what if" visualisation stays honest: the picture is drawn from values Python actually
+    produced (which indexes a slice really selected, say), not from a JavaScript guess at Python's rules.
+    Returns {stdout, values: {id: json-able}, error?, probeErrors?: {id: message}}.
+    """
+    code = _str_arg(code)
+    wanted = _json_value(probes_json)
+    if not isinstance(wanted, dict):
+        wanted = {}
+    budget = _budget(budget_ms, 5000)
+    res = {'stdout': '', 'values': {}}
+    register_source(code)
+    with Sandbox('test') as sb:
+        reset_workdir([])
+        try:
+            code_obj = _compile(code)
+        except SyntaxError as e:
+            res['error'] = syntax_error(e)
+            return _dump(res)
+        random.seed(TEST_SEED)
+        sb.set_stdin([])
+        ns = _fresh_ns()
+        out = sb.call(lambda: exec(code_obj, ns), budget_ms=budget)
+        res['stdout'] = sb.stdout_value()
+        if not out.ok and not isinstance(out.exc, SystemExit):
+            res['error'] = runtime_error(out.exc)
+            if isinstance(out.exc, StudentTimeout):
+                res['timedOut'] = True
+            return _dump(res)
+        errors = {}
+        for pid, src in wanted.items():
+            key = str(pid)
+            try:
+                expr = _compile(str(src), mode='eval')
+            except SyntaxError:
+                errors[key] = 'is not a Python expression'
+                continue
+            ev = sb.call(lambda e=expr: eval(e, ns), budget_ms=budget)
+            if ev.ok:
+                res['values'][key] = _jsonable(ev.value)
+            else:
+                errors[key] = '%s: %s' % (type(ev.exc).__name__, ev.exc)
+        if errors:
+            res['probeErrors'] = errors
     return _dump(res)
 
 

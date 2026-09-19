@@ -24,6 +24,7 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/content/topics/NN-id/` | Topic content (cheat sheet, worked example, common mistakes, scenarios) |
 | `src/content/generated/` | Verifier output (expected outputs, trace rows, real exceptions, question index, experiment runs). Never hand-edit |
 | `src/content/experiments.ts` | "What if" helpers: combinations, template filling, output diffing. UI in `src/ui/shell/topic/WhatIf.tsx` |
+| `src/runtime/python/harness.py` `probe()` | Verifier-only: run code, then evaluate expressions in the namespace it left, so a picture is drawn from real Python |
 | `src/content/mistakes.ts`, `patterns.ts` | Mistake catalogue (labels, explanations, runtime matchers) and best-practice cards |
 | `src/runtime/python/` | Grading harness (`_pl` package): sandboxed runs, tests, AST checks, tracer |
 | `src/runtime/pyWorker.ts`, `pyClient.ts` | Browser worker + client (queue, watchdog, respawn) |
@@ -45,7 +46,9 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 - **Content changes must pass the verifier** with 0 errors: solutions pass tests in Pyodide, buggy variants and distractors fail tagged tests, read-format answers are generated not typed.
 - **"What if" experiments never run Python in the browser.** The verifier runs every combination of every
   control and writes `src/content/generated/experiments/<topic>.json`; the tab looks the answer up, so it is
-  instant and works before Python starts. Keep it that way: no live runs, and no hand-written outputs.
+  instant and works before Python starts, and it is what lets a slider redraw on every step as it is
+  dragged. Keep it that way: no live runs, and no hand-written outputs. A picture is drawn from `probes`
+  (Python expressions the verifier evaluates), never from JavaScript reimplementing Python's rules.
   Authoring rules are in `docs/build/CONTENT.md`.
 - **Styling uses tokens only** (`src/styles/tokens.css`), light on `:root`, dark via `prefers-color-scheme` or `data-theme`. No gradients, no purple (hue 250–320), no emoji icons, radius ≤ 8px. Plain student-facing words; never show internal ids.
 - **Never `innerHTML`**. Render Md strings with `Markdown`, code with `CodeBlock`.

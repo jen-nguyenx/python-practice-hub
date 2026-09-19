@@ -5,11 +5,11 @@ import type { Experiment } from '../../schema.ts';
 const counting: Experiment = {
   id: 't03-x1',
   title: 'Where counting starts, where it stops, and how big the jumps are',
-  intro: 'The three numbers in `range()` are the start, the stop and the step. Change one at a time and watch which numbers appear.',
-  template: 'for n in range(⟦start⟧, ⟦stop⟧, ⟦step⟧):\n    print(n)\n',
+  intro: 'Drag the sliders and watch the dots. The three numbers in `range()` are the start, the stop and the step.',
+  template: 'for n in range(\u27e6start\u27e7, \u27e6stop\u27e7, \u27e6step\u27e7):\n    print(n)\n',
   knobs: [
-    { id: 'start', label: 'start counting at', choices: [{ value: '0' }, { value: '3' }, { value: '6' }] },
-    { id: 'stop', label: 'stop before', choices: [{ value: '5' }, { value: '0' }] },
+    { id: 'start', kind: 'range', label: 'start counting at', min: 0, max: 10, start: 0 },
+    { id: 'stop', kind: 'range', label: 'stop before', min: 0, max: 10, start: 5 },
     {
       id: 'step',
       label: 'jump by',
@@ -20,13 +20,22 @@ const counting: Experiment = {
       ],
     },
   ],
-  notes: {
-    '0-0-0': 'The everyday case. Counting starts at the start number and stops **before** the stop number, so 5 never appears.',
-    '0-1-0': 'Nothing prints. You asked to count up from 0 and stop before 0, which is over before it begins.',
-    '2-1-2': 'Counting backwards works, but only when the start is above the stop.',
-    '0-0-2': 'Nothing prints again. A negative step counts down, so it needs a stop **below** the start.',
+  probes: { produced: 'list(range(\u27e6start\u27e7, \u27e6stop\u27e7, \u27e6step\u27e7))' },
+  visual: {
+    kind: 'numberline',
+    min: 0,
+    max: 10,
+    picked: 'produced',
+    caption: 'The whole numbers from 0 to 10. The filled dots are the ones the loop actually hands to `n`.',
   },
-  takeaway: 'The stop number is never printed. It is the line the loop must not cross, not the last value. And a negative step only produces numbers when the start is above the stop, which is why a backwards loop that prints nothing is usually a start and stop the wrong way round.',
+  notes: {
+    '0-5-0': 'The everyday case. Counting starts on the start number and stops **before** the stop number, so the dot under 5 stays empty.',
+    '0-0-0': 'Nothing prints. You asked to count up from 0 and stop before 0, which is over before it begins.',
+    '6-0-2': 'Counting backwards works, but only when the start is above the stop.',
+    '0-5-2': 'Nothing again. A negative step counts down, so it needs a stop **below** the start.',
+    '0-10-1': 'Jumping by 2 from 0 lands on the even numbers and skips 10, because 10 is the stop.',
+  },
+  takeaway: 'The stop number is never reached. It is the line the loop must not cross, not the last value, which is why `range(0, 5)` gives you five numbers ending at 4. And a negative step only produces anything when the start is above the stop, so a backwards loop that prints nothing almost always has its start and stop the wrong way round.',
 };
 
 const accumulator: Experiment = {

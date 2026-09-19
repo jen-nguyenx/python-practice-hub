@@ -15,6 +15,7 @@ export const PY_DIR = join(PROJECT_ROOT, 'src', 'runtime', 'python');
 
 export interface TraceResult { rows: string[][]; stdout: string; error?: PyError }
 export interface CaptureResult { stdout: string; error?: PyError; timedOut?: boolean }
+export interface ProbeResult { stdout: string; values: Record<string, unknown>; error?: PyError; timedOut?: boolean; probeErrors?: Record<string, string> }
 export interface LiteralInfo { ok: boolean; error?: string; hasFloat: boolean; isTuple: boolean; typeName: string }
 export interface DefinesResult { defined: boolean; compileError?: PyError; error?: PyError }
 export interface ConstructsResult { parsed: boolean; used: string[]; defs: string[] }
@@ -31,6 +32,8 @@ export interface Harness {
   pair(reference: string, buggy: string, fnName: string, argsRepr: string): PairResult;
   trace(code: string, watch: string[], anchorLine: number, stdin?: string[]): TraceResult;
   runCapture(code: string, stdin?: string[]): CaptureResult;
+  /** Run the code, then evaluate each expression in the namespace it left behind. */
+  probe(code: string, probes: Record<string, string>): ProbeResult;
   literalInfo(expr: string): LiteralInfo;
   defines(code: string, fnName: string): DefinesResult;
   constructs(code: string): ConstructsResult;
@@ -67,6 +70,7 @@ export async function createHarness(opts: { hashSeed?: string } = {}): Promise<H
     pair: (reference, buggy, fnName, argsRepr) => call('pair', reference, buggy, fnName, argsRepr),
     trace: (code, watch, anchorLine, stdin = []) => call('trace', code, j(watch), anchorLine, j(stdin)),
     runCapture: (code, stdin = []) => call('run_capture', code, j(stdin)),
+    probe: (code, probes) => call('probe', code, j(probes)),
     literalInfo: (expr) => call('literal_info', expr),
     defines: (code, fnName) => call('defines', code, fnName),
     constructs: (code) => call('constructs', code),

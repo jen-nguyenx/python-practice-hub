@@ -61,6 +61,29 @@
     "stdout": "42                       -> 42                     -> 42                     int   same\n3.5                      -> 3.5                    -> 3.5                    float same\n'text'                   -> \"text\"                 -> 'text'                 str   same\nTrue                     -> true                   -> True                   bool  same\nNone                     -> null                   -> None                   NoneType same\n[1, 2]                   -> [1, 2]                 -> [1, 2]                 list  same\n(1, 2)                   -> [1, 2]                 -> [1, 2]                 list  CHANGED\n{'a': 1}                 -> {\"a\": 1}               -> {'a': 1}               dict  same\n{1: 'one'}               -> {\"1\": \"one\"}           -> {'1': 'one'}           dict  CHANGED\n{2.5: 'two and a half'}  -> {\"2.5\": \"two and a half\"} -> {'2.5': 'two and a half'} dict  CHANGED\n{True: 'yes'}            -> {\"true\": \"yes\"}        -> {'true': 'yes'}        dict  CHANGED\n"
   },
   "s2-b3": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "[1, 2, 3]\n[1, 2, 3]\n[1, 2, 3]\nTrue\n"
+        },
+        "1": {
+          "stdout": "(1, 2, 3)\n[1, 2, 3]\n[1, 2, 3]\nFalse\n"
+        },
+        "2": {
+          "stdout": "{1: 'a', 2: 'b'}\n{\"1\": \"a\", \"2\": \"b\"}\n{'1': 'a', '2': 'b'}\nFalse\n"
+        },
+        "3": {
+          "error": {
+            "line": 4,
+            "message": "Object of type set is not JSON serializable",
+            "type": "TypeError"
+          },
+          "stdout": ""
+        }
+      }
+    }
+  },
+  "s2-b4": {
     "shell": [
       {
         "source": "import json",
@@ -115,7 +138,7 @@
       }
     ]
   },
-  "s2-b5": {
+  "s2-b6": {
     "error": {
       "line": 6,
       "message": "Object of type date is not JSON serializable\nwhen serializing dict item 'when'",

@@ -196,6 +196,34 @@ print(totals, 'after', looks, 'row visits')
           kind: 'prose',
           body: 'Four rows and two suburbs is a small difference. A project file has thousands of rows and dozens of groups, and the left-hand shape multiplies one by the other. The right-hand loop never grows past one visit per row, however many groups turn up.\n\nThe same argument applies to `header.index(...)`: call it once, above the loop, not on every row.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'one-pass-grouping',
+            title: 'Watching the totals fill in as rows are read',
+            intro: 'Drag **rows read so far** and watch each suburb\'s bar grow. Nothing here re-reads a row once it has been counted.',
+            template: 'rows = [\n    ("subiaco", 12.5), ("como", 3.0), ("subiaco", 8.0),\n    ("victoria park", 6.0), ("como", 1.5), ("subiaco", 4.0),\n    ("como", 2.5), ("victoria park", 9.5),\n][:⟦n⟧]\n\ntotals = {}\nfor name, rain in rows:\n    totals[name] = totals.get(name, 0) + rain\n\nfor name in sorted(totals):\n    print(name, round(totals[name], 2))\n',
+            knobs: [
+              { id: 'n', kind: 'range', label: 'rows read so far', min: 1, max: 8, start: 8 },
+            ],
+            probes: {
+              'suburb-totals': "[round(totals.get(s, 0), 2) for s in ['subiaco', 'como', 'victoria park']]",
+              'suburb-names': "['subiaco', 'como', 'victoria park']",
+            },
+            visual: {
+              kind: 'bars',
+              values: 'suburb-totals',
+              labels: 'suburb-names',
+              caption: "Each suburb's running total after the rows read so far.",
+            },
+            notes: {
+              '0': 'After one row, only Subiaco has a bar. Como and Victoria Park sit at zero because they have not been seen yet, not because they are missing — `totals.get(name, 0)` is what keeps a suburb\'s first row from crashing the lookup.',
+              '2': 'Three rows in, Subiaco has two readings added together and Como has one. Victoria Park is still waiting for its first row to arrive.',
+              '7': 'All eight rows read, and every bar matches what the printed totals show. The bars would end up exactly the same if the rows arrived in a different order, because addition does not care what order it happens in — only that every row is visited once.',
+            },
+            takeaway: 'A one-pass accumulator does not wait for the whole file before it has an answer: each row updates one bar and leaves the others untouched. That is why building the group totals into a dictionary as the rows are read costs one visit per row, no matter how many groups eventually turn up — the alternative, a separate scan per group, would cost one visit per row for every single group.',
+          },
+        },
         { kind: 'experiment', id: 't12-x2' },
         { kind: 'mistakes', only: ['header_order_assumed', 'efficiency_repeat_pass'] },
       ],

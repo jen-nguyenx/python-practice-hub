@@ -285,6 +285,38 @@ print(is_century_heat(20.0))
           kind: 'prose',
           body: 'Four different uses of a returned value in one block: stored in a variable, dropped into an f-string, used as the condition of an `if`, and passed straight into another function. The second function never repeats the conversion arithmetic; it calls the first one and builds on the answer. That is what makes small functions worth writing.\n\nNotice also that `is_century_heat` is tested with `if is_century_heat(today):` and not `== True`. It already hands back a yes-or-no value.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'return-value-across-a-range',
+            title: 'Watching a return value across a range of arguments',
+            intro: 'Drag the Celsius temperature into `c_to_f` and watch what comes back. The picture plots the same function against many arguments at once.',
+            template: 'def c_to_f(celsius):\n    """Return celsius converted to Fahrenheit."""\n    return celsius * 9 / 5 + 32\n\n\ntoday = ⟦c⟧\nprint("c_to_f(", today, ") =", c_to_f(today))\n',
+            knobs: [
+              { id: 'c', kind: 'range', label: 'the Celsius temperature to convert', min: -40, max: 40, start: 20 },
+            ],
+            probes: {
+              converted: '[[c, c_to_f(c)] for c in range(-40, 41)]',
+              'same-number': '[[c, c] for c in range(-40, 41)]',
+            },
+            visual: {
+              kind: 'plot',
+              xLabel: 'Celsius',
+              yLabel: 'value',
+              caption: 'The return value across a range of arguments, next to the argument itself.',
+              series: [
+                { probe: 'converted', label: 'c_to_f(celsius)' },
+                { probe: 'same-number', label: 'celsius (for comparison)' },
+              ],
+            },
+            notes: {
+              '0': 'At -40 the function returns -40 too. This is the one temperature where the Celsius number and the Fahrenheit number are identical, which is exactly where the two lines in the picture cross.',
+              '40': 'At 0 Celsius the function returns 32, the freezing point of water. It is a good value to test a temperature function against, because you already know the answer by heart.',
+              '80': 'At 40 Celsius the function returns 104. Past the crossing point the two lines pull apart in the other direction.',
+            },
+            takeaway: 'A function has exactly one return value for each argument, so plotting them across a range shows the whole relationship at once instead of one call at a time. Here the two lines cross exactly once, at -40, the single temperature where the Celsius reading and the Fahrenheit reading happen to agree. Everywhere else they diverge, which is why "the same number" is not the same thing as "the same temperature".',
+          },
+        },
       ],
     },
     {

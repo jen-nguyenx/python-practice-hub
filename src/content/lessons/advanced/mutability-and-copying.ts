@@ -200,7 +200,47 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'Use `deepcopy` when the structure is nested and you need the copy to be genuinely independent. It is slower, it follows every reference, and it is the wrong tool for a flat list of numbers.\n\nThe same trap has a second form, and this one arrives without any copying at all. Multiplying a list repeats the **reference**, not the contents.',
+          body: 'Use `deepcopy` when the structure is nested and you need the copy to be genuinely independent. It is slower, it follows every reference, and it is the wrong tool for a flat list of numbers.',
+        },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'copy-depth',
+            title: 'Which names change when b is built',
+            intro: 'Choose how `b` is built from `a`, then watch what happens when `b` is appended to and its first inner list is appended to.',
+            template: 'import copy\n\na = [[1, 2], [3, 4]]\nb = ⟦method⟧\n\nb.append([9, 9])\nb[0].append(99)\n\nprint("a:", a)\nprint("b:", b)\nprint("same object:", a is b)\n',
+            knobs: [
+              {
+                id: 'method',
+                label: 'build b as',
+                choices: [
+                  { value: 'a', caption: '= (same object)' },
+                  { value: 'list(a)', caption: 'list(a)' },
+                  { value: 'copy.deepcopy(a)', caption: 'copy.deepcopy(a)' },
+                ],
+              },
+            ],
+            probes: {
+              sizes: '[len(a), len(b), len(a[0]), len(b[0])]',
+              'size-labels': "['len(a)', 'len(b)', 'len(a[0])', 'len(b[0])']",
+            },
+            visual: {
+              kind: 'bars',
+              values: 'sizes',
+              labels: 'size-labels',
+              caption: 'How many items are in each list after both appends, for the copy method chosen.',
+            },
+            notes: {
+              '0': '`a` and `b` are two names for the same list. Every bar matches: appending to `b` and appending to its first inner list both show up in `a`, because there is only one list to change.',
+              '1': 'The outer list is new: `len(a)` stays at 2 while `len(b)` grows to 3. But the inner lists were never copied, so `len(a[0])` grows right alongside `len(b[0])` — a shallow copy is only skin deep.',
+              '2': 'Every bar involving `a` stays at its original size. `deepcopy` walked the whole structure, so `b` owns its own outer list and its own inner lists, and nothing done through `b` reaches `a`.',
+            },
+            takeaway: '`=` shares the object outright, `list(a)` makes a new outer container but keeps the same inner objects, and `copy.deepcopy` copies all the way down. A shallow copy is enough when nothing inside the outer list can change, and wrong the moment something inside it can.',
+          },
+        },
+        {
+          kind: 'prose',
+          body: 'The same trap has a second form, and this one arrives without any copying at all. Multiplying a list repeats the **reference**, not the contents.',
         },
         {
           kind: 'compare',

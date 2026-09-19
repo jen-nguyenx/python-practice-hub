@@ -42,26 +42,7 @@
       }
     ]
   },
-  "s0-b3": {
-    "error": {
-      "line": 1,
-      "message": "too many values to unpack (expected 2, got 3)",
-      "type": "ValueError"
-    },
-    "stdout": ""
-  },
-  "s0-b4": {
-    "error": {
-      "line": 1,
-      "message": "not enough values to unpack (expected 3, got 2)",
-      "type": "ValueError"
-    },
-    "stdout": ""
-  },
-  "s0-b6": {
-    "stdout": "('Ada', 'Lovelace') <class 'tuple'>\nAda\nLovelace\n"
-  },
-  "s0-b9": {
+  "s0-b10": {
     "shell": [
       {
         "source": "a, b = \"left\", \"right\"",
@@ -90,6 +71,80 @@
         "value": "[3, 2, 1]"
       }
     ]
+  },
+  "s0-b3": {
+    "error": {
+      "line": 1,
+      "message": "too many values to unpack (expected 2, got 3)",
+      "type": "ValueError"
+    },
+    "stdout": ""
+  },
+  "s0-b4": {
+    "error": {
+      "line": 1,
+      "message": "not enough values to unpack (expected 3, got 2)",
+      "type": "ValueError"
+    },
+    "stdout": ""
+  },
+  "s0-b5": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "error": {
+            "line": 2,
+            "message": "not enough values to unpack (expected 3, got 1)",
+            "type": "ValueError"
+          },
+          "stdout": "",
+          "values": {}
+        },
+        "1": {
+          "error": {
+            "line": 2,
+            "message": "not enough values to unpack (expected 3, got 2)",
+            "type": "ValueError"
+          },
+          "stdout": "",
+          "values": {}
+        },
+        "2": {
+          "stdout": "10 20 30\n",
+          "values": {
+            "count-labels": [
+              "values given",
+              "names to fill"
+            ],
+            "counts": [
+              3,
+              3
+            ]
+          }
+        },
+        "3": {
+          "error": {
+            "line": 2,
+            "message": "too many values to unpack (expected 3, got 4)",
+            "type": "ValueError"
+          },
+          "stdout": "",
+          "values": {}
+        },
+        "4": {
+          "error": {
+            "line": 2,
+            "message": "too many values to unpack (expected 3, got 5)",
+            "type": "ValueError"
+          },
+          "stdout": "",
+          "values": {}
+        }
+      }
+    }
+  },
+  "s0-b7": {
+    "stdout": "('Ada', 'Lovelace') <class 'tuple'>\nAda\nLovelace\n"
   },
   "s1-b1": {
     "shell": [

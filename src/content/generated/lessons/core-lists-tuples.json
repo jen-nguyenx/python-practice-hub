@@ -151,6 +151,63 @@
       "stdout": "[('Armadale', 30), ('Joondalup', 12), ('Subiaco', 12)]\n"
     }
   },
+  "s3-b6": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "[('Bread', 40), ('Coffee', 40), ('Flowers', 20), ('Fruit', 65)]\n",
+          "values": {
+            "labels": [
+              "Bread",
+              "Coffee",
+              "Flowers",
+              "Fruit"
+            ],
+            "values": [
+              40,
+              40,
+              20,
+              65
+            ]
+          }
+        },
+        "1": {
+          "stdout": "[('Flowers', 20), ('Bread', 40), ('Coffee', 40), ('Fruit', 65)]\n",
+          "values": {
+            "labels": [
+              "Flowers",
+              "Bread",
+              "Coffee",
+              "Fruit"
+            ],
+            "values": [
+              20,
+              40,
+              40,
+              65
+            ]
+          }
+        },
+        "2": {
+          "stdout": "[('Fruit', 65), ('Bread', 40), ('Coffee', 40), ('Flowers', 20)]\n",
+          "values": {
+            "labels": [
+              "Fruit",
+              "Bread",
+              "Coffee",
+              "Flowers"
+            ],
+            "values": [
+              65,
+              40,
+              40,
+              20
+            ]
+          }
+        }
+      }
+    }
+  },
   "s4-b1": {
     "stdout": "booked ['A1', 'A2', 'A3']\nsaved  ['A1', 'A2', 'A3']\ncopy   ['A1', 'A2']\n"
   },

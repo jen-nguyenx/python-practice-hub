@@ -254,7 +254,35 @@ print(total(nums))
         },
         {
           kind: 'prose',
-          body: 'One number per call, two thousand numbers, and the calls run out of room long before the data does. Nothing is wrong with that recursive function: it is the right code for the wrong job.\n\nWhere recursion earns its place is a problem whose **shape** is nested, where a loop would need to remember where it had been. A list that contains lists, to any depth, is the standard example, and the unit uses it a lot.',
+          body: 'One number per call, two thousand numbers, and the calls run out of room long before the data does. Nothing is wrong with that recursive function: it is the right code for the wrong job.\n\nDepth is not the only way a recursive function can cost more than the loop it replaced. A function that makes **more than one** recursive call per call can need far more calls than its input is big, and no depth limit warns you about it, because the calls never stack very deep at all.',
+        },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'branching-calls',
+            title: 'One call becomes two',
+            intro: 'This counts every call made while working out the nth Fibonacci number the naive way, with no memory of what it has already computed. Drag **n** and watch how fast the count climbs.',
+            template: 'def fib_calls(k):\n    if k <= 1:\n        return 1\n    return fib_calls(k - 1) + fib_calls(k - 2) + 1\n\nn = ⟦n⟧\nprint("calls made for n =", n, ":", fib_calls(n))\n',
+            knobs: [
+              { id: 'n', kind: 'range', label: 'n', min: 1, max: 18, start: 8 },
+            ],
+            probes: {
+              growth: '[[k, fib_calls(k)] for k in range(0, ⟦n⟧ + 1)]',
+            },
+            visual: {
+              kind: 'plot',
+              xLabel: 'n',
+              yLabel: 'calls made',
+              caption: 'Calls needed for each size up to the one you picked, so you can watch the curve extend as you drag.',
+              series: [{ probe: 'growth', label: 'calls made' }],
+            },
+            notes: {
+              '0': 'At n = 1 there is exactly one call: the base case, answering straight away.',
+              '7': 'By n = 8 the curve has barely lifted off the axis. This is the range where a slow function still feels fast, which is exactly what makes it easy to ship.',
+              '17': 'At n = 18 the line has shot upward while the input only grew one at a time. Every call here still does almost nothing on its own — one comparison, one addition — the cost is entirely in how many of them there are.',
+            },
+            takeaway: 'A recursive function that makes two calls to move one step forward does not cost "one call per item": each call spawns two more before it reaches a base case, so the number of calls compounds the way the Fibonacci numbers themselves do. Depth stayed small the whole time — this function never got close to a `RecursionError` — the cost showed up as sheer call count instead. Counting how many recursive calls a function makes per call is as important as checking that it has a base case at all.',
+          },
         },
         {
           kind: 'code',

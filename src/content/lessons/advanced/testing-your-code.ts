@@ -152,6 +152,34 @@ const lesson: Lesson = {
           body: 'Every mark in the middle of every band is handled correctly, and one of the boundaries is not. Testing `65` and `75` would have found nothing; testing the exact edges found it on the first run.\n\nThe habit worth taking from this: for every condition in your code, test the value **at** the threshold, not just values either side of it.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'find-the-boundary-bug',
+            title: 'Drag across the boundary',
+            intro: 'This is the same `grade` function, with the same bug. Drag the mark being tested and watch where "should pass" and "actually passed" stop agreeing.',
+            template: "def grade(mark):\n    if mark >= 80:\n        return 'HD'\n    if mark >= 70:\n        return 'D'\n    if mark >= 60:\n        return 'CR'\n    if mark > 50:\n        return 'P'\n    return 'N'\n\nmark = ⟦mark⟧\nresult = grade(mark)\nprint(mark, '->', result)\nprint('should pass:', mark >= 50, '  actually passed:', result != 'N')\n",
+            knobs: [
+              { id: 'mark', kind: 'range', label: 'the mark to test', min: 45, max: 55, start: 50 },
+            ],
+            probes: {
+              passing: "[m for m in range(45, 56) if grade(m) != 'N']",
+            },
+            visual: {
+              kind: 'numberline',
+              min: 45,
+              max: 55,
+              picked: 'passing',
+              caption: 'Every mark from 45 to 55 that this `grade` actually treats as a pass.',
+            },
+            notes: {
+              '0': 'At 45, both lines agree: it should not pass, and it does not.',
+              '5': 'At exactly 50, "should pass" says true — the spec is "50 or more" — but `grade` says `N`. The line reads `mark > 50`, not `mark >= 50`, so the boundary value itself is the one mark this function gets wrong.',
+              '10': 'At 55 both lines agree again. The gap in the lit numbers sits at exactly one point: 50.',
+            },
+            takeaway: 'The bug is invisible from either side of it — 49 and 51 both behave exactly as expected — and only shows up by testing the boundary value itself. That is the whole argument for the edge-case habit: an off-by-one error occupies exactly one input, and a test suite that never tries that input will never find it.',
+          },
+        },
+        {
           kind: 'code',
           caption: 'The empty case, which is the one people forget.',
           code: "def average(values):\n    return sum(values) / len(values)\n\nprint(average([2, 4]))\nprint(average([]))\n",

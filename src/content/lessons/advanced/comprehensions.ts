@@ -91,6 +91,34 @@ const lesson: Lesson = {
           body: 'The order the pieces run in is not the order they are written. Python walks the items first, tests the `if` on each one, and only then works out the expression at the front. So the expression at the front only ever sees items that survived the filter.\n\nThat last line is a pattern worth stealing: build the filtered list, take its length, and you have counted without writing a counter variable.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'filter-threshold',
+            title: 'Which numbers survive the filter',
+            intro: 'Drag **keep numbers at least** and watch which boxes stay lit. Every number is checked, every time, even the ones you already know will fail.',
+            template: 'nums = [4, -2, 7, 0, -9, 12, 5, -6, 9, 1]\nthreshold = ⟦threshold⟧\nkept = [n for n in nums if n >= threshold]\nprint(kept)\nprint(len(kept), "out of", len(nums), "survived")\n',
+            knobs: [
+              { id: 'threshold', kind: 'range', label: 'keep numbers at least', min: -9, max: 13, start: 0 },
+            ],
+            probes: {
+              items: '[str(n) for n in nums]',
+              picked: '[i for i, n in enumerate(nums) if n >= ⟦threshold⟧]',
+            },
+            visual: {
+              kind: 'sequence',
+              items: 'items',
+              picked: 'picked',
+              caption: 'The ten numbers in their original positions; lit boxes are the ones the trailing `if` kept.',
+            },
+            notes: {
+              '0': 'The threshold matches the smallest number in the list, so every box lights up. The trailing `if` did not throw anything out here, but Python still checked all ten to find that out.',
+              '9': 'At a threshold of 0, the negative numbers are the only ones dropped. Notice the surviving boxes keep their original order and their original spacing — a comprehension filters, it never reshuffles.',
+              '22': 'No number in the list reaches 13, so nothing survives and the comprehension returns an empty list. An empty result is not an error; it is a completely ordinary answer to "which of these are at least 13".',
+            },
+            takeaway: 'A trailing `if` walks every item and asks the same question of each one before deciding what goes in the result. Moving the threshold never changes which numbers exist, only which ones pass the test — the comprehension rebuilds its answer from the whole list every time, in the order the list already had.',
+          },
+        },
+        {
           kind: 'checkpoint',
           prompt: 'Here is a loop:\n\n```\ntotal = 0\nfor row in rows:\n    if row[1] >= 50:\n        total = total + row[1]\n```\n\nIt is not a build-a-list loop, so the rewrite is not a plain comprehension. What is the one-line version, and what is the name of the thing in the brackets?',
           answer: '`total = sum(row[1] for row in rows if row[1] >= 50)`.\n\nThe thing inside `sum(...)` is a **generator expression**, not a list comprehension: it has no square brackets, and it hands values to `sum` one at a time instead of building a whole list first. Writing `sum([...])` with the brackets also works and gives the same answer, but it builds a list only to add it up and throw it away. Generator expressions have a lesson of their own.',

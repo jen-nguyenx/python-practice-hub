@@ -80,6 +80,32 @@ const lesson: Lesson = {
           kind: 'prose',
           body: 'Rebinding the local name left the module untouched, because `from statistics import mean` did not connect the two names — it pointed a second name at the same object, once, at import time.\n\nThe same thing happens in the other direction, and that is where it costs you: if a module reassigns one of its own names while the program runs — a counter, a configuration value, a cached result — a name you pulled out with `from` still refers to whatever it was at import time, while `statistics.mean`-style access looks it up fresh each time. For functions this rarely matters. For a value that changes, it matters a lot.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'what-lands-in-your-program',
+            title: 'What one import statement actually adds',
+            intro: 'Choose an import style and see exactly which names it adds to your program — not what you assume it adds.',
+            template: "before = set(dir())\n⟦style⟧\nafter = sorted(n for n in set(dir()) - before if n != 'before')\nprint(after)\nprint('statistics' in dir())\nprint('mean' in dir())\n",
+            knobs: [
+              {
+                id: 'style',
+                label: 'how you import statistics',
+                choices: [
+                  { value: 'import statistics', caption: 'import statistics' },
+                  { value: 'from statistics import mean', caption: 'from statistics import mean' },
+                  { value: 'from statistics import *', caption: 'from statistics import *' },
+                ],
+              },
+            ],
+            notes: {
+              '0': 'Exactly one new name: `statistics` itself. `mean` does not exist on its own — it is only reachable as `statistics.mean`, which is why the last line answers `False`.',
+              '1': 'Exactly one new name again, but a different one: `mean`. `statistics` itself was never bound, so `statistics.mean(...)` would fail here even though `mean(...)` works.',
+              '2': 'Dozens of names arrive at once, and you cannot tell from this line alone which ones. `mean` is among them, and so is everything else the module considered public — including names that might already mean something else in your file.',
+            },
+            takeaway: 'An import statement is an assignment, and what it assigns depends entirely on its form: one module name, one function name, or every public name the module has. `import *` is the only one of the three where you cannot read the line and know what you got.',
+          },
+        },
       ],
     },
     {

@@ -116,6 +116,34 @@ const lesson: Lesson = {
           ],
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'overlap-sizes',
+            title: 'Union, intersection and the leftovers, moving together',
+            intro: 'Drag **how many people came both days** and watch all four bars move at once. Monday always has six people; Tuesday\'s six slide across so that exactly this many of them match Monday\'s.',
+            template: 'overlap = ⟦overlap⟧\nmonday = set(range(0, 6))\ntuesday = set(range(6 - overlap, 12 - overlap))\nprint("monday: ", sorted(monday))\nprint("tuesday:", sorted(tuesday))\nprint("came both days:", sorted(monday & tuesday))\n',
+            knobs: [
+              { id: 'overlap', kind: 'range', label: 'came both days', min: 0, max: 6, start: 3 },
+            ],
+            probes: {
+              sizes: '[len(monday | tuesday), len(monday & tuesday), len(monday - tuesday), len(tuesday - monday)]',
+              'size-labels': "['union', 'intersection', 'monday only', 'tuesday only']",
+            },
+            visual: {
+              kind: 'bars',
+              values: 'sizes',
+              labels: 'size-labels',
+              caption: 'Sizes of the union, the intersection, and each day\'s leftovers, as the overlap changes.',
+            },
+            notes: {
+              '0': 'No overlap at all. The intersection bar is at zero, and the union is the full twelve people from both days added together, because nobody is being counted twice.',
+              '3': 'Half of Monday also came Tuesday. The union bar sits below twelve, because the three who came both days are counted once, not twice.',
+              '6': 'The two days are exactly the same six people. Intersection matches both days exactly, and each "only" bar drops to zero, because nobody attended just one day.',
+            },
+            takeaway: 'The union bar is never the sum of the two days on their own; it is always that sum minus whoever is being double-counted, which is exactly the intersection. Watch the two "only" bars and the intersection bar always add back up to the union, however far you drag the slider.',
+          },
+        },
+        {
           kind: 'table',
           caption: 'Read the operator as a question.',
           head: ['Written', 'Method', 'The question it answers'],

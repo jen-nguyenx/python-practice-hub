@@ -112,6 +112,44 @@ const lesson: Lesson = {
           body: 'Two of those repay a second look. The word-boundary pattern refused the `cat` buried inside a longer word, which is the fix for the classic "why does my search for `cat` match `concatenate`" problem. And the alternation found the `cat` inside `catalogue`, because `|` on its own says nothing about boundaries — the two ideas combine, they do not replace each other.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'light-up-the-match',
+            title: 'See exactly what a pattern claims',
+            intro: 'Same text every time: `cat concatenate`. Choose a pattern and watch which characters it actually matches.',
+            template: "import re\n\nsubject = 'cat concatenate'\npattern = ⟦pattern⟧\nmatches = list(re.finditer(pattern, subject))\nprint(pattern)\nprint([m.group() for m in matches])\nprint([m.span() for m in matches])\n",
+            knobs: [
+              {
+                id: 'pattern',
+                label: 'the pattern',
+                choices: [
+                  { value: "r'cat'", caption: 'cat' },
+                  { value: "r'\\bcat\\b'", caption: 'cat, as a whole word' },
+                  { value: "r'cat|nate'", caption: 'cat or nate' },
+                  { value: "r'concatenate'", caption: 'the whole word' },
+                ],
+              },
+            ],
+            probes: {
+              chars: 'list(subject)',
+              lit: '[i for m in matches for i in range(m.start(), m.end())]',
+            },
+            visual: {
+              kind: 'sequence',
+              items: 'chars',
+              picked: 'lit',
+              caption: 'One box per character. The lit boxes are exactly what the pattern matched.',
+            },
+            notes: {
+              '0': 'Two matches: the standalone `cat`, and the `cat` hiding inside `concatenate`. `cat` has no idea it is inside a longer word — it only asks whether those three letters appear.',
+              '1': 'One match. `\\b` requires a word boundary on each side, and the `cat` inside `concatenate` is surrounded by other letters, so it is refused. Only the standalone word is lit.',
+              '2': 'Three matches: both `cat`s from before, plus `nate` at the very end of `concatenate`. `|` does not pick one branch over the other — every place either branch fits gets matched.',
+              '3': 'One match, but a long one: the whole word `concatenate` lights up as a single match, because the pattern asked for all eleven characters in that exact order.',
+            },
+            takeaway: 'A pattern matches exactly the characters it describes, no more and no less — the picture is not an interpretation of the pattern, it is what `re` actually found. Adding `\\b` shrinks what counts as a match; adding `|` widens it; asking for a whole word matches only where the whole word appears.',
+          },
+        },
+        {
           kind: 'checkpoint',
           prompt: 'Write a pattern that matches an Australian-style student number: the letter `u` followed by exactly seven digits, and nothing else. Say what each piece is for, and what goes wrong if you leave off the anchors.',
           answer: '`r\'^u\\d{7}$\'`. The `^` fixes the match to the start, `u` is a literal, `\\d{7}` is exactly seven digits, and `$` fixes the end. Without the anchors the pattern matches a student number **inside** anything else: `search` would accept `xu12345678y`, because it is free to start matching wherever it likes and to stop as soon as it has seven digits — so a validator built from it would pass rubbish. The alternative to anchors is `re.fullmatch`, which requires the whole text to match and lets you write `r\'u\\d{7}\'` with no anchors at all. For validation, prefer `fullmatch`: forgetting an anchor is silent, and forgetting to call `fullmatch` is not.',

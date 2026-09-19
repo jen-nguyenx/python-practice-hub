@@ -260,6 +260,44 @@ const lesson: Lesson = {
           body: '`[::-1]` reverses everything, ties included, so the tied rows come out in the opposite of their original order. `reverse=True` reverses the *comparison* and leaves ties alone, so tied rows stay in the order they arrived.\n\nWhen you have already sorted by a tie-break in an earlier pass, this is the difference between keeping that work and destroying it.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'stable-tiebreak',
+            title: 'Where a tie lands depends on what came before',
+            intro: 'Five students, three of them tied on 71. Choose what to sort by and watch the three ties settle into a different order each time — never scrambled, always inherited from somewhere.',
+            template: 'rows = [("cy", 71), ("bo", 88), ("ana", 71), ("di", 95), ("eli", 71)]\nresult = ⟦sortby⟧\nprint(result)\n',
+            knobs: [
+              {
+                id: 'sortby',
+                label: 'sort by',
+                choices: [
+                  { value: 'sorted(rows, key=lambda r: r[0])', caption: 'name' },
+                  { value: 'sorted(rows, key=lambda r: r[1])', caption: 'score' },
+                  { value: 'sorted(sorted(rows, key=lambda r: r[0]), key=lambda r: r[1])', caption: 'name, then score' },
+                  { value: 'sorted(rows, key=lambda r: r[1], reverse=True)', caption: 'score, high to low' },
+                ],
+              },
+            ],
+            probes: {
+              'order-scores': '[r[1] for r in (⟦sortby⟧)]',
+              'order-names': '[r[0] for r in (⟦sortby⟧)]',
+            },
+            visual: {
+              kind: 'bars',
+              values: 'order-scores',
+              labels: 'order-names',
+              caption: 'The scores in the order the sort produced, labelled with whose score each bar is.',
+            },
+            notes: {
+              '0': 'Sorted by name: ana, bo, cy, di, eli. The three tied scores of 71 are scattered wherever their names put them — this key does not group them at all.',
+              '1': 'Sorted by score: the three 71s tie, and a stable sort never reorders a tie, so they keep the order they already had in `rows` — cy, then ana, then eli.',
+              '2': 'Sorted by name first, then by score: the first pass already put the ties in alphabetical order — ana, cy, eli — and because the second sort is stable, it has no reason to disturb that order. Same three names, same scores, a different tie order from sorting by score alone.',
+              '3': '`reverse=True` sorted by score, high to low: the highest scores come first, and the tied 71s still keep their original order from `rows` — cy, ana, eli — because `reverse=True` flips the comparison, not the list.',
+            },
+            takeaway: 'A stable sort never reorders two rows whose keys are equal — it leaves them exactly as they were relative to each other. That is why the three tied scores land in a different order depending on what happened before the sort: whatever order existed going in is the order ties come out in, whichever key you choose and whichever direction you sort.',
+          },
+        },
+        {
           kind: 'checkpoint',
           prompt: 'A leaderboard is built by sorting entries alphabetically by name, then sorting by score with `reverse=True`. A colleague replaces the second step with `sorted(entries, key=score)[::-1]` and says it is the same thing. What breaks, and for whom?',
           answer: 'Ties break. Two players on the same score were in alphabetical order after the first pass, and `reverse=True` keeps them that way. Slicing with `[::-1]` reverses the whole list, so tied players come out in **reverse** alphabetical order.\n\nIt breaks for exactly the players who are level with someone else, which is why it survives a casual test on data where no two scores are equal, and shows up in production the first week two people tie.',

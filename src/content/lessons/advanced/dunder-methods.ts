@@ -234,6 +234,42 @@ const lesson: Lesson = {
           body: 'The left-hand code works. It just makes every caller reach inside the object and know which attribute holds what. The right-hand version moves that knowledge into the class once, and the callers read like ordinary Python.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'which-dunders-exist',
+            title: 'Add a dunder, watch one more thing start working',
+            intro: 'Choose which methods the class defines. The five trials below are unchanged; only the class changes.',
+            template: "class Team:\n    def __init__(self, name, players):\n        self.name = name\n        self.players = players\n\n⟦dunders⟧\n\nteams = [Team('Reds', ['a', 'b']), Team('Blues', ['c'])]\ntrials = [\n    ('str', lambda: str(teams[0])),\n    ('len', lambda: len(teams[0])),\n    ('sorted names', lambda: [t.name for t in sorted(teams)]),\n    ('a in team', lambda: 'a' in teams[0]),\n    ('equal', lambda: teams[0] == Team('Reds', [])),\n]\nfor label, attempt in trials:\n    try:\n        print(label, '->', attempt())\n    except TypeError:\n        print(label, '-> TypeError')\n",
+            knobs: [
+              {
+                id: 'dunders',
+                label: 'which dunders are defined',
+                choices: [
+                  { value: 'pass', caption: 'none' },
+                  { value: "Team.__repr__ = lambda self: f'Team({self.name!r})'", caption: 'repr only' },
+                  {
+                    value:
+                      "Team.__repr__ = lambda self: f'Team({self.name!r})'; Team.__len__ = lambda self: len(self.players)",
+                    caption: 'repr + len',
+                  },
+                  {
+                    value:
+                      "Team.__repr__ = lambda self: f'Team({self.name!r})'; Team.__len__ = lambda self: len(self.players); Team.__eq__ = lambda self, other: self.name == other.name; Team.__lt__ = lambda self, other: self.name < other.name; Team.__contains__ = lambda self, who: who in self.players",
+                    caption: 'all five',
+                  },
+                ],
+              },
+            ],
+            notes: {
+              '0': 'Nothing defined. `str` falls back to the default display, `len` and membership both refuse with a `TypeError`, `sorted` refuses too because there is no `__lt__`, and equality answers `False` by identity — two different `Team` objects are never equal, whatever they hold.',
+              '1': 'Printing improved and nothing else did. `__repr__` only teaches Python how to display the object; it has no opinion on length, order or membership.',
+              '2': '`len` now works, because `__len__` exists. `sorted` and `in` still refuse: a size is not an order, and it is not a way of asking "is this inside you".',
+              '3': 'All five trials succeed. Nothing about `Team` changed except which promises it makes — each dunder answers exactly one piece of syntax, and only that one.',
+            },
+            takeaway: 'Every one of `len(x)`, `sorted(xs)`, `x in y`, `x == y` and `print(x)` is a separate promise, answered by a separate method. Defining one never buys you another — `__len__` never got you `in`, and `__repr__` never got you `sorted` — which is why a class advertises exactly the behaviours it actually defines, no more.',
+          },
+        },
+        {
           kind: 'table',
           caption: 'The ones worth knowing, roughly in the order you would add them.',
           head: ['Method', 'Called by', 'Add it when'],

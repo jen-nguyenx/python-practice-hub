@@ -181,7 +181,32 @@
       }
     ]
   },
-  "s4-b6": {
+  "s4-b5": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "The age box holds: 21\nAs a number: 21\n"
+        },
+        "1": {
+          "error": {
+            "line": 3,
+            "message": "invalid literal for int() with base 10: '3.5'",
+            "type": "ValueError"
+          },
+          "stdout": "The age box holds: 3.5\n"
+        },
+        "2": {
+          "error": {
+            "line": 3,
+            "message": "invalid literal for int() with base 10: 'hello'",
+            "type": "ValueError"
+          },
+          "stdout": "The age box holds: hello\n"
+        }
+      }
+    }
+  },
+  "s4-b7": {
     "error": {
       "line": 1,
       "message": "invalid literal for int() with base 10: 'twenty'",

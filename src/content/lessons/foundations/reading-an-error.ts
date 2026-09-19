@@ -83,6 +83,34 @@ const lesson: Lesson = {
           prompt: 'The list above has three items, and `days[3]` failed. What is the largest position that works, and why?',
           answer: '`days[2]`, which is `Wed`. Positions start at 0, so three items occupy positions 0, 1 and 2. The last position is always one less than the length. This off-by-one is the single most common error in programming, and it has caught everyone who has ever written code.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'same-lines-different-mistake',
+            title: 'Same three lines, four different mistakes',
+            intro: 'Switch which one thing is wrong at the top of this program, and watch both the error type and the line it happens on change.',
+            template: '⟦setup⟧\nfor row in report:\n    print(row[0])\nprint(\'done\')\n',
+            knobs: [
+              {
+                id: 'setup',
+                label: 'the mistake',
+                choices: [
+                  { value: 'report = [(1, 2), (3, 4)]', caption: 'no mistake' },
+                  { value: 'report = [1, 2, 3]', caption: 'wrong kind of item in the list' },
+                  { value: 'reports = [(1, 2)]', caption: 'misspelled the name' },
+                  { value: 'report = [1, 2, 3][10]', caption: 'asked for an item past the end' },
+                ],
+              },
+            ],
+            notes: {
+              '0': 'No mistake at all: `report` holds two pairs, so `row[0]` pulls the first number out of each one, and the program finishes cleanly with `done`.',
+              '1': '`report` holds plain numbers instead of pairs. `row[0]` needs something with parts to index into, and a lone number has none, so `TypeError` fires on line 3, the moment the loop first tries it.',
+              '2': '`report` itself was never created. The line above defines `reports` instead, one letter different. Python does not notice the typo until it needs the real name, so the failure lands on line 2, the `for` line, and it is a `NameError`.',
+              '3': 'This time the mistake is on line 1 itself: asking for the eleventh item of a three-item list raises `IndexError` before the loop even starts, so nothing after it ever runs.',
+            },
+            takeaway: 'The same three-line program, with one line changed at the top, gives four different results: a clean run, and three different errors on three different lines. Type and line are the two clues Python always hands you, and reading both, rather than only noticing that something broke, is what gets you to the cause fastest.',
+          },
+        },
       ],
     },
     {

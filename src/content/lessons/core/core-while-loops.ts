@@ -43,6 +43,34 @@ const lesson: Lesson = {
             ['Try every combination of two collections', 'for inside for'],
           ],
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'collatz-passes',
+            title: 'How many passes, before you run it',
+            intro: 'Drag the starting number. The rule never changes: halve an even number, or triple an odd one and add 1. Nobody, including the person who wrote this rule, can tell you how many passes it takes before you start.',
+            template: 'n = ⟦start⟧\npasses = 0\nsteps = [n]\nwhile n != 1:\n    if n % 2 == 0:\n        n = n // 2\n    else:\n        n = n * 3 + 1\n    passes = passes + 1\n    steps.append(n)\nprint(\'passes:\', passes)\nprint(steps)\n',
+            knobs: [
+              { id: 'start', kind: 'range', label: 'starting number', min: 1, max: 20, start: 6 },
+            ],
+            probes: {
+              points: '[[i, v] for i, v in enumerate(steps)]',
+            },
+            visual: {
+              kind: 'plot',
+              xLabel: 'pass',
+              yLabel: 'n',
+              caption: 'The value of n after each pass of the loop, for this starting number.',
+              series: [{ probe: 'points', label: 'n' }],
+            },
+            notes: {
+              '0': 'Starting at 1 means the condition is false before the loop ever runs. Zero passes, and `passes` never leaves the 0 it started at — the zero-pass case from the top of this lesson, turning up here too.',
+              '6': 'Starting at 7 takes 16 passes, and along the way n climbs as high as 52 before it ever comes down. There was no way to see that coming from the number 7 alone.',
+              '15': 'Starting at 16 is the smooth case: 16, 8, 4, 2, 1, four passes exactly, because 16 is a power of two and every pass is a plain halving.',
+            },
+            takeaway: 'A `for` loop can promise its count in advance because it is given the count. This loop cannot: two starting numbers a single step apart can take wildly different numbers of passes, and the only way to find out is to run it and watch the condition. That not-knowing-in-advance is exactly why `while` exists.',
+          },
+        },
       ],
     },
     {

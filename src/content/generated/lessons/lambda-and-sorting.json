@@ -235,6 +235,88 @@
       "stdout": "[('bo', 88), ('cy', 71), ('ana', 71)]\n"
     }
   },
+  "s5-b6": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "[('ana', 71), ('bo', 88), ('cy', 71), ('di', 95), ('eli', 71)]\n",
+          "values": {
+            "order-names": [
+              "ana",
+              "bo",
+              "cy",
+              "di",
+              "eli"
+            ],
+            "order-scores": [
+              71,
+              88,
+              71,
+              95,
+              71
+            ]
+          }
+        },
+        "1": {
+          "stdout": "[('cy', 71), ('ana', 71), ('eli', 71), ('bo', 88), ('di', 95)]\n",
+          "values": {
+            "order-names": [
+              "cy",
+              "ana",
+              "eli",
+              "bo",
+              "di"
+            ],
+            "order-scores": [
+              71,
+              71,
+              71,
+              88,
+              95
+            ]
+          }
+        },
+        "2": {
+          "stdout": "[('ana', 71), ('cy', 71), ('eli', 71), ('bo', 88), ('di', 95)]\n",
+          "values": {
+            "order-names": [
+              "ana",
+              "cy",
+              "eli",
+              "bo",
+              "di"
+            ],
+            "order-scores": [
+              71,
+              71,
+              71,
+              88,
+              95
+            ]
+          }
+        },
+        "3": {
+          "stdout": "[('di', 95), ('bo', 88), ('cy', 71), ('ana', 71), ('eli', 71)]\n",
+          "values": {
+            "order-names": [
+              "di",
+              "bo",
+              "cy",
+              "ana",
+              "eli"
+            ],
+            "order-scores": [
+              95,
+              88,
+              71,
+              71,
+              71
+            ]
+          }
+        }
+      }
+    }
+  },
   "s6-b1": {
     "stdout": "1. Eli  95\n2. bo   88\n3. Ana  71\n4. Cy   71\n5. di   no score\n"
   }

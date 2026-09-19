@@ -172,6 +172,34 @@ print(round(total, 2))
           id: 't03-x2',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'growing-total',
+            title: 'Watching the total climb, pass by pass',
+            intro: 'Drag how many prices have been counted so far. Each bar is the total right after that pass finished.',
+            template: 'prices = [4, 3, 5, 6, 2, 7, 1, 8]\nn = ⟦n⟧\ntotal = 0\nfor price in prices[:n]:\n    total = total + price\nprint("after", n, "prices, total =", total)\n',
+            knobs: [
+              { id: 'n', kind: 'range', label: 'how many prices counted so far', min: 0, max: 8, start: 4 },
+            ],
+            probes: {
+              'running-totals': '[sum(prices[:i + 1]) for i in range(⟦n⟧)]',
+              'pass-labels': '[str(i + 1) for i in range(⟦n⟧)]',
+            },
+            visual: {
+              kind: 'bars',
+              values: 'running-totals',
+              labels: 'pass-labels',
+              caption: 'The accumulator after each pass. One bar per price counted so far.',
+            },
+            notes: {
+              '0': 'Zero passes. The loop body runs no times at all, so `total` never moves off its starting value of 0. The line after the loop still runs; a for loop over nothing is not an error.',
+              '4': 'Four bars, each taller than the last. Every price is positive, so the total can only climb or stay flat between one pass and the next, never fall.',
+              '8': 'Every price counted. The last bar is the same number `sum(prices)` would give you directly, because that is all an accumulator is: the running answer, kept one step at a time.',
+            },
+            takeaway: 'Each bar is the accumulator one pass further into the loop. Here it only ever grows, because every price is positive, which is the shape an accumulator always makes: a staircase that climbs or holds, one step per pass, never sideways in a single jump.',
+          },
+        },
+        {
           kind: 'callout',
           tone: 'warn',
           title: 'Do not call it sum',

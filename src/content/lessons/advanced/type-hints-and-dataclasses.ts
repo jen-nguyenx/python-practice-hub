@@ -126,6 +126,32 @@ const lesson: Lesson = {
           answer: 'A type checker reading the file would flag that `/` produces a float and the signature says `int`. A test asserting `average([70, 75]) == 72` (or `== 72.5`) would catch it too, if someone wrote one. The checker is the one to rely on here, because it costs nothing per function: it reads every line of the file, including branches no test happens to exercise, and it finds this class of mistake the moment you save. Tests are better at logic you can get wrong in ways no type describes — which is why you want both, and why the next lesson is about testing.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'a-call-that-breaks-the-hint',
+            title: 'Nothing stops the call',
+            intro: 'This function\'s hint promises `str` in, `str` out. Choose what you actually pass and see whether Python minds.',
+            template: 'def make_tag(name: str, count: int) -> str:\n    return name * count\n\nresult = make_tag(⟦args⟧)\nprint(repr(result))\nprint(type(result).__name__)\n',
+            knobs: [
+              {
+                id: 'args',
+                label: 'what you pass in',
+                choices: [
+                  { value: "'sale', 3", caption: 'matches the hint' },
+                  { value: "['sale'], 3", caption: 'a list where a string was promised' },
+                  { value: "'sale', 2.5", caption: 'a fraction where a whole number was promised' },
+                ],
+              },
+            ],
+            notes: {
+              '0': 'Text in, text out, exactly as the signature says. This is the only one of the three that a type checker would accept.',
+              '1': 'A list stood in for `name`, and `*` on a list repeats it — so the function runs to completion and returns a **list**, not the `str` its own signature promises. Nothing about that return value fails; it is simply not what the annotation said would come back.',
+              '2': 'A fraction stood in for `count`. `*` on a string needs a whole number of repeats, so this one raises — the annotation warned about exactly this, and Python still did nothing to stop the call from being made.',
+            },
+            takeaway: 'The return annotation is exactly as unenforced as the parameter ones: `-> str` is a claim, not a check, so a function can hand back a list while its own signature says otherwise, and nothing at the call site will complain. A checker reading the file catches this before the call ever runs; running it, as this card just did, does not.',
+          },
+        },
+        {
           kind: 'callout',
           tone: 'warn',
           title: 'Hints are not validation',

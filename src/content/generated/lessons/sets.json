@@ -106,7 +106,98 @@
       }
     ]
   },
-  "s2-b4": {
+  "s2-b2": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "monday:  [0, 1, 2, 3, 4, 5]\ntuesday: [6, 7, 8, 9, 10, 11]\ncame both days: []\n",
+          "values": {
+            "sizes": [
+              12,
+              0,
+              6,
+              6
+            ]
+          }
+        },
+        "1": {
+          "stdout": "monday:  [0, 1, 2, 3, 4, 5]\ntuesday: [5, 6, 7, 8, 9, 10]\ncame both days: [5]\n",
+          "values": {
+            "sizes": [
+              11,
+              1,
+              5,
+              5
+            ]
+          }
+        },
+        "2": {
+          "stdout": "monday:  [0, 1, 2, 3, 4, 5]\ntuesday: [4, 5, 6, 7, 8, 9]\ncame both days: [4, 5]\n",
+          "values": {
+            "sizes": [
+              10,
+              2,
+              4,
+              4
+            ]
+          }
+        },
+        "3": {
+          "stdout": "monday:  [0, 1, 2, 3, 4, 5]\ntuesday: [3, 4, 5, 6, 7, 8]\ncame both days: [3, 4, 5]\n",
+          "values": {
+            "sizes": [
+              9,
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "4": {
+          "stdout": "monday:  [0, 1, 2, 3, 4, 5]\ntuesday: [2, 3, 4, 5, 6, 7]\ncame both days: [2, 3, 4, 5]\n",
+          "values": {
+            "sizes": [
+              8,
+              4,
+              2,
+              2
+            ]
+          }
+        },
+        "5": {
+          "stdout": "monday:  [0, 1, 2, 3, 4, 5]\ntuesday: [1, 2, 3, 4, 5, 6]\ncame both days: [1, 2, 3, 4, 5]\n",
+          "values": {
+            "sizes": [
+              7,
+              5,
+              1,
+              1
+            ]
+          }
+        },
+        "6": {
+          "stdout": "monday:  [0, 1, 2, 3, 4, 5]\ntuesday: [0, 1, 2, 3, 4, 5]\ncame both days: [0, 1, 2, 3, 4, 5]\n",
+          "values": {
+            "sizes": [
+              6,
+              6,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "shared": {
+        "size-labels": [
+          "union",
+          "intersection",
+          "monday only",
+          "tuesday only"
+        ]
+      }
+    }
+  },
+  "s2-b5": {
     "shell": [
       {
         "source": "core = {\"ana\", \"bo\"}",

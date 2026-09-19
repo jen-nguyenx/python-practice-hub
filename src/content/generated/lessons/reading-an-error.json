@@ -31,6 +31,39 @@
     },
     "stdout": ""
   },
+  "s1-b7": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "1\n3\ndone\n"
+        },
+        "1": {
+          "error": {
+            "line": 3,
+            "message": "'int' object is not subscriptable",
+            "type": "TypeError"
+          },
+          "stdout": ""
+        },
+        "2": {
+          "error": {
+            "line": 2,
+            "message": "name 'report' is not defined. Did you mean: 'reports'?",
+            "type": "NameError"
+          },
+          "stdout": ""
+        },
+        "3": {
+          "error": {
+            "line": 1,
+            "message": "list index out of range",
+            "type": "IndexError"
+          },
+          "stdout": ""
+        }
+      }
+    }
+  },
   "s2-b1": {
     "error": {
       "line": 1,

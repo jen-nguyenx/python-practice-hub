@@ -89,5 +89,23 @@
     "right": {
       "stdout": "2\nTeam('Reds', ['a', 'b'])\n[Team('Blues', ['c']), Team('Reds', ['a', 'b'])]\nTrue\nFalse True\n"
     }
+  },
+  "s6-b3": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "str -> <__main__.Team object at 0x1513b78>\nlen -> TypeError\nsorted names -> TypeError\na in team -> TypeError\nequal -> False\n"
+        },
+        "1": {
+          "stdout": "str -> Team('Reds')\nlen -> TypeError\nsorted names -> TypeError\na in team -> TypeError\nequal -> False\n"
+        },
+        "2": {
+          "stdout": "str -> Team('Reds')\nlen -> 2\nsorted names -> TypeError\na in team -> TypeError\nequal -> False\n"
+        },
+        "3": {
+          "stdout": "str -> Team('Reds')\nlen -> 2\nsorted names -> ['Blues', 'Reds']\na in team -> True\nequal -> True\n"
+        }
+      }
+    }
   }
 }

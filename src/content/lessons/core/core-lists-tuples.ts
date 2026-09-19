@@ -161,6 +161,42 @@ const lesson: Lesson = {
           body: 'Both put the wettest suburb first. Only one of them has the tied names in alphabetical order, because `reverse=True` flipped the names as well as the numbers. Negating the number turns it upside down on its own and leaves the text alone, and it is the standard way of writing "biggest first, then A to Z". It works only on numbers, which is why the minus sign never appears on the name.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'stall-sort-key',
+            title: 'What the key decides',
+            intro: 'Same four stalls, three different keys. Watch which one moves to the front, and which two stay next to each other for the wrong reason.',
+            template: "sales = [('Bread', 40), ('Fruit', 65), ('Coffee', 40), ('Flowers', 20)]\nordered = sorted(sales, key=⟦key⟧)\nprint(ordered)\n",
+            knobs: [
+              {
+                id: 'key',
+                label: 'sort by',
+                choices: [
+                  { value: 'lambda e: e[0]', caption: 'name, A to Z' },
+                  { value: 'lambda e: e[1]', caption: 'sales, lowest first' },
+                  { value: 'lambda e: (-e[1], e[0])', caption: 'sales, highest first, ties by name' },
+                ],
+              },
+            ],
+            probes: {
+              values: '[amount for _, amount in ordered]',
+              labels: '[name for name, _ in ordered]',
+            },
+            visual: {
+              kind: 'bars',
+              values: 'values',
+              labels: 'labels',
+              caption: 'One bar per stall, in the order this key puts them. Watch Bread and Coffee, tied on 40.',
+            },
+            notes: {
+              '0': 'Alphabetical order ignores the numbers entirely. Bread comes first because B comes before C, F and F, not because it sold the least.',
+              '1': 'Lowest sales first puts Flowers at the front. Bread and Coffee are tied on 40, so they land next to each other in whichever order they happened to start in — that is not a rule, it is luck.',
+              '2': 'Highest sales first, and the tie between Bread and Coffee is finally broken by name. The minus sign flips only the number; the name still sorts the ordinary way round it.',
+            },
+            takeaway: 'The key decides the whole order, and a key that is just a number leaves every tie exactly where it happened to start. Writing the key as a tuple, `(-e[1], e[0])`, sorts by the number first and settles a tie with the name, without needing `reverse=True` to touch either part.',
+          },
+        },
+        {
           kind: 'callout',
           tone: 'exam',
           title: 'In the paper',

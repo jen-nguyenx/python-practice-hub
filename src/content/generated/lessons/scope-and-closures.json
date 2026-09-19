@@ -65,7 +65,146 @@
       "stdout": "[0, 1, 2]\n[0, 1, 2]\n"
     }
   },
-  "s4-b4": {
+  "s4-b3": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "[1, 1]\n",
+          "values": {
+            "labels": [
+              "closure 0",
+              "closure 1"
+            ],
+            "results": [
+              1,
+              1
+            ]
+          }
+        },
+        "1": {
+          "stdout": "[2, 2, 2]\n",
+          "values": {
+            "labels": [
+              "closure 0",
+              "closure 1",
+              "closure 2"
+            ],
+            "results": [
+              2,
+              2,
+              2
+            ]
+          }
+        },
+        "2": {
+          "stdout": "[3, 3, 3, 3]\n",
+          "values": {
+            "labels": [
+              "closure 0",
+              "closure 1",
+              "closure 2",
+              "closure 3"
+            ],
+            "results": [
+              3,
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "3": {
+          "stdout": "[4, 4, 4, 4, 4]\n",
+          "values": {
+            "labels": [
+              "closure 0",
+              "closure 1",
+              "closure 2",
+              "closure 3",
+              "closure 4"
+            ],
+            "results": [
+              4,
+              4,
+              4,
+              4,
+              4
+            ]
+          }
+        },
+        "4": {
+          "stdout": "[5, 5, 5, 5, 5, 5]\n",
+          "values": {
+            "labels": [
+              "closure 0",
+              "closure 1",
+              "closure 2",
+              "closure 3",
+              "closure 4",
+              "closure 5"
+            ],
+            "results": [
+              5,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          }
+        },
+        "5": {
+          "stdout": "[6, 6, 6, 6, 6, 6, 6]\n",
+          "values": {
+            "labels": [
+              "closure 0",
+              "closure 1",
+              "closure 2",
+              "closure 3",
+              "closure 4",
+              "closure 5",
+              "closure 6"
+            ],
+            "results": [
+              6,
+              6,
+              6,
+              6,
+              6,
+              6,
+              6
+            ]
+          }
+        },
+        "6": {
+          "stdout": "[7, 7, 7, 7, 7, 7, 7, 7]\n",
+          "values": {
+            "labels": [
+              "closure 0",
+              "closure 1",
+              "closure 2",
+              "closure 3",
+              "closure 4",
+              "closure 5",
+              "closure 6",
+              "closure 7"
+            ],
+            "results": [
+              7,
+              7,
+              7,
+              7,
+              7,
+              7,
+              7,
+              7
+            ]
+          }
+        }
+      }
+    }
+  },
+  "s4-b5": {
     "stdout": "[0, 1, 2]\n[0, 1, 2]\n[0, 1, 2]\n"
   },
   "s5-b1": {

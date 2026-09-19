@@ -89,6 +89,34 @@ const lesson: Lesson = {
           body: 'Two rows in that table are the ones to remember. A tuple goes out as a JSON array and comes back a list, because JSON has no tuples. And **every key becomes a string**: numbers, and even `True`, are spelled as text keys on the way out, and stay text on the way back.\n\nThat last one bites when you save a dictionary keyed by student number and read it back expecting numbers.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'round-trip-a-value',
+            title: 'Pick a value, send it through JSON',
+            intro: 'Choose what goes in, then compare it with what comes back out the other side.',
+            template: 'import json\n\nvalue = ⟦value⟧\ntext = json.dumps(value)\nback = json.loads(text)\nprint(repr(value))\nprint(text)\nprint(repr(back))\nprint(back == value)\n',
+            knobs: [
+              {
+                id: 'value',
+                label: 'the value sent through',
+                choices: [
+                  { value: '[1, 2, 3]', caption: 'a list' },
+                  { value: '(1, 2, 3)', caption: 'a tuple' },
+                  { value: "{1: 'a', 2: 'b'}", caption: 'a dict with number keys' },
+                  { value: "{'x', 'y'}", caption: 'a set' },
+                ],
+              },
+            ],
+            notes: {
+              '0': 'A list survives exactly: same type, same contents, `back == value` is `True`.',
+              '1': 'A tuple goes out as a JSON array — JSON has nothing else to make it — and `loads` has no way to know it should come back as a tuple, so it comes back a list. Same numbers, different type, and `[1, 2, 3] == (1, 2, 3)` is `False`.',
+              '2': 'The keys `1` and `2` are written as the text `"1"` and `"2"`, because every JSON key is a string. `back` looks right when printed and fails the equality check, because its keys are text where the original had numbers.',
+              '3': 'A set has no JSON equivalent at all, so `dumps` refuses outright before anything is written. Converting to a sorted list first is the fix, and it is a decision you make, not one the module makes for you.',
+            },
+            takeaway: 'JSON only really has arrays and text keys. Whatever left your program as a tuple, or was keyed by anything other than a string, comes back changed — quietly for a tuple or a numeric key, loudly for a set — so the round trip is only safe for the types JSON actually has.',
+          },
+        },
+        {
           kind: 'shell',
           caption: 'Keyed by number, saved, reloaded.',
           lines: [

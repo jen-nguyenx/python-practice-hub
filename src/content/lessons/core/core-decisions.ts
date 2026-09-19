@@ -212,6 +212,35 @@ print(grade)
           title: 'Inclusive ranges',
           body: '"Between 1 and 9 inclusive" is written `1 <= n <= 9`. Python allows that chained form and reads it as `1 <= n and n <= 9`. The opposite test, for a value that is out of range, is `n < 1 or n > 9` — note that it flips `and` into `or` as well as flipping each comparison.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'inside-or-outside',
+            title: 'A range and its opposite',
+            intro: 'Drag n and watch `1 <= n <= 9` against `n < 1 or n > 9`. The dots show every whole number the range test lets through.',
+            template: 'n = ⟦n⟧\ninside = 1 <= n <= 9\noutside = n < 1 or n > 9\nprint("1 <= n <= 9   :", inside)\nprint("n < 1 or n > 9:", outside)\n',
+            knobs: [
+              { id: 'n', kind: 'range', label: 'the number tested', min: -5, max: 15, start: 5 },
+            ],
+            probes: {
+              'inside-nums': '[k for k in range(-5, 16) if 1 <= k <= 9]',
+            },
+            visual: {
+              kind: 'numberline',
+              min: -5,
+              max: 15,
+              picked: 'inside-nums',
+              caption: 'Every whole number from -5 to 15. The lit ones satisfy 1 <= n <= 9.',
+            },
+            notes: {
+              '6': 'n = 1 is the low end of the chain, and `<=` on both sides means the ends count. `inside` is True here, and `outside`, its exact opposite, is False.',
+              '5': 'One step below the range, at n = 0: `inside` flips to False and `outside` flips to True. The two are always opposites, so knowing one tells you the other for free.',
+              '14': 'n = 9 is the other boundary. `<=` includes it too, so `inside` is True right up to and including 9.',
+              '15': 'One step past the top, at n = 10: `inside` is False and `outside` is True, the mirror image of n = 0.',
+            },
+            takeaway: 'A chained comparison `1 <= n <= 9` is `1 <= n and n <= 9` in one line: every whole number from 1 to 9 counts, both ends included. Its opposite is not `n < 1 and n > 9` — nothing satisfies that at all — it is `n < 1 or n > 9`. Negating a range flips `and` into `or` at the same time as it flips each `<=` around.',
+          },
+        },
       ],
     },
     {

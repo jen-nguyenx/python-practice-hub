@@ -86,6 +86,35 @@ const lesson: Lesson = {
           prompt: 'A card number is stored as a string of 16 digits. You want the middle four, at positions 6, 7, 8 and 9. Which slice, and how do you check it without counting?',
           answer: '`card[6:10]`. The check is the subtraction: 10 minus 6 is 4 characters, and the first of them is at position 6. Writing `card[6:9]` is the commonest version of this mistake, and it gives three characters rather than four.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'string-step-slice',
+            title: 'The third number in a slice',
+            intro: 'Drag the step and watch which letters light up. `word[::step]` visits every `step`-th position instead of a run of neighbours.',
+            template: "word = 'FREMANTLE'\npiece = word[::⟦step⟧]\nprint(piece)\nprint(len(piece))\n",
+            knobs: [
+              { id: 'step', kind: 'range', label: 'step', min: -9, max: 9, start: 2 },
+            ],
+            probes: {
+              letters: 'list(word)',
+              picked: 'list(range(len(word)))[::⟦step⟧]',
+            },
+            visual: {
+              kind: 'sequence',
+              items: 'letters',
+              picked: 'picked',
+              caption: 'Each box is one letter, with its position underneath. The lit boxes are the ones this step keeps.',
+            },
+            notes: {
+              '10': 'Every letter, in order. Leaving the step out entirely is the same as writing 1.',
+              '8': 'The step is negative, so Python reads from the other end. This is what `word[::-1]` really is: not a special trick, just a step of -1.',
+              '9': 'A step of zero means never move, and Python does not sit there waiting forever. It refuses on the spot: `ValueError: slice step cannot be zero`.',
+              '18': 'The step is as big as the whole word, so only the very first letter is ever visited. The word does not need to divide evenly by the step for the slice to work; it just stops the moment it runs out of positions.',
+            },
+            takeaway: 'The step is not a third boundary like start and stop are. It says how many positions to jump between picks: 1 visits every letter, 2 visits every other one, and a negative step walks backwards from the end instead of forwards from the start. A step of 0 asks for a jump that goes nowhere, and Python refuses rather than loop forever.',
+          },
+        },
       ],
     },
     {

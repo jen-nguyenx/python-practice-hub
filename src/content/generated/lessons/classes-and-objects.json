@@ -150,6 +150,18 @@
       "stdout": "['apple']\n['pear']\nFalse\n"
     }
   },
+  "s4-b5": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "['apple', 'pear']\n['apple', 'pear']\nTrue\n"
+        },
+        "1": {
+          "stdout": "['apple']\n['pear']\nFalse\n"
+        }
+      }
+    }
+  },
   "s5-b1": {
     "stdout": "5.0\n5.0\n5.0\n"
   },

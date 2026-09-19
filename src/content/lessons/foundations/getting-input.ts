@@ -187,6 +187,32 @@ const lesson: Lesson = {
           body: 'Those first two show that `int()` on a decimal number does not round: it cuts off everything after the point and keeps the whole part. `round()` is the one that rounds. Choosing the wrong one gives you an answer that is one out, sometimes, which is a horrible bug to find.\n\nThe last line is a small kindness: spaces around the digits are ignored, so somebody who types a stray space before their number does not break your program.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'typed-vs-converted',
+            title: 'What was typed, and what int() does with it',
+            intro: 'Pick what somebody typed into the age box, and watch where `int()` draws the line between a number and everything else.',
+            template: 'typed = "⟦typed⟧"\nprint("The age box holds:", typed)\nage = int(typed)\nprint("As a number:", age)\n',
+            knobs: [
+              {
+                id: 'typed',
+                label: 'somebody typed',
+                choices: [
+                  { value: '21', caption: '"21"' },
+                  { value: '3.5', caption: '"3.5"' },
+                  { value: 'hello', caption: '"hello"' },
+                ],
+              },
+            ],
+            notes: {
+              '0': '21 is nothing but digits, so `int()` accepts it outright and hands back the whole number 21. Nothing goes wrong.',
+              '1': '3.5 has a decimal point in it. `int()` will not round it and will not cut it for you, because text holding a decimal is not text holding a whole number. It stops with a `ValueError`, right on the line with the conversion.',
+              '2': 'hello has no digits in it at all. Same error, same reason: `int()` only accepts text that is entirely a whole number.',
+            },
+            takeaway: '`int()` converts text only when the text is nothing but a whole number. A decimal point, a word, anything else at all, and it raises `ValueError` at the exact line doing the converting, never later where the number gets used. That is why the message names the value it could not take: it is telling you precisely what arrived.',
+          },
+        },
+        {
           kind: 'prose',
           body: 'Now the whole thing together, as it happens in a real program. Somebody was asked for a number and typed a word.',
         },

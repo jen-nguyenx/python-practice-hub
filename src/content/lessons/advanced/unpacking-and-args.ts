@@ -51,6 +51,36 @@ const lesson: Lesson = {
           code: 'a, b, c = (1, 2)\n',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'unpack-count',
+            title: 'The count has to match exactly',
+            intro: 'The pattern always wants three names filled. Drag **values sliced off the list** and watch which counts Python accepts.',
+            template: 'values = [10, 20, 30, 40, 50][:⟦n⟧]\na, b, c = values\nprint(a, b, c)\n',
+            knobs: [
+              { id: 'n', kind: 'range', label: 'values sliced off the list', min: 1, max: 5, start: 3 },
+            ],
+            probes: {
+              counts: '[⟦n⟧, 3]',
+              'count-labels': "['values given', 'names to fill']",
+            },
+            visual: {
+              kind: 'bars',
+              values: 'counts',
+              labels: 'count-labels',
+              caption: 'How many values arrived against how many names the pattern has.',
+            },
+            notes: {
+              '0': 'One value for three names. `a, b, c = [10]` cannot find enough values, and the message says exactly that: not enough values to unpack.',
+              '1': 'Two values, three names. Still short by one, and Python refuses rather than leaving one name unset.',
+              '2': 'Exactly three values for three names: the only setting here that runs to completion. Count both sides before you write the line.',
+              '3': 'Four values, three names. Now there is one value with nowhere to go, and unpacking refuses just as firmly as it did when there were too few.',
+              '4': 'Five values, three names — the gap is wider, but the error is the same shape as it was with four.',
+            },
+            takeaway: 'Plain unpacking is not a best-effort operation. The number of names on the left has to match the number of values on the right exactly, or Python raises rather than guessing which name to leave empty or which value to drop. A starred name is the only way to accept "at least this many" — without one, three names always means exactly three values.',
+          },
+        },
+        {
           kind: 'prose',
           body: 'The most useful thing unpacking does is return more than one value from a function. Python has no special syntax for that: the function returns a tuple, and the caller unpacks it.',
         },

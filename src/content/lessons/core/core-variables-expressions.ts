@@ -175,6 +175,38 @@ const lesson: Lesson = {
           ],
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'brackets-cross-once',
+            title: 'Two expressions, one number apart',
+            intro: 'Drag the number and watch `n + 6 / 2` against `(n + 6) / 2`. They only ever agree at one value of n.',
+            template: 'n = ⟦n⟧\nwrong = n + 6 / 2\nright = (n + 6) / 2\nprint("n + 6 / 2   =", wrong)\nprint("(n + 6) / 2 =", right)\n',
+            knobs: [
+              { id: 'n', kind: 'range', label: 'the number', min: -10, max: 10, start: 0 },
+            ],
+            probes: {
+              'no-brackets': '[[k, k + 6 / 2] for k in range(-10, 11)]',
+              'with-brackets': '[[k, (k + 6) / 2] for k in range(-10, 11)]',
+            },
+            visual: {
+              kind: 'plot',
+              xLabel: 'n',
+              yLabel: 'value',
+              caption: 'Both expressions plotted against n. They cross exactly once.',
+              series: [
+                { probe: 'no-brackets', label: 'n + 6 / 2' },
+                { probe: 'with-brackets', label: '(n + 6) / 2' },
+              ],
+            },
+            notes: {
+              '10': 'At n = 0 the two lines meet: both come out at 3.0. Testing an expression only at 0 is how a precedence bug like this one gets past you completely.',
+              '0': 'At n = -10 the gap is wide: -7.0 against -2.0. Away from zero, skipping the division does something very different from doing it last.',
+              '20': 'At n = 10 the gap has swung the other way: 13.0 against 8.0. Whichever side of zero n sits on, only one of these lines is the average.',
+            },
+            takeaway: '`n + 6 / 2` always finishes the division first, so it is really `n + 3.0` in disguise. `(n + 6) / 2` divides the whole total, which is `n / 2 + 3`. The two lines cross exactly once, at n = 0, so a test built around zero can make a missing bracket look harmless when every other value would have caught it.',
+          },
+        },
+        {
           kind: 'checkpoint',
           prompt: 'You want the average of 4 and 6. Which of `4 + 6 / 2` and `(4 + 6) / 2` is the average, and why does the other one look so plausible?',
           answer: 'The bracketed one. Without brackets the division is applied before the addition, so Python halves the 6 and then adds the 4 — both lines are in the session above, and they do not agree. It looks plausible because it reads in English exactly like the thing you meant. Whenever an expression mixes `+` with `*`, `/` or `//`, put the brackets in even when they are not needed: they cost nothing and they say what you meant.',

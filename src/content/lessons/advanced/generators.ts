@@ -135,6 +135,33 @@ const lesson: Lesson = {
           body: '`list(evens())` and `sum(itertools.count())` do not raise. They run until the program is stopped or memory is gone. Anything that consumes an endless generator must have its own reason to stop: a `break`, an `islice`, a `takewhile`, or a condition in the loop.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'how-many-are-ever-made',
+            title: 'Only what you ask for exists',
+            intro: 'Drag **how many to take** from an endless generator of even numbers. Nothing beyond that count is ever produced, however far the slider goes.',
+            template: 'def evens():\n    n = 0\n    while True:\n        yield n\n        n = n + 2\n\ngen = evens()\nproduced = [next(gen) for _ in range(⟦take⟧)]\nprint(produced)\n',
+            knobs: [
+              { id: 'take', kind: 'range', label: 'how many to take', min: 1, max: 12, start: 4 },
+            ],
+            probes: {
+              picked: 'produced',
+            },
+            visual: {
+              kind: 'numberline',
+              min: 0,
+              max: 22,
+              picked: 'picked',
+              caption: 'The even numbers this run actually produced. The generator has no opinion about the rest.',
+            },
+            notes: {
+              '0': 'Taking one value runs the body exactly once, to the first `yield`, and then leaves it paused there. The generator does not know or care that it could keep going.',
+              '11': 'Even at the top of the slider this is still twelve numbers out of an endless supply. Nothing about `evens()` changed; only how many times it was asked to continue.',
+            },
+            takeaway: 'A generator does not compute a batch and hand you a slice of it. Each `next()` runs the body forward to the next `yield` and no further, so the numberline only ever lights up exactly as many values as were asked for — never more, however large the ask.',
+          },
+        },
+        {
           kind: 'checkpoint',
           prompt: 'Write a generator that produces the Fibonacci numbers for ever, then use it to get the first Fibonacci number over 1000 — without producing any more values than you need.',
           answer: 'The generator is four lines, and the caller does the stopping:\n\n```\ndef fibonacci():\n    a, b = 0, 1\n    while True:\n        yield a\n        a, b = b, a + b\n\nfor value in fibonacci():\n    if value > 1000:\n        print(value)\n        break\n```\n\n`next(v for v in fibonacci() if v > 1000)` does the same in one line: the generator expression filters lazily, and `next` asks for exactly one value and stops. Neither version computes a single Fibonacci number past the first one that qualifies.',

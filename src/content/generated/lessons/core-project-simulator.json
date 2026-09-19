@@ -10,6 +10,99 @@
       "stdout": "{'subiaco': 20.5, 'como': 4.5} after 4 row visits\n"
     }
   },
+  "s3-b3": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "subiaco 12.5\n",
+          "values": {
+            "suburb-totals": [
+              12.5,
+              0,
+              0
+            ]
+          }
+        },
+        "1": {
+          "stdout": "como 3.0\nsubiaco 12.5\n",
+          "values": {
+            "suburb-totals": [
+              12.5,
+              3,
+              0
+            ]
+          }
+        },
+        "2": {
+          "stdout": "como 3.0\nsubiaco 20.5\n",
+          "values": {
+            "suburb-totals": [
+              20.5,
+              3,
+              0
+            ]
+          }
+        },
+        "3": {
+          "stdout": "como 3.0\nsubiaco 20.5\nvictoria park 6.0\n",
+          "values": {
+            "suburb-totals": [
+              20.5,
+              3,
+              6
+            ]
+          }
+        },
+        "4": {
+          "stdout": "como 4.5\nsubiaco 20.5\nvictoria park 6.0\n",
+          "values": {
+            "suburb-totals": [
+              20.5,
+              4.5,
+              6
+            ]
+          }
+        },
+        "5": {
+          "stdout": "como 4.5\nsubiaco 24.5\nvictoria park 6.0\n",
+          "values": {
+            "suburb-totals": [
+              24.5,
+              4.5,
+              6
+            ]
+          }
+        },
+        "6": {
+          "stdout": "como 7.0\nsubiaco 24.5\nvictoria park 6.0\n",
+          "values": {
+            "suburb-totals": [
+              24.5,
+              7,
+              6
+            ]
+          }
+        },
+        "7": {
+          "stdout": "como 7.0\nsubiaco 24.5\nvictoria park 15.5\n",
+          "values": {
+            "suburb-totals": [
+              24.5,
+              7,
+              15.5
+            ]
+          }
+        }
+      },
+      "shared": {
+        "suburb-names": [
+          "subiaco",
+          "como",
+          "victoria park"
+        ]
+      }
+    }
+  },
   "s4-b1": {
     "stdout": "{'rowing': 42, 'chess': 28}\nskipped: duplicate -> 'rowing ,17'\nskipped: not a number -> 'Chess,n/a'\nskipped: out of range -> 'Hockey,-3'\n"
   },

@@ -185,6 +185,30 @@ const lesson: Lesson = {
           body: 'A list, dict or set written in the class body is created once, when the class is defined, and shared by every object of that class for the whole run. This is the same trap as a mutable default argument in a function, and it is found late because it only shows up once a second object exists.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'where-the-list-is-made',
+            title: 'One word decides whether it is shared',
+            intro: 'Choose where `items` is created. Both versions look reasonable; only one of them gives every basket its own list.',
+            template: "class Basket:\n    ⟦decl⟧\n\n    def add(self, thing):\n        self.items.append(thing)\n\nb1 = Basket()\nb2 = Basket()\nb1.add('apple')\nb2.add('pear')\nprint(b1.items)\nprint(b2.items)\nprint(b1.items is b2.items)\n",
+            knobs: [
+              {
+                id: 'decl',
+                label: 'where items is created',
+                choices: [
+                  { value: 'items = []', caption: 'in the class body' },
+                  { value: 'def __init__(self): self.items = []', caption: 'inside __init__' },
+                ],
+              },
+            ],
+            notes: {
+              '0': "One list, made once when the class was defined. Both baskets read `self.items`, find nothing of their own, and fall back to that same class attribute — so `b1.add('apple')` and `b2.add('pear')` both land in it, and `b1.items is b2.items` is `True`.",
+              '1': "`__init__` runs once per basket and creates a fresh list each time. `b1.items` and `b2.items` are now different objects, so each basket only ever holds what was added to it.",
+            },
+            takeaway: 'The class body runs once, when the class is defined; `__init__` runs once per object. A mutable value written in the class body is therefore one object shared by everyone, and a mutable value assigned in `__init__` is a new one per instance — the only difference is which of those two places the line sits in.',
+          },
+        },
+        {
           kind: 'checkpoint',
           prompt: 'A class has `counts = {}` in its body and a method whose only line is `self.counts[word] = 1`. A second method\'s only line is `self.counts = {}`. Which of the two changes what other instances see, and why are they different when both are spelled with `self.counts`?',
           answer: 'The first one changes what everyone sees. `self.counts[word] = 1` looks up `counts`, finds nothing in the instance bag, falls back to the class attribute, and then mutates that one shared dict in place. The second one is an assignment to `self.counts`, and assignment never falls back: it creates an instance attribute, so that instance stops seeing the shared dict entirely and no one else is affected. Same spelling, different operation — one reads then mutates, the other binds.',

@@ -64,6 +64,26 @@
   "s2-b3": {
     "stdout": "72.5 float\nthe annotation promised int and the body cannot deliver it\n"
   },
+  "s2-b5": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "'salesalesale'\nstr\n"
+        },
+        "1": {
+          "stdout": "['sale', 'sale', 'sale']\nlist\n"
+        },
+        "2": {
+          "error": {
+            "line": 2,
+            "message": "can't multiply sequence by non-int of type 'float'",
+            "type": "TypeError"
+          },
+          "stdout": ""
+        }
+      }
+    }
+  },
   "s3-b1": {
     "stdout": "Student(name='Ada', mark=72, unit='CITS1401')\nTrue False\n"
   },

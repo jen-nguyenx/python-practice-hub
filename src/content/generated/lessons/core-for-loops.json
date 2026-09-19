@@ -67,6 +67,163 @@
       "stdout": "19.4\n"
     }
   },
+  "s3-b6": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "after 0 prices, total = 0\n",
+          "values": {
+            "pass-labels": [],
+            "running-totals": []
+          }
+        },
+        "1": {
+          "stdout": "after 1 prices, total = 4\n",
+          "values": {
+            "pass-labels": [
+              "1"
+            ],
+            "running-totals": [
+              4
+            ]
+          }
+        },
+        "2": {
+          "stdout": "after 2 prices, total = 7\n",
+          "values": {
+            "pass-labels": [
+              "1",
+              "2"
+            ],
+            "running-totals": [
+              4,
+              7
+            ]
+          }
+        },
+        "3": {
+          "stdout": "after 3 prices, total = 12\n",
+          "values": {
+            "pass-labels": [
+              "1",
+              "2",
+              "3"
+            ],
+            "running-totals": [
+              4,
+              7,
+              12
+            ]
+          }
+        },
+        "4": {
+          "stdout": "after 4 prices, total = 18\n",
+          "values": {
+            "pass-labels": [
+              "1",
+              "2",
+              "3",
+              "4"
+            ],
+            "running-totals": [
+              4,
+              7,
+              12,
+              18
+            ]
+          }
+        },
+        "5": {
+          "stdout": "after 5 prices, total = 20\n",
+          "values": {
+            "pass-labels": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "running-totals": [
+              4,
+              7,
+              12,
+              18,
+              20
+            ]
+          }
+        },
+        "6": {
+          "stdout": "after 6 prices, total = 27\n",
+          "values": {
+            "pass-labels": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6"
+            ],
+            "running-totals": [
+              4,
+              7,
+              12,
+              18,
+              20,
+              27
+            ]
+          }
+        },
+        "7": {
+          "stdout": "after 7 prices, total = 28\n",
+          "values": {
+            "pass-labels": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7"
+            ],
+            "running-totals": [
+              4,
+              7,
+              12,
+              18,
+              20,
+              27,
+              28
+            ]
+          }
+        },
+        "8": {
+          "stdout": "after 8 prices, total = 36\n",
+          "values": {
+            "pass-labels": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8"
+            ],
+            "running-totals": [
+              4,
+              7,
+              12,
+              18,
+              20,
+              27,
+              28,
+              36
+            ]
+          }
+        }
+      }
+    }
+  },
   "s4-b1": {
     "stdout": "3 210\n"
   },

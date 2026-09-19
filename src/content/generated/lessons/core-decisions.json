@@ -115,6 +115,88 @@
       }
     ]
   },
+  "s4-b4": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "1": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "2": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "3": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "4": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "5": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "6": {
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+        },
+        "7": {
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+        },
+        "8": {
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+        },
+        "9": {
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+        },
+        "10": {
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+        },
+        "11": {
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+        },
+        "12": {
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+        },
+        "13": {
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+        },
+        "14": {
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+        },
+        "15": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "16": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "17": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "18": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "19": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        },
+        "20": {
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+        }
+      },
+      "shared": {
+        "inside-nums": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      }
+    }
+  },
   "s5-b1": {
     "stdout": "True False\n"
   },

@@ -202,6 +202,34 @@ const lesson: Lesson = {
           body: 'On the left, all three functions captured the same variable `i`, and by the time any of them ran, the loop had finished and `i` held its final value. Nothing was copied at any point; there was one `i` and three functions pointing at it.\n\nOn the right, `value=i` is a default argument, and a default is worked out **when the `def` runs** — once per turn of the loop. Each function ends up with its own copy of the number, frozen at the moment it was made.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'how-many-closures-share-one-i',
+            title: 'More closures, same surprise',
+            intro: 'Drag **how many closures** are made in the loop. Every one of them still reports whatever `i` finished on.',
+            template: 'makers = []\nfor i in range(⟦count⟧):\n    def show():\n        return i\n    makers.append(show)\n\nresults = [f() for f in makers]\nprint(results)\n',
+            knobs: [
+              { id: 'count', kind: 'range', label: 'how many closures', min: 2, max: 8, start: 4 },
+            ],
+            probes: {
+              results: 'results',
+              labels: '[\'closure \' + str(i) for i in range(len(results))]',
+            },
+            visual: {
+              kind: 'bars',
+              values: 'results',
+              labels: 'labels',
+              max: 7,
+              caption: 'One bar per closure, each showing what it returns. Every bar is the same height.',
+            },
+            notes: {
+              '0': 'Two closures, and both return 1 — the loop\'s final value of `i`, not 0 and 1 as their positions might suggest.',
+              '6': 'Eight closures now, and the bars are still one flat line, just at a higher number. Adding more closures never makes them disagree, because they were never looking at different things.',
+            },
+            takeaway: 'Every closure in the loop points at the same variable `i`, not a copy of what `i` held when it was made. Whether there are two of them or eight, the bars stay flat, because there is only one `i` and every function is reading it after the loop has already finished with it.',
+          },
+        },
+        {
           kind: 'prose',
           body: 'The default-argument fix is the shortest one, and the same mechanism that makes mutable defaults dangerous is what makes it work here: the default is evaluated at definition time. `functools.partial` does the same job with the intent written more plainly.',
         },

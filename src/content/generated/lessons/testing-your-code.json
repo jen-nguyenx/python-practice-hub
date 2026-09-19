@@ -30,6 +30,54 @@
     "stdout": "ok   80 is HD | got 'HD' want 'HD'\nok   79 is D | got 'D' want 'D'\nok   70 is D | got 'D' want 'D'\nok   60 is CR | got 'CR' want 'CR'\nFAIL 50 is P | got 'N' want 'P'\nok   49 is N | got 'N' want 'N'\nok   0 is N | got 'N' want 'N'\n"
   },
   "s3-b4": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "45 -> N\nshould pass: False   actually passed: False\n"
+        },
+        "1": {
+          "stdout": "46 -> N\nshould pass: False   actually passed: False\n"
+        },
+        "2": {
+          "stdout": "47 -> N\nshould pass: False   actually passed: False\n"
+        },
+        "3": {
+          "stdout": "48 -> N\nshould pass: False   actually passed: False\n"
+        },
+        "4": {
+          "stdout": "49 -> N\nshould pass: False   actually passed: False\n"
+        },
+        "5": {
+          "stdout": "50 -> N\nshould pass: True   actually passed: False\n"
+        },
+        "6": {
+          "stdout": "51 -> P\nshould pass: True   actually passed: True\n"
+        },
+        "7": {
+          "stdout": "52 -> P\nshould pass: True   actually passed: True\n"
+        },
+        "8": {
+          "stdout": "53 -> P\nshould pass: True   actually passed: True\n"
+        },
+        "9": {
+          "stdout": "54 -> P\nshould pass: True   actually passed: True\n"
+        },
+        "10": {
+          "stdout": "55 -> P\nshould pass: True   actually passed: True\n"
+        }
+      },
+      "shared": {
+        "passing": [
+          51,
+          52,
+          53,
+          54,
+          55
+        ]
+      }
+    }
+  },
+  "s3-b5": {
     "error": {
       "line": 2,
       "message": "division by zero",

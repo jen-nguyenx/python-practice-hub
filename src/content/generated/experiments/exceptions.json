@@ -1,0 +1,232 @@
+{
+  "t10-x1": {
+    "runs": {
+      "0-0": {
+        "stdout": "the number is 42\nthe program carries on\n"
+      },
+      "0-1": {
+        "stdout": "the number is 42\nthe program carries on\n"
+      },
+      "0-2": {
+        "stdout": "the number is 42\nthe program carries on\n"
+      },
+      "1-0": {
+        "stdout": "could not use that\nthe program carries on\n"
+      },
+      "1-1": {
+        "error": {
+          "line": 3,
+          "message": "invalid literal for int() with base 10: '4.5'",
+          "type": "ValueError"
+        },
+        "stdout": ""
+      },
+      "1-2": {
+        "stdout": "could not use that\nthe program carries on\n"
+      },
+      "2-0": {
+        "error": {
+          "line": 3,
+          "message": "int() argument must be a string, a bytes-like object or a real number, not 'NoneType'",
+          "type": "TypeError"
+        },
+        "stdout": ""
+      },
+      "2-1": {
+        "stdout": "could not use that\nthe program carries on\n"
+      },
+      "2-2": {
+        "stdout": "could not use that\nthe program carries on\n"
+      }
+    }
+  },
+  "t10-x2": {
+    "runs": {
+      "0-0": {
+        "rows": [
+          [
+            "'3.2'",
+            "3.2",
+            "3.2"
+          ],
+          [
+            "'1.5'",
+            "1.5",
+            "4.7"
+          ]
+        ],
+        "stdout": "mean 2.35\n"
+      },
+      "0-1": {
+        "rows": [
+          [
+            "'3.2'",
+            "3.2",
+            "3.2"
+          ],
+          [
+            "'N/A'",
+            "3.2",
+            "6.4"
+          ],
+          [
+            "'1.5'",
+            "1.5",
+            "7.9"
+          ]
+        ],
+        "stdout": "mean 2.6333333333333333\n"
+      },
+      "0-2": {
+        "rows": [
+          [
+            "'3.2'",
+            "3.2",
+            "3.2"
+          ],
+          [
+            "'N/A'",
+            "0",
+            "3.2"
+          ],
+          [
+            "'1.5'",
+            "1.5",
+            "4.7"
+          ]
+        ],
+        "stdout": "mean 1.5666666666666667\n"
+      },
+      "1-0": {
+        "error": {
+          "line": 11,
+          "message": "division by zero",
+          "type": "ZeroDivisionError"
+        },
+        "rows": [],
+        "stdout": ""
+      },
+      "1-1": {
+        "error": {
+          "line": 9,
+          "message": "name 'value' is not defined. Did you mean: 'False'?",
+          "type": "NameError"
+        },
+        "rows": [
+          [
+            "'N/A'",
+            "",
+            "0"
+          ]
+        ],
+        "stdout": ""
+      },
+      "1-2": {
+        "rows": [
+          [
+            "'N/A'",
+            "0",
+            "0"
+          ],
+          [
+            "'n/a'",
+            "0",
+            "0"
+          ]
+        ],
+        "stdout": "mean 0.0\n"
+      },
+      "2-0": {
+        "rows": [
+          [
+            "'3.2'",
+            "3.2",
+            "3.2"
+          ],
+          [
+            "'1.5'",
+            "1.5",
+            "4.7"
+          ]
+        ],
+        "stdout": "mean 2.35\n"
+      },
+      "2-1": {
+        "rows": [
+          [
+            "'3.2'",
+            "3.2",
+            "3.2"
+          ],
+          [
+            "'1.5'",
+            "1.5",
+            "4.7"
+          ]
+        ],
+        "stdout": "mean 2.35\n"
+      },
+      "2-2": {
+        "rows": [
+          [
+            "'3.2'",
+            "3.2",
+            "3.2"
+          ],
+          [
+            "'1.5'",
+            "1.5",
+            "4.7"
+          ]
+        ],
+        "stdout": "mean 2.35\n"
+      }
+    }
+  },
+  "t10-x3": {
+    "runs": {
+      "0-0": {
+        "stdout": "total 7.5\n"
+      },
+      "0-1": {
+        "stdout": "total 7.5\n"
+      },
+      "0-2": {
+        "stdout": "total 7.5\n"
+      },
+      "1-0": {
+        "error": {
+          "line": 5,
+          "message": "name 'flaot' is not defined. Did you mean: 'float'?",
+          "type": "NameError"
+        },
+        "stdout": ""
+      },
+      "1-1": {
+        "error": {
+          "line": 5,
+          "message": "name 'flaot' is not defined. Did you mean: 'float'?",
+          "type": "NameError"
+        },
+        "stdout": ""
+      },
+      "1-2": {
+        "stdout": "total 0\n"
+      },
+      "2-0": {
+        "error": {
+          "line": 5,
+          "message": "float() argument must be a string or a real number, not 'builtin_function_or_method'",
+          "type": "TypeError"
+        },
+        "stdout": ""
+      },
+      "2-1": {
+        "stdout": "total 0\n"
+      },
+      "2-2": {
+        "stdout": "total 0\n"
+      }
+    }
+  }
+}

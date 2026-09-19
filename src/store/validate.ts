@@ -145,6 +145,8 @@ export function sanitizeEvent(raw: unknown): AppEvent | null {
         durationMs, qids: r.qids.filter(idStr).slice(0, 200),
       };
     }
+    case 'lesson_done':
+      return topic(r.topicId) ? { ...base, type, topicId: r.topicId } : null;
     case 'override':
       return r.what === 'unlockAll' && isBool(r.value) ? { ...base, type, what: 'unlockAll', value: r.value } : null;
     case 'flag':

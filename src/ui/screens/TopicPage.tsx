@@ -12,7 +12,7 @@ import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
 import type { TopicMeta } from '../../content/topics.ts';
 import { Skeleton } from '../components/Skeleton.tsx';
 import { TabPanel, Tabs } from '../components/Tabs.tsx';
-import { recentMistakes, safeQuestionStats, safeTopicProgress } from '../shell/progressData.ts';
+import { lessonsDone, recentMistakes, safeQuestionStats, safeTopicProgress } from '../shell/progressData.ts';
 import { storeReady } from '../shell/storeReady.ts';
 import type { TopicFilters, TopicTab } from '../shell/topic/filters.ts';
 import { loadFilters, loadTopicTab, rememberTopicTab, saveFilters } from '../shell/topic/filters.ts';
@@ -89,6 +89,7 @@ export function TopicPage({ topicId }: { topicId: string }) {
   const progressAll = useMemo(() => safeTopicProgress(events, settings), [events, settings]);
   const stats = useMemo(() => safeQuestionStats(events), [events]);
   const recent = useMemo(() => recentMistakes(events, 30), [events]);
+  const lessonDone = useMemo(() => lessonsDone(events), [events]);
   const p = meta ? progressAll[meta.id] : undefined;
   const locked = !ready || p?.state === 'locked';
 
@@ -155,7 +156,7 @@ export function TopicPage({ topicId }: { topicId: string }) {
 
   return (
     <div class="tp">
-      <TopicHeader meta={meta} p={p} ready={ready && (!!topic || load.status === 'error')} target={target} allSolved={allSolved} prevLocked={prevLocked} />
+      <TopicHeader meta={meta} p={p} ready={ready && (!!topic || load.status === 'error')} target={target} allSolved={allSolved} prevLocked={prevLocked} lessonDone={lessonDone.has(meta.id)} />
       <Tabs idBase={idBase} label="Topic sections" tabs={tabs} active={shown} onChange={changeTab} class="tp-tabs" />
       <TabPanel idBase={idBase} id={shown} class="tp-tabpanel">
         {panel}

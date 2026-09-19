@@ -55,6 +55,7 @@ export type AppEvent =
   | (EventBase & { type: 'run'; qid: string | null; topicId: TopicId | null; ok: boolean; errorType?: string; timedOut: boolean; durationMs: number })
   | (EventBase & { type: 'self_explain'; qid: string; text: string })
   | (EventBase & { type: 'test_result'; kind: TestKind; topicIds: TopicId[]; score: number; total: number; passed: boolean; durationMs: number; qids: string[] })
+  | (EventBase & { type: 'lesson_done'; topicId: TopicId })
   | (EventBase & { type: 'override'; what: 'unlockAll'; value: boolean })
   | (EventBase & { type: 'flag'; qid: string; reason: 'wrong-answer' | 'unclear' | 'too-hard' | 'other'; note: string });
 

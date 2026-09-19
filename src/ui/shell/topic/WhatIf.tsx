@@ -197,7 +197,11 @@ function Control({ k, index, pick, onPick, groupId }: {
 
 interface CardState { picks: number[]; prev: string[] }
 
-function ExperimentCard({ x, gen }: { x: Experiment; gen: GeneratedExperiment }) {
+/**
+ * `compact` drops the eyebrow and title, for the lesson, where the step heading already names the
+ * experiment. The intro stays either way: it tells the student what to do with the controls.
+ */
+export function ExperimentCard({ x, gen, compact }: { x: Experiment; gen: GeneratedExperiment; compact?: boolean }) {
   const runs = gen.runs;
   // `prev` starts as the opening output so nothing is marked as changed until the student changes something.
   const [state, setState] = useState<CardState>(() => {
@@ -226,8 +230,8 @@ function ExperimentCard({ x, gen }: { x: Experiment; gen: GeneratedExperiment })
   return (
     <article class="tp-card wi-card">
       <header class="wi-head">
-        <p class="tp-label">What if</p>
-        <h2 class="tp-read-title">{x.title}</h2>
+        {compact ? null : <p class="tp-label">What if</p>}
+        {compact ? null : <h2 class="tp-read-title">{x.title}</h2>}
         <Markdown text={x.intro} class="tp-md wi-intro" />
       </header>
 

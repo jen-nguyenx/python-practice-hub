@@ -1,0 +1,479 @@
+{
+  "t13-x1": {
+    "runs": {
+      "0-0-0": {
+        "stdout": "total: 0\ncalls made: 1\n",
+        "values": {
+          "chain": [
+            0
+          ]
+        }
+      },
+      "0-0-1": {
+        "stdout": "total: 1\ncalls made: 2\n",
+        "values": {
+          "chain": [
+            1,
+            0
+          ]
+        }
+      },
+      "0-0-2": {
+        "stdout": "total: 3\ncalls made: 3\n",
+        "values": {
+          "chain": [
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "0-0-3": {
+        "stdout": "total: 6\ncalls made: 4\n",
+        "values": {
+          "chain": [
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "0-0-4": {
+        "stdout": "total: 10\ncalls made: 5\n",
+        "values": {
+          "chain": [
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "0-0-5": {
+        "stdout": "total: 15\ncalls made: 6\n",
+        "values": {
+          "chain": [
+            5,
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "0-0-6": {
+        "stdout": "total: 21\ncalls made: 7\n",
+        "values": {
+          "chain": [
+            6,
+            5,
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "0-0-7": {
+        "stdout": "total: 28\ncalls made: 8\n",
+        "values": {
+          "chain": [
+            7,
+            6,
+            5,
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "0-0-8": {
+        "stdout": "total: 36\ncalls made: 9\n",
+        "values": {
+          "chain": [
+            8,
+            7,
+            6,
+            5,
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "0-1-0": {
+        "stdout": "total: 0\ncalls made: 1\n",
+        "values": {
+          "chain": [
+            0
+          ]
+        }
+      },
+      "0-1-1": {
+        "error": {
+          "line": 4,
+          "message": "maximum recursion depth exceeded",
+          "type": "RecursionError"
+        },
+        "stdout": "",
+        "values": {}
+      },
+      "0-1-2": {
+        "stdout": "total: 2\ncalls made: 2\n",
+        "values": {
+          "chain": [
+            2,
+            0
+          ]
+        }
+      },
+      "0-1-3": {
+        "error": {
+          "line": 4,
+          "message": "maximum recursion depth exceeded",
+          "type": "RecursionError"
+        },
+        "stdout": "",
+        "values": {}
+      },
+      "0-1-4": {
+        "stdout": "total: 6\ncalls made: 3\n",
+        "values": {
+          "chain": [
+            4,
+            2,
+            0
+          ]
+        }
+      },
+      "0-1-5": {
+        "error": {
+          "line": 4,
+          "message": "maximum recursion depth exceeded",
+          "type": "RecursionError"
+        },
+        "stdout": "",
+        "values": {}
+      },
+      "0-1-6": {
+        "stdout": "total: 12\ncalls made: 4\n",
+        "values": {
+          "chain": [
+            6,
+            4,
+            2,
+            0
+          ]
+        }
+      },
+      "0-1-7": {
+        "error": {
+          "line": 4,
+          "message": "maximum recursion depth exceeded",
+          "type": "RecursionError"
+        },
+        "stdout": "",
+        "values": {}
+      },
+      "0-1-8": {
+        "stdout": "total: 20\ncalls made: 5\n",
+        "values": {
+          "chain": [
+            8,
+            6,
+            4,
+            2,
+            0
+          ]
+        }
+      },
+      "1-0-0": {
+        "stdout": "total: 0\ncalls made: 1\n",
+        "values": {
+          "chain": [
+            0
+          ]
+        }
+      },
+      "1-0-1": {
+        "stdout": "total: 1\ncalls made: 2\n",
+        "values": {
+          "chain": [
+            1,
+            0
+          ]
+        }
+      },
+      "1-0-2": {
+        "stdout": "total: 3\ncalls made: 3\n",
+        "values": {
+          "chain": [
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "1-0-3": {
+        "stdout": "total: 6\ncalls made: 4\n",
+        "values": {
+          "chain": [
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "1-0-4": {
+        "stdout": "total: 10\ncalls made: 5\n",
+        "values": {
+          "chain": [
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "1-0-5": {
+        "stdout": "total: 15\ncalls made: 6\n",
+        "values": {
+          "chain": [
+            5,
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "1-0-6": {
+        "stdout": "total: 21\ncalls made: 7\n",
+        "values": {
+          "chain": [
+            6,
+            5,
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "1-0-7": {
+        "stdout": "total: 28\ncalls made: 8\n",
+        "values": {
+          "chain": [
+            7,
+            6,
+            5,
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "1-0-8": {
+        "stdout": "total: 36\ncalls made: 9\n",
+        "values": {
+          "chain": [
+            8,
+            7,
+            6,
+            5,
+            4,
+            3,
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "1-1-0": {
+        "stdout": "total: 0\ncalls made: 1\n",
+        "values": {
+          "chain": [
+            0
+          ]
+        }
+      },
+      "1-1-1": {
+        "stdout": "total: 1\ncalls made: 2\n",
+        "values": {
+          "chain": [
+            1,
+            -1
+          ]
+        }
+      },
+      "1-1-2": {
+        "stdout": "total: 2\ncalls made: 2\n",
+        "values": {
+          "chain": [
+            2,
+            0
+          ]
+        }
+      },
+      "1-1-3": {
+        "stdout": "total: 4\ncalls made: 3\n",
+        "values": {
+          "chain": [
+            3,
+            1,
+            -1
+          ]
+        }
+      },
+      "1-1-4": {
+        "stdout": "total: 6\ncalls made: 3\n",
+        "values": {
+          "chain": [
+            4,
+            2,
+            0
+          ]
+        }
+      },
+      "1-1-5": {
+        "stdout": "total: 9\ncalls made: 4\n",
+        "values": {
+          "chain": [
+            5,
+            3,
+            1,
+            -1
+          ]
+        }
+      },
+      "1-1-6": {
+        "stdout": "total: 12\ncalls made: 4\n",
+        "values": {
+          "chain": [
+            6,
+            4,
+            2,
+            0
+          ]
+        }
+      },
+      "1-1-7": {
+        "stdout": "total: 16\ncalls made: 5\n",
+        "values": {
+          "chain": [
+            7,
+            5,
+            3,
+            1,
+            -1
+          ]
+        }
+      },
+      "1-1-8": {
+        "stdout": "total: 20\ncalls made: 5\n",
+        "values": {
+          "chain": [
+            8,
+            6,
+            4,
+            2,
+            0
+          ]
+        }
+      }
+    }
+  },
+  "t13-x2": {
+    "runs": {
+      "0-0": {
+        "stdout": "HTREP\n"
+      },
+      "0-1": {
+        "stdout": "PERTH\n"
+      },
+      "0-2": {
+        "stdout": "\n"
+      },
+      "0-3": {
+        "error": {
+          "line": 2,
+          "message": "maximum recursion depth exceeded",
+          "type": "RecursionError"
+        },
+        "stdout": ""
+      },
+      "1-0": {
+        "error": {
+          "line": 4,
+          "message": "unsupported operand type(s) for +: 'int' and 'str'",
+          "type": "TypeError"
+        },
+        "stdout": ""
+      },
+      "1-1": {
+        "error": {
+          "line": 4,
+          "message": "can only concatenate str (not \"int\") to str",
+          "type": "TypeError"
+        },
+        "stdout": ""
+      },
+      "1-2": {
+        "stdout": "0\n"
+      },
+      "1-3": {
+        "error": {
+          "line": 2,
+          "message": "maximum recursion depth exceeded",
+          "type": "RecursionError"
+        },
+        "stdout": ""
+      }
+    }
+  },
+  "t13-x3": {
+    "runs": {
+      "0-0": {
+        "stdout": "down: PERTH\ndown: ERTH\ndown: RTH\ndown: TH\ndown: H\nup: H\nup: TH\nup: RTH\nup: ERTH\nup: PERTH\n"
+      },
+      "0-1": {
+        "stdout": "down: PERTH\ndown: ERTH\ndown: RTH\ndown: TH\ndown: H\nup: H\nup: T\nup: R\nup: E\nup: P\n"
+      },
+      "0-2": {
+        "stdout": "down: PERTH\ndown: ERTH\ndown: RTH\ndown: TH\ndown: H\n"
+      },
+      "1-0": {
+        "stdout": "down: P\ndown: E\ndown: R\ndown: T\ndown: H\nup: H\nup: TH\nup: RTH\nup: ERTH\nup: PERTH\n"
+      },
+      "1-1": {
+        "stdout": "down: P\ndown: E\ndown: R\ndown: T\ndown: H\nup: H\nup: T\nup: R\nup: E\nup: P\n"
+      },
+      "1-2": {
+        "stdout": "down: P\ndown: E\ndown: R\ndown: T\ndown: H\n"
+      },
+      "2-0": {
+        "stdout": "up: H\nup: TH\nup: RTH\nup: ERTH\nup: PERTH\n"
+      },
+      "2-1": {
+        "stdout": "up: H\nup: T\nup: R\nup: E\nup: P\n"
+      },
+      "2-2": {
+        "stdout": ""
+      }
+    }
+  }
+}

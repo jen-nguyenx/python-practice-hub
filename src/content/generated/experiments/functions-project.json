@@ -1,0 +1,114 @@
+{
+  "t11-x1": {
+    "runs": {
+      "0-0": {
+        "stdout": "outside, visitors is 0\n"
+      },
+      "0-1": {
+        "stdout": "outside, visitors is 1\n"
+      },
+      "1-0": {
+        "error": {
+          "line": 4,
+          "message": "cannot access local variable 'visitors' where it is not associated with a value",
+          "type": "UnboundLocalError"
+        },
+        "stdout": ""
+      },
+      "1-1": {
+        "error": {
+          "line": 4,
+          "message": "cannot access local variable 'visitors' where it is not associated with a value",
+          "type": "UnboundLocalError"
+        },
+        "stdout": ""
+      },
+      "2-0": {
+        "stdout": "1\noutside, visitors is 0\n"
+      },
+      "2-1": {
+        "stdout": "1\noutside, visitors is None\n"
+      }
+    }
+  },
+  "t11-x2": {
+    "runs": {
+      "0-0-0": {
+        "stdout": "first playlist:  ['Down Under']\nsecond playlist: ['Down Under', 'Land Down Under']\n"
+      },
+      "0-0-1": {
+        "stdout": "first playlist:  ['Down Under']\nsecond playlist: ['Land Down Under']\n"
+      },
+      "0-1-0": {
+        "stdout": "first playlist:  ['Down Under']\nsecond playlist: ['Down Under', 'Land Down Under']\n"
+      },
+      "0-1-1": {
+        "stdout": "first playlist:  ['Down Under']\nsecond playlist: ['Land Down Under']\n"
+      },
+      "1-0-0": {
+        "error": {
+          "line": 3,
+          "message": "'NoneType' object has no attribute 'append'",
+          "type": "AttributeError"
+        },
+        "stdout": ""
+      },
+      "1-0-1": {
+        "error": {
+          "line": 3,
+          "message": "'NoneType' object has no attribute 'append'",
+          "type": "AttributeError"
+        },
+        "stdout": ""
+      },
+      "1-1-0": {
+        "stdout": "first playlist:  ['Down Under']\nsecond playlist: ['Land Down Under']\n"
+      },
+      "1-1-1": {
+        "stdout": "first playlist:  ['Down Under']\nsecond playlist: ['Land Down Under']\n"
+      }
+    }
+  },
+  "t11-x3": {
+    "runs": {
+      "0-0": {
+        "stdout": "the marker sees: 6.0\n"
+      },
+      "0-1": {
+        "stdout": "6.0\nthe marker sees: None\n"
+      },
+      "1-0": {
+        "error": {
+          "line": 6,
+          "message": "type NoneType doesn't define __round__ method",
+          "type": "TypeError"
+        },
+        "stdout": "6.0\n"
+      },
+      "1-1": {
+        "error": {
+          "line": 6,
+          "message": "type NoneType doesn't define __round__ method",
+          "type": "TypeError"
+        },
+        "stdout": "6.0\n"
+      },
+      "2-0": {
+        "error": {
+          "line": 6,
+          "message": "type NoneType doesn't define __round__ method",
+          "type": "TypeError"
+        },
+        "stdout": ""
+      },
+      "2-1": {
+        "error": {
+          "line": 6,
+          "message": "type NoneType doesn't define __round__ method",
+          "type": "TypeError"
+        },
+        "stdout": ""
+      }
+    }
+  }
+}

@@ -50,7 +50,7 @@ function statusLine(meta: TopicMeta, p: TopicProgress, allSolved: boolean) {
 
 function capital(s: string) { return s ? s[0].toUpperCase() + s.slice(1) : s; }
 
-function ProgressCard({ meta, p, target, allSolved }: { meta: TopicMeta; p: TopicProgress; target: Question | undefined; allSolved: boolean }) {
+function ProgressCard({ meta, p, target, allSolved, lessonDone }: { meta: TopicMeta; p: TopicProgress; target: Question | undefined; allSolved: boolean; lessonDone: boolean }) {
   const total = p.total;
   if (total === 0) {
     return (
@@ -61,6 +61,8 @@ function ProgressCard({ meta, p, target, allSolved }: { meta: TopicMeta; p: Topi
     );
   }
   const label = allSolved ? 'Practise again' : p.attempted === 0 && p.solved === 0 ? 'Start' : 'Resume';
+  // Someone who has never touched this topic is better served by the lesson than by a cold question.
+  const lessonFirst = !lessonDone && p.attempted === 0 && p.solved === 0;
   return (
     <section class="tp-card tp-side" aria-label="Progress in this topic">
       <div class="tp-count">
@@ -86,19 +88,41 @@ function ProgressCard({ meta, p, target, allSolved }: { meta: TopicMeta; p: Topi
       </div>
       <p class="tp-status">{statusLine(meta, p, allSolved)}</p>
       <div class="tp-side-actions">
-        <button
-          type="button"
-          class="btn primary tp-cta"
-          disabled={!target}
-          title={target ? `${allSolved ? 'First question' : 'Next unsolved'}: ${target.title}` : undefined}
-          onClick={() => target && navigate(href.question(target.id))}
-        >
-          {label}
-          <Icon name="arrowRight" size={16} />
-        </button>
-        <a class="btn tp-btn2" href={href.topicTest(meta.id)}>Topic test</a>
+        {lessonFirst ? (
+          <>
+            <a class="btn primary tp-cta" href={href.lesson(meta.id)}>
+              Start the lesson
+              <Icon name="arrowRight" size={16} />
+            </a>
+            <button
+              type="button"
+              class="btn tp-btn2"
+              disabled={!target}
+              onClick={() => target && navigate(href.question(target.id))}
+            >
+              Skip to questions
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              class="btn primary tp-cta"
+              disabled={!target}
+              title={target ? `${allSolved ? 'First question' : 'Next unsolved'}: ${target.title}` : undefined}
+              onClick={() => target && navigate(href.question(target.id))}
+            >
+              {label}
+              <Icon name="arrowRight" size={16} />
+            </button>
+            <a class="btn tp-btn2" href={href.topicTest(meta.id)}>Topic test</a>
+          </>
+        )}
       </div>
-      <p class="tp-side-links"><a class="tp-link" href={href.report(meta.id)}>Topic report<Icon name="arrowRight" size={14} /></a></p>
+      <p class="tp-side-links">
+        {lessonFirst ? null : <a class="tp-link" href={href.lesson(meta.id)}>{lessonDone ? 'Read the lesson again' : 'Lesson'}<Icon name="arrowRight" size={14} /></a>}
+        <a class="tp-link" href={href.report(meta.id)}>Topic report<Icon name="arrowRight" size={14} /></a>
+      </p>
     </section>
   );
 }
@@ -118,18 +142,21 @@ function LockCard({ meta, p, prevLocked }: { meta: TopicMeta; p: TopicProgress; 
           {!prevLocked ? <a href={href.topicTest(prev.id)} class="tp-link-quiet">or pass its topic test</a> : null}
         </p>
       ) : null}
-      <p class="tp-lock-foot">The cheat sheet, worked example and common mistakes are open to read.</p>
+      <p class="tp-lock-foot">
+        The <a class="tp-link-quiet" href={href.lesson(meta.id)}>lesson</a> is open to read now, questions or not.
+      </p>
     </section>
   );
 }
 
-export function TopicHeader({ meta, p, ready, target, allSolved, prevLocked }: {
+export function TopicHeader({ meta, p, ready, target, allSolved, prevLocked, lessonDone }: {
   meta: TopicMeta;
   p: TopicProgress | undefined;
   ready: boolean;
   target: Question | undefined;
   allSolved: boolean;
   prevLocked: boolean;
+  lessonDone: boolean;
 }) {
   let side;
   if (!ready || !p) {
@@ -142,7 +169,7 @@ export function TopicHeader({ meta, p, ready, target, allSolved, prevLocked }: {
       </div>
     );
   } else if (p.state === 'locked') side = <LockCard meta={meta} p={p} prevLocked={prevLocked} />;
-  else side = <ProgressCard meta={meta} p={p} target={target} allSolved={allSolved} />;
+  else side = <ProgressCard meta={meta} p={p} target={target} allSolved={allSolved} lessonDone={lessonDone} />;
 
   return (
     <header class="tp-head">

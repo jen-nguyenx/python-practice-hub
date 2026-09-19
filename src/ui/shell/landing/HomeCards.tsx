@@ -10,9 +10,13 @@ const DIFF_WORD: Record<Diff, string> = { easy: 'Easy', medium: 'Medium', hard: 
 
 export interface ContinuePosition { number: number; total: number }
 
-export function ContinueCard({ info, position, fresh }: { info: ContinueInfo; position: ContinuePosition | null; fresh: boolean }) {
+export function ContinueCard({ info, position, fresh, lessonDone }: {
+  info: ContinueInfo; position: ContinuePosition | null; fresh: boolean; lessonDone: boolean;
+}) {
   const t = info.topic;
   const q = info.question;
+  // A first-time student is better served by the lesson than by a cold question with no context.
+  const lessonFirst = fresh && !lessonDone;
   return (
     <section class="hc hc-continue" aria-labelledby="hc-continue">
       <p class="hc-eyebrow">{fresh ? 'Start here' : 'Continue'}</p>
@@ -29,11 +33,22 @@ export function ContinueCard({ info, position, fresh }: { info: ContinueInfo; po
         ) : <span>Every open question in this topic is done.</span>}
       </p>
       <div class="hc-actions">
-        <a class="btn primary" href={q ? href.question(q.qid) : href.topic(t.id)}>
-          {q ? (fresh ? 'Start' : 'Continue') : 'Open topic'}
-          <span class="sr-only">: {q ? q.title : t.title}</span>
-          <Icon name="arrowRight" size={16} />
-        </a>
+        {lessonFirst ? (
+          <>
+            <a class="btn primary" href={href.lesson(t.id)}>
+              Start the lesson
+              <span class="sr-only">: {t.title}</span>
+              <Icon name="arrowRight" size={16} />
+            </a>
+            {q ? <a class="btn ghost" href={href.question(q.qid)}>Skip to questions</a> : null}
+          </>
+        ) : (
+          <a class="btn primary" href={q ? href.question(q.qid) : href.topic(t.id)}>
+            {q ? (fresh ? 'Start' : 'Continue') : 'Open topic'}
+            <span class="sr-only">: {q ? q.title : t.title}</span>
+            <Icon name="arrowRight" size={16} />
+          </a>
+        )}
       </div>
     </section>
   );

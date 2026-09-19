@@ -1,6 +1,7 @@
 // App: route switch inside the frame (AppShell: global top bar, main landmark, tour, shortcut sheet).
 import { route, href } from './router.ts';
 import { Landing } from '../ui/screens/Landing.tsx';
+import { LessonPage } from '../ui/screens/LessonPage.tsx';
 import { TopicPage } from '../ui/screens/TopicPage.tsx';
 import { QuestionPage } from '../ui/screens/QuestionPage.tsx';
 import { Playground } from '../ui/screens/Playground.tsx';
@@ -16,6 +17,7 @@ export function App() {
   switch (r.name) {
     case 'landing': screen = <Landing />; break;
     case 'topic': screen = <TopicPage key={r.topicId} topicId={r.topicId} />; break;
+    case 'lesson': screen = <LessonPage key={r.topicId} topicId={r.topicId} />; break;
     case 'question': screen = <QuestionPage qid={r.qid} />; break;
     case 'playground': screen = <Playground />; break;
     case 'report': screen = <Report topicId={r.topicId} />; break;

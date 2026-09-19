@@ -111,6 +111,13 @@ export function recentMistakes(events: readonly AppEvent[], days = 14, now = Dat
   return [...map.values()].sort((a, b) => b.count - a.count || b.lastTs - a.lastTs);
 }
 
+/** Topics whose lesson has been read through to the last step. */
+export function lessonsDone(events: readonly AppEvent[]): Set<TopicId> {
+  const out = new Set<TopicId>();
+  for (const e of events) if (e.type === 'lesson_done') out.add(e.topicId);
+  return out;
+}
+
 export function attemptCount(events: readonly AppEvent[]) {
   let n = 0;
   for (const e of events) if (e.type === 'attempt') n++;

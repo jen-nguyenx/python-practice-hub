@@ -1,0 +1,194 @@
+{
+  "t01-x1": {
+    "runs": {
+      "0-0": {
+        "error": {
+          "line": 3,
+          "message": "division by zero",
+          "type": "ZeroDivisionError"
+        },
+        "stdout": ""
+      },
+      "0-1": {
+        "error": {
+          "line": 3,
+          "message": "division by zero",
+          "type": "ZeroDivisionError"
+        },
+        "stdout": ""
+      },
+      "0-2": {
+        "error": {
+          "line": 3,
+          "message": "division by zero",
+          "type": "ZeroDivisionError"
+        },
+        "stdout": ""
+      },
+      "1-0": {
+        "stdout": "18.0\n"
+      },
+      "1-1": {
+        "stdout": "18\n"
+      },
+      "1-2": {
+        "stdout": "0\n"
+      },
+      "2-0": {
+        "stdout": "9.0\n"
+      },
+      "2-1": {
+        "stdout": "9\n"
+      },
+      "2-2": {
+        "stdout": "0\n"
+      },
+      "3-0": {
+        "stdout": "6.0\n"
+      },
+      "3-1": {
+        "stdout": "6\n"
+      },
+      "3-2": {
+        "stdout": "0\n"
+      },
+      "4-0": {
+        "stdout": "4.5\n"
+      },
+      "4-1": {
+        "stdout": "4\n"
+      },
+      "4-2": {
+        "stdout": "2\n"
+      },
+      "5-0": {
+        "stdout": "3.6\n"
+      },
+      "5-1": {
+        "stdout": "3\n"
+      },
+      "5-2": {
+        "stdout": "3\n"
+      },
+      "6-0": {
+        "stdout": "3.0\n"
+      },
+      "6-1": {
+        "stdout": "3\n"
+      },
+      "6-2": {
+        "stdout": "0\n"
+      },
+      "7-0": {
+        "stdout": "2.5714285714285716\n"
+      },
+      "7-1": {
+        "stdout": "2\n"
+      },
+      "7-2": {
+        "stdout": "4\n"
+      },
+      "8-0": {
+        "stdout": "2.25\n"
+      },
+      "8-1": {
+        "stdout": "2\n"
+      },
+      "8-2": {
+        "stdout": "2\n"
+      },
+      "9-0": {
+        "stdout": "2.0\n"
+      },
+      "9-1": {
+        "stdout": "2\n"
+      },
+      "9-2": {
+        "stdout": "0\n"
+      }
+    }
+  },
+  "t01-x2": {
+    "runs": {
+      "0-0": {
+        "stdout": "3.2 -> 3\n"
+      },
+      "0-1": {
+        "stdout": "3.2 -> 3\n"
+      },
+      "0-2": {
+        "stdout": "3.2 -> 3.0\n"
+      },
+      "1-0": {
+        "stdout": "3.7 -> 3\n"
+      },
+      "1-1": {
+        "stdout": "3.7 -> 4\n"
+      },
+      "1-2": {
+        "stdout": "3.7 -> 3.0\n"
+      },
+      "2-0": {
+        "stdout": "2.5 -> 2\n"
+      },
+      "2-1": {
+        "stdout": "2.5 -> 2\n"
+      },
+      "2-2": {
+        "stdout": "2.5 -> 2.0\n"
+      },
+      "3-0": {
+        "stdout": "-3.7 -> -3\n"
+      },
+      "3-1": {
+        "stdout": "-3.7 -> -4\n"
+      },
+      "3-2": {
+        "stdout": "-3.7 -> -4.0\n"
+      }
+    }
+  },
+  "t01-x3": {
+    "runs": {
+      "0-0-0": {
+        "stdout": "8\n"
+      },
+      "0-0-1": {
+        "stdout": "15\n"
+      },
+      "0-1-0": {
+        "error": {
+          "line": 3,
+          "message": "unsupported operand type(s) for +: 'int' and 'str'",
+          "type": "TypeError"
+        },
+        "stdout": ""
+      },
+      "0-1-1": {
+        "stdout": "33333\n"
+      },
+      "1-0-0": {
+        "error": {
+          "line": 3,
+          "message": "can only concatenate str (not \"int\") to str",
+          "type": "TypeError"
+        },
+        "stdout": ""
+      },
+      "1-0-1": {
+        "stdout": "555\n"
+      },
+      "1-1-0": {
+        "stdout": "53\n"
+      },
+      "1-1-1": {
+        "error": {
+          "line": 3,
+          "message": "can't multiply sequence by non-int of type 'str'",
+          "type": "TypeError"
+        },
+        "stdout": ""
+      }
+    }
+  }
+}

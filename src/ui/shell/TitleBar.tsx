@@ -33,6 +33,7 @@ export function crumbsFor(r: Route): Crumb[] {
     case 'report': return r.topicId && TOPIC_BY_ID[r.topicId]
       ? [{ label: 'Report', href: href.report() }, { label: TOPIC_BY_ID[r.topicId].short }]
       : [{ label: 'Report' }];
+    case 'lesson': return [topic(r.topicId), { label: 'Lesson' }];
     case 'topic-test': return [topic(r.topicId), { label: 'Topic test' }];
     case 'exam': return [{ label: 'Exams' }];
     case 'settings': return [{ label: 'Settings' }];

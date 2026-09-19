@@ -23,6 +23,7 @@ if (!base) {
 
 type Index = { qid: string; topicId: string; format: string; diff: string }[];
 const index: Index = JSON.parse(readFileSync('src/content/generated/question-index.json', 'utf8'));
+const TOPICS: { id: string }[] = [...new Set(index.map((q) => q.topicId))].map((id) => ({ id }));
 
 const failures: string[] = [];
 const browser = await chromium.launch({ executablePath: CHROME, headless: true });
@@ -86,25 +87,84 @@ for (const topicId of withExperiments) {
   if (n === 0) failures.push(`what if: ${topicId} shows no experiments`);
   for (let i = 0; i < n; i++) {
     const card = cards.nth(i);
-    const before = await card.locator('.wi-out').innerText();
-    // Move the first control to its far end; the verifier guarantees some control changes the result.
-    const slider = card.locator('.wi-slider').first();
-    if (await slider.count()) {
-      // End on a focused range input is a real drag to the maximum, and fires input the same way.
-      await slider.focus();
-      await page.keyboard.press('End');
-    } else {
-      const opts = card.locator('.wi-knob').first().locator('[role="radio"]');
-      await opts.nth((await opts.count()) - 1).click();
+    const knobs = card.locator('.wi-knob');
+    const knobCount = await knobs.count();
+    // What the student is meant to observe: the printed output, the variable table, and how much of the
+    // picture is lit. Deliberately NOT the note, which is authored per combination and so would move even
+    // if the generated data were frozen -- that would make this check pass for the wrong reason.
+    const shown = async () => {
+      const text = await card.locator('.wi-out, .wi-table').allInnerTexts();
+      const lit = await card.locator('.wi-cell.is-picked, .wi-tick.is-hit').count();
+      return `${text.join('|')}#${lit}`;
+    };
+    const program = () => card.locator('.wi-code').innerText();
+    const openingShown = await shown();
+    let outputMoved = false;
+
+    // Each control is tried from the state the card opens in, and put back afterwards. Without the reset,
+    // an earlier control can move the card into a region where a later one genuinely has no effect.
+    for (let k = 0; k < knobCount; k++) {
+      const knob = knobs.nth(k);
+      const beforeProgram = await program();
+      const slider = knob.locator('.wi-slider');
+      const opts = knob.locator('[role="radio"]');
+
+      if (await slider.count()) {
+        const original = await slider.inputValue();
+        await slider.focus();
+        await page.keyboard.press('End');
+        await page.waitForTimeout(150);
+        if (await program() === beforeProgram) await page.keyboard.press('Home');
+        await page.waitForTimeout(200);
+        if (await program() === beforeProgram) failures.push(`what if: ${topicId} experiment ${i + 1} control ${k + 1} does not change the program`);
+        if (await shown() !== openingShown) outputMoved = true;
+        await slider.evaluate((el, v) => {
+          (el as HTMLInputElement).value = v as string;
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+        }, original);
+      } else {
+        const count = await opts.count();
+        let original = 0;
+        for (let o = 0; o < count; o++) {
+          if (await opts.nth(o).getAttribute('aria-checked') === 'true') { original = o; break; }
+        }
+        await opts.nth(count - 1).click();
+        await page.waitForTimeout(150);
+        if (await program() === beforeProgram) await opts.nth(0).click();
+        await page.waitForTimeout(200);
+        if (await program() === beforeProgram) failures.push(`what if: ${topicId} experiment ${i + 1} control ${k + 1} does not change the program`);
+        if (await shown() !== openingShown) outputMoved = true;
+        await opts.nth(original).click();
+      }
+      await page.waitForTimeout(120);
     }
-    await page.waitForTimeout(250);
-    if (await card.locator('.wi-out').innerText() === before) {
-      failures.push(`what if: ${topicId} experiment ${i + 1} shows the same output after changing a control`);
+    if (!outputMoved) {
+      failures.push(`what if: ${topicId} experiment ${i + 1} shows the same result whichever control is moved`);
     }
   }
   await page.screenshot({ path: `${SHOTS}/whatif-${topicId}.png`, fullPage: false });
 }
 console.log(`Checked "what if" controls on ${withExperiments.length} topic(s).`);
+
+// Lesson mode: every topic must give a walkable sequence that ends on the practise step, and every step
+// must render something. A step showing the "being written" placeholder means generated data is missing.
+for (const t of TOPICS) {
+  await visit(page, `#/learn/${t.id}`);
+  const labels = await page.locator('.ls-step-l').allInnerTexts();
+  if (labels.length < 2) {
+    failures.push(`lesson: ${t.id} has ${labels.length} steps`);
+    continue;
+  }
+  for (let i = 1; i < labels.length; i++) {
+    await page.getByRole('button', { name: /^Next/ }).click();
+    await page.waitForTimeout(150);
+    const body = await page.locator('.ls-body').innerText();
+    if (body.includes('being written')) failures.push(`lesson: ${t.id} step ${i + 1} (${labels[i]}) has no content`);
+  }
+  const last = await page.locator('.ls-count').innerText();
+  if (!last.includes(`of ${labels.length}`)) failures.push(`lesson: ${t.id} did not reach the last step (${last})`);
+}
+console.log(`Walked the lesson for ${TOPICS.length} topics.`);
 
 // The Python worker must not hand student code a route to JavaScript. With one, pasted code could read the
 // app's IndexedDB (same origin) and POST a student's whole progress log anywhere. The import denylist in

@@ -1,0 +1,796 @@
+{
+  "t02-x1": {
+    "runs": {
+      "0-0-0": {
+        "stdout": "No free drink\n"
+      },
+      "0-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "0-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "0-1-1": {
+        "stdout": "No free drink\n"
+      },
+      "1-0-0": {
+        "stdout": "No free drink\n"
+      },
+      "1-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "1-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "1-1-1": {
+        "stdout": "No free drink\n"
+      },
+      "10-0-0": {
+        "stdout": "Free drink\n"
+      },
+      "10-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "10-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "10-1-1": {
+        "stdout": "Free drink\n"
+      },
+      "2-0-0": {
+        "stdout": "No free drink\n"
+      },
+      "2-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "2-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "2-1-1": {
+        "stdout": "No free drink\n"
+      },
+      "3-0-0": {
+        "stdout": "No free drink\n"
+      },
+      "3-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "3-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "3-1-1": {
+        "stdout": "No free drink\n"
+      },
+      "4-0-0": {
+        "stdout": "No free drink\n"
+      },
+      "4-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "4-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "4-1-1": {
+        "stdout": "No free drink\n"
+      },
+      "5-0-0": {
+        "stdout": "Free drink\n"
+      },
+      "5-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "5-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "5-1-1": {
+        "stdout": "Free drink\n"
+      },
+      "6-0-0": {
+        "stdout": "Free drink\n"
+      },
+      "6-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "6-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "6-1-1": {
+        "stdout": "Free drink\n"
+      },
+      "7-0-0": {
+        "stdout": "Free drink\n"
+      },
+      "7-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "7-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "7-1-1": {
+        "stdout": "Free drink\n"
+      },
+      "8-0-0": {
+        "stdout": "Free drink\n"
+      },
+      "8-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "8-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "8-1-1": {
+        "stdout": "Free drink\n"
+      },
+      "9-0-0": {
+        "stdout": "Free drink\n"
+      },
+      "9-0-1": {
+        "stdout": "Free drink\n"
+      },
+      "9-1-0": {
+        "stdout": "No free drink\n"
+      },
+      "9-1-1": {
+        "stdout": "Free drink\n"
+      }
+    }
+  },
+  "t02-x2": {
+    "runs": {
+      "0-0": {
+        "stdout": "No warning today\n"
+      },
+      "0-1": {
+        "stdout": "No warning today\n"
+      },
+      "1-0": {
+        "stdout": "No warning today\n"
+      },
+      "1-1": {
+        "stdout": "No warning today\n"
+      },
+      "10-0": {
+        "stdout": "Extreme heat\nHeat warning\n"
+      },
+      "10-1": {
+        "stdout": "Extreme heat\n"
+      },
+      "11-0": {
+        "stdout": "Extreme heat\nHeat warning\n"
+      },
+      "11-1": {
+        "stdout": "Extreme heat\n"
+      },
+      "12-0": {
+        "stdout": "Extreme heat\nHeat warning\n"
+      },
+      "12-1": {
+        "stdout": "Extreme heat\n"
+      },
+      "2-0": {
+        "stdout": "No warning today\n"
+      },
+      "2-1": {
+        "stdout": "No warning today\n"
+      },
+      "3-0": {
+        "stdout": "No warning today\n"
+      },
+      "3-1": {
+        "stdout": "No warning today\n"
+      },
+      "4-0": {
+        "stdout": "No warning today\n"
+      },
+      "4-1": {
+        "stdout": "No warning today\n"
+      },
+      "5-0": {
+        "stdout": "Heat warning\n"
+      },
+      "5-1": {
+        "stdout": "Heat warning\n"
+      },
+      "6-0": {
+        "stdout": "Heat warning\n"
+      },
+      "6-1": {
+        "stdout": "Heat warning\n"
+      },
+      "7-0": {
+        "stdout": "Heat warning\n"
+      },
+      "7-1": {
+        "stdout": "Heat warning\n"
+      },
+      "8-0": {
+        "stdout": "Heat warning\n"
+      },
+      "8-1": {
+        "stdout": "Heat warning\n"
+      },
+      "9-0": {
+        "stdout": "Heat warning\n"
+      },
+      "9-1": {
+        "stdout": "Heat warning\n"
+      }
+    }
+  },
+  "t02-x3": {
+    "runs": {
+      "0-0-0": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "0-0-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "0-1-0": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "0-1-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "1-0-0": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "1-0-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "1-1-0": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "1-1-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "10-0-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "10-0-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "10-1-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "10-1-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "2-0-0": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "2-0-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "2-1-0": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "2-1-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "3-0-0": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "3-0-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "3-1-0": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "3-1-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "4-0-0": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "4-0-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "4-1-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "4-1-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "5-0-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "5-0-1": {
+        "stdout": "Too short\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "5-1-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "5-1-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "6-0-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "6-0-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "6-1-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "6-1-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "7-0-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "7-0-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "7-1-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "7-1-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "8-0-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "8-0-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "8-1-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "8-1-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "9-0-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "9-0-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "9-1-0": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      },
+      "9-1-1": {
+        "stdout": "Can ride\n",
+        "values": {
+          "allowed": [
+            120,
+            121,
+            122,
+            123,
+            124,
+            125
+          ]
+        }
+      }
+    }
+  }
+}

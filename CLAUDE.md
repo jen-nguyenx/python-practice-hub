@@ -1,6 +1,6 @@
 # PyLadder — CLAUDE.md
 
-Python practice app for first-year UWA CITS1401 students: 13 unlockable topics, 278 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, "what if" experiments, topic tests, a custom timed practice test, a mock final exam (eight slots, 100 marks, two hours), and reports.
+Python practice app for first-year UWA CITS1401 students: 13 unlockable topics, 278 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, a guided lesson per topic with interactive "what if" experiments, topic tests, a custom timed practice test, a mock final exam (eight slots, 100 marks, two hours), and reports.
 
 ## Commands
 ```bash
@@ -31,7 +31,8 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts` |
 | `src/store/` | IndexedDB event log, snapshots, scratch files, settings (localStorage), export/import |
 | `src/app/` | App shell, hash router, singletons (`services.ts`), `markTopicOpened` |
-| `src/ui/screens/` | Landing, TopicPage, QuestionPage, Playground, Report, TopicTest, MidsemTest, Settings |
+| `src/ui/screens/` | Landing, TopicPage, LessonPage, QuestionPage, Playground, Report, TopicTest, ExamPractice, Settings |
+| `src/ui/lesson/steps.ts` | The lesson's ordered steps, derived from a topic's own content. Pure and tested |
 | `src/ui/formats/read|code/` | The 12 question-format components; `registry.ts` maps format → component |
 | `src/ui/workbench/`, `src/ui/editor/` | Question controller pieces, panels, hints, answers; Monaco + textarea editors |
 | `src/ui/report/`, `src/ui/testmode/` | Report sections; test runner and question selection |
@@ -44,6 +45,11 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 - **Unlock rule** (`src/engine/progress.ts`): topic 1 always open; topic N+1 unlocks when topic N was opened and its `minimum` is met (questions solved without revealing the answer; hints are fine; `code` of them must be code formats), or its topic test was passed, or Settings "Unlock all topics" is on.
 - **Everything is derived from the append-only event log** (`src/engine/types.ts` `AppEvent`). Add a new event type rather than mutating state.
 - **Content changes must pass the verifier** with 0 errors: solutions pass tests in Pyodide, buggy variants and distractors fail tagged tests, read-format answers are generated not typed.
+- **Lesson mode (`#/learn/:id`) is an order over existing content, not new content.** `lessonSteps()` derives
+  the sequence from the topic itself: intro, cheat sheet, worked example, one step per experiment, common
+  mistakes, then practise. Steps with nothing to show are left out, so adding an experiment adds a step for
+  free and no topic needs bespoke wiring. It is readable while the topic is locked, like the other reading
+  surfaces, and a student who has never touched a topic is offered the lesson before a cold question.
 - **"What if" experiments never run Python in the browser.** The verifier runs every combination of every
   control and writes `src/content/generated/experiments/<topic>.json`; the tab looks the answer up, so it is
   instant and works before Python starts, and it is what lets a slider redraw on every step as it is

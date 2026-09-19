@@ -6,7 +6,7 @@ import { QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { TOPICS } from '../../content/topics.ts';
 import { Skeleton } from '../components/Skeleton.tsx';
 import { continueInfo, examSummary, hasAnyAttempt, todayNumbers } from '../shell/homeData.ts';
-import { safeTopicProgress } from '../shell/progressData.ts';
+import { lessonsDone, safeTopicProgress } from '../shell/progressData.ts';
 import { ContinueCard, ExamCard } from '../shell/landing/HomeCards.tsx';
 import type { ContinuePosition } from '../shell/landing/HomeCards.tsx';
 import { Ladder, LadderSkeleton } from '../shell/landing/Ladder.tsx';
@@ -61,6 +61,7 @@ export function Landing() {
     if (idx >= 0) position = { number: idx + 1, total: inTopic.length };
   }
   const fresh = !hasAnyAttempt(events);
+  const doneLessons = useMemo(() => lessonsDone(events), [events]);
 
   return (
     <div class="page home">
@@ -70,7 +71,7 @@ export function Landing() {
         <Today events={events} />
       </header>
       <div class="home-hero">
-        <ContinueCard info={info} position={position} fresh={fresh} />
+        <ContinueCard info={info} position={position} fresh={fresh} lessonDone={doneLessons.has(info.topic.id)} />
         <ExamCard summary={exam} />
       </div>
       <Ladder progress={progress} currentTopic={progress[info.topic.id]?.state === 'locked' ? null : info.topic.id} />

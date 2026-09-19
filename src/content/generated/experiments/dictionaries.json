@@ -1,0 +1,176 @@
+{
+  "t08-x1": {
+    "runs": {
+      "0-0": {
+        "stdout": "3\n4\n"
+      },
+      "0-1": {
+        "stdout": "3\n4\n"
+      },
+      "0-2": {
+        "stdout": "3\n4\n"
+      },
+      "1-0": {
+        "error": {
+          "line": 3,
+          "message": "'latte'",
+          "type": "KeyError"
+        },
+        "stdout": ""
+      },
+      "1-1": {
+        "error": {
+          "line": 5,
+          "message": "unsupported operand type(s) for +: 'NoneType' and 'int'",
+          "type": "TypeError"
+        },
+        "stdout": "None\n"
+      },
+      "1-2": {
+        "stdout": "0\n1\n"
+      }
+    }
+  },
+  "t08-x2": {
+    "runs": {
+      "0-0": {
+        "error": {
+          "line": 5,
+          "message": "unsupported operand type(s) for +: 'int' and 'str'",
+          "type": "TypeError"
+        },
+        "stdout": "flat white\n"
+      },
+      "0-1": {
+        "stdout": "flat white\nmuffin\ntotal 15\n"
+      },
+      "1-0": {
+        "stdout": "12\n3\ntotal 15\n"
+      },
+      "1-1": {
+        "error": {
+          "line": 5,
+          "message": "12",
+          "type": "KeyError"
+        },
+        "stdout": "12\n"
+      },
+      "2-0": {
+        "error": {
+          "line": 5,
+          "message": "unsupported operand type(s) for +: 'int' and 'tuple'",
+          "type": "TypeError"
+        },
+        "stdout": "('flat white', 12)\n"
+      },
+      "2-1": {
+        "error": {
+          "line": 5,
+          "message": "('flat white', 12)",
+          "type": "KeyError"
+        },
+        "stdout": "('flat white', 12)\n"
+      }
+    }
+  },
+  "t08-x3": {
+    "runs": {
+      "0-0": {
+        "rows": [
+          [
+            "'tea'",
+            "{'tea': 1}"
+          ],
+          [
+            "'Tea'",
+            "{'tea': 1, 'Tea': 1}"
+          ],
+          [
+            "'tea '",
+            "{'tea': 1, 'Tea': 1, 'tea ': 1}"
+          ]
+        ],
+        "stdout": "{'tea': 1, 'Tea': 1, 'tea ': 1}\n"
+      },
+      "0-1": {
+        "error": {
+          "line": 5,
+          "message": "'tea'",
+          "type": "KeyError"
+        },
+        "rows": [
+          [
+            "'tea'",
+            "{}"
+          ]
+        ],
+        "stdout": ""
+      },
+      "0-2": {
+        "rows": [
+          [
+            "'tea'",
+            "{'tea': 1}"
+          ],
+          [
+            "'Tea'",
+            "{'tea': 1, 'Tea': 1}"
+          ],
+          [
+            "'tea '",
+            "{'tea': 1, 'Tea': 1, 'tea ': 1}"
+          ]
+        ],
+        "stdout": "{'tea': 1, 'Tea': 1, 'tea ': 1}\n"
+      },
+      "1-0": {
+        "rows": [
+          [
+            "'tea'",
+            "{'tea': 1}"
+          ],
+          [
+            "'tea'",
+            "{'tea': 2}"
+          ],
+          [
+            "'tea'",
+            "{'tea': 3}"
+          ]
+        ],
+        "stdout": "{'tea': 3}\n"
+      },
+      "1-1": {
+        "error": {
+          "line": 5,
+          "message": "'tea'",
+          "type": "KeyError"
+        },
+        "rows": [
+          [
+            "'tea'",
+            "{}"
+          ]
+        ],
+        "stdout": ""
+      },
+      "1-2": {
+        "rows": [
+          [
+            "'tea'",
+            "{'tea': 1}"
+          ],
+          [
+            "'tea'",
+            "{'tea': 1}"
+          ],
+          [
+            "'tea'",
+            "{'tea': 1}"
+          ]
+        ],
+        "stdout": "{'tea': 1}\n"
+      }
+    }
+  }
+}

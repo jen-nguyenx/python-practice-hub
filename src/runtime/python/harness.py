@@ -10,6 +10,7 @@ list/object arguments) and returns a JSON string whose shape matches src/runtime
     trace(code, watch, anchor_line, stdin_lines)                      -> {rows, stdout, error?}
     run_capture(code, stdin_lines)                                    -> {stdout, error?}
     probe(code, probes_json)                                          -> {stdout, values, error?}
+    repl(lines_json, stdin_lines)                                     -> {lines: [{source, stdout, value?, error?}]}
 
 Verifier helpers (not used by the browser): literal_info, defines, constructs.
 """
@@ -289,6 +290,64 @@ def probe(code, probes_json, budget_ms=None):
         if errors:
             res['probeErrors'] = errors
     return _dump(res)
+
+
+def repl(lines_json, stdin_lines=None, budget_ms=None):
+    """Run lines as a Python shell session and record what each one did (verifier only).
+
+    A lesson that shows ">>> 2 + 3" followed by "5" must get that 5 from the interpreter, not from an
+    author. Each line runs in one shared namespace; a line that is an expression records the repr of its
+    value, anything else records what it printed. A line that raises records the error and the session
+    carries on, because showing a failure is often the point.
+    """
+    sources = [_str_arg(x) for x in _list_arg(lines_json)]
+    stdin = [str(s) for s in _list_arg(stdin_lines)]
+    budget = _budget(budget_ms, 5000)
+    out = []
+    register_source('\n'.join(sources))
+    with Sandbox('test') as sb:
+        reset_workdir([])
+        random.seed(TEST_SEED)
+        sb.set_stdin(stdin)
+        ns = _fresh_ns()
+        for src in sources:
+            entry = {'source': src, 'stdout': ''}
+            if not src.strip():
+                out.append(entry)
+                continue
+            mode = 'eval'
+            try:
+                code_obj = _compile(src, mode='eval')
+            except SyntaxError:
+                mode = 'exec'
+                try:
+                    code_obj = _compile(src, mode='exec')
+                except SyntaxError as e:
+                    entry['error'] = syntax_error(e)
+                    out.append(entry)
+                    continue
+            before = len(sb.stdout_value())
+            if mode == 'eval':
+                res = sb.call(lambda c=code_obj: eval(c, ns), budget_ms=budget)
+            else:
+                res = sb.call(lambda c=code_obj: exec(c, ns), budget_ms=budget)
+            entry['stdout'] = sb.stdout_value()[before:]
+            if res.ok:
+                # A statement, and an expression evaluating to None, both show nothing: that is the shell's
+                # own behaviour and teaching it is part of the point (print() returns None).
+                if mode == 'eval' and res.value is not None:
+                    entry['value'] = _truncate(_safe_repr(res.value), MAX_PROBE_STR)
+            elif not isinstance(res.exc, SystemExit):
+                entry['error'] = runtime_error(res.exc)
+            out.append(entry)
+    return _dump({'lines': out})
+
+
+def _safe_repr(value):
+    try:
+        return repr(value)
+    except Exception as e:  # noqa: BLE001
+        return '<repr failed: %s>' % type(e).__name__
 
 
 # ---------------- analyze ----------------

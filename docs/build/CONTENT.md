@@ -122,5 +122,48 @@ combination shows the same thing, if `anchorLine` never runs, if a probe raises 
 succeeded, or if a probe a picture needs is not a list. It warns if a control never changes anything
 whatever the others are set to.
 
+## Lessons
+
+A lesson is authored teaching material, separate from questions (practice) and experiments (exploration).
+Lessons live at `src/content/lessons/<track>/<id>.ts`, default-exporting a `Lesson`
+(`import type { Lesson } from '../../lessonSchema.ts'`). The file name must equal the id, and the folder
+must equal the track. Read `src/content/lessonSchema.ts`, then
+`src/content/lessons/foundations/reading-an-error.ts` as the worked example and the quality bar.
+
+**The rule that governs everything: a lesson never states what Python does.** Every output a reader sees is
+produced by the verifier running that code. Never type an output, a value, a `repr`, or an error message
+into prose as if it were fact — write the code and let the block show it. If you want to claim
+`int(3.7)` is 3, put it in a `shell` block and let Python say so.
+
+**Tracks.** `foundations` assumes nothing whatsoever and never mentions the unit. `core` teaches one of the
+13 topics and sets `topicId`. `advanced` goes past the unit and may use any module the sandbox allows
+(everything except os/sys/subprocess and friends: math, random, json, csv, re, collections, itertools,
+functools, datetime, statistics, dataclasses, typing, enum and more all work).
+
+**Sections are the steps** a reader walks through, so each one should be a single idea with a title short
+enough for a rail ("Why it matters", not "Why this matters in practice"). Aim for 4 to 8 sections.
+
+**Blocks** are the body of a section:
+- `prose` is the workhorse. Md: `inline code`, **bold**, *italic*, lists, blank line for a paragraph.
+- `code` is a program plus the output the verifier recorded. Add `stdin` if it calls `input()`.
+- `shell` is a `>>>` session: each line runs in one shared namespace and its value is recorded. Best for
+  showing what an expression *is*. Add `stdin` if any line calls `input()`.
+- `compare` runs two versions side by side; mark the wrong one `bad: true`.
+- `callout` with tone `note`, `warn` or `exam` (`exam` means "this comes up in the paper").
+- `checkpoint` is a question with the answer hidden until asked for. Two or three per lesson.
+- `steps` for a procedure, `table` for a small reference.
+- `experiment`, `workedExample`, `mistakes` and `practice` pull in the topic's own material and need
+  `topicId`. Use them: a core lesson should not restate what the topic already has.
+
+**A block that raises on purpose is good teaching** and is allowed everywhere; say so in the surrounding
+prose. A block that fails to *compile* is a bug and fails the verifier. Two shell mistakes are always
+bugs and are caught: a line calling `input()` with no `stdin`, and a line failing because an earlier line
+failed to set the name it uses (everything after that point is not real output).
+
+**Write for someone who is not sure they can do this.** Plain words, short sentences, and say why something
+matters before saying what it is. Never write "simply", "just" or "obviously".
+
+Run `npm run verify:lessons` (fast: skips every topic) until it reports 0 errors and 0 warnings.
+
 ## Verify (mandatory)
 Run `npm run verify -- --topic <topic-id>` until it reports zero errors. It checks your content against the schema rules, runs every solution against its tests in real Python (Pyodide, Python 3.14), checks mutants/distractors/buggy versions fail as intended, and writes `src/content/generated/<topic-id>.json` (plus `generated/experiments/<topic-id>.json` if you wrote experiments). Also run `npx tsc --noEmit -p .` and fix type errors in your folder. If the verifier command does not exist yet, wait by working on content quality, then retry. Report the final verifier output summary in your last message.

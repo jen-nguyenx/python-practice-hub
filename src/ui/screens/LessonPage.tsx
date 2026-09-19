@@ -5,11 +5,12 @@
 // practise — and carries them through with one button. Readable while the topic is still locked, like
 // every other reading surface in the app.
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import { href } from '../../app/router.ts';
+import { href, navigate } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
 import type { TopicId } from '../../content/ids.ts';
 import { loadExperiments, loadTopic } from '../../content/index.ts';
 import type { GeneratedExperiments, Topic } from '../../content/schema.ts';
+import { LESSON_FOR_TOPIC } from '../../content/lessons/index.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
 import type { TopicMeta } from '../../content/topics.ts';
 import { Icon } from '../components/Icon.tsx';
@@ -116,8 +117,14 @@ export function LessonPage({ topicId }: { topicId: string }) {
   const [generated, setGenerated] = useState<GeneratedExperiments | null>(null);
   const [index, setIndex] = useState(() => loadStep(topicId));
 
+  // A topic with an authored lesson uses that; this derived path is the fallback while one is written.
+  const authored = meta ? LESSON_FOR_TOPIC[meta.id] : undefined;
   useEffect(() => {
-    if (!meta) return;
+    if (authored) navigate(href.lesson(authored.id));
+  }, [authored?.id]);
+
+  useEffect(() => {
+    if (!meta || authored) return;
     let alive = true;
     setTopic(null);
     setFailed(false);

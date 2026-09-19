@@ -2,6 +2,8 @@
 import { route, href } from './router.ts';
 import { Landing } from '../ui/screens/Landing.tsx';
 import { LessonPage } from '../ui/screens/LessonPage.tsx';
+import { LessonReader } from '../ui/screens/LessonReader.tsx';
+import { LessonsIndex } from '../ui/screens/LessonsIndex.tsx';
 import { TopicPage } from '../ui/screens/TopicPage.tsx';
 import { QuestionPage } from '../ui/screens/QuestionPage.tsx';
 import { Playground } from '../ui/screens/Playground.tsx';
@@ -18,6 +20,8 @@ export function App() {
     case 'landing': screen = <Landing />; break;
     case 'topic': screen = <TopicPage key={r.topicId} topicId={r.topicId} />; break;
     case 'lesson': screen = <LessonPage key={r.topicId} topicId={r.topicId} />; break;
+    case 'lessons': screen = <LessonsIndex />; break;
+    case 'lesson-read': screen = <LessonReader key={r.lessonId} lessonId={r.lessonId} />; break;
     case 'question': screen = <QuestionPage qid={r.qid} />; break;
     case 'playground': screen = <Playground />; break;
     case 'report': screen = <Report topicId={r.topicId} />; break;

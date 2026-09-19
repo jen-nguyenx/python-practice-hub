@@ -4,17 +4,20 @@
 //   node scripts/verify-content.ts --topic strings verify one topic (repeatable)
 //   node scripts/verify-content.ts --check         regenerate in memory, exit 1 if files on disk are stale
 //   node scripts/verify-content.ts --static        schema checks only (no Python)
+//   node scripts/verify-content.ts --lessons       lessons only (skips every topic; fast while writing one)
 import { existsSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { TOPICS } from '../src/content/topics.ts';
 import type { GeneratedExperiments, GeneratedTopic, Question, Topic } from '../src/content/schema.ts';
+import type { GeneratedLesson } from '../src/content/lessonSchema.ts';
 import type { QuestionMeta } from '../src/content/questionIndex.ts';
 import { createHarness, PROJECT_ROOT } from './verify/pyodide.ts';
 import type { Harness } from './verify/pyodide.ts';
 import { jsonEqual, readJson, stableStringify, writeIfChanged } from './verify/json.ts';
 import { formatIssue, Issues, plural, topicHeader } from './verify/report.ts';
 import { checkTopicExperiments } from './verify/experiments.ts';
+import { checkLessons } from './verify/lessons.ts';
 import { checkTopicRuntime } from './verify/runtime.ts';
 import type { RuntimeContext } from './verify/runtime.ts';
 import { checkTopicStatic, isStub, questionsOf } from './verify/static.ts';
@@ -23,6 +26,7 @@ import type { TopicInfo } from './verify/static.ts';
 const argv = process.argv.slice(2);
 const check = argv.includes('--check');
 const staticOnly = argv.includes('--static');
+const lessonsOnly = argv.includes('--lessons');
 const selected: string[] = [];
 for (let i = 0; i < argv.length; i++) {
   if (argv[i] === '--topic' && argv[i + 1]) selected.push(argv[++i]);
@@ -54,7 +58,7 @@ for (const t of TOPICS) {
   }
 }
 
-const targets = loaded.filter((l) => selected.length === 0 || selected.includes(l.info.id));
+const targets = lessonsOnly ? [] : loaded.filter((l) => selected.length === 0 || selected.includes(l.info.id));
 
 // ---------- cross-topic id uniqueness ----------
 const owner = new Map<string, string>();
@@ -122,6 +126,15 @@ for (const { info, topic } of targets) {
   }
 }
 
+// ---------- lessons (static checks always; code blocks run unless --static) ----------
+const topicsById = new Map<string, Topic>();
+for (const { info, topic } of loaded) if (topic) topicsById.set(info.id, topic);
+// Lessons are global, not per topic, so they are only checked on a full run.
+const wholeRun = lessonsOnly || selected.length === 0;
+const lessons = wholeRun
+  ? await checkLessons(issues, topicsById, staticOnly ? null : () => ctx.harness())
+  : { generated: new Map<string, GeneratedLesson>(), index: [] as unknown[] };
+
 // ---------- question index (always from all topics) ----------
 const index: QuestionMeta[] = [];
 for (const { info, topic } of loaded) {
@@ -169,8 +182,10 @@ function emitOrRemove(path: string, value: Record<string, unknown>) {
 if (!staticOnly) {
   for (const [id, gen] of generated) emit(join(GENERATED_DIR, `${id}.json`), gen);
   for (const [id, x] of experiments) emitOrRemove(join(GENERATED_DIR, 'experiments', `${id}.json`), x);
+  for (const [id, gen] of lessons.generated) emitOrRemove(join(GENERATED_DIR, 'lessons', `${id}.json`), gen);
 }
-emit(join(GENERATED_DIR, 'question-index.json'), index);
+if (!lessonsOnly) emit(join(GENERATED_DIR, 'question-index.json'), index);
+if (wholeRun) emit(join(GENERATED_DIR, 'lesson-index.json'), lessons.index);
 
 // ---------- report ----------
 const lines: string[] = [];
@@ -179,11 +194,18 @@ for (const { info, topic } of targets) {
   lines.push(topicHeader(info.num, info.id, count, topic ? isStub(topic) : false, issues));
   for (const i of issues.forTopic(info.id)) lines.push(formatIssue(i));
 }
+const lessonErrors = issues.count('error', 'lessons');
+const lessonWarns = issues.count('warn', 'lessons');
+if (wholeRun) {
+  lines.push(`${lessonErrors > 0 ? 'FAIL' : 'ok  '} -- lessons: ${plural(lessons.index.length, 'lesson')}, ${plural(lessonErrors, 'error')}, ${plural(lessonWarns, 'warning')}`);
+  for (const i of issues.forTopic('lessons')) lines.push(formatIssue(i));
+}
 console.log(lines.join('\n'));
-const errors = targets.reduce((n, t) => n + issues.count('error', t.info.id), 0);
-const warns = targets.reduce((n, t) => n + issues.count('warn', t.info.id), 0);
+const errors = targets.reduce((n, t) => n + issues.count('error', t.info.id), 0) + lessonErrors;
+const warns = targets.reduce((n, t) => n + issues.count('warn', t.info.id), 0) + lessonWarns;
 const qTotal = targets.reduce((n, t) => n + (t.topic ? questionsOf(t.topic).length : 0), 0);
-console.log(`\n${plural(targets.length, 'topic')}, ${plural(qTotal, 'question')}: ${plural(errors, 'error')}, ${plural(warns, 'warning')}.${staticOnly ? ' (static checks only)' : ''}`);
+const scopeText = lessonsOnly ? plural(lessons.index.length, 'lesson') : `${plural(targets.length, 'topic')}, ${plural(qTotal, 'question')}`;
+console.log(`\n${scopeText}: ${plural(errors, 'error')}, ${plural(warns, 'warning')}.${staticOnly ? ' (static checks only)' : ''}`);
 if (check && stale.length) {
   console.log(`Stale generated files (run npm run verify): ${stale.join(', ')}`);
 }

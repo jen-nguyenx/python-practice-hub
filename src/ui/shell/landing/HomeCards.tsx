@@ -35,7 +35,7 @@ export function ContinueCard({ info, position, fresh, lessonDone }: {
       <div class="hc-actions">
         {lessonFirst ? (
           <>
-            <a class="btn primary" href={href.lesson(t.id)}>
+            <a class="btn primary" href={href.topicLesson(t.id)}>
               Start the lesson
               <span class="sr-only">: {t.title}</span>
               <Icon name="arrowRight" size={16} />

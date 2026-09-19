@@ -4,6 +4,7 @@ import { href } from '../../app/router.ts';
 import type { Route } from '../../app/router.ts';
 import { QUESTION_BY_ID } from '../../content/loadIndex.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
+import { LESSON_BY_ID } from '../../content/lessons/index.ts';
 import { Icon } from '../components/Icon.tsx';
 import { IS_MAC } from './format.ts';
 import { LogoMark } from './LogoMark.tsx';
@@ -34,6 +35,11 @@ export function crumbsFor(r: Route): Crumb[] {
       ? [{ label: 'Report', href: href.report() }, { label: TOPIC_BY_ID[r.topicId].short }]
       : [{ label: 'Report' }];
     case 'lesson': return [topic(r.topicId), { label: 'Lesson' }];
+    case 'lessons': return [{ label: 'Lessons' }];
+    case 'lesson-read': return [
+      { label: 'Lessons', href: href.lessons() },
+      { label: LESSON_BY_ID[r.lessonId]?.title ?? 'Lesson not found' },
+    ];
     case 'topic-test': return [topic(r.topicId), { label: 'Topic test' }];
     case 'exam': return [{ label: 'Exams' }];
     case 'settings': return [{ label: 'Settings' }];

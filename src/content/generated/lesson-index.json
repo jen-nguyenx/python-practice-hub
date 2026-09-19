@@ -1,0 +1,16 @@
+[
+  {
+    "id": "reading-an-error",
+    "minutes": 12,
+    "outcomes": [
+      "Read a traceback from the bottom up and say what went wrong",
+      "Point at the line that caused an error",
+      "Tell the four commonest error types apart by what they mean",
+      "Know why the reported line is sometimes not the guilty one"
+    ],
+    "sections": 5,
+    "summary": "Python tells you what went wrong and where. Most beginners never read it",
+    "title": "Reading an error message",
+    "track": "foundations"
+  }
+]

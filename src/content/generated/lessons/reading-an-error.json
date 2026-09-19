@@ -1,0 +1,101 @@
+{
+  "s0-b1": {
+    "error": {
+      "line": 5,
+      "message": "name 'avarage' is not defined",
+      "type": "NameError"
+    },
+    "stdout": ""
+  },
+  "s1-b3": {
+    "error": {
+      "line": 2,
+      "message": "name 'scores' is not defined. Did you mean: 'score'?",
+      "type": "NameError"
+    },
+    "stdout": ""
+  },
+  "s1-b4": {
+    "error": {
+      "line": 2,
+      "message": "can only concatenate str (not \"int\") to str",
+      "type": "TypeError"
+    },
+    "stdout": "21\n"
+  },
+  "s1-b5": {
+    "error": {
+      "line": 2,
+      "message": "list index out of range",
+      "type": "IndexError"
+    },
+    "stdout": ""
+  },
+  "s2-b1": {
+    "error": {
+      "line": 1,
+      "message": "'(' was never closed",
+      "type": "SyntaxError"
+    },
+    "stdout": ""
+  },
+  "s2-b3": {
+    "left": {
+      "error": {
+        "line": 1,
+        "message": "expected ':'",
+        "type": "SyntaxError"
+      },
+      "stdout": ""
+    },
+    "right": {
+      "stdout": "0\n1\n2\n"
+    }
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "age = input()",
+        "stdout": "21\n"
+      },
+      {
+        "source": "age",
+        "stdout": "",
+        "value": "'21'"
+      },
+      {
+        "source": "type(age)",
+        "stdout": "",
+        "value": "<class 'str'>"
+      },
+      {
+        "error": {
+          "line": 1,
+          "message": "can only concatenate str (not \"int\") to str",
+          "type": "TypeError"
+        },
+        "source": "age + 1",
+        "stdout": ""
+      },
+      {
+        "source": "int(age) + 1",
+        "stdout": "",
+        "value": "22"
+      },
+      {
+        "source": "days = ['Mon', 'Tue', 'Wed']",
+        "stdout": ""
+      },
+      {
+        "source": "len(days)",
+        "stdout": "",
+        "value": "3"
+      },
+      {
+        "source": "days[len(days) - 1]",
+        "stdout": "",
+        "value": "'Wed'"
+      }
+    ]
+  }
+}

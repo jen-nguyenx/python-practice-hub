@@ -4,6 +4,8 @@ export type Route =
   | { name: 'landing' }
   | { name: 'topic'; topicId: string }
   | { name: 'lesson'; topicId: string }
+  | { name: 'lessons' }
+  | { name: 'lesson-read'; lessonId: string }
   | { name: 'question'; qid: string }
   | { name: 'playground' }
   | { name: 'report'; topicId?: string }
@@ -27,6 +29,8 @@ export function parseHash(hash: string): Route {
   if (parts.length === 0) return { name: 'landing' };
   switch (parts[0]) {
     case 'topic': return parts[1] ? { name: 'topic', topicId: parts[1] } : { name: 'not-found', path };
+    case 'lessons': return { name: 'lessons' };
+    case 'lesson': return parts[1] ? { name: 'lesson-read', lessonId: parts[1] } : { name: 'lessons' };
     case 'learn': return parts[1] ? { name: 'lesson', topicId: parts[1] } : { name: 'not-found', path };
     case 'q': return parts[1] ? { name: 'question', qid: parts[1] } : { name: 'not-found', path };
     case 'playground': return { name: 'playground' };
@@ -58,7 +62,10 @@ export function navigate(path: string) {
 export const href = {
   landing: () => '#/',
   topic: (id: string) => `#/topic/${id}`,
-  lesson: (id: string) => `#/learn/${id}`,
+  /** A topic's guided path. Resolves to that topic's authored lesson when one exists. */
+  lesson: (id: string) => `#/lesson/${id}`,
+  topicLesson: (id: string) => `#/learn/${id}`,
+  lessons: () => '#/lessons',
   question: (qid: string) => `#/q/${qid}`,
   playground: () => '#/playground',
   report: (topicId?: string) => (topicId ? `#/report/${topicId}` : '#/report'),

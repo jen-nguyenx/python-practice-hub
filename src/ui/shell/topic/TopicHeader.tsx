@@ -90,7 +90,7 @@ function ProgressCard({ meta, p, target, allSolved, lessonDone }: { meta: TopicM
       <div class="tp-side-actions">
         {lessonFirst ? (
           <>
-            <a class="btn primary tp-cta" href={href.lesson(meta.id)}>
+            <a class="btn primary tp-cta" href={href.topicLesson(meta.id)}>
               Start the lesson
               <Icon name="arrowRight" size={16} />
             </a>
@@ -120,7 +120,7 @@ function ProgressCard({ meta, p, target, allSolved, lessonDone }: { meta: TopicM
         )}
       </div>
       <p class="tp-side-links">
-        {lessonFirst ? null : <a class="tp-link" href={href.lesson(meta.id)}>{lessonDone ? 'Read the lesson again' : 'Lesson'}<Icon name="arrowRight" size={14} /></a>}
+        {lessonFirst ? null : <a class="tp-link" href={href.topicLesson(meta.id)}>{lessonDone ? 'Read the lesson again' : 'Lesson'}<Icon name="arrowRight" size={14} /></a>}
         <a class="tp-link" href={href.report(meta.id)}>Topic report<Icon name="arrowRight" size={14} /></a>
       </p>
     </section>
@@ -143,7 +143,7 @@ function LockCard({ meta, p, prevLocked }: { meta: TopicMeta; p: TopicProgress; 
         </p>
       ) : null}
       <p class="tp-lock-foot">
-        The <a class="tp-link-quiet" href={href.lesson(meta.id)}>lesson</a> is open to read now, questions or not.
+        The <a class="tp-link-quiet" href={href.topicLesson(meta.id)}>lesson</a> is open to read now, questions or not.
       </p>
     </section>
   );

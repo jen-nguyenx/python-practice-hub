@@ -2,7 +2,7 @@
 // Usage: npm run build && node scripts/smoke.ts [--base http://localhost:4173/] [--shots scratch/smoke]
 import { chromium, type ConsoleMessage, type Page } from 'playwright-core';
 import { spawn } from 'node:child_process';
-import { mkdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 
 const args = process.argv.slice(2);
 const argVal = (name: string, def: string) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : def; };
@@ -61,6 +61,43 @@ for (const q of index) {
 }
 
 console.log(`Visited ${seen.size} question samples across ${new Set(index.map((q) => q.topicId)).size} topics.`);
+
+// "What if": every outcome is generated at verify time, so a control must change the output without
+// Python running at all. A stale or missing generated file would silently show the same thing forever.
+// A fresh profile opens the first-run tour, whose dialog would swallow every click below.
+await page.getByRole('button', { name: /^Skip/ }).first().click({ timeout: 5000 }).catch(() => {});
+await page.keyboard.press('Escape').catch(() => {});
+await page.waitForTimeout(400);
+const withExperiments: string[] = JSON.parse(readFileSync('src/content/generated/question-index.json', 'utf8'))
+  .map((q: { topicId: string }) => q.topicId)
+  .filter((id: string, i: number, all: string[]) => all.indexOf(id) === i)
+  .filter((id: string) => existsSync(`src/content/generated/experiments/${id}.json`));
+for (const topicId of withExperiments) {
+  await visit(page, `#/topic/${topicId}`);
+  const tab = page.getByRole('tab', { name: 'What if' });
+  if (!(await tab.count())) {
+    failures.push(`what if: ${topicId} has generated experiments but no tab`);
+    continue;
+  }
+  await tab.click();
+  await page.waitForTimeout(500);
+  const cards = page.locator('.wi-card');
+  const n = await cards.count();
+  if (n === 0) failures.push(`what if: ${topicId} shows no experiments`);
+  for (let i = 0; i < n; i++) {
+    const card = cards.nth(i);
+    const before = await card.locator('.wi-out').innerText();
+    // Move the first control to its last choice; the verifier guarantees some control changes the result.
+    const opts = card.locator('.wi-knob').first().locator('[role="radio"]');
+    await opts.nth((await opts.count()) - 1).click();
+    await page.waitForTimeout(250);
+    if (await card.locator('.wi-out').innerText() === before) {
+      failures.push(`what if: ${topicId} experiment ${i + 1} shows the same output after changing a control`);
+    }
+  }
+  await page.screenshot({ path: `${SHOTS}/whatif-${topicId}.png`, fullPage: false });
+}
+console.log(`Checked "what if" controls on ${withExperiments.length} topic(s).`);
 
 // The Python worker must not hand student code a route to JavaScript. With one, pasted code could read the
 // app's IndexedDB (same origin) and POST a student's whole progress log anywhere. The import denylist in

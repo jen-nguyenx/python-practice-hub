@@ -1,6 +1,6 @@
 # PyLadder — CLAUDE.md
 
-Python practice app for first-year UWA CITS1401 students: 13 unlockable topics, 278 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, topic tests, a custom timed practice test, a mock final exam (eight slots, 100 marks, two hours), and reports.
+Python practice app for first-year UWA CITS1401 students: 13 unlockable topics, 278 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, "what if" experiments, topic tests, a custom timed practice test, a mock final exam (eight slots, 100 marks, two hours), and reports.
 
 ## Commands
 ```bash
@@ -22,7 +22,8 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 |---|---|
 | `src/content/ids.ts`, `schema.ts`, `topics.ts` | Contracts: id catalogues, question schema, topic order + unlock minimums |
 | `src/content/topics/NN-id/` | Topic content (cheat sheet, worked example, common mistakes, scenarios) |
-| `src/content/generated/` | Verifier output (expected outputs, trace rows, real exceptions, question index). Never hand-edit |
+| `src/content/generated/` | Verifier output (expected outputs, trace rows, real exceptions, question index, experiment runs). Never hand-edit |
+| `src/content/experiments.ts` | "What if" helpers: combinations, template filling, output diffing. UI in `src/ui/shell/topic/WhatIf.tsx` |
 | `src/content/mistakes.ts`, `patterns.ts` | Mistake catalogue (labels, explanations, runtime matchers) and best-practice cards |
 | `src/runtime/python/` | Grading harness (`_pl` package): sandboxed runs, tests, AST checks, tracer |
 | `src/runtime/pyWorker.ts`, `pyClient.ts` | Browser worker + client (queue, watchdog, respawn) |
@@ -42,6 +43,10 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 - **Unlock rule** (`src/engine/progress.ts`): topic 1 always open; topic N+1 unlocks when topic N was opened and its `minimum` is met (questions solved without revealing the answer; hints are fine; `code` of them must be code formats), or its topic test was passed, or Settings "Unlock all topics" is on.
 - **Everything is derived from the append-only event log** (`src/engine/types.ts` `AppEvent`). Add a new event type rather than mutating state.
 - **Content changes must pass the verifier** with 0 errors: solutions pass tests in Pyodide, buggy variants and distractors fail tagged tests, read-format answers are generated not typed.
+- **"What if" experiments never run Python in the browser.** The verifier runs every combination of every
+  control and writes `src/content/generated/experiments/<topic>.json`; the tab looks the answer up, so it is
+  instant and works before Python starts. Keep it that way: no live runs, and no hand-written outputs.
+  Authoring rules are in `docs/build/CONTENT.md`.
 - **Styling uses tokens only** (`src/styles/tokens.css`), light on `:root`, dark via `prefers-color-scheme` or `data-theme`. No gradients, no purple (hue 250–320), no emoji icons, radius ≤ 8px. Plain student-facing words; never show internal ids.
 - **Never `innerHTML`**. Render Md strings with `Markdown`, code with `CodeBlock`.
 - **Never restore Python's JavaScript bridge.** `pyWorker.ts` runs `SEVER_JS_BRIDGE` after warm-up to drop

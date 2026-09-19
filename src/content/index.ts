@@ -1,6 +1,6 @@
 // Content loader. Topic content is code-split: one chunk per topic.
 import type { TopicId } from './ids.ts';
-import type { GeneratedTopic, Question, Topic } from './schema.ts';
+import type { GeneratedExperiments, GeneratedTopic, Question, Topic } from './schema.ts';
 import { TOPICS } from './topics.ts';
 
 const loaders: Record<TopicId, () => Promise<{ default: Topic }>> = {
@@ -34,6 +34,15 @@ export function loadTopic(id: TopicId): Promise<Topic> {
 export async function loadGenerated(id: TopicId): Promise<GeneratedTopic> {
   const key = `./generated/${id}.json`;
   const loader = generatedLoaders[key];
+  return loader ? loader() : {};
+}
+
+// What every combination of every "what if" control really did, recorded by the verifier in real Python.
+// Topics without experiments have no file, so a missing loader is normal, not an error.
+const experimentLoaders = import.meta.glob<GeneratedExperiments>('./generated/experiments/*.json', { import: 'default' });
+
+export async function loadExperiments(id: TopicId): Promise<GeneratedExperiments> {
+  const loader = experimentLoaders[`./generated/experiments/${id}.json`];
   return loader ? loader() : {};
 }
 

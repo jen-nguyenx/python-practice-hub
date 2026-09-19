@@ -239,3 +239,52 @@ a.tp-q:focus-visible { outline: 2px solid var(--focus); outline-offset: -3px; bo
   .tp-q, .tp-q-chev { transition: none; }
   a.tp-q:hover .tp-q-chev { transform: none; }
 }
+
+/* ---------- "what if" experiments ---------- */
+.wi-list { display: grid; gap: 24px; }
+.wi-card { max-width: calc(96ch + 80px); min-width: 0; padding: 32px 36px; display: grid; gap: 24px; }
+.wi-head { display: grid; gap: 8px; }
+.wi-head .tp-read-title { font-size: var(--fs-20); }
+.wi-intro { color: var(--text-muted); font-size: var(--fs-15); }
+
+.wi-knobs { display: grid; gap: 14px; padding: 16px 18px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-2); }
+.wi-knob { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.wi-knob-label { flex: 0 0 auto; min-width: 12ch; font-size: var(--fs-13); color: var(--text-muted); }
+.wi-choice-code { font-family: var(--mono); font-size: var(--fs-13); }
+.wi-choice-text { font-size: var(--fs-13); }
+
+.wi-panes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.wi-pane { display: grid; gap: 8px; min-width: 0; }
+
+/* The fragment the controls put there, marked in place so a change is visible in the program itself. */
+.wi-set { background: var(--blue-soft); box-shadow: inset 0 -2px 0 var(--blue-line); border-radius: 3px; padding: 1px 1px 0; }
+
+.wi-out { margin: 0; padding: 14px 0; border-radius: var(--r-2); background: var(--bg-inset); color: var(--text); font-family: var(--mono); font-size: var(--fs-14); line-height: 1.7; overflow-x: auto; min-height: 3.4em; }
+.wi-out.is-empty { display: grid; place-items: center; padding: 14px 18px; color: var(--text-muted); font-family: var(--sans); font-size: var(--fs-14); text-align: center; }
+.wi-out.is-empty p { margin: 0; }
+.wi-line { display: block; padding: 0 18px; }
+.wi-line.is-changed { background: var(--blue-soft); box-shadow: inset 2px 0 0 var(--blue); }
+.wi-line.is-error { color: var(--bad); }
+.wi-line.is-error.is-changed { background: var(--bad-soft); box-shadow: inset 2px 0 0 var(--bad); }
+
+.wi-watch { max-width: 520px; }
+.wi-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-2); }
+.wi-table { border-collapse: collapse; width: 100%; font-family: var(--mono); font-size: var(--fs-13); font-variant-numeric: tabular-nums; }
+.wi-table th, .wi-table td { padding: 7px 14px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.wi-table tbody tr:last-child td { border-bottom: 0; }
+.wi-table thead th { background: var(--surface-2); color: var(--text-muted); font-weight: 500; }
+.wi-table .wi-pass { color: var(--text-faint); width: 1%; }
+
+.wi-note-box { padding: 12px 16px; background: var(--surface-2); border-left: 2px solid var(--blue); border-radius: 0 var(--r-1) var(--r-1) 0; font-size: var(--fs-15); }
+.wi-note-box .tp-md > :first-child { margin-top: 0; }
+.wi-note-box .tp-md > :last-child { margin-bottom: 0; }
+.wi-note { color: var(--text-muted); font-size: var(--fs-14); margin: 0; }
+.wi-takeaway { display: grid; gap: 6px; padding-top: 20px; border-top: 1px solid var(--border); font-size: var(--fs-15); }
+
+@container tp (max-width: 860px) {
+  .wi-panes { grid-template-columns: minmax(0, 1fr); }
+}
+@container tp (max-width: 640px) {
+  .wi-card { padding: 24px 20px; }
+  .wi-knob-label { flex-basis: 100%; }
+}

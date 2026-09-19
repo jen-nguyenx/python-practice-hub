@@ -4,15 +4,17 @@
 //   node scripts/verify-content.ts --topic strings verify one topic (repeatable)
 //   node scripts/verify-content.ts --check         regenerate in memory, exit 1 if files on disk are stale
 //   node scripts/verify-content.ts --static        schema checks only (no Python)
+import { existsSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { TOPICS } from '../src/content/topics.ts';
-import type { GeneratedTopic, Question, Topic } from '../src/content/schema.ts';
+import type { GeneratedExperiments, GeneratedTopic, Question, Topic } from '../src/content/schema.ts';
 import type { QuestionMeta } from '../src/content/questionIndex.ts';
 import { createHarness, PROJECT_ROOT } from './verify/pyodide.ts';
 import type { Harness } from './verify/pyodide.ts';
 import { jsonEqual, readJson, stableStringify, writeIfChanged } from './verify/json.ts';
 import { formatIssue, Issues, plural, topicHeader } from './verify/report.ts';
+import { checkTopicExperiments } from './verify/experiments.ts';
 import { checkTopicRuntime } from './verify/runtime.ts';
 import type { RuntimeContext } from './verify/runtime.ts';
 import { checkTopicStatic, isStub, questionsOf } from './verify/static.ts';
@@ -104,6 +106,22 @@ for (const { info, topic } of targets) {
   }
 }
 
+// ---------- "what if" experiments (static checks always; every combination run unless --static) ----------
+const experiments = new Map<string, GeneratedExperiments>();
+for (const { info, topic } of targets) {
+  if (!topic) continue;
+  const any = Array.isArray((topic as { experiments?: unknown[] }).experiments) && (topic as { experiments: unknown[] }).experiments.length > 0;
+  if (!any) {
+    experiments.set(info.id, {});
+    continue;
+  }
+  try {
+    experiments.set(info.id, checkTopicExperiments(issues, info, topic, staticOnly ? null : await ctx.harness()));
+  } catch (e) {
+    issues.error(info.id, undefined, `experiment checks crashed: ${(e as Error).stack ?? e}`);
+  }
+}
+
 // ---------- question index (always from all topics) ----------
 const index: QuestionMeta[] = [];
 for (const { info, topic } of loaded) {
@@ -138,8 +156,19 @@ function emit(path: string, value: unknown) {
     writeIfChanged(path, stableStringify(value));
   }
 }
+/** A topic with no experiments should have no file, so a deleted experiment cannot leave stale data behind. */
+function emitOrRemove(path: string, value: Record<string, unknown>) {
+  if (Object.keys(value).length > 0) {
+    emit(path, value);
+    return;
+  }
+  if (!existsSync(path)) return;
+  if (check) stale.push(path.replace(PROJECT_ROOT + '/', ''));
+  else rmSync(path);
+}
 if (!staticOnly) {
   for (const [id, gen] of generated) emit(join(GENERATED_DIR, `${id}.json`), gen);
+  for (const [id, x] of experiments) emitOrRemove(join(GENERATED_DIR, 'experiments', `${id}.json`), x);
 }
 emit(join(GENERATED_DIR, 'question-index.json'), index);
 

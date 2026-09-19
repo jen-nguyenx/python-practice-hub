@@ -203,6 +203,44 @@ export interface Topic {
   workedExample: { title: string; code: string; steps: Md[] };
   commonMistakes: { mistake: MistakeId; bad: string; good: string; note: Md }[];
   scenarios: Scenario[];
+  /** "What if" experiments: change one part of a program and see the output change. 0-4 per topic. */
+  experiments?: Experiment[];
+}
+
+// ---------- "what if" experiments (no grading; every outcome is generated, never typed) ----------
+
+/** One control: a labelled set of alternative code fragments for a single spot in the program. */
+export interface Knob {
+  /** Marker name used in the template as ⟦id⟧. Kebab-case, unique within the experiment. */
+  id: string;
+  /** What this control changes, in plain words, e.g. "where the counting starts". */
+  label: string;
+  /**
+   * 2-4 alternatives. `value` is substituted into the template verbatim, so it must be a single line
+   * (a fragment at the start of a line carries its own indentation). `caption` is the plain-words
+   * label on the button; the fragment itself is shown when there is none.
+   */
+  choices: { value: string; caption?: string }[];
+}
+
+export interface Experiment {
+  /** e.g. "t03-x1". */
+  id: string;
+  title: string;
+  /** One or two sentences: what to change and what to watch. */
+  intro: Md;
+  /** Program with each knob's marker ⟦id⟧ appearing exactly once. */
+  template: string;
+  /** 1-3 knobs. Every combination is run by the verifier. */
+  knobs: Knob[];
+  /** Optional variable table: these names are snapshotted each time `anchorLine` finishes. */
+  watch?: string[];
+  /** 1-based line of the template. Required when `watch` is set. */
+  anchorLine?: number;
+  /** Optional plain-words note for one combination, keyed by choice indexes joined with "-", e.g. "1-0". */
+  notes?: Record<string, Md>;
+  /** The point of the experiment. Always visible under the output. */
+  takeaway: Md;
 }
 
 // ---------- generated data (written by scripts/verify-content.ts, never hand-edited) ----------
@@ -220,3 +258,16 @@ export interface GeneratedQuestion {
   twins?: { outLeft: string; outRight: string; differs: boolean };
 }
 export type GeneratedTopic = Record<string, GeneratedQuestion>;
+
+/** One run of an experiment: what that combination of choices really did. */
+export interface GeneratedRun {
+  stdout: string;
+  /** Set when that combination raises. Experiments may crash on purpose; that is often the lesson. */
+  error?: { type: string; message: string; line: number };
+  /** Present when the experiment sets `watch`: one row per anchor-line execution, as Python reprs. */
+  rows?: string[][];
+}
+/** Combination key (choice indexes joined with "-") -> what happened. */
+export type GeneratedExperiment = Record<string, GeneratedRun>;
+/** Experiment id -> its runs. Written to src/content/generated/experiments/<topic>.json. */
+export type GeneratedExperiments = Record<string, GeneratedExperiment>;

@@ -6,11 +6,12 @@ You are writing practice material for first-year UWA students in CITS1401 (Compu
 Your folder: `src/content/topics/NN-<topic-id>/`.
 - `index.ts` default-exports a `Topic` (`import type { Topic } from '../../schema.ts'`). Replace the stub.
 - One file per scenario: `s1-<slug>.ts` exporting a `Scenario`; `index.ts` imports them WITH `.ts` extensions.
+- Optional `experiments.ts` exporting `experiments: Experiment[]` for the "What if" tab (see below).
 - `cheatsheet` and other Md strings may live in `cheatsheet.ts`. Content files must import only `../../schema.ts` / `../../ids.ts` types (with `import type`). No Vite-only imports, no `?raw`, no JSON imports. Node runs these files directly.
 - Never edit files outside your folder. Never hand-edit `src/content/generated/**` (the verifier writes it).
 
 ## Ids
-- Scenario id: `tNN-sK` (NN = topic number from `src/content/topics.ts`, K = 1..4). Question id: `tNN-sK-qM`. Ids are unique and stable.
+- Scenario id: `tNN-sK` (NN = topic number from `src/content/topics.ts`, K = 1..4). Question id: `tNN-sK-qM`. Experiment id: `tNN-xK`. Ids are unique and stable.
 
 ## Volume and mix (per topic) — these are MINIMUMS
 A topic may hold more than the table says (extra practice is welcome); the verifier only warns when a topic has fewer questions than planned, or loses a format, difficulty band, paper item or project item. When you add questions, keep the same quality bar and spread them across formats and difficulties.
@@ -73,5 +74,37 @@ A topic may hold more than the table says (extra practice is welcome); the verif
   - `refactor`: working but clumsy code; `mustRemove`/`mustAdd` are AST flags from `AST_FLAGS`; tests still pass after refactoring; `pattern` from `PATTERN_IDS`.
   - `testWriter`: `reference` correct, `buggy` wrong on an edge case; `argsExample` is a Python tuple literal like `"([1, 2, 3],)"`.
 
+## "What if" experiments (optional, 2-3 per topic)
+
+One short program with two or three parts turned into controls. The student changes a control and sees the
+real output change. This is the only place in the app that teaches by exploration rather than by question,
+so aim it at the thing students get wrong *before* they can answer anything: what `range()` counts, what a
+loop variable holds, where an accumulator update goes.
+
+Write them in `experiments.ts` (see `src/content/topics/03-for-loops-range/experiments.ts` for three worked
+examples) and add `experiments` to the `Topic` in `index.ts`.
+
+- `template` is the program, with `⟦knobId⟧` markers — the same marker style as a cloze. Each knob gets
+  exactly one marker.
+- Every choice `value` is substituted verbatim and **must stay on one line**, so line numbers never move. A
+  fragment at the start of a line carries its own indentation, which is how "inside the loop" versus "after
+  the loop" is offered as a choice.
+- 1-3 knobs, 2-4 choices each, at most 48 combinations. Give a `caption` when the fragment alone would not
+  read as plain words; the fragment is then shown on hover.
+- `label` names the control the way a student would say it ("stop before", "each time round the loop"), not
+  the way the language does.
+- Set `watch` and `anchorLine` to add a variable table that changes with the controls. Keep it under 16 rows.
+- `notes` explains one specific combination, keyed by choice indexes (`"1-0"`). Write notes for the
+  combinations that teach something: the right answer, and the two or three wrong beliefs worth naming.
+- `takeaway` is always visible and is the point of the whole thing.
+- A combination that **crashes is allowed and often is the lesson** (`len()` of a number). A combination that
+  does not *compile* is an authoring bug and fails the verifier.
+- Nothing is graded and nothing is logged; this tab is readable even when the topic is locked.
+
+The verifier runs every combination in real Python and writes
+`src/content/generated/experiments/<topic-id>.json`. It fails if a fragment does not compile, if every
+combination shows the same thing, or if `anchorLine` never runs, and warns if a control never changes
+anything whatever the others are set to.
+
 ## Verify (mandatory)
-Run `npm run verify -- --topic <topic-id>` until it reports zero errors. It checks your content against the schema rules, runs every solution against its tests in real Python (Pyodide, Python 3.14), checks mutants/distractors/buggy versions fail as intended, and writes `src/content/generated/<topic-id>.json`. Also run `npx tsc --noEmit -p .` and fix type errors in your folder. If the verifier command does not exist yet, wait by working on content quality, then retry. Report the final verifier output summary in your last message.
+Run `npm run verify -- --topic <topic-id>` until it reports zero errors. It checks your content against the schema rules, runs every solution against its tests in real Python (Pyodide, Python 3.14), checks mutants/distractors/buggy versions fail as intended, and writes `src/content/generated/<topic-id>.json` (plus `generated/experiments/<topic-id>.json` if you wrote experiments). Also run `npx tsc --noEmit -p .` and fix type errors in your folder. If the verifier command does not exist yet, wait by working on content quality, then retry. Report the final verifier output summary in your last message.

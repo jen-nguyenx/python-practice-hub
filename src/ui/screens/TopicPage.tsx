@@ -6,8 +6,8 @@ import { href } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
 import { markTopicOpened } from '../../app/session.ts';
 import type { TopicId } from '../../content/ids.ts';
-import { loadTopic } from '../../content/index.ts';
-import type { Topic } from '../../content/schema.ts';
+import { loadExperiments, loadTopic } from '../../content/index.ts';
+import type { GeneratedExperiments, Topic } from '../../content/schema.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
 import type { TopicMeta } from '../../content/topics.ts';
 import { Skeleton } from '../components/Skeleton.tsx';
@@ -19,6 +19,7 @@ import { loadFilters, loadTopicTab, rememberTopicTab, saveFilters } from '../she
 import { QuestionsTab } from '../shell/topic/QuestionsTab.tsx';
 import { CheatSheetTab, MistakesTab, WorkedExampleTab } from '../shell/topic/ReadTabs.tsx';
 import { TopicHeader } from '../shell/topic/TopicHeader.tsx';
+import { WhatIfTab } from '../shell/topic/WhatIf.tsx';
 import '../shell/topic/topic.css';
 
 type LoadState = { status: 'loading' } | { status: 'ready'; topic: Topic } | { status: 'error'; message: string };
@@ -54,6 +55,7 @@ export function TopicPage({ topicId }: { topicId: string }) {
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
   const [tab, setTab] = useState<TopicTab>(() => loadTopicTab(topicId));
   const [filters, setFilters] = useState<TopicFilters>(() => loadFilters(topicId));
+  const [experiments, setExperiments] = useState<GeneratedExperiments | null>(null);
 
   // Tab and filters are remembered per topic; pick them up when moving between topics.
   useEffect(() => {
@@ -71,6 +73,18 @@ export function TopicPage({ topicId }: { topicId: string }) {
     );
     return () => { alive = false; };
   }, [meta?.id]);
+
+  // The recorded outcomes for "what if" are only fetched when that tab is open; every other tab stays light.
+  useEffect(() => {
+    if (!meta || tab !== 'whatif') return;
+    let alive = true;
+    setExperiments(null);
+    loadExperiments(meta.id).then(
+      (g) => { if (alive) setExperiments(g); },
+      () => { if (alive) setExperiments({}); },
+    );
+    return () => { alive = false; };
+  }, [meta?.id, tab]);
 
   const progressAll = useMemo(() => safeTopicProgress(events, settings), [events, settings]);
   const stats = useMemo(() => safeQuestionStats(events), [events]);
@@ -103,13 +117,18 @@ export function TopicPage({ topicId }: { topicId: string }) {
   const allSolved = questions.length > 0 && !firstUnsolved;
   const target = firstUnsolved ?? questions[0];
 
+  // The "what if" tab only appears for topics that have experiments written.
+  const hasExperiments = (topic?.experiments?.length ?? 0) > 0;
   const tabs = [
     { id: 'questions' as const, label: 'Questions' },
     { id: 'cheatsheet' as const, label: 'Cheat sheet' },
     { id: 'example' as const, label: <ShortLabel long="Worked example" short="Example" /> },
+    ...(hasExperiments ? [{ id: 'whatif' as const, label: 'What if' }] : []),
     { id: 'mistakes' as const, label: <ShortLabel long="Common mistakes" short="Mistakes" /> },
   ];
   const idBase = `topic-${meta.id}`;
+
+  const shown: TopicTab = tab === 'whatif' && !hasExperiments ? 'questions' : tab;
 
   let panel;
   if (load.status === 'error') {
@@ -121,12 +140,13 @@ export function TopicPage({ topicId }: { topicId: string }) {
     );
   } else if (!topic || !ready) panel = <TopicSkeleton />;
   else {
-    switch (tab) {
+    switch (shown) {
       case 'questions':
         panel = <QuestionsTab topic={topic} stats={stats} filters={filters} onFilters={changeFilters} locked={locked} recent={recent} />;
         break;
       case 'cheatsheet': panel = <CheatSheetTab topic={topic} />; break;
       case 'example': panel = <WorkedExampleTab topic={topic} />; break;
+      case 'whatif': panel = <WhatIfTab topic={topic} generated={experiments} />; break;
       case 'mistakes': panel = <MistakesTab topic={topic} />; break;
     }
   }
@@ -136,8 +156,8 @@ export function TopicPage({ topicId }: { topicId: string }) {
   return (
     <div class="tp">
       <TopicHeader meta={meta} p={p} ready={ready && (!!topic || load.status === 'error')} target={target} allSolved={allSolved} prevLocked={prevLocked} />
-      <Tabs idBase={idBase} label="Topic sections" tabs={tabs} active={tab} onChange={changeTab} class="tp-tabs" />
-      <TabPanel idBase={idBase} id={tab} class="tp-tabpanel">
+      <Tabs idBase={idBase} label="Topic sections" tabs={tabs} active={shown} onChange={changeTab} class="tp-tabs" />
+      <TabPanel idBase={idBase} id={shown} class="tp-tabpanel">
         {panel}
       </TabPanel>
     </div>

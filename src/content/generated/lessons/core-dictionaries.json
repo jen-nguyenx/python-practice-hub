@@ -49,13 +49,8 @@
       }
     ]
   },
-  "s1-b1": {
-    "error": {
-      "line": 5,
-      "message": "'latte'",
-      "type": "KeyError"
-    },
-    "stdout": "None\n0\n{'flat white': 12, 'muffin': 3}\n"
+  "s1-b2": {
+    "stdout": "0\n{'flat white': 12, 'muffin': 3}\n"
   },
   "s2-b1": {
     "left": {
@@ -229,7 +224,7 @@
   "s2-b4": {
     "stdout": "{'SR001': 2, 'SR002': 1}\n{'SR001': 5.300000000000001, 'SR002': 4.8}\n"
   },
-  "s2-b8": {
+  "s2-b7": {
     "stdout": "{'Perth': 1, 'perth': 1, 'Perth ': 1, 'Joondalup': 1}\n4\n{'perth': 3, 'joondalup': 1}\n2\n"
   },
   "s3-b1": {
@@ -240,10 +235,13 @@
       "stdout": "{'Mon': ['Ava', 'Noor'], 'Tue': ['Kai']}\n"
     }
   },
-  "s4-b1": {
-    "stdout": "key: Ava\nkey: Kai\nkey: Noor\nvalue: 72\nvalue: 41\nvalue: 63\npair: Ava 72\npair: Kai 41\npair: Noor 63\n"
+  "s4-b0": {
+    "stdout": "Ava\nKai\nNoor\n"
   },
-  "s4-b5": {
+  "s4-b1": {
+    "stdout": "value: 72\nvalue: 41\nvalue: 63\npair: Ava 72\npair: Kai 41\npair: Noor 63\n"
+  },
+  "s4-b4": {
     "error": {
       "line": 2,
       "message": "dictionary changed size during iteration",
@@ -251,7 +249,7 @@
     },
     "stdout": ""
   },
-  "s4-b7": {
+  "s4-b5": {
     "stdout": "{'Ava': 72, 'Noor': 63}\n{'Ava': 72, 'Kai': 41, 'Noor': 63}\n"
   },
   "s5-b1": {

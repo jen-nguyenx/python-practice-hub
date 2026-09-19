@@ -42,11 +42,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'The line that assigns to `stops[1]` is the whole difference between a list and a string. A string refuses that and raises an error; a list accepts it and the change is there on the next line. A list can be altered in place. Everything else in this lesson follows from that.',
-        },
-        {
-          kind: 'prose',
-          body: 'A slice of a list works exactly like a slice of a string, and the positions can be counted from either end. Drag both ends below and watch which items a slice actually takes.',
+          body: 'The line that assigns to `stops[1]` is the whole difference between a list and a string. A string refuses that and raises an error; a list accepts it and the change is there on the next line. A list can be altered in place. Everything else in this lesson follows from that.\n\nA slice of a list works exactly like a slice of a string, and the positions can be counted from either end. Drag both ends below and watch which items a slice actually takes.',
         },
         {
           kind: 'experiment',
@@ -76,8 +72,20 @@ const lesson: Lesson = {
           ],
         },
         {
+          kind: 'match',
+          ask: 'Drag each list method onto what it does.',
+          pairs: [
+            { left: 'append(x)', right: 'Adds x to the end of the list' },
+            { left: 'pop()', right: 'Removes and returns the last item' },
+            { left: 'pop(0)', right: 'Removes and returns the first item' },
+            { left: 'insert(i, x)', right: 'Puts x into the list at position i' },
+            { left: 'remove(x)', right: 'Deletes the first item equal to x' },
+            { left: 'sort()', right: 'Reorders the list in place and returns nothing' },
+          ],
+        },
+        {
           kind: 'prose',
-          body: 'The `append` line answered with nothing at all, while `pop` answered with the item it removed. That is not a quirk of the display. A method that changes the list hands back nothing useful, because the change *is* the result. `pop` is the exception: it removes an item and gives it to you, which is what makes it useful for taking the next person off the front of a queue.\n\n`insert`, `remove`, `reverse` and `sort` are all in the first group. None of their results is worth saving, and the next section is about what happens when somebody saves one anyway.',
+          body: 'The `append` line answered with nothing at all, while `pop` answered with the item it removed. That is not a quirk of the display. A method that changes the list hands back nothing useful, because the change *is* the result. `pop` is the exception: it removes an item and gives it to you, which is what makes it useful for taking the next person off the front of a queue. The next section is about what happens when somebody saves a result that was never worth saving.',
         },
         {
           kind: 'code',
@@ -100,11 +108,18 @@ const lesson: Lesson = {
           code: 'times = [31.2, 29.8, 30.5]\ntimes = times.sort()\nprint(times[0])\n',
         },
         {
-          kind: 'prose',
-          body: 'The error is about `None`, which is Python\'s word for no value at all. The sort itself worked perfectly. The problem is the assignment: `times.sort()` reordered the list and handed back nothing, and that nothing was then stored under the name `times`, throwing the list away. The crash arrives one line later, at the first attempt to use it.\n\nSo the rule is about the two lines, not about sorting. Watch both versions side by side.',
+          kind: 'quiz',
+          prompt: 'The sort itself works: `times` really does end up in order. What does the call `times.sort()` itself return, the thing that gets stored in `times` on the line above?',
+          options: [
+            { text: 'None', correct: true, why: '`sort()` reorders the list in place and hands back nothing. That `None` is what got stored under the name `times`, throwing the real list away.' },
+            { text: 'The sorted list', why: 'That is what `sorted(times)` gives back. `times.sort()` changes the list itself and returns nothing at all.' },
+            { text: 'The number of items sorted', why: 'Nothing in this topic reports a count like that. `sort()` returns `None`, full stop.' },
+            { text: 'True', why: '`sort()` does not report success or failure with a boolean. It returns `None`, the same as any function with no `return` statement.' },
+          ],
         },
         {
           kind: 'shell',
+          caption: 'Watch both versions side by side.',
           lines: [
             'times = [31.2, 29.8, 30.5]',
             'sorted(times)',
@@ -145,11 +160,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'The last two lines do the same job; `lambda` is a way of writing a one-line function where it is used instead of naming it above. Either is accepted.\n\nNow look at the two tied suburbs in that output. Their order is whatever order they were in when they arrived, which is not a rule at all, and a marker\'s hidden test will have them the other way round. When a task says "wettest first, then alphabetically", the second rule belongs inside the key.',
-        },
-        {
-          kind: 'prose',
-          body: 'A key that returns a **tuple** is compared part by part: first parts first, and second parts only where the first parts are equal. That is exactly a tie-break. The only difficulty is that one part wants to go high to low and the other low to high, and `reverse=True` reverses everything at once.',
+          body: 'The last two lines do the same job; `lambda` is a way of writing a one-line function where it is used instead of naming it above. Either is accepted.\n\nNow look at the two tied suburbs in that output. Their order is whatever order they were in when they arrived, which is not a rule at all, and a marker\'s hidden test will have them the other way round. When a task says "wettest first, then alphabetically", the second rule belongs inside the key: a key that returns a **tuple** is compared part by part, first parts first, and second parts only where the first parts are equal. The one difficulty is that the number wants to go high to low while the name wants to go low to high, and `reverse=True` reverses both parts at once.',
         },
         {
           kind: 'compare',

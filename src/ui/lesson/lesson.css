@@ -223,3 +223,13 @@
 @media (prefers-reduced-motion: reduce) {
   .ib-option { transition: none; }
 }
+
+.lb-tryit { margin: 0; }
+.lb-tryit-btn { font-size: var(--fs-13); }
+.lb-tryit-btn svg { color: var(--text-muted); }
+
+.lx-search { display: flex; align-items: center; gap: 10px; max-width: 460px; padding: 0 14px; border: 1px solid var(--border-control); border-radius: var(--r-2); background: var(--surface); color: var(--text-muted); }
+.lx-search:focus-within { border-color: var(--focus); box-shadow: 0 0 0 3px var(--blue-soft); }
+.lx-search-in { flex: 1 1 auto; min-width: 0; padding: 11px 0; border: 0; background: transparent; color: var(--text); font-family: var(--sans); font-size: var(--fs-15); }
+.lx-search-in:focus { outline: none; }
+.lx-none { margin: 0; font-size: var(--fs-15); color: var(--text-muted); }

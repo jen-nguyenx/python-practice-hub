@@ -2,6 +2,9 @@
   "s2-b1": {
     "stdout": "[2, 10.25]\nNone\nNone\nNone\n"
   },
+  "s2-b4": {
+    "stdout": "2 10.2\n"
+  },
   "s3-b1": {
     "left": {
       "stdout": "{'subiaco': 20.5, 'como': 4.5} after 8 row visits\n"
@@ -106,7 +109,7 @@
   "s4-b1": {
     "stdout": "{'rowing': 42, 'chess': 28}\nskipped: duplicate -> 'rowing ,17'\nskipped: not a number -> 'Chess,n/a'\nskipped: out of range -> 'Hockey,-3'\n"
   },
-  "s5-b3": {
+  "s5-b4": {
     "stdout": "score only, reversed:  ['hockey', 'chess', 'rowing']\nscore then name A-Z:   ['chess', 'hockey', 'rowing']\n"
   }
 }

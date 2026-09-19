@@ -87,17 +87,15 @@ print(total(['212', '148', 'n/a', '356']))
           ],
         },
         {
-          kind: 'table',
-          caption: 'The same list as a question you can ask yourself.',
-          head: ['Type', 'What Python is telling you', 'Where it usually comes from'],
-          rows: [
-            ['ValueError', 'Right kind of thing, wrong content', 'Converting a field out of a file'],
-            ['TypeError', 'Wrong kind of thing altogether', 'A function that returned `None`, or text added to a number'],
-            ['IndexError', 'There is no item at that position', 'A short row, or a blank line, after `split`'],
-            ['KeyError', 'That key is not in the dictionary', 'Counting into a dictionary without starting the key first'],
-            ['ZeroDivisionError', 'You divided by nothing', 'An average when every row was skipped'],
-            ['FileNotFoundError', 'No file by that name', 'A file name the marker chose, not the one you tested with'],
-            ['NameError', 'I have never been given that name', 'A typo, or using a name before it exists'],
+          kind: 'match',
+          ask: 'Match each exception to the kind of data that usually causes it.',
+          pairs: [
+            { left: '`ValueError`', right: 'Converting a field out of a file' },
+            { left: '`TypeError`', right: 'A function that returned `None`, or text added to a number' },
+            { left: '`IndexError`', right: 'A short row, or a blank line, after `split`' },
+            { left: '`KeyError`', right: 'Counting into a dictionary without starting the key first' },
+            { left: '`ZeroDivisionError`', right: 'An average when every row was skipped' },
+            { left: '`FileNotFoundError`', right: 'A file name the marker chose, not the one you tested with' },
           ],
         },
         {
@@ -148,7 +146,18 @@ print(total(['212', '148', 'n/a', '356']))
       blocks: [
         {
           kind: 'prose',
-          body: 'Writing `except:` with nothing after it catches **everything**. It looks like the safe option. It is the opposite, because the things it catches include all of your own mistakes: a misspelt name, a method you forgot to call, a variable you never set.\n\nThe symptom is not an error. The symptom is a total of 0, or an empty list, from a program that reported nothing at all — and no clue where to start looking.',
+          body: 'Writing `except:` with nothing after it catches **everything**. It looks like the safe option. It is the opposite.',
+        },
+        {
+          kind: 'quiz',
+          prompt: 'A loop is wrapped in `try: ... except:` with nothing after the colon. You misspell a variable name inside the `try`. What happens?',
+          code: "totals = {}\nfor row in data:\n    try:\n        totls['x'] = totls.get('x', 0) + row\n    except:\n        pass\nprint(totals)\n",
+          options: [
+            { text: 'The typo is silently swallowed, and `totals` comes out empty', correct: true, why: 'A bare `except:` catches the `NameError` from the typo exactly as readily as it catches bad data, so the real bug never surfaces — the symptom is only a wrong, quiet answer.' },
+            { text: 'Python still reports the NameError, because typos are a special case', why: 'A bare `except:` does not distinguish your bugs from expected bad data. It catches everything, typos included.' },
+            { text: 'The program crashes anyway, because a typo cannot be caught', why: 'A `NameError` is an exception like any other, and `except:` with nothing named catches every exception.' },
+            { text: 'The loop runs correctly, because `pass` fixes the typo', why: '`pass` does not repair anything. It only means "do nothing here," so the row that hit the typo is simply skipped without a trace.' },
+          ],
         },
         { kind: 'experiment', id: 't10-x3' },
         {

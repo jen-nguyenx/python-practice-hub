@@ -23,25 +23,21 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Everything you have written so far has worked out a value, shown it, and forgotten it. That is enough for one sum and useless for anything longer, because real programs use the same value in several places.\n\nHere is a program that works out the cost of twelve coffees, and then the cost with a ten per cent discount.',
+          body: 'Everything you have written so far works out a value, shows it, and forgets it. That is fine for one sum, and useless once a program uses the same value in several places. Here is the cost of twelve coffees, and the cost with a ten per cent discount, written with the price typed twice.',
         },
         {
           kind: 'code',
-          caption: 'The price is written out twice.',
+          caption: 'The price, 4.50, is written out twice.',
           code: 'print(12 * 4.50)\nprint(12 * 4.50 * 0.9)\n',
         },
         {
           kind: 'prose',
-          body: 'It works. Now the price goes up to five pounds. You have to find every copy of `4.50` and change it, and if you miss one, the program keeps running and gives you a wrong answer without a word of complaint. With two lines you will not miss one. With two hundred lines, you will.\n\nThe fix is to write the price down once, under a name.',
+          body: "It works, until the price changes. Then you have to find every copy of `4.50` and fix it, and a missed copy runs cleanly and gives a wrong answer without a word of complaint. With two lines you won't miss one; with two hundred, you will.",
         },
         {
           kind: 'code',
-          caption: 'The price is written once, at the top. One line to change when it moves.',
+          caption: 'The price is written once, under the name `price`. A **variable** is a label stuck to a value; everywhere you write `price`, Python looks up what it is stuck to. `12 * price` also says what it means, which `12 * 4.50` does not.',
           code: 'price = 5.00\nprint(12 * price)\nprint(12 * price * 0.9)\n',
-        },
-        {
-          kind: 'prose',
-          body: 'A name used like this is called a **variable**, because what it holds can vary. That is the whole idea: `price` is a label, `5.00` is the value the label is stuck to, and everywhere you write `price`, Python looks up what the label is on and uses that.\n\nThe second reason to use names has nothing to do with changing values. `12 * price` says what it means. `12 * 4.50` does not, and in six months neither will you.',
         },
       ],
     },
@@ -51,14 +47,13 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Writing `price = 5.00` is called **assignment**. There is one rule for reading it, and it is not the rule you learned in maths:\n\n> Work out everything on the **right** of the `=` first. Then attach the name on the **left** to the result.\n\nRight to left, always. The name is the destination, not one side of a balance.',
+          body: 'Writing `price = 5.00` is **assignment**, and it reads right to left, not the way you learned in maths:\n\n> Work out everything on the **right** of the `=` first. Then attach the name on the **left** to the result.',
         },
         {
           kind: 'shell',
-          caption: 'Making names, and using them.',
+          caption: 'Making names, and using them. Assignment lines show no answer at all: it is an instruction, not a question. And reading a name never uses it up, as the last line shows.',
           lines: [
             'price = 4.50',
-            'price',
             'price * 2',
             'count = 3',
             'total = price * count',
@@ -67,8 +62,14 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Three things to take from that session.\n\nThe assignment lines showed no answer at all. Assignment is an instruction, not a question: it stores something and hands nothing back. If you ever wonder why a line "did nothing", check whether it was an assignment.\n\nLine 5 worked out `price * count` first, got a number, and only then attached the name `total` to it. Right to left.\n\nAnd the last line shows `price` unchanged. Using a value never uses it up. You can read a name as often as you like.',
+          kind: 'quiz',
+          prompt: 'Given `price = 4.50` and `count = 3`, what does `total = price * count` do?',
+          options: [
+            { text: 'Works out `price * count` first, then attaches the name `total` to the result', correct: true, why: 'Right to left: the right-hand side is finished before any name moves.' },
+            { text: 'Attaches `total` to `price`, then multiplies by `count`', why: 'That reads left to right, which is not how assignment works. The right-hand side is always worked out first.' },
+            { text: 'Compares `price` and `count` and stores whether they match', why: "That's what `==` does. A single `=` stores a value; it never asks a question." },
+            { text: 'Nothing, because assignment never produces a value', why: 'It never shows an answer, but it very much does something: it stores a value under a name for later use.' },
+          ],
         },
         {
           kind: 'callout',
@@ -84,14 +85,13 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Python uses `=` for "store this" and `==` for "are these the same?". They are different operations that happen to be spelled similarly, and confusing them is close to universal at the start.\n\n- `=` is an instruction. It changes what a name holds. It answers nothing.\n- `==` is a question. It changes nothing. It answers `True` or `False`.',
+          body: 'Python uses `=` for "store this" and `==` for "are these the same?": different operations, spelled similarly, confused by nearly everybody at first.',
         },
         {
           kind: 'shell',
-          caption: 'Watch which lines change `count` and which only ask about it.',
+          caption: 'Watch which lines change `count` and which only ask about it. The two `==` lines answer a question and leave `count` exactly as it was; the `=` lines answer nothing and change it.',
           lines: [
             'count = 3',
-            'count',
             'count == 3',
             'count == 4',
             'count',
@@ -100,26 +100,19 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'The two `==` lines answered a question and left `count` exactly as it was. The `=` lines answered nothing and changed it. Read `=` out loud as "becomes" and `==` as "is equal to", and the two stop blurring together.',
-        },
-        {
-          kind: 'prose',
-          body: 'Because assignment is an instruction and the name is the destination, the name has to be on the left. Putting it on the right is not a different way of saying the same thing; it is something Python cannot read at all. The program below is wrong on purpose.',
-        },
-        {
           kind: 'code',
-          caption: 'A deliberate error. Notice that even line 1 produced no output.',
+          caption: 'A deliberate error. Because the name has to be the destination, it has to be on the left; `10 = total` is not readable at all. Notice even line 1 produced no output: Python could not make sense of the whole file, so nothing ran.',
           code: 'total = 10\n10 = total\nprint(total)\n',
         },
         {
-          kind: 'prose',
-          body: 'This error type is different from the others you have seen. Python could not make sense of the file as a piece of writing, so it refused to run **any** of it, including the first line, which was perfectly fine. Nothing at all ran. When you get one of these, the program has not half-worked: it has not started.',
-        },
-        {
-          kind: 'checkpoint',
+          kind: 'quiz',
           prompt: 'What is the difference between `x = 5` and `x == 5`?',
-          answer: 'The first makes `x` hold `5`, replacing whatever it held before, and produces no answer. The second leaves `x` alone and produces `True` or `False` depending on what `x` already holds. Reading them aloud is the reliable way to keep them apart: "x becomes 5" against "x is equal to 5".',
+          options: [
+            { text: '`x = 5` makes `x` hold 5 and answers nothing; `x == 5` leaves `x` alone and answers `True` or `False`', correct: true, why: 'Read them aloud: "x becomes 5" against "x is equal to 5", and the two stop blurring together.' },
+            { text: 'They do the same thing; `==` is just clearer to read', why: 'They are different operations. One stores a value, the other checks one, and mixing them up is a common source of bugs.' },
+            { text: '`x = 5` checks whether `x` is 5; `x == 5` sets it', why: "That's the two swapped. A single `=` stores; a double `==` checks." },
+            { text: '`x == 5` only works if `x` already holds 5', why: '`x == 5` works whatever `x` holds. It simply answers `False` when `x` is something else.' },
+          ],
         },
       ],
     },
@@ -129,11 +122,11 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A name can be re-attached as often as you like, and the old value is dropped when you do. This is how anything that accumulates works: a running total, a score, a counter.\n\nThe line that surprises people is `score = score + 10`, which is nonsense as a mathematical statement and perfectly sensible as an instruction. Read it right to left: work out `score + 10` using what `score` holds *now*, then attach `score` to the answer.',
+          body: 'A name can be re-attached as often as you like, dropping the old value. This is how a running total, a score, or a counter works. `score = score + 10` is nonsense as maths and sensible as an instruction: read it right to left, working out `score + 10` from whatever `score` holds *now*, then attaching `score` to the answer.',
         },
         {
           kind: 'shell',
-          caption: 'A name built up from its own old value.',
+          caption: 'A name built up from its own old value. Each line uses the old value to work out the new one; nothing circular happens, because the right-hand side finishes before the name moves.',
           lines: [
             'score = 0',
             'score = score + 10',
@@ -143,10 +136,6 @@ const lesson: Lesson = {
             'score = score * 2',
             'score',
           ],
-        },
-        {
-          kind: 'prose',
-          body: 'Each line used the old value to work out the new one. Nothing circular happened, because the right-hand side was finished before the name moved.\n\nBecause each step starts from wherever the last one left off, the order of two changes is not a detail. Swap them in the card below and watch the bars.',
         },
         {
           kind: 'interactive',
@@ -196,11 +185,11 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'A name is also free to hold a different *type* of value later. Python does not fix a name to one kind of thing. That flexibility is convenient and occasionally a trap, so it is worth seeing once.',
+          body: 'A name is also free to hold a different *type* of value later. Python does not fix a name to one kind of thing, which is convenient and occasionally a trap.',
         },
         {
           kind: 'shell',
-          caption: 'The same name, holding two different kinds of value.',
+          caption: 'The same name, holding two different kinds of value. The last line fails on purpose: the name is currently attached to text, so adding a number to it is the mixture Python refuses. The name did not change; what it points at did.',
           lines: [
             'answer = 42',
             'type(answer)',
@@ -208,10 +197,6 @@ const lesson: Lesson = {
             'type(answer)',
             'answer + 1',
           ],
-        },
-        {
-          kind: 'prose',
-          body: 'The last line fails on purpose, and by now the message should read as reasonable: the name is currently attached to text, so adding a number to it is the mixture Python refuses. The name did not change. What it points at did.',
         },
       ],
     },
@@ -221,17 +206,16 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Python has a few rules about what a name may be made of, and beyond those, complete freedom. The rules are short:',
+          body: 'Python has a few rules about what a name may be made of, and beyond those, complete freedom. A name that describes what it holds is the cheapest documentation there is; the usual style is lower case with underscores, like `first_name` or `total_cost`. Single letters like `a` or `x` save four keystrokes today and cost ten minutes later, though a loop counter named `i` is a traditional exception.',
         },
         {
-          kind: 'table',
-          caption: 'The rules for a legal name.',
-          head: ['Rule', 'Works', 'Does not work'],
-          rows: [
-            ['Letters, digits and underscores only', 'total_2', 'total-2'],
-            ['Cannot start with a digit', 'score2', '2score'],
-            ['No spaces', 'first_name', 'first name'],
-            ['Capital letters count as different', 'total_cost', 'Total_cost is a separate name'],
+          kind: 'match',
+          ask: 'Match each name to whether it is legal, and why.',
+          pairs: [
+            { left: '`total_2`', right: 'Legal: letters, digits and underscores' },
+            { left: '`2score`', right: 'Illegal: starts with a digit' },
+            { left: '`first name`', right: 'Illegal: contains a space' },
+            { left: '`Total_cost`', right: 'Legal, but a different name from `total_cost`' },
           ],
         },
         {
@@ -240,12 +224,8 @@ const lesson: Lesson = {
           code: '2nd_place = "Sam"\nprint(2nd_place)\n',
         },
         {
-          kind: 'prose',
-          body: 'The last rule in the table is the one that bites quietly. Capital letters matter, so a name typed with a capital in one place and without it in another is two separate names as far as Python is concerned.',
-        },
-        {
           kind: 'shell',
-          caption: 'Two names that differ by one capital letter.',
+          caption: 'Two names that differ by one capital letter. Capitals count, so a name typed with a capital in one place and without it in another is two separate names to Python.',
           lines: [
             'Total = 10',
             'total = 3',
@@ -254,13 +234,14 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Now the part the rules do not cover. A name that describes what it holds is the cheapest documentation there is, and the usual style in Python is lower case with underscores between words: `first_name`, `total_cost`, `days_late`.\n\nSingle letters like `a` and `x` are a false economy. They save you four keystrokes today and cost you ten minutes every time you come back to the code, because nothing on the screen tells you what they are for. The exception that everyone accepts is a counter in a loop, where `i` is traditional and understood.',
-        },
-        {
-          kind: 'checkpoint',
-          prompt: 'Which of these are legal Python names: `total cost`, `total_cost`, `TotalCost`, `1st_total`, `_total`?',
-          answer: '`total_cost`, `TotalCost` and `_total` are legal. `total cost` has a space in it and `1st_total` starts with a digit, so neither can be read by Python at all. Of the legal three, `total_cost` is the one that matches the usual Python style and the one another reader would expect.',
+          kind: 'quiz',
+          prompt: 'Which of these are legal Python names: `total cost`, `total_cost`, `1st_total`?',
+          options: [
+            { text: 'Only `total_cost`', correct: true, why: '`total cost` has a space and `1st_total` starts with a digit, so neither can be read by Python at all.' },
+            { text: 'All three', why: 'A space and a leading digit both make a name unreadable to Python.' },
+            { text: 'Only `1st_total`', why: 'Starting with a digit is exactly what the rules forbid.' },
+            { text: 'None of them', why: '`total_cost` breaks no rule: letters and an underscore, no spaces, no leading digit.' },
+          ],
         },
       ],
     },
@@ -270,7 +251,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Python knows nothing about a name until an assignment creates it. Ask for one it has never been given, and it stops and says so. There are only two ways this happens, and the message is the same for both.\n\nThe first is a typo.',
+          body: 'Python knows nothing about a name until an assignment creates it. Ask for one it has never been given, and it stops and says so. There are only two ways this happens, and the message is the same for both: a typo, or asking for a name before the line that creates it.',
         },
         {
           kind: 'code',
@@ -278,22 +259,19 @@ const lesson: Lesson = {
           code: 'total = 25\nprint(totl)\n',
         },
         {
-          kind: 'prose',
-          body: 'The second is asking for a name before the line that creates it. Remember that the computer works top to bottom: when it reaches line 1 below, line 2 has not happened yet.',
-        },
-        {
           kind: 'code',
-          caption: 'The right name, in the wrong order. Also deliberate.',
+          caption: 'The right name, in the wrong order. The computer works top to bottom, so when it reaches line 1, line 2 has not happened yet.',
           code: 'print(count)\ncount = 5\n',
         },
         {
-          kind: 'prose',
-          body: 'Both programs raise the same type of error, and it is worth committing to memory because you will see it weekly: Python is telling you that the name on that line means nothing to it.\n\nThe fix is one of two things, and the error alone cannot tell you which. Either you spelled it differently from the line that created it, or you have not created it yet. Check the spelling first, since that is the commoner of the two and takes a second to rule out.',
-        },
-        {
-          kind: 'checkpoint',
-          prompt: 'A program reads `average = totla / count` and stops on that line saying the name `totla` is not defined. You look above and find a line reading `total = 240`. What happened, and what changes?',
-          answer: 'The letters of `total` got swapped while typing. The line that stored the value used one spelling and the line that reads it uses another, so Python sees two unrelated names and has only ever been given one of them. Fix the spelling on the line that failed. The value was never lost; it was under the other label the whole time.',
+          kind: 'quiz',
+          prompt: 'A program reads `average = totla / count` and stops on that line, saying the name `totla` is not defined. A line above reads `total = 240`. What happened?',
+          options: [
+            { text: 'The letters of `total` got swapped while typing; the two lines use different spellings for what was meant to be the same name', correct: true, why: 'Python sees two unrelated names and has only ever been given one of them. The value was never lost, only stored under a different label.' },
+            { text: '`total` was never given a value', why: 'It was: the line above sets `total = 240`. The problem is that the line using it spells it differently.' },
+            { text: 'You cannot divide by `count`', why: 'The error names `totla`, not `count` or a division problem. Read the message for the exact name it could not find.' },
+            { text: 'Python ran the lines in the wrong order', why: 'Python always runs top to bottom. The line defining `total` runs before the line that fails, so order is not the issue here.' },
+          ],
         },
       ],
     },

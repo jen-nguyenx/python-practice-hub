@@ -7,11 +7,27 @@ import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd, Markdown } from '../components/Markdown.tsx';
 import { Annotate, Match, Order, Predict, Quiz } from './Interactive.tsx';
+import { openInPlayground } from '../workbench/openInPlayground.ts';
 import { MistakesTab, WorkedExampleTab } from '../shell/topic/ReadTabs.tsx';
 import { ExperimentCard } from '../shell/topic/WhatIf.tsx';
 
 function errorText(e: LessonError): string {
   return `${e.type}${e.message ? `: ${e.message}` : ''}`;
+}
+
+/**
+ * Takes the program to the Playground so a reader can change it and run it themselves. Deliberately not
+ * offered on a prediction until it has been answered: being able to run the code first would turn
+ * "what does this print" into "press the button".
+ */
+function TryIt({ code, name }: { code: string; name: string }) {
+  return (
+    <p class="lb-tryit">
+      <button type="button" class="btn ghost lb-tryit-btn" onClick={() => openInPlayground(code, name)}>
+        <Icon name="terminal" size={14} /> Try it yourself
+      </button>
+    </p>
+  );
 }
 
 /**
@@ -80,6 +96,8 @@ function Checkpoint({ prompt, answer }: { prompt: string; answer: string }) {
 const CALLOUT_TITLE = { note: 'Worth knowing', warn: 'Careful', exam: 'In the exam' } as const;
 
 export interface BlockContext {
+  /** Used to name the file when a program is sent to the Playground. */
+  slug: string;
   topic: Topic | null;
   experiments: GeneratedExperiments | null;
   /** Where the practice block sends the reader. */
@@ -98,6 +116,7 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
           {block.caption ? <figcaption><Markdown text={block.caption} class="lb-md lb-cap" /></figcaption> : null}
           <CodeBlock code={block.code} numbered label="Example program" />
           {block.hideOutput ? null : <Output recorded={gen !== undefined} stdout={gen?.stdout} error={gen?.error} label="What it prints" />}
+          <TryIt code={block.code} name={`${ctx.slug}.py`} />
         </figure>
       );
 
@@ -122,6 +141,7 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
                 </p>
                 <CodeBlock code={spec.code} label={spec.label} />
                 <Output recorded={out !== undefined} stdout={out?.stdout} error={out?.error} label={`What ${spec.label} prints`} />
+                <TryIt code={spec.code} name={`${ctx.slug}-${side}.py`} />
               </div>
             ))}
           </div>
@@ -145,7 +165,7 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
       return <Quiz prompt={block.prompt} code={block.code} options={block.options} />;
 
     case 'predict':
-      return <Predict code={block.code} ask={block.ask} choices={block.choices} stdout={gen?.stdout} error={gen?.error} />;
+      return <Predict code={block.code} ask={block.ask} choices={block.choices} stdout={gen?.stdout} error={gen?.error} slug={ctx.slug} />;
 
     case 'order':
       return <Order lines={block.lines} ask={block.ask} stdout={gen?.stdout} />;
@@ -154,7 +174,12 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
       return <Match pairs={block.pairs} ask={block.ask} />;
 
     case 'annotate':
-      return <Annotate code={block.code} notes={block.notes} ask={block.ask} />;
+      return (
+        <>
+          <Annotate code={block.code} notes={block.notes} ask={block.ask} />
+          <TryIt code={block.code} name={`${ctx.slug}.py`} />
+        </>
+      );
 
     case 'steps':
       return (

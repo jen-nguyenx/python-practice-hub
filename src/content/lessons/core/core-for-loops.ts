@@ -64,8 +64,13 @@ print('Done')
           ],
         },
         {
+          kind: 'predict',
+          ask: 'Predict exactly which numbers this range produces, including whether 9 is one of them.',
+          code: 'print(list(range(2, 9, 2)))\n',
+        },
+        {
           kind: 'prose',
-          body: 'The last pair is the one to keep. When a question says "from 1 to n", including n, the stop has to be `n + 1`. When it says "the first n values", starting at zero, `range(n)` is already right.\n\nThe two empty ranges are worth knowing because a loop over an empty range is not an error. The body runs zero times, quietly, and whatever comes after the loop still runs. A loop that prints nothing is almost always a range whose start and stop are the wrong way round for its step.',
+          body: 'When a question says "from 1 to n", including n, the stop has to be `n + 1`. When it says "the first n values", starting at zero, `range(n)` is already right.\n\nA loop over an empty range is not an error. The body runs zero times, quietly, and whatever comes after the loop still runs. A loop that prints nothing is almost always a range whose start and stop are the wrong way round for its step.',
         },
         {
           kind: 'experiment',
@@ -124,17 +129,24 @@ print('Done')
       blocks: [
         {
           kind: 'prose',
-          body: 'Most useful loops build one answer out of many values: a total, a count, a highest so far. The shape is always the same three parts, and each part is on a different indentation level.\n\n**Before** the loop, create the variable and give it a starting value. **Inside** the loop, update it using its own current value. **After** the loop, use it. A sum starts at 0, a count starts at 0, and a product starts at 1, because starting a product at 0 would hold it at 0 forever.',
+          body: 'Most useful loops build one answer out of many values: a total, a count, a highest so far. The pattern always has three parts, each at its own indentation level: set up before the loop, update inside it, use the result after.',
         },
         {
-          kind: 'code',
-          caption: 'Four prices, one total. The variable appears on both sides of the update.',
-          code: `prices = [4.9, 3.2, 4.9, 6.4]
-total = 0
-for price in prices:
-    total = total + price
-print(round(total, 2))
-`,
+          kind: 'order',
+          ask: 'These five lines build a running total over a list of prices. Drag them into the order that makes the loop work.',
+          lines: [
+            { text: 'prices = [4.9, 3.2, 4.9, 6.4]', indent: 0 },
+            { text: 'total = 0', indent: 0 },
+            { text: 'for price in prices:', indent: 0 },
+            { text: 'total = total + price', indent: 1 },
+            { text: 'print(round(total, 2))', indent: 0 },
+          ],
+        },
+        {
+          kind: 'callout',
+          tone: 'note',
+          title: 'Where an accumulator starts',
+          body: 'A sum starts at 0, a count starts at 0, and a product starts at 1 — starting a product at 0 would hold it at 0 forever.',
         },
         {
           kind: 'prose',

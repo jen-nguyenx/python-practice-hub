@@ -29,6 +29,9 @@
       "stdout": "22\n"
     }
   },
+  "s2-b3": {
+    "stdout": "10\n10 None\n"
+  },
   "s3-b1": {
     "stdout": "big\nNone\n"
   },

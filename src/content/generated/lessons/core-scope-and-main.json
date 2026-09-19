@@ -8,6 +8,9 @@
     "stdout": "6.4\n"
   },
   "s1-b1": {
+    "stdout": "inside:  0\noutside: 100\n"
+  },
+  "s1-b2": {
     "error": {
       "line": 5,
       "message": "cannot access local variable 'visitors' where it is not associated with a value",

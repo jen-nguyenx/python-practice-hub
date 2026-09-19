@@ -9,6 +9,7 @@ export type Route =
   | { name: 'question'; qid: string }
   | { name: 'playground' }
   | { name: 'report'; topicId?: string }
+  | { name: 'review' }
   | { name: 'topic-test'; topicId: string }
   | { name: 'exam' }
   | { name: 'settings' }
@@ -35,6 +36,7 @@ export function parseHash(hash: string): Route {
     case 'q': return parts[1] ? { name: 'question', qid: parts[1] } : { name: 'not-found', path };
     case 'playground': return { name: 'playground' };
     case 'report': return { name: 'report', topicId: parts[1] };
+    case 'review': return { name: 'review' };
     case 'test': return parts[1] ? { name: 'topic-test', topicId: parts[1] } : { name: 'not-found', path };
     case 'exam': return { name: 'exam' };
     // The mid-semester test became the exam page; old links and bookmarks still work.
@@ -66,6 +68,7 @@ export const href = {
   lesson: (id: string) => `#/lesson/${id}`,
   topicLesson: (id: string) => `#/learn/${id}`,
   lessons: () => '#/lessons',
+  review: () => '#/review',
   question: (qid: string) => `#/q/${qid}`,
   playground: () => '#/playground',
   report: (topicId?: string) => (topicId ? `#/report/${topicId}` : '#/report'),

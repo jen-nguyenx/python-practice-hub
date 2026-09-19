@@ -2,10 +2,10 @@
   "s0-b1": {
     "stdout": "15\n"
   },
-  "s1-b1": {
+  "s1-b0": {
     "stdout": "Hello\nSam\n42\nname\n"
   },
-  "s1-b3": {
+  "s1-b1": {
     "shell": [
       {
         "source": "greeting = \"Hello\"",
@@ -19,11 +19,6 @@
       {
         "source": "print(greeting)",
         "stdout": "Hello\n"
-      },
-      {
-        "source": "\"Hello\"",
-        "stdout": "",
-        "value": "'Hello'"
       }
     ]
   },
@@ -34,28 +29,16 @@
         "stdout": "Total: 42\n"
       },
       {
-        "source": "print(\"a\", \"b\", \"c\")",
-        "stdout": "a b c\n"
-      },
-      {
         "source": "print(1, 2, 3, sep=\" - \")",
         "stdout": "1 - 2 - 3\n"
       },
       {
         "source": "print(\"a\", \"b\", sep=\"\")",
         "stdout": "ab\n"
-      },
-      {
-        "source": "print()",
-        "stdout": "\n"
-      },
-      {
-        "source": "print(\"done\")",
-        "stdout": "done\n"
       }
     ]
   },
-  "s2-b4": {
+  "s2-b2": {
     "error": {
       "line": 2,
       "message": "can only concatenate str (not \"int\") to str",
@@ -63,7 +46,7 @@
     },
     "stdout": ""
   },
-  "s2-b6": {
+  "s2-b3": {
     "stdout": "Total: 42\nTotal: 42\n"
   },
   "s3-b1": {
@@ -77,17 +60,8 @@
         "stdout": ""
       },
       {
-        "source": "f\"{name} scored {score}\"",
-        "stdout": "",
-        "value": "'Sam scored 87'"
-      },
-      {
         "source": "print(f\"{name} scored {score}.\")",
         "stdout": "Sam scored 87.\n"
-      },
-      {
-        "source": "print(f\"{name} scored {score} out of 100, which is {score / 100}\")",
-        "stdout": "Sam scored 87 out of 100, which is 0.87\n"
       },
       {
         "source": "print(f\"Twice {score} is {score * 2}\")",
@@ -95,7 +69,7 @@
       }
     ]
   },
-  "s3-b4": {
+  "s3-b2": {
     "left": {
       "stdout": "Hello, {name}\n"
     },
@@ -110,19 +84,9 @@
         "stdout": ""
       },
       {
-        "source": "price",
-        "stdout": "",
-        "value": "0.6666666666666666"
-      },
-      {
         "source": "round(price, 2)",
         "stdout": "",
         "value": "0.67"
-      },
-      {
-        "source": "price",
-        "stdout": "",
-        "value": "0.6666666666666666"
       },
       {
         "source": "f\"{price:.2f}\"",
@@ -133,14 +97,10 @@
         "source": "price",
         "stdout": "",
         "value": "0.6666666666666666"
-      },
-      {
-        "source": "print(f\"That is {price:.2f} each\")",
-        "stdout": "That is 0.67 each\n"
       }
     ]
   },
-  "s4-b4": {
+  "s4-b2": {
     "experiment": {
       "runs": {
         "0-0": {
@@ -230,7 +190,7 @@
       }
     }
   },
-  "s4-b6": {
+  "s4-b3": {
     "shell": [
       {
         "source": "round(2.5)",
@@ -246,20 +206,10 @@
         "source": "round(4.5)",
         "stdout": "",
         "value": "4"
-      },
-      {
-        "source": "round(2.4)",
-        "stdout": "",
-        "value": "2"
-      },
-      {
-        "source": "round(2.6)",
-        "stdout": "",
-        "value": "3"
       }
     ]
   },
-  "s5-b2": {
+  "s5-b1": {
     "shell": [
       {
         "source": "x = print(\"hello\")",
@@ -272,11 +222,6 @@
       {
         "source": "print(x)",
         "stdout": "None\n"
-      },
-      {
-        "source": "type(x)",
-        "stdout": "",
-        "value": "<class 'NoneType'>"
       }
     ]
   }

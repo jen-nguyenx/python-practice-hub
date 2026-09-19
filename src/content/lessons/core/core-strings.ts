@@ -74,8 +74,15 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Because the stop is left out, the number of characters a slice takes is the stop minus the start. That is a subtraction you can do in your head, and it beats counting letters on the screen.\n\nIt is also why `word[0:4]` and `word[4:9]` fit together with nothing missing and nothing repeated, which you can see in the line that adds them. Leaving a number out means "from the beginning" or "to the end". And unlike indexing, a slice never raises an error for going too far, which is a convenience right up until it quietly hides a bug.',
+          kind: 'predict',
+          ask: 'Predict what this prints, including how many characters come out the other end.',
+          code: "word = 'FREMANTLE'\nprint(word[2:7])\nprint(len(word[2:7]))\n",
+        },
+        {
+          kind: 'callout',
+          tone: 'note',
+          title: 'Count without counting',
+          body: 'The number of characters a slice takes is the stop minus the start — a subtraction you can do in your head, faster than counting letters on the screen.',
         },
         {
           kind: 'experiment',
@@ -217,13 +224,21 @@ const lesson: Lesson = {
           body: 'Since nothing can be changed, a string that you assemble has to be assembled the way a running total is: start with an empty one before the loop, and on each pass replace it with itself plus a bit more.\n\nThe empty string `\'\'` is two quote marks with nothing between them. It is to text what 0 is to addition: the thing you start from.',
         },
         {
-          kind: 'code',
-          caption: 'Pulling the digits out of a seat label.',
+          kind: 'annotate',
+          ask: 'Pulling the digits out of a seat label. Click any line to find out what it does.',
           code: "digits = ''\nfor ch in 'Gate 7, Row 12':\n    if ch.isdigit():\n        digits = digits + ch\nprint(digits)\nprint(digits + digits)\nprint(int(digits) + int(digits))\n",
+          notes: {
+            '1': 'Starts the string empty, exactly like a running total starts at 0. This is the value before anything has been added.',
+            '2': 'Visits one character at a time from the sentence, including the spaces, the comma and the digits.',
+            '3': 'Only characters that are digits pass this test; letters, spaces and the comma are skipped.',
+            '4': 'Builds a new string: the digits collected so far, plus this one more character, replacing the old value under the same name.',
+            '6': 'Two copies of the same text glued end to end — `+` here means join, not add, because both sides are still text.',
+            '7': 'Converts each side to a number first, so this line really does add. Compare its answer with the line above.',
+          },
         },
         {
           kind: 'prose',
-          body: 'The last two lines add the same thing to itself and disagree completely. What the loop built is text, and text made of digits is still text until something converts it, so `+` glues where you might have expected it to add. Converting with `int()` is a separate step, and forgetting it is one of the most common ways a string question goes wrong late.\n\nTwo things break this pattern. Putting `digits = \'\'` inside the loop resets it on every pass, so only the last character survives. And adding a separator after each item leaves one on the end that should not be there.',
+          body: 'Two things break this pattern. Putting `digits = \'\'` **inside** the loop resets it on every pass, so only the last character survives. And adding a separator after each item leaves one on the end that should not be there.',
         },
         {
           kind: 'code',

@@ -21,7 +21,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'You already know how to keep data in lists and dictionaries and how to write functions that work on them. A class is not a new kind of power. It is a way of keeping **one thing\'s data and the operations on that data in one place**, so they cannot drift apart.\n\nHere is what drifting apart looks like. Two lists hold the parts of the same accounts, and nothing in the language makes them stay the same length.',
+          body: 'You already keep data in lists and dictionaries and write functions that work on them. A class does one specific job: it keeps **one thing\'s data and the operations on that data in one place**, so they cannot drift apart.\n\nHere is what drifting apart looks like. Two lists hold the parts of the same accounts, and nothing in the language forces them to stay in step.',
         },
         {
           kind: 'compare',
@@ -37,8 +37,22 @@ const lesson: Lesson = {
           },
         },
         {
+          kind: 'quiz',
+          prompt: 'The left-hand version does not crash on a typo. Why does it fail?',
+          options: [
+            {
+              text: 'The design allows a half-finished account to exist',
+              correct: true,
+              why: 'Appending to `names` without appending to `balances` is legal Python. Nothing ties the two lists together, so an account can exist in one and not the other.',
+            },
+            { text: '`append` is the wrong method to add an item to a list', why: '`append` is correct and works exactly as intended. The bug is not in that call, it is in there being two lists to keep in step at all.' },
+            { text: 'Python lists cannot hold both text and numbers across two lists', why: 'They can, and do here without complaint. The mismatch is in length, not in type.' },
+            { text: 'The `deposit` function has a bug in its arithmetic', why: 'The arithmetic is right: `balances[0]` genuinely gains 30.0. The account added afterwards is the one that breaks.' },
+          ],
+        },
+        {
           kind: 'prose',
-          body: 'The left-hand version does not fail because of a typo. It fails because the design allows a half-finished account to exist. An `Account` object cannot be half-finished: making one demands both parts at once, and the name and the balance travel together for the rest of their lives.\n\nThat is the reason to reach for a class. Not "this is the advanced way", but "these pieces belong to each other and I want the language to enforce it".',
+          body: 'An `Account` object cannot be half-finished: making one demands a name and a balance at once, and the two travel together for the rest of their lives. That is the reason to reach for a class — not "this is the advanced way", but "these pieces belong to each other and I want the language to enforce it".',
         },
       ],
     },
@@ -48,7 +62,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Strip away the vocabulary and an object is a small bag of named values, plus a label saying what kind of thing it is. You can watch that in the shell. `vars()` shows the bag; `type()` shows the label.',
+          body: 'Strip away the vocabulary and an object is a small bag of named values, plus a label saying what kind of thing it is. `vars()` shows the bag; `type()` shows the label.',
         },
         {
           kind: 'shell',
@@ -60,7 +74,6 @@ const lesson: Lesson = {
             "d.name = 'Rex'",
             'd.age = 4',
             'vars(d)',
-            'd.name',
             'type(d)',
             'isinstance(d, Dog)',
             'e = Dog()',
@@ -69,8 +82,18 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Two facts from that session are worth holding on to. Each object carries **its own** bag: creating a second `Dog` did not inherit the first one\'s name. And the class is the label, not the contents: both objects are `Dog`s while holding completely different things.\n\nWriting attributes on from outside, the way that session did, works but is a poor habit. Anyone reading the class has no idea what a `Dog` is supposed to hold. That is what `__init__` is for.',
+          kind: 'quiz',
+          prompt: 'Two `Dog` objects were made above, and only one of them got a `name`. What does that show about how objects hold data?',
+          options: [
+            {
+              text: 'Each object carries its own bag; nothing is shared between instances by default',
+              correct: true,
+              why: '`vars(e)` came back empty. Making a second `Dog` did not inherit the first one\'s attributes — each object starts with a bag of its own.',
+            },
+            { text: 'The class itself changed once `d.name` was set', why: 'The class did not change. `Dog.name` still does not exist; only `d`, one specific object, gained the attribute.' },
+            { text: '`d` and `e` are two names for the same object', why: '`d is e` says `False`. They are two separate objects, made by two separate calls to `Dog()`.' },
+            { text: 'Setting an attribute from outside the class is required to give an object any data', why: 'It works here, but it is a poor habit for exactly the reason this section is heading toward: a reader of `Dog` has no way to know what a `Dog` is supposed to hold.' },
+          ],
         },
       ],
     },
@@ -80,27 +103,42 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: '`__init__` runs automatically, once, straight after a new object is made. Its job is to put the object into a usable state: every attribute the rest of the class relies on should be set here, so a reader can learn the whole shape of the object from one method.\n\nThe first parameter, `self`, is the object being set up. The name is a convention, not a keyword, but use it: every Python reader expects it.',
+          body: '`__init__` runs automatically, once, straight after a new object is made. Its job is to put the object into a usable state, so a reader can learn the whole shape of the object from one method. The first parameter, `self`, is the object being set up — a convention, not a keyword, but every Python reader expects it.',
         },
         {
           kind: 'code',
           caption: 'Two accounts, made from one class.',
-          code: "class Account:\n    def __init__(self, name, balance):\n        self.name = name\n        self.balance = balance\n\na = Account('Ada', 120.0)\nb = Account('Grace', 40.0)\nprint(a.name, a.balance)\nprint(b.name, b.balance)\nprint(vars(a))\nprint(vars(b))\nprint(a is b, type(a) is type(b))\n",
+          code: "class Account:\n    def __init__(self, name, balance):\n        self.name = name\n        self.balance = balance\n\na = Account('Ada', 120.0)\nb = Account('Grace', 40.0)\nprint(a.name, a.balance)\nprint(b.name, b.balance)\nprint(a is b, type(a) is type(b))\n",
         },
         {
-          kind: 'prose',
-          body: 'Notice what `Account(...)` gave back, and what the two bags hold. `self.name = name` is not a mystery: on the left is an attribute of this one object, on the right is the argument that was passed in. They are spelled the same here out of habit, and you could call the parameter anything.',
+          kind: 'order',
+          ask: 'These lines build a working `Point` class and use it. Drag them into an order that runs.',
+          lines: [
+            { text: 'class Point:', indent: 0 },
+            { text: 'def __init__(self, x, y):', indent: 1 },
+            { text: 'self.x = x', indent: 2 },
+            { text: 'self.y = y', indent: 2 },
+            { text: 'def move(self, dx):', indent: 1 },
+            { text: 'self.x = self.x + dx', indent: 2 },
+            { text: 'p = Point(0, 0)', indent: 0 },
+          ],
+        },
+        {
+          kind: 'predict',
+          ask: 'Here `self.` is left off inside `__init__`. What prints?',
+          code: "class Account:\n    def __init__(self, name, balance):\n        name = name\n        balance = balance\n\na = Account('Ada', 120.0)\ntry:\n    print(a.name)\nexcept AttributeError as e:\n    print('AttributeError:', e)\n",
+          choices: [
+            'Ada',
+            "AttributeError: 'Account' object has no attribute 'name'",
+            '120.0',
+            'None',
+          ],
         },
         {
           kind: 'callout',
           tone: 'warn',
           title: 'A bare `name = name` does nothing useful',
-          body: 'Inside `__init__`, writing `name = name` makes a local variable that dies when the method ends. Only assignments to `self.something` outlive the call. If an attribute is missing later, this is the first thing to check.',
-        },
-        {
-          kind: 'code',
-          caption: 'The same class with the `self.` left off. It raises on purpose.',
-          code: "class Account:\n    def __init__(self, name, balance):\n        name = name\n        balance = balance\n\na = Account('Ada', 120.0)\nprint(a.name)\n",
+          body: 'It makes a local variable that dies when `__init__` ends. Only assignments to `self.something` outlive the call. If an attribute is missing later, this is the first thing to check.',
         },
       ],
     },
@@ -115,25 +153,26 @@ const lesson: Lesson = {
         {
           kind: 'code',
           caption: 'The same deposit, called two ways.',
-          code: "class Account:\n    def __init__(self, name, balance):\n        self.name = name\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance = self.balance + amount\n        return self.balance\n\n    def can_afford(self, cost):\n        return cost <= self.balance\n\na = Account('Ada', 100.0)\nprint(a.deposit(10.0))\nprint(Account.deposit(a, 10.0))\nprint(a.balance)\nprint(a.can_afford(50.0), a.can_afford(500.0))\nprint(type(a.deposit).__name__, type(Account.deposit).__name__)\n",
+          code: "class Account:\n    def __init__(self, name, balance):\n        self.name = name\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance = self.balance + amount\n        return self.balance\n\n    def can_afford(self, cost):\n        return cost <= self.balance\n\na = Account('Ada', 100.0)\nprint(a.deposit(10.0))\nprint(Account.deposit(a, 10.0))\nprint(a.balance)\nprint(a.can_afford(50.0), a.can_afford(500.0))\n",
         },
         {
-          kind: 'prose',
-          body: '`a.deposit(10.0)` and `Account.deposit(a, 10.0)` did the same work, and the balance shows both deposits landed. The dot form fills in the first argument with the object on the left of the dot. That is the whole of `self`.\n\nThe last line is the same idea seen from the other end: reached through an instance the function has become something that already knows its object, and reached through the class it has not.',
-        },
-        {
-          kind: 'code',
-          caption: 'A method written without `self` in its signature. This one raises, and the message is worth reading closely.',
+          kind: 'quiz',
+          prompt: 'A method is written as `def deposit(amount):` with no `self` parameter, and `a.deposit(10.0)` is called. What happens?',
           code: "class Account:\n    def __init__(self, balance):\n        self.balance = balance\n\n    def deposit(amount):\n        return amount\n\na = Account(100.0)\nprint(a.deposit(10.0))\n",
-        },
-        {
-          kind: 'checkpoint',
-          prompt: 'The call above passed one argument, and the complaint counts two. Where did the second one come from, and why does adding `self` to the signature fix it rather than hiding the problem?',
-          answer: 'The dot call always passes the object on the left of the dot as the first argument, so `a.deposit(10.0)` really hands over two values: `a` and `10.0`. The method as written has room for one. Adding `self` does not silence anything — it gives the object somewhere to land, which is what the method needed all along if it is ever to read `self.balance`. A method that genuinely has no use for the object is a sign it should not be a method at all.',
+          options: [
+            {
+              text: 'TypeError: deposit() takes 1 positional argument but 2 were given',
+              correct: true,
+              why: 'The dot call always passes the object on the left of the dot as the first argument, so `a.deposit(10.0)` really hands over two values: `a` and `10.0`. The method as written has room for one.',
+            },
+            { text: '10.0, because the object is not needed for this method', why: 'The call never gets that far. It fails before the body runs, on the mismatched number of arguments.' },
+            { text: '100.0, the balance the account started with', why: '`deposit` never even reaches `return amount`; the call fails on the argument count first.' },
+            { text: 'Nothing prints, but no error is raised either', why: 'An uncaught `TypeError` does raise, and does stop the program — it does not fail silently.' },
+          ],
         },
         {
           kind: 'prose',
-          body: 'A useful habit when naming methods: a method that **changes** the object (`deposit`, `append`, `sort`) usually returns nothing, and a method that **answers a question** about it (`can_afford`, `count`, `sorted`) returns a value and changes nothing. Mixing the two in one method is how surprising bugs get written.',
+          body: 'Adding `self` back does not silence anything: it gives the object somewhere to land, which the method needs if it is ever to read `self.balance`. A method that never mentions `self` is usually a function wearing a costume.',
         },
       ],
     },
@@ -143,7 +182,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'An attribute written in the class body, outside any method, belongs to the **class**. Every instance can see it, and there is only one of it. An attribute assigned through `self` belongs to that **instance** alone.\n\nReading follows a simple order: the instance\'s own bag first, the class second. Writing never follows that order — it always makes an instance attribute.',
+          body: 'An attribute written in the class body, outside any method, belongs to the **class**; every instance can see it, and there is only one of it. An attribute assigned through `self` belongs to that **instance** alone. Reading checks the instance\'s own bag first, then the class. Writing always makes an instance attribute.',
         },
         {
           kind: 'shell',
@@ -153,17 +192,15 @@ const lesson: Lesson = {
             'a = Dog()',
             'b = Dog()',
             'a.legs, b.legs, Dog.legs',
-            'vars(a)',
             'a.legs = 3',
             'a.legs, b.legs, Dog.legs',
-            'vars(a)',
             'Dog.legs = 5',
             'a.legs, b.legs',
           ],
         },
         {
           kind: 'prose',
-          body: 'Assigning to `a.legs` did not change the class or the other dog: it put a value in `a`\'s own bag, which is then found first. Changing the class attribute afterwards moved `b`, which still has nothing of its own, and left `a` where it was.\n\nThat is harmless for a number. It is not harmless for a list or a dict, because there you usually **change the object in place** instead of assigning a new one, and in-place changes are visible to everyone sharing it.',
+          body: 'Assigning to `a.legs` did not touch the class or the other dog. That is harmless for a number, because assignment replaces the value. It is not harmless for a list or a dict, because those are usually **changed in place** instead — and an in-place change is visible to everyone sharing the object.',
         },
         {
           kind: 'compare',
@@ -182,7 +219,7 @@ const lesson: Lesson = {
           kind: 'callout',
           tone: 'warn',
           title: 'Anything mutable belongs in `__init__`',
-          body: 'A list, dict or set written in the class body is created once, when the class is defined, and shared by every object of that class for the whole run. This is the same trap as a mutable default argument in a function, and it is found late because it only shows up once a second object exists.',
+          body: 'A list, dict or set written in the class body is created once, when the class is defined, and shared by every object of that class for the whole run. This is the same trap as a mutable default argument, and it is found late because it only shows up once a second object exists.',
         },
         {
           kind: 'interactive',
@@ -205,13 +242,22 @@ const lesson: Lesson = {
               '0': "One list, made once when the class was defined. Both baskets read `self.items`, find nothing of their own, and fall back to that same class attribute — so `b1.add('apple')` and `b2.add('pear')` both land in it, and `b1.items is b2.items` is `True`.",
               '1': "`__init__` runs once per basket and creates a fresh list each time. `b1.items` and `b2.items` are now different objects, so each basket only ever holds what was added to it.",
             },
-            takeaway: 'The class body runs once, when the class is defined; `__init__` runs once per object. A mutable value written in the class body is therefore one object shared by everyone, and a mutable value assigned in `__init__` is a new one per instance — the only difference is which of those two places the line sits in.',
+            takeaway: 'The class body runs once, when the class is defined; `__init__` runs once per object. A mutable value written in the class body is therefore one object shared by everyone, and a mutable value assigned in `__init__` is a new one per instance.',
           },
         },
         {
-          kind: 'checkpoint',
-          prompt: 'A class has `counts = {}` in its body and a method whose only line is `self.counts[word] = 1`. A second method\'s only line is `self.counts = {}`. Which of the two changes what other instances see, and why are they different when both are spelled with `self.counts`?',
-          answer: 'The first one changes what everyone sees. `self.counts[word] = 1` looks up `counts`, finds nothing in the instance bag, falls back to the class attribute, and then mutates that one shared dict in place. The second one is an assignment to `self.counts`, and assignment never falls back: it creates an instance attribute, so that instance stops seeing the shared dict entirely and no one else is affected. Same spelling, different operation — one reads then mutates, the other binds.',
+          kind: 'quiz',
+          prompt: 'A class has `counts = {}` in its body. One method\'s only line is `self.counts[word] = 1`; another\'s only line is `self.counts = {}`. Which one changes what other instances see?',
+          options: [
+            {
+              text: 'Only `self.counts[word] = 1`',
+              correct: true,
+              why: 'It looks up `counts`, finds nothing in the instance bag, falls back to the shared class dict, and mutates that dict in place — every instance sees the new key. `self.counts = {}` is an assignment, which never falls back: it creates an instance attribute and leaves the shared dict alone.',
+            },
+            { text: 'Only `self.counts = {}`', why: 'Assignment to `self.counts` creates a fresh instance attribute; it does not reach back and change the shared dict other instances still see.' },
+            { text: 'Both, equally', why: 'They look similar but perform different operations: one reads then mutates a shared object, the other replaces what the instance points to. Only the first is visible elsewhere.' },
+            { text: 'Neither — `self.counts` always refers to the instance', why: 'Reading falls back to the class when the instance has nothing of its own, which is exactly what lets `self.counts[word] = 1` reach the shared dict.' },
+          ],
         },
       ],
     },
@@ -221,7 +267,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Classes are over-used by people who have recently learned them. The test is not "is this a thing in the real world". The test is: **is there state that several operations share?** If there is not, a class adds a layer between the reader and the work.',
+          body: 'Classes are over-used by people who have recently learned them. The test is not "is this a thing in the real world". The test is: **is there state that several operations share?** If not, a class adds a layer between the reader and the work.',
         },
         {
           kind: 'code',
@@ -229,8 +275,22 @@ const lesson: Lesson = {
           code: "class Stats:\n    def mean(self, values):\n        return sum(values) / len(values)\n\ndef mean(values):\n    return sum(values) / len(values)\n\nprint(Stats().mean([2, 4, 9]))\nprint(mean([2, 4, 9]))\nprint(Stats.mean(None, [2, 4, 9]))\n",
         },
         {
+          kind: 'quiz',
+          prompt: 'You are reading 2000 rows of `(student_id, mark)` from a file and reporting the highest mark per student. Someone proposes a `Student` class with `add_mark` and `best`. When is that a good idea?',
+          options: [
+            {
+              text: 'Once students grow other behaviour that depends on the same state — a pass flag, a weighted average, a printable report',
+              correct: true,
+              why: 'A class earns its place when several operations share and depend on the same state. "Group, then take the max" alone has no such sharing — a dict from id to a running maximum says everything in a couple of lines.',
+            },
+            { text: 'As soon as the data represents something real, like a student', why: 'The test is not whether the thing is real-world, it is whether several operations share mutable state. A real-world subject with one operation on it is still better as a function.' },
+            { text: 'Never — 2000 rows is too many for a class to handle well', why: 'The row count has nothing to do with it. A class does not become slower or wrong because there are many instances of it.' },
+            { text: 'Only if the marks need to be sorted', why: 'Sorting is a single operation with no shared state to protect; it does not by itself justify a class over a plain data structure.' },
+          ],
+        },
+        {
           kind: 'prose',
-          body: 'All three lines agree, and the last one is the giveaway: the method works with `None` where the object should be, because it never looks at `self`. Creating a `Stats()` only to throw it away is a signal you can learn to spot in your own code.\n\nThe other common alternative is a plain dict or tuple for data with no behaviour attached — especially data that arrived from a file or a web service, where the keys are decided elsewhere and might change.',
+          body: 'The other common alternative is a plain dict or tuple for data with no behaviour attached — especially data that arrived from a file or a web service, where the keys are decided elsewhere.',
         },
         {
           kind: 'table',
@@ -245,19 +305,14 @@ const lesson: Lesson = {
         },
         {
           kind: 'shell',
-          caption: 'A dict is a perfectly respectable record, and it costs one line.',
+          caption: 'A dict is a perfectly respectable record, and it costs one line — and one typo.',
           lines: [
             "row = {'name': 'Ada', 'mark': 72}",
             "row['mark']",
             "row['marc']",
-            "sorted(row)",
             "row['grade'] = 'D'",
             'row',
           ],
-        },
-        {
-          kind: 'prose',
-          body: 'That mistyped key is the price of a dict: nothing checks the spelling, and you find out when it runs. A class with named attributes catches it earlier, and the next lesson on dataclasses makes writing such a class almost free. Neither is correct in every case — choose by what changes.',
         },
       ],
     },
@@ -277,18 +332,19 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'code',
-          caption: 'A small class that follows all five.',
-          code: "class Marks:\n    def __init__(self, unit):\n        self.unit = unit\n        self.scores = []\n\n    def record(self, score):\n        self.scores.append(score)\n\n    def average(self):\n        if not self.scores:\n            return 0.0\n        return sum(self.scores) / len(self.scores)\n\n    def best(self):\n        return max(self.scores, default=0)\n\ncits = Marks('CITS1401')\nprint(cits.average(), cits.best())\nfor s in [62, 78, 55]:\n    cits.record(s)\nprint(cits.scores)\nprint(cits.average())\nprint(cits.best())\nprint(vars(Marks('OTHER')))\n",
-        },
-        {
-          kind: 'prose',
-          body: 'The empty case was handled without a special "have I started yet" flag, because `__init__` guaranteed `self.scores` exists from the first moment. That is the quiet benefit of setting everything up front: the rest of the class has fewer states to worry about.',
+          kind: 'annotate',
+          ask: 'A small class that follows all five habits. Click a line to see which habit it demonstrates.',
+          code: "class Marks:\n    def __init__(self, unit):\n        self.unit = unit\n        self.scores = []\n\n    def record(self, score):\n        self.scores.append(score)\n\n    def average(self):\n        if not self.scores:\n            return 0.0\n        return sum(self.scores) / len(self.scores)\n",
+          notes: {
+            '3': '`self.scores = []` is set in `__init__`, even though it starts empty. A reader learns the whole shape of a `Marks` object from this one method, and the mutable list lives here rather than in the class body, so it is never shared between instances.',
+            '6': '`record` only changes the object — it appends and returns nothing. It never doubles as a question-answering method.',
+            '9': '`average` only answers a question and changes nothing. The empty case is handled without a separate flag, because `__init__` already guaranteed `self.scores` exists.',
+          },
         },
         {
           kind: 'checkpoint',
-          prompt: 'You are asked to write code that reads 2000 rows of `(student_id, mark)` from a file and reports the highest mark per student. Someone suggests a `Student` class with `add_mark` and `best`. What question decides whether that is a good idea, and what would you write if the answer is no?',
-          answer: 'The question is whether anything else happens to a student besides accumulating marks. If the whole program is "group, then take the max", there is no shared state worth a class and no behaviour to attach — a dict from id to a list of marks, or straight to a running maximum, says everything in a couple of lines and is faster to read. The class earns its place the moment students grow other behaviour that depends on the same state: a pass flag, a weighted average, a printable report. Write the dict version first; promote it to a class when the second operation arrives.',
+          prompt: 'You are asked to write code that reads 2000 rows of `(student_id, mark)` and reports the highest mark per student. Someone suggests a `Student` class with `add_mark` and `best`. What would you write first, and when would you promote it to a class?',
+          answer: 'Write the dict version first: a dict from id to a running maximum, or to a list of marks. Promote it to a class the moment a second kind of behaviour arrives that depends on the same state — a pass flag, a weighted average, a printable report. The class earns its place through shared state and multiple operations on it, not through the subject being a person rather than a number.',
         },
       ],
     },

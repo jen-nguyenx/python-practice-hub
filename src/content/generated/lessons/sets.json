@@ -40,7 +40,7 @@
       }
     ]
   },
-  "s0-b4": {
+  "s0-b3": {
     "shell": [
       {
         "source": "tags = {\"red\", \"blue\"}",
@@ -106,7 +106,7 @@
       }
     ]
   },
-  "s2-b2": {
+  "s2-b3": {
     "experiment": {
       "runs": {
         "0": {
@@ -197,7 +197,10 @@
       }
     }
   },
-  "s2-b5": {
+  "s2-b4": {
+    "stdout": "7\n3\n4\n"
+  },
+  "s2-b6": {
     "shell": [
       {
         "source": "core = {\"ana\", \"bo\"}",
@@ -378,7 +381,7 @@
       }
     ]
   },
-  "s5-b5": {
+  "s5-b4": {
     "error": {
       "line": 3,
       "message": "'set' object is not subscriptable",
@@ -386,7 +389,7 @@
     },
     "stdout": "3\n"
   },
-  "s6-b3": {
+  "s6-b2": {
     "stdout": "['di', 'ana', 'cy', 'bo']\n['ana', 'bo', 'cy', 'di']\n3 repeats dropped\n"
   }
 }

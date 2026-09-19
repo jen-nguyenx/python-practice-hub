@@ -21,20 +21,12 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A lot of people arrive here believing that programming is for a certain kind of mind, and that they do not have one. So before any Python, four facts that are worth more than encouragement, because you can check every one of them yourself.\n\n**Nothing you type can break anything.** Not the computer, not this page, not your work. The worst that happens is a message in red saying Python could not do what you asked. You read it, change a character, and run it again.\n\n**The list of things to learn is short.** Not easy, but short. A handful of ways to store a value, a handful of ways to repeat something, a handful of ways to make a decision. That is most of it. You are not facing an endless subject.\n\n**You get an answer every few seconds.** Unlike most things worth learning, you are never left wondering whether you got it right. You run the code, and the computer tells you at once.\n\n**Nobody reads code fluently at the start.** Reading a line of Python and knowing what it does is a skill that arrives slowly and without you noticing. Feeling slow now is what the beginning feels like, not a sign about you.',
-        },
-        {
-          kind: 'prose',
-          body: 'Here is a complete Python program. It is two lines long. Underneath it is exactly what happens when the computer runs it.',
+          body: "Nothing you type here can break anything: the worst that happens is a message in red, which you read, fix, and run again. The list of things to learn is short, even if it is not easy. You get an answer in seconds, every time, so you are never left wondering if you got it right. And reading code fluently is a skill that arrives slowly for everybody, not a sign of anything about you.\n\nHere is a complete Python program, two lines long, with exactly what happens when it runs underneath it.",
         },
         {
           kind: 'code',
-          caption: 'A whole program, and its output.',
+          caption: 'A whole program. The computer runs the first line, then the second, then stops.',
           code: 'print("Two coffees at 4.50 each cost:")\nprint(2 * 4.50)\n',
-        },
-        {
-          kind: 'prose',
-          body: 'That is not a fragment or a simplified version. That is a program. The computer read the first line, did what it said, then read the second line and did what that said, and then stopped because there was nothing left.\n\nThe area underneath the code is called the **output**: everything the program showed you while it ran. For now, the output is the only way you can see what your program did.',
         },
       ],
     },
@@ -44,7 +36,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Here is the definition, and it really is the whole thing:\n\n> A program is a list of instructions. The computer carries them out one at a time, from the top of the file to the bottom, finishing each one before it starts the next.\n\nThat is worth trusting, because almost every confusion a beginner has comes from quietly assuming the computer did something in a different order, or did two things at once, or looked ahead. It does not. It starts at the top, and it works down.',
+          body: 'The whole definition:\n\n> A program is a list of instructions. The computer carries them out one at a time, from the top of the file to the bottom, finishing each one before it starts the next.\n\nIt never looks ahead, never does two things at once, and never reorders anything.',
         },
         {
           kind: 'code',
@@ -52,17 +44,15 @@ const lesson: Lesson = {
           code: 'print("First instruction")\nprint("Second instruction")\nprint("Third instruction")\n',
         },
         {
-          kind: 'prose',
-          body: 'The output came out in the same order as the lines, because the computer went through them in that order. There is nothing clever happening. That is the point.',
-        },
-        {
-          kind: 'checkpoint',
-          prompt: 'If you moved the third line of that program to the top and ran it again, what would come out first?',
-          answer: '`Third instruction`. The computer does not know that "third" is a word about position, and it does not read the words for meaning at all. It reads line one, shows whatever that line says to show, and moves on. Order in the file is order in the output, always.',
-        },
-        {
-          kind: 'prose',
-          body: 'You do not have to take that on trust. Below is a three-line program with a button for each line, so you can put the instructions in any order you like and see what comes out.',
+          kind: 'quiz',
+          prompt: 'If you moved the third line of that program to the top and ran it again, what would print first?',
+          code: 'print("First instruction")\nprint("Second instruction")\nprint("Third instruction")\n',
+          options: [
+            { text: '`Third instruction`', correct: true, why: 'The computer does not read the words for meaning. It runs whichever line now sits on top, and that line says "Third instruction".' },
+            { text: '`First instruction`, because the program still describes a sequence in that order', why: 'The computer has no idea what the words mean or that "third" refers to a position. It only cares about position in the file, and you moved that line to position one.' },
+            { text: 'An error, because the lines are now out of order', why: 'Three `print()` lines in any order all run without complaint. There is no correct sequence for Python to check against, only whatever order is in the file.' },
+            { text: 'All three at once, since order stops mattering', why: 'The computer always runs one instruction at a time. Nothing ever happens simultaneously.' },
+          ],
         },
         {
           kind: 'interactive',
@@ -116,23 +106,20 @@ const lesson: Lesson = {
       title: 'Nothing shows unless you ask',
       blocks: [
         {
-          kind: 'prose',
-          body: 'A program is silent by default. It can work out an enormous amount and show you none of it. `print()` is how you ask for something to be shown.\n\nThe program below has two lines. The first works out a number and the second works out a different number. Look at how much of that reaches the output.',
-        },
-        {
-          kind: 'code',
-          caption: 'Two calculations. Only one of them is shown.',
+          kind: 'predict',
+          ask: 'This program has two lines, each working out a sum. What does it show when it runs?',
           code: '3 + 4\nprint(10 + 5)\n',
+          choices: ['15', '7\n15', '7'],
         },
         {
           kind: 'prose',
-          body: 'The first line ran. The computer worked out the answer to `3 + 4`, and then, because nothing was done with that answer, threw it away. It was never shown because nothing asked for it to be shown.\n\nThis catches everybody at least once: you write a program, it runs with no errors at all, and nothing appears. That is almost never a broken program. It is a program that was never asked to say anything.',
+          body: 'Python worked out `3 + 4`, found that nothing was waiting for the answer, and dropped it. Existing and being shown are separate events, and `print()` is the only thing that makes the second one happen. A program that runs with no errors and shows nothing is almost never broken; it is a program that was never asked to say anything.',
         },
         {
           kind: 'callout',
           tone: 'note',
           title: 'What the brackets are for',
-          body: 'In `print("hello")`, the word `print` names the thing you want done and the brackets hold what you want it done to. The brackets are not decoration: `print` on its own, with no brackets, does not show anything.',
+          body: 'In `print("hello")`, the word `print` names the thing you want done and the brackets hold what you want it done to. `print` on its own, with no brackets, does not show anything.',
         },
       ],
     },
@@ -142,7 +129,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'There is a second way to use Python, and these lessons use it constantly, so it is worth meeting now.\n\nInstead of writing a whole file and running it, you can type one line, get an answer, and type another. This is called the **shell**. In the blocks below, the lines beginning with `>>>` are what somebody typed, and the line underneath each one is what Python answered.',
+          body: 'Instead of writing a whole file and running it, you can type one line, get an answer, and type another. This is called the **shell**, and these lessons use it constantly. In the blocks below, lines beginning `>>>` are what somebody typed; the line underneath is what Python answered.',
         },
         {
           kind: 'shell',
@@ -155,8 +142,14 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Two things in there are worth slowing down for.\n\nThe first line had no `print()` and still showed an answer. That is the shell being helpful: it shows you the value of whatever you type, so you can ask it questions. Inside a program file, the same line would show nothing, as you saw in the last section.\n\nThe third line has quote marks around it, and what came back is not a number at all. Quote marks change the meaning of what you write, completely, and that is the subject of the next section.',
+          kind: 'quiz',
+          prompt: 'In the shell, what does `"2 + 3"`, with the quote marks, show?',
+          options: [
+            { text: 'the text `2 + 3`', correct: true, why: 'Quote marks mean "this is text, hand it back exactly as written." Nothing is calculated.' },
+            { text: '`5`', why: 'That is what `2 + 3` without quotes gives. Quote marks stop Python from doing arithmetic at all.' },
+            { text: 'a NameError', why: 'There is no name to look up here, only a piece of text between quote marks, which always works.' },
+            { text: 'nothing, because text needs `print()` to show', why: 'That rule is for programs in a file. In the shell, typing an expression on its own shows its value automatically, with no `print()` needed.' },
+          ],
         },
         {
           kind: 'callout',
@@ -172,22 +165,23 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'The computer has no idea what you are trying to achieve. It cannot tell that you meant a calculation, or that a word was a typo, or that you had a sensible intention. It carries out what is written, exactly, and that is the single most useful thing to remember while you are learning.\n\nBelow, one program has quote marks around the sum and one does not. Nothing else differs.',
+          body: 'The computer carries out exactly what is written. It cannot tell that you meant a calculation, or that a word was a typo. Below, one program has quote marks around the sum and one does not; nothing else differs.',
         },
         {
           kind: 'compare',
-          caption: 'The same characters. One pair of quote marks between them.',
+          caption: 'The same characters. One pair of quote marks between them. Quote marks mean "this is text, do not work anything out"; without them, Python treats `2 + 3` as a calculation.',
           left: { label: 'With quote marks', code: 'print("2 + 3")\n' },
           right: { label: 'Without quote marks', code: 'print(2 + 3)\n' },
         },
         {
-          kind: 'prose',
-          body: 'Quote marks mean *this is text, hand it back to me as written, do not work anything out*. Without them, Python treats `2 + 3` as a calculation and does it.\n\nNeither program is wrong. They ask for different things, and each one did what was asked. The lesson is not "avoid quote marks", it is that a character you might not even notice can change the whole meaning of a line.',
-        },
-        {
-          kind: 'checkpoint',
-          prompt: 'You want a program that shows the number of hours in a week. Which of `print("7 * 24")` and `print(7 * 24)` does what you want?',
-          answer: '`print(7 * 24)`, with no quote marks. The version with quotes would show the characters `7 * 24` and leave you to do the arithmetic yourself. If you are ever unsure which you have written, run it: the answer is immediate, and you never have to guess.',
+          kind: 'quiz',
+          prompt: 'You want a program that shows the number of hours in a week. Which one does that?',
+          options: [
+            { text: '`print(7 * 24)`', correct: true, why: 'No quote marks, so Python treats `7 * 24` as a calculation and works it out.' },
+            { text: '`print("7 * 24")`', why: 'Quote marks mean "show this exactly as written." It prints the six characters `7 * 24`, not an answer.' },
+            { text: '`print("168")`', why: 'That only works because someone already did the multiplication by hand and typed the answer in as text. Change the numbers and it stops being right.' },
+            { text: 'Either one works the same', why: 'They ask for different things: one is a calculation, the other is fixed text. Only one of them produces a number.' },
+          ],
         },
       ],
     },
@@ -197,7 +191,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'At some point, fairly soon, a program of yours will stop partway through and print a message in red. Here is one doing that on purpose, so that the first time you see it is not while you are also worried about something else.\n\nThe third line below has a typo: `prnt` instead of `print`.',
+          body: 'At some point, fairly soon, a program of yours will stop partway through and print a message in red. Here is one doing that on purpose: the third line has a typo, `prnt` instead of `print`.',
         },
         {
           kind: 'code',
@@ -205,17 +199,28 @@ const lesson: Lesson = {
           code: 'print("This line runs.")\nprint("So does this one.")\nprnt("But this one does not.")\n',
         },
         {
-          kind: 'prose',
-          body: 'Notice what survived. The first two lines had already been carried out, and their output is still there. The program did not undo anything or lose anything. It went top to bottom exactly as always, reached an instruction it could not carry out, said so, and stopped.\n\nThat message is not a telling-off and it is not a judgement of you. It is the most useful thing the computer produces: it names the kind of problem and the line number where it gave up. There is a whole lesson on reading these messages, and reading them is the habit that separates people who get unstuck quickly from people who do not.',
+          kind: 'annotate',
+          ask: 'Click each line to see what actually happened.',
+          code: 'print("This line runs.")\nprint("So does this one.")\nprnt("But this one does not.")\n',
+          notes: {
+            '1': 'Runs normally: this line prints its message and moves on.',
+            '2': 'Also runs normally, straight after line 1. Its output is real and stays on screen.',
+            '3': '`prnt` is not a real instruction, so Python raises a `NameError` here and the program stops. Nothing after this line ever runs.',
+          },
         },
         {
-          kind: 'checkpoint',
+          kind: 'quiz',
           prompt: 'A five-line program stops with an error reported on line 4. Did line 2 run?',
-          answer: 'Yes. The computer works from the top down, so lines 1, 2 and 3 were all carried out before it reached the problem, and any output they produced is real. Line 5 did not run, because the program stopped before it got there. This is why it is worth reading the output above an error, not only the error itself: it tells you how far the program got.',
+          options: [
+            { text: 'Yes', correct: true, why: 'The computer works top to bottom, so lines 1 through 3 all ran before it reached the problem on line 4. Any output they produced already happened.' },
+            { text: 'No, the whole program failed together', why: 'A program does not fail all at once. It runs each line until it cannot continue, so everything before the failing line already happened.' },
+            { text: "Only if line 4 doesn't use anything from line 2", why: "Whether line 4 depends on line 2 is beside the point. Line 2 comes before line 4 in the file, so it runs first regardless." },
+            { text: "There's no way to know without running it", why: 'You do know: Python always runs top to bottom and stops only when it reaches trouble, so everything above the failing line has already run.' },
+          ],
         },
         {
           kind: 'prose',
-          body: 'So: a program is a list of instructions, carried out in order, exactly as written, and the output is the part you asked to be shown. Everything else you will learn is built on top of those two sentences.',
+          body: 'So: a program is a list of instructions, carried out in order, exactly as written, and the output is the part you asked to be shown. Everything else you learn is built on those two sentences.',
         },
       ],
     },

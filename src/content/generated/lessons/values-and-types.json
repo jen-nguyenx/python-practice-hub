@@ -59,11 +59,6 @@
         "value": "'hello there'"
       },
       {
-        "source": "\"ha\" * 3",
-        "stdout": "",
-        "value": "'hahaha'"
-      },
-      {
         "source": "len(\"hello\")",
         "stdout": "",
         "value": "5"
@@ -74,18 +69,11 @@
       }
     ]
   },
+  "s2-b2": {
+    "stdout": "hahaha\n"
+  },
   "s3-b1": {
     "shell": [
-      {
-        "source": "True",
-        "stdout": "",
-        "value": "True"
-      },
-      {
-        "source": "False",
-        "stdout": "",
-        "value": "False"
-      },
       {
         "source": "5 > 3",
         "stdout": "",
@@ -150,7 +138,7 @@
       "stdout": "8\n"
     }
   },
-  "s5-b3": {
+  "s5-b2": {
     "experiment": {
       "runs": {
         "0-0": {

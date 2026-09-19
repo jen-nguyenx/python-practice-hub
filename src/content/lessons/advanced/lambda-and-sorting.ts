@@ -21,7 +21,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Python has two ways to sort a list, and mixing them up produces one of the most common bugs in beginner code.\n\n`sorted(x)` takes anything you can loop over and hands back a **new list**. `x.sort()` rearranges the list in place and hands back nothing at all.',
+          body: 'Python has two ways to sort a list, and mixing them up is one of the most common bugs in beginner code. `sorted(x)` hands back a **new list**; `x.sort()` rearranges the list in place and hands back nothing at all.',
         },
         {
           kind: 'shell',
@@ -38,12 +38,14 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: '`sorted` left `nums` alone; `.sort()` changed it. And `.sort()` produced no value at all, which is the trap: writing `nums = nums.sort()` throws the list away and replaces it with nothing.\n\nThe last two lines show the other difference. `sorted` accepts any iterable and always gives a list back, so it sorts a string into a list of characters and a dict into a list of its keys. `.sort()` is a list method and only lists have it.',
+          kind: 'callout',
+          tone: 'warn',
+          title: 'The assignment trap',
+          body: '`nums.sort()` returns nothing, so `nums = nums.sort()` throws the list away and replaces it with `None` — a bug that fails later, wherever the name is next treated as a list, far from where the mistake was made. `sorted` also differs in what it accepts: it works on any iterable and always hands back a list, so it sorts a string into characters and a dict into its keys; `.sort()` is a list method that only lists have.',
         },
         {
           kind: 'compare',
-          caption: 'The assignment trap. The left one is the version people write by accident.',
+          caption: 'The assignment trap in practice. The left one is the version people write by accident.',
           left: {
             label: 'Assigning the result of .sort()',
             code: 'scores = [70, 92, 55]\nscores = scores.sort()\nprint(scores)\nprint(len(scores))\n',
@@ -54,10 +56,6 @@ const lesson: Lesson = {
             code: 'scores = [70, 92, 55]\nscores.sort()\nprint(scores)\nprint(len(scores))\n',
           },
         },
-        {
-          kind: 'prose',
-          body: 'The left version does not fail where the mistake was made. It fails later, on the first line that treats the name as a list, which is why the error can be a long way from the cause.',
-        },
       ],
     },
     {
@@ -66,7 +64,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'By default, sorting compares the items themselves. Often that is not the question. You want the words sorted by length, or the rows sorted by the third column, or the names sorted without caring about capitals.\n\nThe `key` argument takes a function. Python calls it once on each item, and sorts by what comes back. The items you get out are the original items, untouched: `key` decides the order, not the contents.',
+          body: 'By default, sorting compares the items themselves — but often the question is different: sort words by length, or names ignoring capitals. The `key` argument takes a function; Python calls it once per item and sorts by what comes back, while the items themselves stay untouched.',
         },
         {
           kind: 'shell',
@@ -81,8 +79,27 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'The plain sort put `Apple` first, because capital letters come before lower-case ones when characters are compared. `key=str.lower` asked Python to compare the lower-cased version instead, while still handing back the words as they were written.\n\nNotice that `key=len` is a function **named**, not called. You write `len`, not `len()`. Passing `len()` would call it immediately with no argument and fail before sorting began.\n\n`max` and `min` take the same `key`, which is worth remembering: "the longest word" needs no sort at all.',
+          kind: 'quiz',
+          prompt: 'Which of these correctly sorts words by length?',
+          options: [
+            {
+              text: 'sorted(words, key=len)',
+              correct: true,
+              why: 'len is passed as the function itself — Python calls it once per word during the sort.',
+            },
+            {
+              text: 'sorted(words, key=len())',
+              why: 'len() calls the function immediately, with no argument, and raises a TypeError before sorting even starts.',
+            },
+            {
+              text: 'sorted(words, key=len(words))',
+              why: 'This calls len once on the whole list, getting a single number, then tries to use that number as the key function itself — sorting fails.',
+            },
+            {
+              text: 'sorted(len(words))',
+              why: 'This tries to sort the single integer len(words), which is not iterable at all, and raises a TypeError immediately.',
+            },
+          ],
         },
         {
           kind: 'callout',
@@ -98,7 +115,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Most keys are not a ready-made function like `len`. They are something small and specific: "the second item of the tuple", "the length of the name field". Defining a named function three lines up for something used once puts distance between the sort and what it sorts by.\n\n`lambda` writes a function as an expression. `lambda r: r[1]` means *a function that takes one thing, called `r`, and gives back `r[1]`*. It is the same function `def` would make, with no name attached.',
+          body: 'Most keys are not a ready-made function like `len` — they are something small and specific, and naming a function three lines up for something used once puts distance between the sort and what it sorts by. `lambda r: r[1]` means *a function that takes one thing, called `r`, and gives back `r[1]`* — the same function `def` would make, with no name attached.',
         },
         {
           kind: 'shell',
@@ -114,8 +131,10 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'The first line is shown to make the point that a `lambda` is an ordinary value, and then to warn you off it: assigning a `lambda` to a name is a worse way of writing `def double(n): return n * 2`, because the `def` version gets a real name in tracebacks. Use `lambda` where the function is an argument, not where it is a definition.\n\nA `lambda` can take any number of arguments, as the last line shows. What it cannot do is contain a statement. There is no `if:` block, no loop, no `try`, no assignment, and no `return` — the single expression *is* the return value.',
+          kind: 'callout',
+          tone: 'warn',
+          title: 'lambda is an argument, not a definition',
+          body: 'Assigning a lambda to a name, as the first shell line did, is a worse way of writing `def double(n): return n * 2` — the `def` version gets a real name in tracebacks. Use `lambda` where the function is an argument. It also cannot contain a statement: no `if:` block, loop, `try`, assignment or `return` — the single expression is the return value, as the broken line below shows.',
         },
         {
           kind: 'code',
@@ -124,7 +143,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'A conditional *expression* is allowed, because it is an expression: `lambda r: r[1] if r[1] is not None else 0` is a legal key and a useful one for data with holes in it.\n\nWhen the key needs more than that, give it a name. A key function with a `def` can be tested, documented and reused, and a sort that reads `key=grade_order` says more than a `lambda` with a conditional in it.',
+          body: 'A conditional *expression* is fine, because it is an expression: `lambda r: r[1] if r[1] is not None else 0` is a legal key. When the rule needs more than that, give it a name — a `def` can be tested, documented and reused, and `key=grade_order` says more than a `lambda` with a conditional buried in it.',
         },
         {
           kind: 'compare',
@@ -146,22 +165,29 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Sorting by one field leaves ties, and the tie order is then out of your hands. "Sort by score, and where scores are equal, by name" needs a key that produces both.\n\nA tuple key does it, because tuples compare item by item: the first items decide, and only when those are equal does the second matter.',
+          body: 'Sorting by one field leaves ties, and the tie order is then out of your hands. A tuple key fixes that, because tuples compare item by item: the first items decide, and only when those are equal does the second matter.',
         },
         {
           kind: 'shell',
+          caption: '`(71, "zz") < (88, "aa")` is settled by the first items alone; the second is never looked at.',
           lines: [
             '(71, "ana") < (71, "cy")',
             '(71, "zz") < (88, "aa")',
             'rows = [("cy", 71), ("bo", 88), ("ana", 71)]',
             'sorted(rows, key=lambda r: r[1])',
             'sorted(rows, key=lambda r: (r[1], r[0]))',
-            'sorted(rows, key=lambda r: (-r[1], r[0]))',
           ],
         },
         {
-          kind: 'prose',
-          body: 'The first two lines are the whole mechanism. `(71, "ana")` sorts before `(71, "cy")` because the first items tie and the second ones decide, while `(71, "zz")` sorts before `(88, "aa")` because the first items settle it and the second is never looked at.\n\nThe third key sorts by score descending and name ascending at the same time, by negating the number. That is the standard trick for mixed directions, and it only works on numbers: you cannot negate a string.',
+          kind: 'predict',
+          ask: 'Three rows, two of them tied on 71. Predict what this prints.',
+          code: 'rows = [("cy", 71), ("bo", 88), ("ana", 71)]\nprint(sorted(rows, key=lambda r: (-r[1], r[0])))\n',
+          choices: [
+            "[('bo', 88), ('ana', 71), ('cy', 71)]",
+            "[('bo', 88), ('cy', 71), ('ana', 71)]",
+            "[('cy', 71), ('ana', 71), ('bo', 88)]",
+            "[('ana', 71), ('cy', 71), ('bo', 88)]",
+          ],
         },
         {
           kind: 'callout',
@@ -170,9 +196,27 @@ const lesson: Lesson = {
           body: 'Every item at the same position must be comparable with the others. If one row has a number where another has `None`, the sort raises a `TypeError` partway through, because `None < 3` has no answer. Clean the data in the key function, as the named-rule example did.',
         },
         {
-          kind: 'checkpoint',
-          prompt: 'You have `rows` of `(name, score, grade)` and want them ordered by grade ascending, then score **descending**, then name ascending. Grades are the strings `"A"`, `"B"`, `"C"`. Write the key, and say why negating will not work for the grade.',
-          answer: '`key=lambda r: (r[2], -r[1], r[0])`.\n\nNegating only reverses a direction for numbers, and the grade is a string, so `-r[2]` raises a `TypeError`. Here it is not needed, because grade ascending is `"A"` before `"B"` before `"C"`, which is already the order you want.\n\nIf you had wanted grade descending, the fix is to map the grade to a number in the key, for instance `{"A": 0, "B": 1, "C": 2}[r[2]]` and negate that, or sort in two passes and lean on stability.',
+          kind: 'quiz',
+          prompt: 'rows hold `(name, score, grade)` and you want them ordered by grade ascending, then score **descending**, then name ascending, where grade is "A", "B" or "C". Which key achieves it?',
+          options: [
+            {
+              text: 'lambda r: (r[2], -r[1], r[0])',
+              correct: true,
+              why: 'Grade ascending needs no negation, because "A" before "B" before "C" is already the wanted order; the score is negated to sort descending; the name breaks any remaining tie.',
+            },
+            {
+              text: 'lambda r: (-r[2], -r[1], r[0])',
+              why: 'Negating a string raises a TypeError — you cannot negate "A". Grade order does not need reversing here anyway.',
+            },
+            {
+              text: 'lambda r: (r[2], r[1], r[0])',
+              why: 'This sorts score ascending, not descending — ties on grade would put the lowest score first instead of the highest.',
+            },
+            {
+              text: 'lambda r: (r[0], -r[1], r[2])',
+              why: 'This sorts by name first, which ignores the requirement that grade decides the order before anything else.',
+            },
+          ],
         },
       ],
     },
@@ -182,7 +226,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: '"The item at index 1" and "the value under this key" are such common keys that the standard library has them ready-made. `operator.itemgetter` builds the function `lambda r: r[1]` for you, and it reads better at the point of use.',
+          body: '"The item at index 1" and "the value under this key" are common enough keys that the standard library has them ready-made: `operator.itemgetter` builds `lambda r: r[1]` for you, and reads better at the point of use.',
         },
         {
           kind: 'shell',
@@ -198,8 +242,10 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: '`itemgetter(1, 0)` is the tuple key, written without the tuple: given more than one index it produces a tuple of those items, in that order. `itemgetter` also works on anything that supports `[...]`, which is why the dict version needs no change.\n\nThere is a matching `attrgetter` for objects with named fields, which is what you reach for with a `dataclass`.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'attrgetter for objects',
+          body: '`itemgetter(1, 0)` is the tuple key without the tuple: given more than one index, it produces a tuple of those items, in that order. It works on anything supporting `[...]`, which is why the dict version above needed no change. `attrgetter` does the same job for objects with named fields — what you reach for with a dataclass.',
         },
         {
           kind: 'code',
@@ -211,12 +257,12 @@ const lesson: Lesson = {
           caption: 'Which form to use.',
           head: ['The key you want', 'Written as'],
           rows: [
-            ['The item itself', 'leave `key` out'],
-            ['A built-in applied to the item', '`key=len`, `key=abs`, `key=str.lower`'],
-            ['One position or dict key', '`key=itemgetter(1)`'],
-            ['Several, as a tie-break', '`key=itemgetter(1, 0)`'],
-            ['A field of an object', '`key=attrgetter("score")`'],
-            ['Anything with a rule in it', '`key=lambda`, or a named function'],
+            ['The item itself', 'leave key out'],
+            ['A built-in applied to the item', 'key=len, key=abs, key=str.lower'],
+            ['One position or dict key', 'key=itemgetter(1)'],
+            ['Several, as a tie-break', 'key=itemgetter(1, 0)'],
+            ['A field of an object', 'key=attrgetter("score")'],
+            ['Anything with a rule in it', 'key=lambda, or a named function'],
           ],
         },
       ],
@@ -227,7 +273,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Python\'s sort is **stable**, and that is a promise, not an accident of the implementation. It means: when two items have equal keys, they come out in the order they went in.\n\nThat sounds like a detail. It is the reason a two-pass sort works, and it is one of the few guarantees you can build real behaviour on.',
+          body: 'Python\'s sort is **stable** — a promise, not an accident: when two items have equal keys, they come out in the order they went in. That is what makes a two-pass sort work, and it is one of the few guarantees you can build real behaviour on.',
         },
         {
           kind: 'code',
@@ -235,16 +281,14 @@ const lesson: Lesson = {
           code: 'rows = [("cy", 71), ("bo", 88), ("ana", 71)]\n\nby_name = sorted(rows, key=lambda r: r[0])\nprint("after pass 1:", by_name)\n\nby_score_then_name = sorted(by_name, key=lambda r: r[1])\nprint("after pass 2:", by_score_then_name)\n\nprint("tuple key:   ", sorted(rows, key=lambda r: (r[1], r[0])))\n',
         },
         {
-          kind: 'prose',
-          body: 'The two-pass result and the tuple-key result came out the same, and that is what stability buys. Sort by the **least** important field first, then by the most important, and the earlier order survives inside each group of ties.\n\nA tuple key is usually clearer for two or three fields. The two-pass version earns its place when the directions differ and one field is not a number, or when the passes happen in different parts of a program.',
-        },
-        {
-          kind: 'prose',
-          body: 'Stability also explains something that looks like a bug the first time you meet it. `reverse=True` is **not** the same as sorting and then reversing the list.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'Two passes or one tuple',
+          body: 'The two-pass result and the tuple-key result above came out the same: sort by the least important field first, then the most important, and the earlier order survives inside each tie. A tuple key is usually clearer for two or three fields; two passes earn their place when directions differ and one field is not a number, or the passes happen in different parts of a program.',
         },
         {
           kind: 'compare',
-          caption: 'Both give descending scores. Look at what happened to the two rows that tie on 71.',
+          caption: 'Both give descending scores, but reverse=True is not the same as sorting then reversing — look at what happens to the two rows tied on 71.',
           left: {
             label: 'Sort, then reverse the list',
             code: 'rows = [("cy", 71), ("bo", 88), ("ana", 71)]\nprint(sorted(rows, key=lambda r: r[1])[::-1])\n',
@@ -256,8 +300,27 @@ const lesson: Lesson = {
           },
         },
         {
-          kind: 'prose',
-          body: '`[::-1]` reverses everything, ties included, so the tied rows come out in the opposite of their original order. `reverse=True` reverses the *comparison* and leaves ties alone, so tied rows stay in the order they arrived.\n\nWhen you have already sorted by a tie-break in an earlier pass, this is the difference between keeping that work and destroying it.',
+          kind: 'quiz',
+          prompt: 'Both sides above give descending scores. Why do the tied rows (both scoring 71) end up in a different order?',
+          options: [
+            {
+              text: '[::-1] reverses the whole list, ties included, so tied rows come out in the opposite of their original order; reverse=True reverses the comparison and leaves ties in their original order',
+              correct: true,
+              why: 'That is exactly the mechanism: slicing does not know or care which rows were tied, while reverse=True changes how the sort compares, not the list it produces afterward.',
+            },
+            {
+              text: 'reverse=True is buggy for tied values and should be avoided',
+              why: 'reverse=True works correctly here — it deliberately preserves tie order, which is usually the behaviour you want, not a bug.',
+            },
+            {
+              text: 'Both sides give the exact same order; ties cannot be told apart after sorting',
+              why: 'They do not match: the compare block above shows the tied rows land in a different relative order on each side.',
+            },
+            {
+              text: 'sorted() with a key does not guarantee stability the way plain sorted() does',
+              why: 'Stability is a property of Python\'s sort itself, regardless of whether a key is given — it applies exactly the same either way.',
+            },
+          ],
         },
         {
           kind: 'interactive',
@@ -318,8 +381,10 @@ const lesson: Lesson = {
           code: 'rows = [\n    ("Cy", 71),\n    ("bo", 88),\n    ("Ana", 71),\n    ("di", None),\n    ("Eli", 95),\n]\n\ndef ranking_key(row):\n    """Rank highest first, then by name, with missing scores at the end."""\n    name, score = row\n    missing = score is None\n    return (missing, -score if score is not None else 0, name.lower())\n\nfor place, (name, score) in enumerate(sorted(rows, key=ranking_key), start=1):\n    shown = "no score" if score is None else score\n    print(f"{place}. {name:<4} {shown}")\n',
         },
         {
-          kind: 'prose',
-          body: 'Three things in that key are worth copying.\n\n`missing` is a boolean used as the first sort field. `False` sorts before `True`, so every row with a score comes before every row without one, and no separate filtering pass is needed.\n\nThe score is negated so that high scores come first, which means `reverse=True` is not used at all, which in turn means the name tie-break still runs in the direction it was written.\n\n`name.lower()` makes the tie-break ignore capitals, the same job `key=str.lower` did earlier, done inside a bigger key.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'Three things worth copying',
+          body: '`missing` is a boolean used as the first sort field — `False` sorts before `True`, so every row with a score comes before every row without one, no separate filtering pass needed. The score is negated so high scores come first, meaning `reverse=True` is never needed, so the name tie-break still runs the direction it was written. `name.lower()` makes the tie-break ignore capitals, the same job `key=str.lower` did earlier, done inside a bigger key.',
         },
         {
           kind: 'checkpoint',

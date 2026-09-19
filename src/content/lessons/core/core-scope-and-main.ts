@@ -58,7 +58,13 @@ print(cost)
       blocks: [
         {
           kind: 'prose',
-          body: 'Here is the rule that surprises people. Python decides which names are local **before the function runs**, by looking at the code. If a name is assigned anywhere in the function, it is local everywhere in that function — including on lines above the assignment.\n\nSo a function cannot change a caller\'s variable by assigning to it. It cannot even read the outer one once it has assigned to that name.',
+          body: 'Here is the rule that surprises people. Python decides which names are local **before the function runs**, by looking at the code. If a name is assigned anywhere in the function, it is local everywhere in that function — including on lines above the assignment. So a function cannot change a caller\'s variable by assigning to it.',
+        },
+        {
+          kind: 'predict',
+          ask: 'This function assigns to a name that also exists outside it. What does it print, and what does the line after the call print?',
+          code: "total = 100\n\n\ndef reset():\n    total = 0\n    print('inside: ', total)\n\n\nreset()\nprint('outside:', total)\n",
+          choices: ['inside:  0\noutside: 100', 'inside:  0\noutside: 0', 'inside:  100\noutside: 100'],
         },
         {
           kind: 'code',
@@ -253,6 +259,16 @@ print(add_song('Solid Rock'))
         {
           kind: 'prose',
           body: 'Each helper needs one job and one returned value. A helper that reads and validates rows returns rows. A helper that calculates a mean returns a mean, at full precision. `main` is the only place that knows what the final answer is shaped like.',
+        },
+        {
+          kind: 'quiz',
+          prompt: '`main(csvfile)` has three `if` branches, each ending in its own `return`, but for one particular input none of them fires and execution runs off the end of the function. What does `answer = main(csvfile)` receive?',
+          options: [
+            { text: 'None', correct: true, why: 'Falling off the end of a function without hitting a `return` hands back `None`, silently — no error, and nothing on screen to say a branch was missed.' },
+            { text: 'An empty string', why: 'Nothing about running off the end of a function produces text. The value handed back when there is no `return` is always `None`.' },
+            { text: 'Whatever the last local variable was set to', why: 'Python does not guess which variable you meant to return. Without a `return` statement, the answer is `None`, whatever the local variables hold.' },
+            { text: 'A RuntimeError, because every path should return something', why: 'Missing a `return` is a silent bug, not a raised one. That silence is exactly what makes it dangerous in a marked project.' },
+          ],
         },
         { kind: 'experiment', id: 't11-x3' },
         { kind: 'workedExample' },

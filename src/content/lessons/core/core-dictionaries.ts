@@ -23,7 +23,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A list answers the question "what is at position 3?". Very little real data is organised that way. The questions you actually have are "how many flat whites are left?", "what did this card spend?", "which names are in Monday\'s lab?". None of those is about a position, and answering them with a list means searching it from the start every time and hoping nothing moved.\n\nA dictionary answers by **key**. You choose the keys, they are usually words, and looking one up takes the same time whether there are ten entries or ten thousand.',
+          body: 'A list answers "what is at position 3?". A dictionary answers by **key** instead: you choose the keys, they are usually words, and "how many flat whites are left?" or "which names are in Monday\'s lab?" stops needing a search from the start every time.',
         },
         {
           kind: 'shell',
@@ -42,8 +42,18 @@ const lesson: Lesson = {
           ],
         },
         {
+          kind: 'quiz',
+          prompt: 'In the session above, `12 in stock` and `\'muffin\' in stock` were asked. Twelve is a value in that dictionary, not a key. What does `12 in stock` return?',
+          options: [
+            { text: 'False', correct: true, why: '`in` on a dictionary only ever looks at the keys. 12 sits on the right of a colon, as a value, so it is never found.' },
+            { text: 'True', why: '12 is a value in `stock`, but `in` does not search values, only keys.' },
+            { text: 'KeyError', why: '`in` never raises. It always answers with True or False, which is the whole point of asking before you read.' },
+            { text: 'It depends on how many keys are in the dictionary', why: 'Whether a key exists does not depend on the size of the dictionary.' },
+          ],
+        },
+        {
           kind: 'prose',
-          body: 'Note what `in` asked about. It looked for a key, not a value, which is why the line testing a number that appears on the right-hand side of the colon answered the way it did. That trips people up in exactly the questions where it matters.\n\nNote too that one square-bracket assignment does two different jobs. Used on a key that is not there it adds the entry; used on one that is there it replaces the value. There is no separate "add" method, and no error either way.',
+          body: 'The stocktake also shows one square-bracket assignment doing two jobs: on a new key it adds the entry, on an existing one it replaces the value. There is no separate "add" method, and no error either way.',
         },
         {
           kind: 'callout',
@@ -59,16 +69,23 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Reading a key that does not exist is an error, not an empty answer. That is the right behaviour, because asking for a key you believe is there and quietly getting nothing back would hide a real bug. But it means every lookup of a key you are not certain about needs handling.\n\nThere are two tools. `in` asks first. `get` asks and supplies a fallback in one step.',
+          body: 'Reading a key that does not exist is an error, not an empty answer. That is deliberate: quietly getting nothing back for a key you believe is there would hide a real bug. But it means every lookup of a key you are not certain about needs handling, with `in` or with `get`.',
+        },
+        {
+          kind: 'quiz',
+          prompt: '`stock` has no `\'latte\'` key. What happens on each of these two lines, run one after the other?',
+          code: "stock = {'flat white': 12, 'muffin': 3}\nprint(stock['latte'])\nprint(stock.get('latte'))\n",
+          options: [
+            { text: 'The first line raises KeyError; the second prints None', correct: true, why: 'Square brackets demand the key exist. `get` asks and supplies a fallback instead of raising — `None` when none is given.' },
+            { text: 'Both lines raise KeyError', why: '`get` is built exactly to avoid that: a missing key becomes `None`, or whatever fallback you gave it, instead of an error.' },
+            { text: 'Both lines print None', why: 'Square-bracket access on a missing key does not print anything — it raises before the program can print at all.' },
+            { text: 'The first line prints None; the second raises', why: 'It is the other way around: square brackets are the strict one, `get` is the forgiving one.' },
+          ],
         },
         {
           kind: 'code',
-          caption: 'The first three lines work. The last one raises on purpose.',
-          code: "stock = {'flat white': 12, 'muffin': 3}\nprint(stock.get('latte'))\nprint(stock.get('latte', 0))\nprint(stock)\nprint(stock['latte'])\n",
-        },
-        {
-          kind: 'prose',
-          body: 'Two things to take from that. `get` with nothing to fall back on still answers rather than failing, and what it answers with is Python\'s word for no value at all. `get` with a second argument answers with that instead, which is usually what you want when the value is about to be used in a sum.\n\nAnd look at the third line of output, printed after both `get` calls. Asking about a key does not create it. `get` only ever reads.',
+          caption: '`get` with a fallback, and proof that asking about a key never creates it.',
+          code: "stock = {'flat white': 12, 'muffin': 3}\nprint(stock.get('latte', 0))\nprint(stock)\n",
         },
         {
           kind: 'experiment',
@@ -87,7 +104,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Counting how many times each thing appears is the most common use of a dictionary in this unit, and the pattern is three lines long. An empty dictionary before the loop, then one line inside it that reads the count so far and writes back one more.\n\nThe short version of that line is the one that breaks.',
+          body: 'Counting how many times each thing appears is the most common use of a dictionary in this unit: an empty dictionary before the loop, then one line inside it that reads the count so far and writes back one more.',
         },
         {
           kind: 'compare',
@@ -104,7 +121,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: '`+=` has to read the old value before it can add to it, so on the very first sighting of any key it fails for the reason the previous section showed. The fix is not a special case for the first time; `get(song, 0)` handles the first time and every time after it with the same line.\n\nThe same pattern totals rather than counts. Swap the 1 for the amount, and the dictionary holds a running total per key instead of a tally.',
+          body: '`+=` has to read the old value before it can add to it, so the first sighting of any key fails the same way a missing-key lookup always does. `get(song, 0)` handles the first sighting and every one after it with the same line — and swapping the 1 for an amount turns a tally into a running total.',
         },
         {
           kind: 'interactive',
@@ -141,19 +158,15 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'One fare total above did not come out as tidily as the other. That is ordinary decimal arithmetic, which stores most fractions approximately, and it has nothing to do with dictionaries. It is a reason to round money at the moment you print or return it rather than as you accumulate it.',
+          body: 'One fare total above did not come out as tidily as the other — ordinary decimal arithmetic, nothing to do with dictionaries. Round money at the moment you print or return it, not as you accumulate it.',
         },
         {
           kind: 'experiment',
           id: 't08-x3',
         },
         {
-          kind: 'prose',
-          body: 'Because keys are compared exactly, a capital letter or a stray space makes a different key. Data typed by people is full of both, and the tally splits itself without any sign that anything is wrong.',
-        },
-        {
           kind: 'code',
-          caption: 'The same four station names, counted two ways.',
+          caption: 'Keys are compared exactly, so a capital letter or a stray space makes a different key. The same four station names, counted two ways.',
           code: "stops = ['Perth', 'perth', 'Perth ', 'Joondalup']\nraw = {}\nclean = {}\nfor s in stops:\n    raw[s] = raw.get(s, 0) + 1\n    key = s.strip().lower()\n    clean[key] = clean.get(key, 0) + 1\nprint(raw)\nprint(len(raw))\nprint(clean)\nprint(len(clean))\n",
         },
         {
@@ -168,7 +181,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Sometimes the answer to "what is under this key" is not a number but a collection: every name in Monday\'s lab, every species found in one survey area. The value stored against the key is then a list, and it grows as the loop goes on.\n\nThe pattern needs one extra line. Before appending, check whether the key exists yet, and if it does not, start it off with an empty list.',
+          body: 'Sometimes what sits under a key is not a number but a list: every name in Monday\'s lab, every species found in one survey area. Before appending, check whether the key exists yet, and if it does not, start it off with an empty list.',
         },
         {
           kind: 'compare',
@@ -185,7 +198,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'This is aliasing again, wearing a different hat. `groups[day] = names` does not put a list into the dictionary; it puts a second label on the one list that already exists, so every key ends up pointing at the same one and every append is seen by all of them.\n\n`groups[day] = []` writes the two characters that mean "make a new empty list right here", and it runs afresh each time a new key appears. The same applies to a dictionary of dictionaries: the inner `{}` has to be created inside the loop.',
+          body: 'This is aliasing again, wearing a different hat. `groups[day] = names` puts a second label on the one list that already exists, so every key points at the same list and every append is seen by all of them. `groups[day] = []` makes a fresh empty list each time a new key appears — the same rule applies to a dictionary of dictionaries: the inner `{}` has to be created inside the loop.',
         },
         {
           kind: 'checkpoint',
@@ -199,38 +212,32 @@ const lesson: Lesson = {
       title: 'What a loop over a dictionary hands you',
       blocks: [
         {
-          kind: 'prose',
-          body: 'Looping over a dictionary directly gives you the **keys**, one at a time, not the pairs and not the values. That catches people out because it looks as though it ought to give you everything.\n\nThere are three ways to loop, and picking the right one removes a whole line of lookups from the body.',
+          kind: 'predict',
+          ask: 'This loops over a dictionary directly. Does it print the keys, the values, or the pairs?',
+          code: "marks = {'Ava': 72, 'Kai': 41, 'Noor': 63}\nfor name in marks:\n    print(name)\n",
+          choices: ['Ava\nKai\nNoor', '72\n41\n63', "Ava 72\nKai 41\nNoor 63"],
         },
         {
           kind: 'code',
-          caption: 'The same dictionary, three loops.',
-          code: "marks = {'Ava': 72, 'Kai': 41, 'Noor': 63}\n\nfor name in marks:\n    print('key:', name)\n\nfor mark in marks.values():\n    print('value:', mark)\n\nfor name, mark in marks.items():\n    print('pair:', name, mark)\n",
+          caption: 'Looping over a dictionary directly hands you the keys. `.values()` and `.items()` give the other two.',
+          code: "marks = {'Ava': 72, 'Kai': 41, 'Noor': 63}\n\nfor mark in marks.values():\n    print('value:', mark)\n\nfor name, mark in marks.items():\n    print('pair:', name, mark)\n",
         },
         {
           kind: 'prose',
-          body: 'Use `items()` whenever the body needs both halves, and unpack them in the header the way you would with a list of tuples. The keys come out in the order they were first added, which is worth knowing and is not the same as sorted order.',
+          body: 'Use `items()` whenever the body needs both halves, unpacked in the header the way you would a list of tuples. Keys come out in the order they were first added, which is not the same as sorted order.',
         },
         {
           kind: 'experiment',
           id: 't08-x2',
         },
         {
-          kind: 'prose',
-          body: 'One thing is not allowed: adding or removing keys while looping over the same dictionary. Python notices and stops rather than producing half an answer.',
-        },
-        {
           kind: 'code',
-          caption: 'Deleting while looping. This raises on purpose.',
+          caption: 'Adding or removing keys while looping over the same dictionary is not allowed. This raises on purpose.',
           code: "marks = {'Ava': 72, 'Kai': 41, 'Noor': 63}\nfor name in marks:\n    if marks[name] < 50:\n        del marks[name]\nprint(marks)\n",
         },
         {
-          kind: 'prose',
-          body: 'The error names the reason. Build a new dictionary containing the entries you want to keep, which is clearer anyway and leaves the original available if you need it.',
-        },
-        {
           kind: 'code',
-          caption: 'Keeping the passes, without touching the original.',
+          caption: 'The fix: build a new dictionary of the entries to keep, and leave the original alone.',
           code: "marks = {'Ava': 72, 'Kai': 41, 'Noor': 63}\npassed = {}\nfor name, mark in marks.items():\n    if mark >= 50:\n        passed[name] = mark\nprint(passed)\nprint(marks)\n",
         },
         {
@@ -247,7 +254,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A dictionary has no order you can rely on for output, and it has no `sort` of its own. Questions almost never stop at the tally: they want the top three, or the ladder, or everything in order. So the last step of most dictionary questions is turning it into a list of tuples and sorting that.',
+          body: 'A dictionary has no order you can rely on for output, and no `sort` of its own. Most dictionary questions do not stop at the tally — they want the top three, or the ladder — so the last step is turning it into a list of tuples and sorting that.',
         },
         {
           kind: 'code',
@@ -265,7 +272,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'Take those in order. `items()` on its own is not a list and does not print like one, so returning it where a list was asked for loses the mark. `sorted(runs)` gives the keys only, with the values gone entirely. `sorted(runs.items())` sorts by key, alphabetically, because the first part of each tuple is compared first.\n\nThe last two both rank by runs, highest first, and they disagree about the two tied batters. Sorting by the value alone leaves ties in whatever order the dictionary happened to have. Putting the name in the key as a second part settles them, and negating the number is what lets the runs go high to low while the names still go A to Z.',
+          body: '`items()` on its own is not a list, so returning it where a list was asked for loses the mark. `sorted(runs)` gives the keys only. `sorted(runs.items())` sorts by key alphabetically. The last two both rank by runs, highest first, and disagree about the tied batters: sorting by value alone leaves ties in whatever order the dictionary happened to have, while putting the name second in the key settles them — and negating the number lets runs go high to low while names still go A to Z.',
         },
         {
           kind: 'callout',
@@ -292,8 +299,9 @@ const lesson: Lesson = {
           kind: 'workedExample',
         },
         {
-          kind: 'prose',
-          body: 'The cleaning of the site name in step 2 is what makes the two spellings land on one key, and everything downstream depends on it. Skip it and the totals look plausible, the ranking runs without complaint, and the answer is wrong.',
+          kind: 'checkpoint',
+          prompt: 'Skip the site-name cleaning step in the worked example above. The totals still print, the ranking still runs without complaint — so what is actually wrong with the answer?',
+          answer: 'Two spellings of the same site now land under two different keys, so their readings are split into two smaller totals instead of one correct one. Nothing raises, because a dictionary is perfectly happy holding both keys — the ranking is silently built from the wrong groups.',
         },
       ],
     },

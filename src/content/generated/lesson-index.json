@@ -9,6 +9,15 @@
       "Tell an instance attribute from a class attribute, and avoid the shared-mutable trap",
       "Decide when a function, a dict or a tuple is the better answer"
     ],
+    "sectionTitles": [
+      "The problem classes solve",
+      "What an object actually is",
+      "`__init__` and `self`",
+      "Methods: behaviour that belongs to the data",
+      "Class attributes and the shared trap",
+      "When a class is the wrong tool",
+      "Shaping a class well"
+    ],
     "sections": 7,
     "summary": "Keeping data and the behaviour that belongs to it in one place, and knowing when not to",
     "title": "Classes and objects",
@@ -23,6 +32,15 @@
       "Filter with a trailing `if`, and choose values with a leading `if ... else`",
       "Write dict and set comprehensions, and flatten a nested list",
       "Say when a loop is the better choice and defend it"
+    ],
+    "sectionTitles": [
+      "The shape of the loop",
+      "Filtering with if",
+      "Two different ifs",
+      "Dicts and sets",
+      "Two loops, one line",
+      "When a loop is better",
+      "The variable does not leak"
     ],
     "sections": 7,
     "summary": "Turning a build-a-list loop into one expression, and knowing when that is the wrong move",
@@ -42,6 +60,15 @@
     "prereqs": [
       "classes-and-objects"
     ],
+    "sectionTitles": [
+      "An object with no manners",
+      "`__repr__` before `__str__`",
+      "`__len__`, and the truthiness it brings with it",
+      "`__eq__`, and what it takes away",
+      "`__lt__` and how sorting really works",
+      "`__contains__`: giving `in` a meaning",
+      "Before and after"
+    ],
     "sections": 7,
     "summary": "Teaching your own objects to print, compare, measure and answer `in`",
     "title": "Dunder methods",
@@ -56,6 +83,14 @@
       "Explain why `in` on a list costs more as the list grows and `in` on a set does not",
       "Recognise the quadratic string-building loop and replace it with `join`",
       "Read a nested loop and state its cost without running it"
+    ],
+    "sectionTitles": [
+      "Count steps, not seconds",
+      "Why `in` on a list is slow",
+      "The string-building loop",
+      "Reading a nested loop",
+      "Working out a cost by reading",
+      "What things cost"
     ],
     "sections": 6,
     "summary": "Counting the work a loop does, and seeing which choices make it grow faster than the data",
@@ -75,6 +110,14 @@
     "prereqs": [
       "comprehensions"
     ],
+    "sectionTitles": [
+      "A function that pauses",
+      "Work that never happens",
+      "A sequence with no end",
+      "Generator expressions",
+      "Used once, then empty",
+      "When to reach for one"
+    ],
     "sections": 6,
     "summary": "Producing values one at a time, why that lets a sequence be endless, and the trap of using one twice",
     "title": "Generators",
@@ -89,6 +132,14 @@
       "Say which Python types survive a JSON round trip and which change",
       "Read and write CSV with `csv.DictReader` and `csv.writer` instead of `split(\",\")`",
       "Choose the right format for a given piece of data"
+    ],
+    "sectionTitles": [
+      "Data has to leave the program",
+      "JSON: `dumps` and `loads`",
+      "What survives the round trip",
+      "CSV: why not `split(\",\")`",
+      "`DictReader` and `DictWriter`",
+      "Which format, when"
     ],
     "sections": 6,
     "summary": "Two ways to put data in a text file, and the standard-library modules that get the details right",
@@ -105,6 +156,15 @@
       "Write a `lambda` and say when a named function is the better choice",
       "Explain what a stable sort guarantees and use it on purpose"
     ],
+    "sectionTitles": [
+      "sorted and .sort",
+      "Sorting by something else",
+      "Writing the key inline",
+      "Breaking ties",
+      "itemgetter and attrgetter",
+      "What stable means",
+      "Putting it together"
+    ],
     "sections": 7,
     "summary": "Telling sorted what to sort by, breaking ties on purpose, and the stability that makes it possible",
     "title": "Sorting by a key",
@@ -119,6 +179,15 @@
       "Choose between `import x` and `from x import y`, and avoid `import *`",
       "Explain what `if __name__ == \"__main__\":` is for",
       "Name a dozen standard-library modules and what each is for"
+    ],
+    "sectionTitles": [
+      "A module is a file",
+      "`import x` against `from x import y`",
+      "Why `import *` is a bad bargain",
+      "The `__name__` guard",
+      "A module runs once, no matter how often you import it",
+      "A tour of what already exists",
+      "Habits that save you"
     ],
     "sections": 7,
     "summary": "Splitting a program across files, and borrowing the thousands of files Python ships with",
@@ -135,6 +204,14 @@
       "Choose between a shallow copy and `copy.deepcopy`",
       "Recognise the mutable default argument trap and fix it"
     ],
+    "sectionTitles": [
+      "Two kinds of value",
+      "Names, not boxes",
+      "What a function can change",
+      "How deep a copy goes",
+      "The default that remembers",
+      "Why keys must be immutable"
+    ],
     "sections": 6,
     "summary": "Why two names can share one list, what a copy really copies, and the default argument that remembers",
     "title": "Mutability and copying",
@@ -150,6 +227,15 @@
       "Pull pieces out of a match with numbered and named groups",
       "Tell greedy from lazy repetition and fix a pattern that swallows too much",
       "Recognise the jobs where `in`, `split` or `startswith` is the better tool"
+    ],
+    "sectionTitles": [
+      "A pattern describes a shape",
+      "The pieces a pattern is made of",
+      "`search`, `match`, `fullmatch`, `findall`",
+      "Groups: keeping the pieces",
+      "Greedy and lazy",
+      "Changing text, not just finding it",
+      "When a regex is the wrong tool"
     ],
     "sections": 7,
     "summary": "Describing the shape of text instead of the exact characters, and knowing when not to",
@@ -169,6 +255,14 @@
     "prereqs": [
       "lambda-and-sorting"
     ],
+    "sectionTitles": [
+      "Where Python looks",
+      "Assignment decides",
+      "global and nonlocal",
+      "What a closure keeps",
+      "The loop variable surprise",
+      "A decorator, built up"
+    ],
     "sections": 6,
     "summary": "Where Python looks for a name, what a nested function keeps hold of, and how a decorator is built from that",
     "title": "Scope and closures",
@@ -183,6 +277,15 @@
       "Use union, intersection, difference and subset to compare two collections",
       "Deduplicate a list, with or without keeping the original order",
       "Say which values can go in a set and why the others cannot"
+    ],
+    "sectionTitles": [
+      "What a set is",
+      "Why membership is faster",
+      "Comparing two collections",
+      "Removing duplicates",
+      "What can go in",
+      "A set has no order",
+      "Choosing the collection"
     ],
     "sections": 7,
     "summary": "The collection built for membership and overlap, and the two rules that come with it",
@@ -199,6 +302,14 @@
       "Write the failing test first, then the fix",
       "List the edge cases worth trying on almost any function",
       "Read and write a small `unittest.TestCase`"
+    ],
+    "sectionTitles": [
+      "Why bother",
+      "`assert`: a claim the program checks",
+      "Write the failing test first",
+      "The cases worth trying every time",
+      "`unittest`, when the checks outgrow prints",
+      "What makes a test worth having"
     ],
     "sections": 6,
     "summary": "Turning \"it looked right\" into something the computer checks for you every time",
@@ -218,6 +329,14 @@
     "prereqs": [
       "classes-and-objects"
     ],
+    "sectionTitles": [
+      "Hints are documentation that does not rot",
+      "The annotations you will actually write",
+      "Python does not check them",
+      "The class you are tired of writing",
+      "Defaults, frozen and order",
+      "Dataclass, dict or tuple"
+    ],
     "sections": 6,
     "summary": "Writing down what a function expects, and letting Python write the boilerplate class",
     "title": "Type hints and dataclasses",
@@ -232,6 +351,14 @@
       "Use a starred name to take \"all the rest\" on either side of an assignment",
       "Write and call functions using `*args` and `**kwargs`",
       "Make a parameter keyword-only and say why that helps the caller"
+    ],
+    "sectionTitles": [
+      "Names on the left",
+      "Taking the rest",
+      "Stars in a call",
+      "Functions that take any number",
+      "Keyword-only parameters",
+      "Where it adds up"
     ],
     "sections": 6,
     "summary": "Pulling a structure apart into names, and writing functions that take however many arguments arrive",
@@ -251,6 +378,16 @@
     "prereqs": [
       "core-variables-expressions"
     ],
+    "sectionTitles": [
+      "A comparison is a value",
+      "The shape of a decision",
+      "elif is not a run of ifs",
+      "Joining conditions",
+      "Exactly on the line",
+      "Return the answer, not True",
+      "A full decision, start to finish",
+      "Traps and practice"
+    ],
     "sections": 8,
     "summary": "Comparisons, and or not, and why an elif chain is not a run of ifs",
     "title": "Making decisions",
@@ -269,6 +406,16 @@
     ],
     "prereqs": [
       "core-lists-tuples"
+    ],
+    "sectionTitles": [
+      "Looking things up by name",
+      "When the key is not there",
+      "Counting things",
+      "Grouping into lists",
+      "What a loop over a dictionary hands you",
+      "From a dictionary to a ranking",
+      "A whole one, worked",
+      "What goes wrong"
     ],
     "sections": 8,
     "summary": "Looking things up by name instead of by position, counting, grouping and ranking",
@@ -290,6 +437,15 @@
       "reading-an-error",
       "core-files-csv"
     ],
+    "sectionTitles": [
+      "What an exception is",
+      "Reading the message",
+      "Catching the one you expect",
+      "Why a bare except is worse",
+      "Where the try goes",
+      "else and finally",
+      "Return an empty result, do not crash"
+    ],
     "sections": 7,
     "summary": "Handle the one thing that can really go wrong, and let your own bugs stay visible",
     "title": "Exceptions and try / except",
@@ -308,6 +464,16 @@
     ],
     "prereqs": [
       "reading-an-error"
+    ],
+    "sectionTitles": [
+      "Why a file at all",
+      "Opening and closing safely",
+      "One line at a time",
+      "It is text until you convert it",
+      "Find the column by its name",
+      "The rows that are not rows",
+      "Writing the answer back out",
+      "All of it at once"
     ],
     "sections": 8,
     "summary": "Open a file, cut each line into fields, and survive the rows that are broken",
@@ -328,6 +494,16 @@
     "prereqs": [
       "core-decisions"
     ],
+    "sectionTitles": [
+      "Why a loop",
+      "Where a range starts and stops",
+      "What the loop variable holds",
+      "Building up an answer",
+      "Deciding inside a loop",
+      "Tracing a loop by hand",
+      "A loop that answers a question",
+      "Traps and practice"
+    ],
     "sections": 8,
     "summary": "Where a range starts and stops, the accumulator pattern, and how to trace a loop by hand",
     "title": "Repeating with for and range",
@@ -347,6 +523,16 @@
     "prereqs": [
       "core-for-loops"
     ],
+    "sectionTitles": [
+      "Why write a function",
+      "Define, then call",
+      "return versus print",
+      "return ends the function",
+      "Which value goes where",
+      "Using what comes back",
+      "Two functions, one answer",
+      "Traps and practice"
+    ],
     "sections": 8,
     "summary": "def, parameters, and the difference between showing an answer and handing it back",
     "title": "Writing your own functions",
@@ -365,6 +551,16 @@
     ],
     "prereqs": [
       "core-strings"
+    ],
+    "sectionTitles": [
+      "One name, many values",
+      "Growing and shrinking",
+      "sort() or sorted()",
+      "Sorting by your own rule",
+      "Two names, one list",
+      "Tuples, and returning more than one thing",
+      "A whole one, worked",
+      "What goes wrong"
     ],
     "sections": 8,
     "summary": "Collections that change and collections that cannot, sorting with a rule, and the copy that is not a copy",
@@ -386,6 +582,15 @@
     "prereqs": [
       "core-scope-and-main"
     ],
+    "sectionTitles": [
+      "What you are actually being asked",
+      "Reading the specification",
+      "Cutting it into helpers",
+      "Read it once, keep what you need",
+      "Deciding whether a row counts",
+      "Round last, rank properly",
+      "Testing it the way the marker will"
+    ],
     "sections": 7,
     "summary": "How to turn a specification into a program that answers exactly what was asked",
     "title": "Building a whole project",
@@ -406,6 +611,15 @@
     "prereqs": [
       "core-scope-and-main"
     ],
+    "sectionTitles": [
+      "A call is a call",
+      "The base case is the only brake",
+      "Down, then back up",
+      "What you do with the answer",
+      "Making the input smaller",
+      "When recursion is the right tool",
+      "All of it at once"
+    ],
     "sections": 7,
     "summary": "A function that calls itself, the base case that stops it, and what the answer is built from",
     "title": "Recursion",
@@ -424,6 +638,14 @@
     ],
     "prereqs": [
       "core-exceptions"
+    ],
+    "sectionTitles": [
+      "Two worlds, one name",
+      "Assigning cannot reach outside",
+      "Lists are the exception",
+      "Default parameters, and the trap",
+      "Helpers, called from main()",
+      "The rules you are marked against"
     ],
     "sections": 6,
     "summary": "Where a variable lives, what a function can change, and the contract a project is marked on",
@@ -444,6 +666,16 @@
     "prereqs": [
       "reading-an-error"
     ],
+    "sectionTitles": [
+      "Text has positions",
+      "Taking a piece out",
+      "A string cannot be changed",
+      "The methods worth knowing",
+      "Building a string in a loop",
+      "Comparing what somebody typed",
+      "A whole one, worked",
+      "What goes wrong"
+    ],
     "sections": 8,
     "summary": "Positions, slices that stop one early, and why a string method never changes the string",
     "title": "Strings",
@@ -462,6 +694,16 @@
     ],
     "prereqs": [
       "reading-an-error"
+    ],
+    "sectionTitles": [
+      "What kind is it",
+      "Converting on purpose",
+      "Three ways to divide",
+      "The order things happen",
+      "Showing the answer",
+      "A float is not exact",
+      "All of it at once",
+      "Traps and practice"
     ],
     "sections": 8,
     "summary": "What kind a value is, the three ways to divide, and why money in floats goes wrong",
@@ -483,6 +725,16 @@
     "prereqs": [
       "core-lists-tuples"
     ],
+    "sectionTitles": [
+      "When a for loop cannot help",
+      "The condition, and where it is checked",
+      "Loops that never stop",
+      "Stopping at a marker",
+      "Taking a number apart",
+      "Summing a series until it is close enough",
+      "A loop inside a loop",
+      "What goes wrong"
+    ],
     "sections": 8,
     "summary": "Repeating until something becomes true, and what happens when two loops sit inside each other",
     "title": "While loops and nested loops",
@@ -502,6 +754,15 @@
     ],
     "prereqs": [
       "values-and-types"
+    ],
+    "sectionTitles": [
+      "The four you know",
+      "Division always gives a decimal",
+      "Whole division and remainder",
+      "Powers",
+      "What happens first",
+      "Dividing by zero",
+      "Decimals are not exact"
     ],
     "sections": 7,
     "summary": "The seven operators, the order they happen in, and the three that surprise people",
@@ -523,6 +784,14 @@
       "values-and-types",
       "showing-your-work"
     ],
+    "sectionTitles": [
+      "A program that asks",
+      "What input() hands back",
+      "It is always text",
+      "Turning it into a number",
+      "When the typing is not a number",
+      "Putting it together"
+    ],
     "sections": 6,
     "summary": "Asking a person for something, and dealing with the fact that it always arrives as text",
     "title": "Getting input",
@@ -537,6 +806,13 @@
       "Point at the line that caused an error",
       "Tell the four commonest error types apart by what they mean",
       "Know why the reported line is sometimes not the guilty one"
+    ],
+    "sectionTitles": [
+      "An error is information",
+      "The four you will meet",
+      "Why SyntaxError is the odd one out",
+      "Asking Python directly",
+      "What to actually do"
     ],
     "sections": 5,
     "summary": "Python tells you what went wrong and where. Most beginners never read it",
@@ -557,6 +833,14 @@
     "prereqs": [
       "variables-and-names"
     ],
+    "sectionTitles": [
+      "Existing and being shown",
+      "Printing one thing",
+      "Several things on one line",
+      "Building a line with an f-string",
+      "Rounding for display",
+      "When nothing appears"
+    ],
     "sections": 6,
     "summary": "How to get what your program knows onto the screen, in a shape a person can read",
     "title": "Showing your work",
@@ -575,6 +859,15 @@
     ],
     "prereqs": [
       "what-a-program-is"
+    ],
+    "sectionTitles": [
+      "Why this one matters",
+      "Numbers",
+      "Text",
+      "True and False",
+      "Asking what something is",
+      "5 is not \"5\"",
+      "Mixing them, and converting"
     ],
     "sections": 7,
     "summary": "Every value is a kind of thing, and the kind decides what you can do with it",
@@ -595,6 +888,14 @@
     "prereqs": [
       "values-and-types"
     ],
+    "sectionTitles": [
+      "Why bother with names",
+      "How assignment works",
+      "One equals sign is not two",
+      "Changing what a name holds",
+      "Choosing a name",
+      "A name that is not there"
+    ],
     "sections": 6,
     "summary": "A name is a label you attach to a value so you can use it again",
     "title": "Variables and names",
@@ -609,6 +910,14 @@
       "Predict the order the lines of a short program run in",
       "Use `print()` to see what your program did",
       "Tell the difference between what you meant and what you wrote"
+    ],
+    "sectionTitles": [
+      "Before you start",
+      "Instructions, in order",
+      "Nothing shows unless you ask",
+      "Asking Python one line at a time",
+      "What you said, not what you meant",
+      "When something goes wrong"
     ],
     "sections": 6,
     "summary": "A list of instructions, carried out in order, exactly as written",

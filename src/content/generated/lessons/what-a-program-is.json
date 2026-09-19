@@ -1,11 +1,11 @@
 {
-  "s0-b2": {
+  "s0-b1": {
     "stdout": "Two coffees at 4.50 each cost:\n9.0\n"
   },
   "s1-b1": {
     "stdout": "First instruction\nSecond instruction\nThird instruction\n"
   },
-  "s1-b5": {
+  "s1-b3": {
     "experiment": {
       "runs": {
         "0-0-0": {
@@ -92,7 +92,7 @@
       }
     }
   },
-  "s2-b1": {
+  "s2-b0": {
     "stdout": "15\n"
   },
   "s3-b1": {
@@ -127,6 +127,14 @@
     }
   },
   "s5-b1": {
+    "error": {
+      "line": 3,
+      "message": "name 'prnt' is not defined. Did you mean: 'print'?",
+      "type": "NameError"
+    },
+    "stdout": "This line runs.\nSo does this one.\n"
+  },
+  "s5-b2": {
     "error": {
       "line": 3,
       "message": "name 'prnt' is not defined. Did you mean: 'print'?",

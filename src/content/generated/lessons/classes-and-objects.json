@@ -41,11 +41,6 @@
         "value": "{'name': 'Rex', 'age': 4}"
       },
       {
-        "source": "d.name",
-        "stdout": "",
-        "value": "'Rex'"
-      },
-      {
         "source": "type(d)",
         "stdout": "",
         "value": "<class '__main__.Dog'>"
@@ -72,26 +67,16 @@
     ]
   },
   "s2-b1": {
-    "stdout": "Ada 120.0\nGrace 40.0\n{'name': 'Ada', 'balance': 120.0}\n{'name': 'Grace', 'balance': 40.0}\nFalse True\n"
+    "stdout": "Ada 120.0\nGrace 40.0\nFalse True\n"
   },
-  "s2-b4": {
-    "error": {
-      "line": 7,
-      "message": "'Account' object has no attribute 'name'",
-      "type": "AttributeError"
-    },
+  "s2-b2": {
     "stdout": ""
+  },
+  "s2-b3": {
+    "stdout": "AttributeError: 'Account' object has no attribute 'name'\n"
   },
   "s3-b1": {
-    "stdout": "110.0\n120.0\n120.0\nTrue False\nmethod function\n"
-  },
-  "s3-b3": {
-    "error": {
-      "line": 9,
-      "message": "Account.deposit() takes 1 positional argument but 2 were given",
-      "type": "TypeError"
-    },
-    "stdout": ""
+    "stdout": "110.0\n120.0\n120.0\nTrue False\n"
   },
   "s4-b1": {
     "shell": [
@@ -113,11 +98,6 @@
         "value": "(4, 4, 4)"
       },
       {
-        "source": "vars(a)",
-        "stdout": "",
-        "value": "{}"
-      },
-      {
         "source": "a.legs = 3",
         "stdout": ""
       },
@@ -125,11 +105,6 @@
         "source": "a.legs, b.legs, Dog.legs",
         "stdout": "",
         "value": "(3, 4, 4)"
-      },
-      {
-        "source": "vars(a)",
-        "stdout": "",
-        "value": "{'legs': 3}"
       },
       {
         "source": "Dog.legs = 5",
@@ -165,7 +140,7 @@
   "s5-b1": {
     "stdout": "5.0\n5.0\n5.0\n"
   },
-  "s5-b4": {
+  "s5-b5": {
     "shell": [
       {
         "source": "row = {'name': 'Ada', 'mark': 72}",
@@ -186,11 +161,6 @@
         "stdout": ""
       },
       {
-        "source": "sorted(row)",
-        "stdout": "",
-        "value": "['mark', 'name']"
-      },
-      {
         "source": "row['grade'] = 'D'",
         "stdout": ""
       },
@@ -202,6 +172,6 @@
     ]
   },
   "s6-b1": {
-    "stdout": "0.0 0\n[62, 78, 55]\n65.0\n78\n{'unit': 'OTHER', 'scores': []}\n"
+    "stdout": ""
   }
 }

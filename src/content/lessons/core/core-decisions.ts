@@ -97,6 +97,20 @@ print(mark, grade)
           body: 'This is the single most expensive mistake in the topic, because both versions look reasonable and both run without complaint. The difference only shows up when a value makes two conditions true at once.',
         },
         {
+          kind: 'predict',
+          ask: 'A mark of 85 passes every one of these three tests. Predict what this prints before you check.',
+          code: `mark = 85
+grade = ''
+if mark >= 80:
+    grade = 'HD'
+if mark >= 70:
+    grade = 'D'
+if mark >= 50:
+    grade = 'P'
+print(grade)
+`,
+        },
+        {
           kind: 'compare',
           caption: 'The same mark, the same three cutoffs, one word different.',
           left: {
@@ -207,10 +221,14 @@ print(grade)
           ],
         },
         {
-          kind: 'callout',
-          tone: 'exam',
-          title: 'Inclusive ranges',
-          body: '"Between 1 and 9 inclusive" is written `1 <= n <= 9`. Python allows that chained form and reads it as `1 <= n and n <= 9`. The opposite test, for a value that is out of range, is `n < 1 or n > 9` — note that it flips `and` into `or` as well as flipping each comparison.',
+          kind: 'quiz',
+          prompt: 'A theme park ride requires riders to be 120 cm or taller. Which condition matches that rule exactly?',
+          options: [
+            { text: 'height >= 120', correct: true, why: '"120 cm or taller" includes exactly 120, and `>=` is the only one of these that lets a rider at exactly 120 on.' },
+            { text: 'height > 120', why: 'This turns away a rider at exactly 120 cm, and the rule says 120 counts.' },
+            { text: 'height > 119', why: 'This happens to let the same whole-centimetre riders through, but it does not match the wording of the rule, and it breaks the moment height is measured with a decimal.' },
+            { text: 'height >= 121', why: 'This is one centimetre too strict: a rider at exactly 120 should be let in, and this condition turns them away.' },
+          ],
         },
         {
           kind: 'interactive',

@@ -8,6 +8,7 @@ import type { LessonError } from '../../content/lessonSchema.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd, Markdown } from '../components/Markdown.tsx';
+import { openInPlayground } from '../workbench/openInPlayground.ts';
 
 /** Deterministic shuffle: the same block always presents in the same order, so a reader can come back. */
 function shuffled<T>(items: readonly T[], seed: string): T[] {
@@ -72,8 +73,8 @@ export function Quiz({ prompt, code, options }: {
 
 // ---------- predict ----------
 
-export function Predict({ code, ask, choices, stdout, error }: {
-  code: string; ask?: string; choices?: readonly string[]; stdout?: string; error?: LessonError;
+export function Predict({ code, ask, choices, stdout, error, slug }: {
+  code: string; ask?: string; choices?: readonly string[]; stdout?: string; error?: LessonError; slug?: string;
 }) {
   const [typed, setTyped] = useState('');
   const [picked, setPicked] = useState<string | null>(null);
@@ -121,6 +122,11 @@ export function Predict({ code, ask, choices, stdout, error }: {
         <div class={`ib-verdict${right ? ' is-right' : ''}`}>
           <p class="ib-verdict-t">
             {right ? 'That is exactly it.' : 'Not quite. Here is what Python actually printed:'}
+          </p>
+          <p class="lb-tryit">
+            <button type="button" class="btn ghost lb-tryit-btn" onClick={() => openInPlayground(code, `${slug ?? 'predict'}.py`)}>
+              <Icon name="terminal" size={14} /> Try it yourself
+            </button>
           </p>
           {right ? null : (
             <pre class="lb-out"><code>

@@ -50,6 +50,9 @@
     "stdout": "85 HD\n"
   },
   "s2-b1": {
+    "stdout": "P\n"
+  },
+  "s2-b2": {
     "left": {
       "stdout": "P\n"
     },

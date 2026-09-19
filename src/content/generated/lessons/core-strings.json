@@ -94,7 +94,10 @@
       }
     ]
   },
-  "s1-b5": {
+  "s1-b2": {
+    "stdout": "EMANT\n5\n"
+  },
+  "s1-b6": {
     "experiment": {
       "runs": {
         "0": {

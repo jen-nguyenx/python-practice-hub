@@ -161,7 +161,18 @@ with open('sensors') as f:
         },
         {
           kind: 'prose',
-          body: 'Read that session line by line. Multiplying the field did not double anything, adding a number to it stopped the program, and `float` is what turned the characters into a value you can do arithmetic with.\n\nThe last line is the other half of the rule: `int` accepts text that spells a **whole** number and nothing else. For anything that might have a decimal point, use `float`.',
+          body: 'Multiplying the field did not double anything, and adding a number to it stopped the program: `float` is what turned the characters into a value you can do arithmetic with. `int` only accepts text that spells a **whole** number; use `float` for anything that might have a decimal point.',
+        },
+        {
+          kind: 'order',
+          ask: 'These five lines turn one raw line of a file into a usable number. Drag them into an order that runs.',
+          lines: [
+            { text: "line = 'Matilda Bay,2026-03-02,13.1\\n'", indent: 0 },
+            { text: 'line = line.strip()', indent: 0 },
+            { text: "fields = line.split(',')", indent: 0 },
+            { text: 'value = float(fields[2])', indent: 0 },
+            { text: 'print(value)', indent: 0 },
+          ],
         },
         {
           kind: 'experiment',
@@ -289,7 +300,20 @@ print(total, count)
         },
         {
           kind: 'prose',
-          body: 'The guard on the left-hand version is missing entirely, and the file only has to contain one unusable row for the whole program to stop. The right-hand version keeps going and tells you how many rows it could actually use.\n\nThe length check is the one people leave out, because a blank line looks like it would give no fields at all. It gives one empty field, so comparing the number of fields with the number of columns in the header catches it, along with every short row.',
+          body: 'The guard on the left-hand version is missing entirely, so one unusable row stops the whole program. The right-hand version keeps going. Click each numbered line below to see what it is guarding against.',
+        },
+        {
+          kind: 'annotate',
+          ask: 'The same guarded loop, self-contained: one blank row and one N/A row hidden among good ones.',
+          code: "header = ['site', 'date', 'salinity']\nrows = ['Matilda Bay,2026-03-01,12.4', '', 'Matilda Bay,2026-03-02,N/A', 'Matilda Bay,2026-03-03,13.1']\ntotal = 0\ncount = 0\nfor row in rows:\n    fields = row.strip().split(',')\n    if len(fields) != len(header):\n        continue\n    value = fields[2].strip()\n    if value == '' or value.upper() == 'N/A':\n        continue\n    total = total + float(value)\n    count = count + 1\nprint(total, count)\n",
+          notes: {
+            '5': 'Checked one row at a time, so a bad row costs only itself, never the rows before or after it.',
+            '6': 'A blank row still splits into one field, `[\'\']`, not zero fields.',
+            '7': 'Comparing the field count with the header catches the blank row, and every short row, before anything tries to read a field from it.',
+            '9': 'N/A is stripped and compared in upper case, so `n/a`, `N/A` and `NA` are all caught the same way.',
+            '10': 'The row is abandoned here, before `float` ever sees the text that would make it raise.',
+            '12': 'Only a row that survived both guards reaches the arithmetic, so `total` never has to cope with text.',
+          },
         },
         {
           kind: 'table',
@@ -356,19 +380,15 @@ print(total, count)
       title: 'Writing the answer back out',
       blocks: [
         {
-          kind: 'prose',
-          body: '`write` takes exactly one string and adds nothing to it. Both halves of that sentence bite. A number has to be turned into text first, and the newline at the end of each line is yours to supply.',
-        },
-        {
           kind: 'code',
-          caption: 'Handing `write` a number, on purpose.',
+          caption: '`write` takes exactly one string and adds nothing to it. Handing it a number, on purpose.',
           code: `with open('summary', 'w') as out:
     out.write(12.4)
 `,
         },
         {
           kind: 'prose',
-          body: 'So build the line as a string. `str(value)` works, and an f-string is usually easier to read because the line looks like the line you want.',
+          body: 'A number has to become text first — `str(value)` works, and an f-string is usually easier to read — and the newline at the end of each line is yours to supply.',
         },
         {
           kind: 'code',

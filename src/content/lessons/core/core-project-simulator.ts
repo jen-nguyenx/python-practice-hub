@@ -24,17 +24,13 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Every question up to now has had one idea in it. A project has none: it is a page of ordinary English describing a program, and the skill being tested is not a Python feature. It is the ability to read carefully, break a job into pieces, and finish something.\n\nThere is nothing in a CITS1401 project you have not already met. Files, loops, dictionaries, functions, try/except. What is new is the **quantity**, and the fact that nobody tells you which part to write first.',
+          body: 'Every question up to now has had one idea in it. A project has none: it is a page of ordinary English describing a program, testing not a Python feature but the ability to read carefully, break a job into pieces, and finish something. There is nothing in it you have not already met — files, loops, dictionaries, functions, try/except — only the **quantity** is new, and nobody tells you which part to write first.',
         },
         {
           kind: 'callout',
           tone: 'exam',
           title: 'What the marker runs',
           body: 'Your file is imported by a program. It calls `main(...)` with arguments it chose, including file names you have never seen and arguments of the wrong type, and compares what comes back with what the specification promised. It does not read your code while it does this, and it does not look at the screen. Everything you are marked on goes out through `return`.',
-        },
-        {
-          kind: 'prose',
-          body: 'So the first hour of a project is not spent writing Python. It is spent turning that page of English into a list of things that are either done or not done.',
         },
       ],
     },
@@ -147,6 +143,20 @@ print(main(42, 'Subiaco'))
           kind: 'checkpoint',
           prompt: 'Why does `rainfall_for` return an empty list when the `rainfall` column is missing, while `read_lines` returns `None` when the file is missing?',
           answer: 'So that `main` can tell the two situations apart if it ever needs to, and so that each helper returns one consistent shape. `read_lines` returns a list of lines or `None`; `rainfall_for` always returns a list, possibly empty. `main` collapses both into the single failure value the spec names. A helper that sometimes returns a list and sometimes a number is the thing to avoid.',
+        },
+        {
+          kind: 'order',
+          ask: 'A spec asks for the count and mean of the valid readings in this list. Drag these lines into an order that works.',
+          lines: [
+            { text: "rows = ['12.4', 'n/a', '8.0']", indent: 0 },
+            { text: 'values = []', indent: 0 },
+            { text: 'for r in rows:', indent: 0 },
+            { text: 'try:', indent: 1 },
+            { text: 'values.append(float(r))', indent: 2 },
+            { text: 'except ValueError:', indent: 1 },
+            { text: 'continue', indent: 2 },
+            { text: 'print(len(values), round(sum(values) / len(values), 4))', indent: 0 },
+          ],
         },
       ],
     },
@@ -288,7 +298,17 @@ for reason, line in skipped:
       blocks: [
         {
           kind: 'prose',
-          body: 'Two things go wrong at the end of a project, after all the hard work is done, and both of them are worth more marks than they look.\n\nThe first is rounding too early. A rounded number has had digits removed, and every calculation you do afterwards spreads that loss. Keep full precision through every helper and round only in the line that builds the value you return.',
+          body: 'Two things go wrong at the end of a project, after all the hard work is done, and both of them are worth more marks than they look.',
+        },
+        {
+          kind: 'quiz',
+          prompt: 'A helper returns `round(share, 4)`, and `main` multiplies that by 100 for the final percentage. A second version keeps `share` unrounded through the helper and rounds only after multiplying by 100. Do the two final answers always agree?',
+          options: [
+            { text: 'No — rounding before the multiplication can shift digits that the multiplication would otherwise have used', correct: true, why: 'Rounding throws digits away for good. Multiplying the rounded value afterwards spreads that loss instead of undoing it.' },
+            { text: 'Yes, because 4 decimal places is already far more precise than the task needs', why: 'How precise 4 decimal places sounds does not matter — the digits dropped by rounding are gone before the multiplication ever sees them, and the gap shows up exactly where the task checks it.' },
+            { text: 'Yes, as long as `share` is never negative', why: 'The sign of `share` changes nothing about whether rounding happened before or after the multiplication.' },
+            { text: 'No, but only because `round()` always rounds down', why: 'Python\'s `round()` rounds to the nearest value, not down. The disagreement comes from removing digits early, not from which way rounding goes.' },
+          ],
         },
         { kind: 'experiment', id: 't12-x1' },
         {

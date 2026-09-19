@@ -36,11 +36,6 @@
         "value": "3.0"
       },
       {
-        "source": "100 / 10",
-        "stdout": "",
-        "value": "10.0"
-      },
-      {
         "source": "type(10 / 2)",
         "stdout": "",
         "value": "<class 'float'>"
@@ -49,11 +44,6 @@
         "source": "7 / 2",
         "stdout": "",
         "value": "3.5"
-      },
-      {
-        "source": "1 / 3",
-        "stdout": "",
-        "value": "0.3333333333333333"
       }
     ]
   },
@@ -80,11 +70,6 @@
         "value": "2"
       },
       {
-        "source": "8 % 2",
-        "stdout": "",
-        "value": "0"
-      },
-      {
         "source": "9 % 2",
         "stdout": "",
         "value": "1"
@@ -96,10 +81,10 @@
       }
     ]
   },
-  "s2-b3": {
+  "s2-b2": {
     "stdout": "8\n20\n"
   },
-  "s2-b5": {
+  "s2-b4": {
     "experiment": {
       "runs": {
         "0": {
@@ -325,18 +310,11 @@
         "source": "9 ** 0.5",
         "stdout": "",
         "value": "3.0"
-      },
-      {
-        "source": "2 ** 0.5",
-        "stdout": "",
-        "value": "1.4142135623730951"
-      },
-      {
-        "source": "3 ^ 2",
-        "stdout": "",
-        "value": "1"
       }
     ]
+  },
+  "s3-b2": {
+    "stdout": "1\n"
   },
   "s4-b2": {
     "shell": [
@@ -351,16 +329,6 @@
         "value": "20"
       },
       {
-        "source": "10 - 2 - 3",
-        "stdout": "",
-        "value": "5"
-      },
-      {
-        "source": "100 / 10 / 2",
-        "stdout": "",
-        "value": "5.0"
-      },
-      {
         "source": "2 * 3 ** 2",
         "stdout": "",
         "value": "18"
@@ -372,7 +340,7 @@
       }
     ]
   },
-  "s4-b4": {
+  "s4-b3": {
     "left": {
       "stdout": "9.0\n"
     },
@@ -427,11 +395,6 @@
         "source": "0.1 + 0.2 == 0.3",
         "stdout": "",
         "value": "False"
-      },
-      {
-        "source": "1.1 * 3",
-        "stdout": "",
-        "value": "3.3000000000000003"
       },
       {
         "source": "round(0.1 + 0.2, 2)",

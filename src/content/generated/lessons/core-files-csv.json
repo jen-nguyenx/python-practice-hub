@@ -68,6 +68,9 @@
       }
     ]
   },
+  "s3-b3": {
+    "stdout": "13.1\n"
+  },
   "s4-b1": {
     "stdout": "25.5\n25.5\n"
   },
@@ -84,7 +87,10 @@
       "stdout": "25.5 2\n"
     }
   },
-  "s5-b5": {
+  "s5-b3": {
+    "stdout": "25.5 2\n"
+  },
+  "s5-b6": {
     "experiment": {
       "runs": {
         "0": {
@@ -147,7 +153,7 @@
       }
     }
   },
-  "s6-b1": {
+  "s6-b0": {
     "error": {
       "line": 2,
       "message": "write() argument must be str, not float",
@@ -155,7 +161,7 @@
     },
     "stdout": ""
   },
-  "s6-b3": {
+  "s6-b2": {
     "stdout": "site,total\napplecross,18.25\ncrawley,11.0\nmatilda bay,25.5\n\n"
   }
 }

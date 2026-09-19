@@ -147,8 +147,30 @@ print(total)
           },
         },
         {
-          kind: 'prose',
-          body: 'Look at the order of what came out on the left. The two correct numbers appeared **first**, from inside the function, and the program stopped afterwards. Both numbers were right and neither of them ever reached the caller, so the addition had nothing to add.\n\nThat error message is the signature of this mistake. When you see a complaint about `NoneType` in an addition, a comparison or an f-string, the first thing to check is whether the function that produced the value printed instead of returning.',
+          kind: 'quiz',
+          prompt: 'The `area` function on the left prints its answer instead of returning it. What does the expression `area(3, 4)` actually hand back to whatever called it?',
+          options: [
+            { text: 'None', correct: true, why: 'A function with no `return` statement always hands back `None`, no matter what it printed or worked out along the way.' },
+            { text: '12', why: '12 is what was printed to the screen. Printing sends characters to the screen; it does not send a value back to the code that made the call.' },
+            { text: "'12' as text", why: 'The function does not return text either. It returns nothing at all, which Python represents as `None`.' },
+            { text: 'An error, immediately', why: 'The call itself raises nothing. The error only appears later, when something tries to use the `None` it handed back — such as adding two of them together.' },
+          ],
+        },
+        {
+          kind: 'predict',
+          ask: 'One of these functions returns, and one only prints. Predict everything this prints, in order.',
+          code: `def twice(n):
+    return n * 2
+
+
+def show_twice(n):
+    print(n * 2)
+
+
+a = twice(5)
+b = show_twice(5)
+print(a, b)
+`,
         },
         {
           kind: 'experiment',

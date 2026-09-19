@@ -494,6 +494,9 @@ export async function checkLessons(
       ...(typeof lesson.order === 'number' ? { order: lesson.order } : {}),
       ...(lesson.prereqs?.length ? { prereqs: lesson.prereqs } : {}),
       outcomes: lesson.outcomes ?? [], sections: (lesson.sections ?? []).length,
+      // Section titles travel in the index so the library can be searched by what a lesson covers,
+      // without downloading every lesson chunk to look inside it.
+      sectionTitles: (lesson.sections ?? []).map((sec) => sec.title),
     });
   }
   return { generated, index };

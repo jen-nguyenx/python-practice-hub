@@ -21,13 +21,13 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A list of dictionaries lives in memory and dies when the program ends. To keep it, send it somewhere, or read what another program produced, it has to become **text**, and both ends have to agree on how to read that text back.\n\nTwo agreements cover almost everything you will meet. CSV is a grid: rows and columns, like a spreadsheet. JSON is a tree: nested dictionaries and lists, the way a web service answers a request. Python ships with a module for each, and both modules exist because the fiddly cases are fiddlier than they look.',
+          body: 'A list of dictionaries lives in memory and dies when the program ends. To keep it, or read what another program produced, it has to become **text**, and both ends have to agree on how to read that text back.\n\nTwo agreements cover almost everything. CSV is a grid: rows and columns, like a spreadsheet. JSON is a tree: nested dictionaries and lists, the way a web service answers a request.',
         },
         {
           kind: 'callout',
           tone: 'exam',
           title: 'Not in the CITS1401 projects',
-          body: 'The unit\'s project specifications forbid importing any module, so the marked work reads files with `open`, `strip` and `split`. Everything here is for your own programs and for after the unit. It is still worth knowing now, because it tells you what your hand-written parsing is trying to reproduce — and which cases it will get wrong.',
+          body: 'The unit\'s project specifications forbid importing any module, so the marked work reads files with `open`, `strip` and `split`. Everything here is for your own programs and for after the unit — and it tells you what your hand-written parsing is trying to reproduce.',
         },
       ],
     },
@@ -37,7 +37,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Four names, and you have the whole module. `dumps` turns data into a string; `loads` reads a string back. The versions without the `s` do the same to an open file: `dump` writes, `load` reads. The `s` stands for string.',
+          body: 'Four names, and you have the whole module. `dumps` turns data into a string; `loads` reads a string back. The versions without the `s` do the same to an open file: `dump` writes, `load` reads.',
         },
         {
           kind: 'shell',
@@ -47,27 +47,33 @@ const lesson: Lesson = {
             "student = {'name': 'Ada', 'marks': [72, 65], 'passed': True, 'note': None}",
             'text = json.dumps(student)',
             'text',
-            'type(text).__name__, len(text)',
             'back = json.loads(text)',
             'back',
             'back == student',
-            "back['marks'][0] + 1",
-            "json.loads('[1, 2, 3]')",
-            'json.dumps([1, 2, 3])',
           ],
         },
         {
-          kind: 'prose',
-          body: 'Look at what changed in the text version of those values: the booleans and the empty value are spelled differently in JSON than in Python, and the quotes are always double. That is JSON\'s spelling, not Python\'s, and `loads` translates it back — which is why the comparison at the end came out as it did.',
+          kind: 'quiz',
+          prompt: 'The booleans and the empty value print differently inside `text` than inside `student`. What is going on?',
+          options: [
+            {
+              text: 'JSON has its own spelling for those values — `true`, `false`, `null` — and `loads` translates it back on the way in',
+              correct: true,
+              why: 'The text is JSON\'s format, not Python\'s: `True` becomes `true`, `None` becomes `null`. `loads` reverses the translation, which is why `back == student` comes out true even though the text in between looked different.',
+            },
+            { text: 'The round trip lost the boolean and the missing value', why: '`back == student` says otherwise: both values survive intact. Only their spelling in the intermediate text differs, not their value after loading.' },
+            { text: 'json.dumps converts every value to a string, including numbers', why: 'The marks come back as a list of integers, not text — `dumps` writes structured JSON, not a string representation of the whole object.' },
+            { text: 'This is a bug specific to this dictionary\'s shape', why: 'Every dict serialised through `json.dumps` gets the same treatment for booleans and `None`; it is how the format is defined, not a quirk of this data.' },
+          ],
         },
         {
           kind: 'code',
           caption: 'Writing to a file and reading it back, which is the usual reason to do any of this.',
-          code: "import json\n\nstudents = [\n    {'name': 'Ada', 'mark': 72},\n    {'name': 'Bob', 'mark': 65},\n]\n\nwith open('marks.json', 'w') as f:\n    json.dump(students, f, indent=2)\n\nprint(open('marks.json').read())\n\nwith open('marks.json') as f:\n    loaded = json.load(f)\n\nprint(loaded == students)\nprint(loaded[0]['name'], loaded[0]['mark'] + 1)\n",
+          code: "import json\n\nstudents = [\n    {'name': 'Ada', 'mark': 72},\n    {'name': 'Bob', 'mark': 65},\n]\n\nwith open('marks.json', 'w') as f:\n    json.dump(students, f, indent=2)\n\nprint(open('marks.json').read())\n\nwith open('marks.json') as f:\n    loaded = json.load(f)\n\nprint(loaded == students)\n",
         },
         {
           kind: 'prose',
-          body: '`indent=2` is the difference between a file a person can read and one long line. It costs a little space and is worth it for anything you might open yourself. `sort_keys=True` is the other option worth knowing: it makes the output order fixed, so two runs produce identical files and a difference in a file really means a difference in the data.',
+          body: '`indent=2` is the difference between a file a person can read and one long line. `sort_keys=True` is the other option worth knowing: it fixes the output order, so a difference between two runs really means a difference in the data.',
         },
       ],
     },
@@ -77,16 +83,22 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'JSON has fewer types than Python, so some values come back as something else, and some cannot go out at all. This is the part people get wrong from memory, so here it is, run.',
+          body: 'JSON has fewer types than Python, so some values come back as something else, and some cannot go out at all. This is the part people get wrong from memory.',
         },
         {
-          kind: 'code',
-          caption: 'Each value sent out and read back, with what it became.',
-          code: "import json\n\nvalues = [\n    42,\n    3.5,\n    'text',\n    True,\n    None,\n    [1, 2],\n    (1, 2),\n    {'a': 1},\n    {1: 'one'},\n    {2.5: 'two and a half'},\n    {True: 'yes'},\n]\n\nfor v in values:\n    text = json.dumps(v)\n    back = json.loads(text)\n    same = 'same' if back == v else 'CHANGED'\n    print(f'{v!r:24} -> {text:22} -> {back!r:22} {type(back).__name__:5} {same}')\n",
+          kind: 'predict',
+          ask: 'A tuple and a dict with integer keys are both sent through `dumps` then `loads`. Which line shows they came back changed?',
+          code: "import json\n\npair = (1, 2)\nback_pair = json.loads(json.dumps(pair))\nprint(type(back_pair).__name__, back_pair == pair)\n\ncounts = {1: 'one', 2: 'two'}\nback_counts = json.loads(json.dumps(counts))\nprint(sorted(back_counts.keys()))\n",
+          choices: [
+            'list False\n[\'1\', \'2\']',
+            'tuple True\n[1, 2]',
+            'list True\n[1, 2]',
+            'list False\n[1, 2]',
+          ],
         },
         {
           kind: 'prose',
-          body: 'Two rows in that table are the ones to remember. A tuple goes out as a JSON array and comes back a list, because JSON has no tuples. And **every key becomes a string**: numbers, and even `True`, are spelled as text keys on the way out, and stay text on the way back.\n\nThat last one bites when you save a dictionary keyed by student number and read it back expecting numbers.',
+          body: 'A tuple goes out as a JSON array and comes back a list, because JSON has no tuples. And **every key becomes a string**, even a number — which bites when you save a dictionary keyed by student number and read it back expecting numbers.',
         },
         {
           kind: 'interactive',
@@ -113,42 +125,18 @@ const lesson: Lesson = {
               '2': 'The keys `1` and `2` are written as the text `"1"` and `"2"`, because every JSON key is a string. `back` looks right when printed and fails the equality check, because its keys are text where the original had numbers.',
               '3': 'A set has no JSON equivalent at all, so `dumps` refuses outright before anything is written. Converting to a sorted list first is the fix, and it is a decision you make, not one the module makes for you.',
             },
-            takeaway: 'JSON only really has arrays and text keys. Whatever left your program as a tuple, or was keyed by anything other than a string, comes back changed — quietly for a tuple or a numeric key, loudly for a set — so the round trip is only safe for the types JSON actually has.',
+            takeaway: 'JSON only really has arrays and text keys. Whatever left your program as a tuple, or was keyed by anything other than a string, comes back changed — quietly for a tuple or a numeric key, loudly for a set.',
           },
-        },
-        {
-          kind: 'shell',
-          caption: 'Keyed by number, saved, reloaded.',
-          lines: [
-            'import json',
-            "counts = {1: 'one', 2: 'two'}",
-            'json.dumps(counts)',
-            'back = json.loads(json.dumps(counts))',
-            'back',
-            'back == counts',
-            'sorted(back)',
-            'back[1]',
-            "back['1']",
-            '{int(k): v for k, v in back.items()} == counts',
-          ],
-        },
-        {
-          kind: 'prose',
-          body: 'The lookup by number failed and the lookup by text worked, and the last line shows the usual repair: convert the keys back yourself, at the moment you load, so the rest of the program never has to know.',
         },
         {
           kind: 'code',
           caption: 'Types JSON cannot take at all. This one raises on purpose.',
-          code: "import json\nimport datetime\n\nprint(json.dumps({'when': '2024-03-01'}))\nprint(json.dumps({'rows': [1, 2], 'ok': True}))\nprint(json.dumps({'when': datetime.date(2024, 3, 1)}))\n",
-        },
-        {
-          kind: 'prose',
-          body: 'Dates, sets, objects of your own classes and anything else JSON has never heard of are refused, with the offending field named. The fix is to convert to something JSON knows before dumping — `str(date)`, `sorted(a_set)`, `dataclasses.asdict(obj)` — and to convert back after loading.',
+          code: "import json\nimport datetime\n\nprint(json.dumps({'rows': [1, 2], 'ok': True}))\nprint(json.dumps({'when': datetime.date(2024, 3, 1)}))\n",
         },
         {
           kind: 'checkpoint',
-          prompt: 'You save `{"scores": {1: 90, 2: 80}, "tags": {"maths", "stats"}}` and it raises. You fix that, save successfully, load the file, and `data["scores"][1]` fails. Explain both problems and write the two conversions that fix them properly.',
-          answer: 'The first failure is the set: JSON has arrays and objects and nothing that means "set", so it refuses. Converting with `sorted(tags)` makes it a list and also makes the file deterministic; on load, `set(data["tags"])` puts it back. The second failure is the key rule: every JSON key is a string, so the integer keys `1` and `2` were written as `"1"` and `"2"` and came back as text, making `data["scores"][1]` a `KeyError` while `data["scores"]["1"]` works. The repair is a comprehension at load time: `{int(k): v for k, v in data["scores"].items()}`. Both conversions belong in one small function that turns loaded JSON into your program\'s shapes, so that nothing downstream has to remember the format\'s limits.',
+          prompt: 'You save `{"scores": {1: 90, 2: 80}, "tags": {"maths", "stats"}}` and it raises. You fix that, save, load the file, and `data["scores"][1]` fails. Explain both problems and the two conversions that fix them.',
+          answer: 'The first failure is the set: JSON has arrays and objects and nothing that means "set", so it refuses. Converting with `sorted(tags)` makes it a list and also makes the file deterministic; on load, `set(data["tags"])` puts it back. The second failure is the key rule: every JSON key is a string, so the integer keys `1` and `2` were written as `"1"` and `"2"` and came back as text, making `data["scores"][1]` a `KeyError` while `data["scores"]["1"]` works. The repair is `{int(k): v for k, v in data["scores"].items()}` at load time. Both conversions belong in one small function that turns loaded JSON into your program\'s shapes.',
         },
       ],
     },
@@ -158,7 +146,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A CSV file is rows of fields separated by commas. It looks so simple that splitting on commas seems obviously enough — and it is, right up until a field contains a comma.\n\nThe format has an answer for that: put the field in quotes. Which means a reader now has to understand quotes, and quotes inside quotes, and line breaks inside quoted fields.',
+          body: 'A CSV file is rows of fields separated by commas. Splitting on commas seems obviously enough — right up until a field contains a comma. The format\'s answer is to put the field in quotes, which means a reader now has to understand quotes, and quotes inside quotes.',
         },
         {
           kind: 'code',
@@ -167,18 +155,13 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'The split produced four fields out of a row that has three, cut a person\'s name in half, and left the quote characters in place. The csv reader produced the three real fields, joined the name back together and removed the quoting.\n\nThe same applies when writing: a field containing a comma, a quote or a newline has to be quoted on the way out, and the module does it for you.',
-        },
-        {
-          kind: 'code',
-          caption: 'Writing rows that contain the awkward characters.',
-          code: "import csv\n\nrows = [\n    ['name', 'mark', 'note'],\n    ['Nguyen, Ada', 72, 'said \"hello\"'],\n    ['Bob', 65, 'plain'],\n]\n\nwith open('marks.csv', 'w', newline='') as f:\n    csv.writer(f).writerows(rows)\n\nprint(repr(open('marks.csv').read()))\nprint()\nwith open('marks.csv') as f:\n    for row in csv.reader(f):\n        print(row)\n",
+          body: 'The split produced four fields out of a row that has three, and cut a person\'s name in half. The csv reader produced the three real fields and removed the quoting.',
         },
         {
           kind: 'callout',
           tone: 'warn',
           title: '`newline=\'\'` when you open a file for csv',
-          body: 'The csv module handles line endings itself. Without `newline=\'\'` in the `open` call, you can get a blank line between every row on some systems. It is a small thing that looks like a bug in your data.',
+          body: 'The csv module handles line endings itself. Without `newline=\'\'` in the `open` call, you can get a blank line between every row on some systems.',
         },
       ],
     },
@@ -188,30 +171,35 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Reading rows as lists means writing `row[2]` and remembering what column two was. `DictReader` uses the header line to give each field its name, so the code says what it means and survives someone adding a column.',
+          body: 'Reading rows as lists means writing `row[2]` and remembering what column two was. `DictReader` uses the header line to give each field its name, so the code survives someone adding a column.',
         },
         {
           kind: 'code',
           caption: 'Writing with a header, then reading it back by name.',
-          code: "import csv\n\nstudents = [\n    {'name': 'Ada', 'mark': 72, 'unit': 'CITS1401'},\n    {'name': 'Bob', 'mark': 65, 'unit': 'CITS1401'},\n]\n\nwith open('marks.csv', 'w', newline='') as f:\n    writer = csv.DictWriter(f, fieldnames=['name', 'mark', 'unit'])\n    writer.writeheader()\n    writer.writerows(students)\n\nprint(open('marks.csv').read())\n\nwith open('marks.csv') as f:\n    for row in csv.DictReader(f):\n        print(row)\n        print('  mark field:', repr(row['mark']), type(row['mark']).__name__)\n",
+          code: "import csv\n\nstudents = [\n    {'name': 'Ada', 'mark': 72, 'unit': 'CITS1401'},\n    {'name': 'Bob', 'mark': 65, 'unit': 'CITS1401'},\n]\n\nwith open('marks.csv', 'w', newline='') as f:\n    writer = csv.DictWriter(f, fieldnames=['name', 'mark', 'unit'])\n    writer.writeheader()\n    writer.writerows(students)\n\nwith open('marks.csv') as f:\n    for row in csv.DictReader(f):\n        print(row)\n        print('  mark field:', repr(row['mark']), type(row['mark']).__name__)\n",
         },
         {
-          kind: 'prose',
-          body: 'The marks went out as whole numbers and came back with quotes around them. That is not a quirk of the module: **a CSV file is text and has no types at all**, so every field arrives as a string and converting is your job.',
+          kind: 'quiz',
+          prompt: 'Every mark went out as a whole number and came back as text with quotes around it. Why?',
+          options: [
+            {
+              text: 'A CSV file is plain text with no type system at all, so every field arrives as a string regardless of what it started as',
+              correct: true,
+              why: 'CSV has no concept of "this column is numbers". Converting is entirely your responsibility, at the moment you read the field back.',
+            },
+            { text: 'DictWriter wrote the marks incorrectly', why: 'The file on disk holds the digits correctly; the type information is simply not part of what CSV can express, so it is lost on the way out, not written wrong.' },
+            { text: 'DictReader has a bug that only affects number-like fields', why: 'This is DictReader working as designed — every field it returns is text, whatever it looks like, because that is all a CSV row is.' },
+            { text: 'The fieldnames list was given in the wrong order', why: 'The field named `mark` still holds the right value, `"72"` — the issue is its type as text, not its position or which column it is.' },
+          ],
         },
         {
           kind: 'code',
           caption: 'Converting at the boundary, and what happens if you forget.',
-          code: "import csv\n\nwith open('marks.csv', 'w', newline='') as f:\n    w = csv.DictWriter(f, fieldnames=['name', 'mark'])\n    w.writeheader()\n    w.writerows([{'name': 'Ada', 'mark': 9}, {'name': 'Bob', 'mark': 65}])\n\nwith open('marks.csv') as f:\n    raw = list(csv.DictReader(f))\n\nprint(raw)\nprint('total:', sum(int(row['mark']) for row in raw))\nprint('top by number:', max(raw, key=lambda r: int(r['mark']))['name'])\nprint('top by text:  ', max(raw, key=lambda r: r['mark'])['name'])\nprint(sum(row['mark'] for row in raw))\n",
+          code: "import csv\n\nwith open('marks.csv', 'w', newline='') as f:\n    w = csv.DictWriter(f, fieldnames=['name', 'mark'])\n    w.writeheader()\n    w.writerows([{'name': 'Ada', 'mark': 9}, {'name': 'Bob', 'mark': 65}])\n\nwith open('marks.csv') as f:\n    raw = list(csv.DictReader(f))\n\nprint('top by number:', max(raw, key=lambda r: int(r['mark']))['name'])\nprint('top by text:  ', max(raw, key=lambda r: r['mark'])['name'])\n",
         },
         {
           kind: 'prose',
-          body: 'The two "top student" lines disagree, and only one of them converted. Comparing the marks as text compares them character by character, so a mark of 9 beats a mark of 65 and the report names the wrong student — no error, no clue. The last line did raise, which in this company counts as the friendly failure.\n\nSo the pattern for any CSV is: read the rows, convert every field you will do arithmetic on, and do it once, in one place, straight after reading.',
-        },
-        {
-          kind: 'checkpoint',
-          prompt: 'A CSV has columns `id,name,mark` and 50,000 rows, some with an empty mark and one with the text `absent`. Write the shape of the loading step in words: what do you convert, what do you do with the bad rows, and why should this be its own function?',
-          answer: 'Convert `id` and `mark` to numbers row by row, inside a `try` that catches `ValueError`, because the empty string and `absent` both fail `int()`. For the bad rows you decide once and write the decision down: skip them, collect them in a second list to report at the end, or store the mark as `None` and let the later code ignore it — "the average of the marks that exist" and "the average counting absences as zero" are different answers, so this is a specification question, not a coding one. It belongs in its own function because that gives the rest of the program a single guarantee: after `load_marks(path)` returns, every mark is a number or explicitly missing, and no other code has to carry a `try` or wonder about text. Testing that one function against an empty file, a header-only file and a row with a bad mark then covers the whole class of problem.',
+          body: 'The two "top student" lines disagree. Comparing marks as text compares them character by character, so a mark of `9` beats a mark of `65` and the report names the wrong student — no error, no clue. The pattern for any CSV: convert every field you will do arithmetic on, once, straight after reading.',
         },
       ],
     },
@@ -221,34 +209,31 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'The choice is decided by the shape of the data, not by taste. A grid of rows that all have the same columns is a CSV. Anything nested, or ragged, or where different records have different fields, is JSON.',
+          body: 'The choice is decided by the shape of the data, not by taste. A grid of rows that all have the same columns is a CSV. Anything nested, or where different records have different fields, is JSON.',
         },
         {
           kind: 'code',
-          caption: 'The same data, forced into each format.',
-          code: "import json\nimport csv\n\nstudent = {\n    'name': 'Ada',\n    'units': [\n        {'code': 'CITS1401', 'assessments': [{'name': 'project 1', 'mark': 18}]},\n    ],\n}\n\nprint(json.dumps(student, indent=2))\n\nwith open('flat.csv', 'w', newline='') as f:\n    w = csv.writer(f)\n    w.writerow(['name', 'units'])\n    w.writerow([student['name'], student['units']])\n\nprint(repr(open('flat.csv').read()))\nwith open('flat.csv') as f:\n    row = list(csv.DictReader(f))[0]\nprint(type(row['units']).__name__, row['units'][:20])\n",
+          caption: 'Nested data, forced into a CSV cell.',
+          code: "import csv\n\nstudent = {\n    'name': 'Ada',\n    'units': [{'code': 'CITS1401', 'mark': 72}],\n}\n\nwith open('flat.csv', 'w', newline='') as f:\n    w = csv.writer(f)\n    w.writerow(['name', 'units'])\n    w.writerow([student['name'], student['units']])\n\nwith open('flat.csv') as f:\n    row = list(csv.DictReader(f))[0]\nprint(type(row['units']).__name__)\nprint(row['units'][:20])\n",
         },
         {
           kind: 'prose',
           body: 'The nested structure went into the CSV as the text of its own repr, and came back as text that is no longer data. Nothing raised; the information is simply gone. That is what "the wrong format" looks like in practice.',
         },
         {
-          kind: 'table',
-          caption: 'Choosing.',
-          head: ['', 'CSV', 'JSON'],
-          rows: [
-            ['Shape', 'A grid: every row has the same columns', 'A tree: dicts and lists inside each other'],
-            ['Types', 'None. Everything is text', 'Numbers, text, booleans, null, arrays, objects'],
-            ['Opens in a spreadsheet', 'Yes, which is often the whole point', 'No'],
-            ['Good for', 'Marks, readings, transactions, anything tabular', 'Settings, web service replies, records of varying shape'],
-            ['Watch out for', 'Commas and quotes inside fields; no types', 'Keys always become strings; no dates, sets or tuples'],
-            ['Module', 'csv: reader, writer, DictReader, DictWriter', 'json: dumps, loads, dump, load'],
+          kind: 'match',
+          ask: 'Match each situation to the format that fits it.',
+          pairs: [
+            { left: '200,000 identical rows of (timestamp, sensor, value)', right: 'CSV: one uniform grid' },
+            { left: 'A settings file where some options are lists', right: 'JSON: nested, nothing to flatten' },
+            { left: 'Marks a colleague will open in a spreadsheet', right: 'CSV: opens directly as a grid' },
+            { left: "A web service's reply, with records of varying shape", right: 'JSON: records are not uniform' },
           ],
         },
         {
           kind: 'checkpoint',
-          prompt: 'You are storing 200,000 sensor readings of `(timestamp, sensor_id, value)` that will be loaded into a spreadsheet by someone else, and separately a settings file with about twenty options, some of them lists. Choose a format for each and give the reason that decides it — not "one is nested", but what goes wrong with the other choice.',
-          answer: 'Readings go in a CSV. The rows are identical in shape, so JSON would repeat all three key names 200,000 times for no benefit — a much larger file — and the person with the spreadsheet could not open it without writing a program first. Settings go in JSON. Forced into a CSV, the options that are lists would have to be flattened into some private convention such as semicolon-separated text, and every reader and writer of the file would then have to know and agree on that convention — which is the moment you have invented a format instead of using one. The deciding question is not the shape of the data but what the other end has to know: CSV when the shape is uniform and the consumer is a spreadsheet, JSON when the structure itself is part of the information.',
+          prompt: '200,000 sensor readings of `(timestamp, sensor_id, value)` need loading into a spreadsheet by someone else. What goes wrong if you store them as JSON instead of CSV?',
+          answer: 'The rows are identical in shape, so JSON would repeat all three key names 200,000 times for no benefit — a much larger file — and the person with the spreadsheet could not open it without writing a program first to flatten it. CSV fits exactly because the shape is uniform and the consumer is a spreadsheet; JSON earns its place only once the structure itself carries information, as it would for a settings file with optional, variously-shaped fields.',
         },
       ],
     },

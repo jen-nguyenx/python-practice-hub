@@ -1,9 +1,9 @@
 {
   "s0-b1": {
-    "stdout": "PASS_MARK = 50\n\n\ndef mean(values):\n    return sum(values) / len(values)\n\n\ndef passed(mark):\n    return mark >= PASS_MARK\n\n['PASS_MARK', 'mean', 'passed']\n50\n65.0\nFalse\n"
+    "stdout": "['PASS_MARK', 'mean', 'passed']\n65.0\nFalse\n"
   },
-  "s0-b3": {
-    "stdout": "module\nstatistics\n65\n['mean', 'median', 'median_grouped', 'median_high', 'median_low']\nTrue\n"
+  "s0-b2": {
+    "stdout": "module\n65\nTrue\n"
   },
   "s1-b1": {
     "shell": [
@@ -47,18 +47,10 @@
         "source": "middle([3, 1, 2])",
         "stdout": "",
         "value": "2"
-      },
-      {
-        "source": "sorted(n for n in dir(statistics) if n.startswith('me'))",
-        "stdout": "",
-        "value": "['mean', 'median', 'median_grouped', 'median_high', 'median_low']"
       }
     ]
   },
   "s1-b3": {
-    "stdout": "True\n2.5\nmy own mean\n2.5\nFalse\n"
-  },
-  "s1-b5": {
     "experiment": {
       "runs": {
         "0": {
@@ -73,7 +65,7 @@
       }
     }
   },
-  "s2-b1": {
+  "s2-b0": {
     "shell": [
       {
         "source": "pow(2, 10)",
@@ -99,38 +91,23 @@
         "value": "62"
       },
       {
-        "source": "sorted(n for n in set(dir()) - before if len(n) <= 3)",
-        "stdout": "",
-        "value": "['cos', 'e', 'erf', 'exp', 'fma', 'gcd', 'inf', 'lcm', 'log', 'nan', 'pi', 'pow', 'sin', 'tan', 'tau', 'ulp']"
-      },
-      {
         "source": "e",
         "stdout": "",
         "value": "2.718281828459045"
-      },
-      {
-        "source": "'e' in before",
-        "stdout": "",
-        "value": "False"
       }
     ]
   },
-  "s2-b3": {
-    "left": {
-      "stdout": "2\n"
-    },
-    "right": {
-      "stdout": "my own careful mean of 3 values\n2\n"
-    }
+  "s2-b2": {
+    "stdout": "2\n"
   },
   "s3-b1": {
-    "stdout": "--- what another file sees when it imports tools_lib ---\nthe body of this file just ran, and __name__ is tools_lib\nand the importer can now call: 3.0\n--- what happens when tools_lib.py is the program you run ---\nthe body of this file just ran, and __name__ is __main__\nself-test: 2.0\n"
+    "stdout": "--- imported ---\nthe body just ran, and __name__ is tools_lib\n--- run as the main program ---\nthe body just ran, and __name__ is __main__\nself-test: 2.0\n"
   },
   "s4-b1": {
-    "stdout": "first import:\n  greet is new, so the file runs\n    the body of greet.py is running\nsecond import:\n  greet is already imported, so nothing runs\nthird import:\n  greet is already imported, so nothing runs\nTrue hello\n"
+    "stdout": "first import:\n  greet is new, so the file runs\n    the body of greet.py is running\nsecond import:\n  greet is already imported, so nothing runs\nTrue hello\n"
   },
-  "s4-b3": {
-    "stdout": "True\nTrue\nFalse\n"
+  "s4-b2": {
+    "stdout": "True\nTrue\n"
   },
   "s5-b1": {
     "shell": [
@@ -159,19 +136,9 @@
         "value": "(2, 1)"
       },
       {
-        "source": "datetime.date(2024, 3, 1) - datetime.date(2024, 2, 1)",
-        "stdout": "",
-        "value": "datetime.timedelta(days=29)"
-      },
-      {
         "source": "(datetime.date(2024, 3, 1) - datetime.date(2024, 2, 1)).days",
         "stdout": "",
         "value": "29"
-      },
-      {
-        "source": "collections.defaultdict(list)[999]",
-        "stdout": "",
-        "value": "[]"
       }
     ]
   }

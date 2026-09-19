@@ -23,16 +23,12 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'More beginner programs break for this one reason than for any other, so this lesson is worth reading slowly even though the idea in it is small.\n\nHere is the problem in three characters. The program below adds one to something that looks exactly like the number twenty-one. It stops with an error. That is on purpose.',
+          body: 'More beginner programs break for this one reason than for any other. The program below adds one to something that looks exactly like the number twenty-one, and stops with an error, on purpose.',
         },
         {
           kind: 'code',
-          caption: 'This raises an error deliberately. Read the last line of the message.',
+          caption: 'This raises an error deliberately. `"21"` and `21` are genuinely different things to Python, the way a photograph of a key is not a key. By the end of this lesson, that message will look reasonable.',
           code: 'print("21" + 1)\n',
-        },
-        {
-          kind: 'prose',
-          body: 'Python is not being difficult. `"21"` and `21` are genuinely different things to it, in the same way that a photograph of a key is not a key. By the end of this lesson that message will look reasonable to you, which is the whole point: an error you understand is a small delay, and an error you do not understand is an afternoon.',
         },
       ],
     },
@@ -42,11 +38,11 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A **value** is a single piece of information: a number, a word, an answer to a yes-or-no question. Values are what your programs push around, and everything else is machinery for pushing them.\n\nPython keeps two kinds of number apart. A **whole number**, written with no decimal point. And a **decimal number**, written with one.',
+          body: 'A **value** is a single piece of information: a number, a word, an answer to a yes-or-no question. Python keeps two kinds of number apart: a **whole number**, written with no decimal point, and a **decimal number**, written with one. Their short names, which you will see in error messages constantly, are **int** and **float**.',
         },
         {
           kind: 'shell',
-          caption: 'Numbers, and some arithmetic on them.',
+          caption: 'Numbers, and some arithmetic on them. Notice that `2.0` keeps its `.0`, and that `10 / 4` gives a decimal even though it is not something you asked to round.',
           lines: [
             '12',
             '12 + 30',
@@ -56,14 +52,6 @@ const lesson: Lesson = {
             '10 / 4',
           ],
         },
-        {
-          kind: 'prose',
-          body: 'Two things there are worth noticing now and will be explained in full later.\n\n`2.0` came back with its `.0` still attached. To you and me that is the number two; to Python it is a decimal number that happens to land on a whole value, and it stays written as a decimal.\n\nAnd `10 / 4` gave a decimal answer, which you expected. What you might not expect is that division gives a decimal answer *even when it divides evenly*. There is a lesson on arithmetic that shows this properly.',
-        },
-        {
-          kind: 'prose',
-          body: 'Python has short names for these two kinds. A whole number is an **int**, short for integer. A decimal number is a **float**, which is short for floating point and is an odd name for a very ordinary thing. You will see both words in error messages constantly, so it is worth learning them now rather than being surprised by them later.',
-        },
       ],
     },
     {
@@ -72,23 +60,24 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Anything written between quote marks is **text**: a name, a sentence, a postcode, a single letter, or nothing at all. Python calls a piece of text a **string**, because it is a string of characters one after another. Its short name is **str**.\n\nYou can use single or double quote marks. Python does not mind which, as long as the pair match.',
+          body: 'Anything between quote marks is **text**, called a **string** (short name **str**) because it is a string of characters. Single or double quotes both work, as long as the pair match.',
         },
         {
           kind: 'shell',
-          caption: 'Text, and a few things you can do to it.',
+          caption: 'Text, and a few things you can do to it. `+` joins two pieces of text end to end; `len()` gives the number of characters.',
           lines: [
             '"hello"',
             "'hello'",
             '"hello" + " there"',
-            '"ha" * 3',
             'len("hello")',
             'print("hello")',
           ],
         },
         {
-          kind: 'prose',
-          body: 'Some of that is worth unpacking.\n\n`+` between two pieces of text does not add anything. It **joins** them, end to end, with nothing in between: notice that the space in the result came from the space inside the second piece of text, not from Python being tidy.\n\n`*` with a number repeats the text that many times, which is more useful than it sounds for drawing lines and lining things up.\n\n`len()` gives the number of characters.\n\nAnd the last line is the important one. When Python *shows you a value* in the shell, it puts quote marks around text so you can see where it starts and ends. When `print()` shows it, the quote marks are gone. The quotes were never part of the text. They are how you tell Python where the text begins and ends when you write it down.',
+          kind: 'predict',
+          ask: '`*` between text and a number repeats the text that many times. What does this print?',
+          code: 'print("ha" * 3)\n',
+          choices: ['hahaha', 'ha3', '9'],
         },
       ],
     },
@@ -98,14 +87,12 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'The third kind of value is the simplest: there are only two of them, `True` and `False`, and they are the answer to a yes-or-no question. Python calls this kind a **bool**, after George Boole, a mathematician who worked out the logic of such things long before computers existed.\n\nYou will meet them properly when you start making decisions in code. For now, meet them at all. Note the capital letters, and note that they have no quote marks: `True` is the value, and `"True"` would be a five-letter piece of text.',
+          body: 'The third kind of value is the simplest: there are only two of them, `True` and `False`, the answer to a yes-or-no question. Python calls this kind a **bool**. Note the capital letters and the absence of quote marks: `"True"` would be a five-letter piece of text, not the value.',
         },
         {
           kind: 'shell',
           caption: 'Comparisons produce True or False. Two equals signs asks "are these the same?".',
           lines: [
-            'True',
-            'False',
             '5 > 3',
             '5 < 3',
             '10 == 10',
@@ -114,8 +101,14 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'The last two are a warning in advance. Comparing text is exact and fussy: a capital letter is a different character from a small one, and a trailing space is a character too. Python does not decide that two pieces of text are close enough.',
+          kind: 'quiz',
+          prompt: 'Which of these is `True`?',
+          options: [
+            { text: '`"cat" == "cat"`', correct: true, why: 'Comparing text is exact. Every character matches, so the two are the same.' },
+            { text: '`"cat" == "Cat"`', why: 'A capital letter is a different character from a small one. Python does not decide the two are close enough.' },
+            { text: '`"cat" == "cat "`', why: 'A trailing space is a character too. Two pieces of text that differ by even one space are not equal.' },
+            { text: '`"5" == 5`', why: 'One side is text and the other is a number. They are different types, so they are never the same value.' },
+          ],
         },
       ],
     },
@@ -125,11 +118,11 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Every value in Python has a **type**: the kind of thing it is. The type is what decides which operations make sense on it, which is why the type is usually the first thing to check when something behaves strangely.\n\nYou never have to guess. `type()` answers directly, and it is one of the most useful things you can type while you are stuck.',
+          body: 'Every value has a **type**: the kind of thing it is, which decides which operations make sense on it. You never have to guess. `type()` answers directly, and is one of the most useful things to type when something behaves strangely.',
         },
         {
           kind: 'shell',
-          caption: 'Four different values, and one that is not what it looks like.',
+          caption: 'Four different values, and one that is not what it looks like. Python answers with the word `class` and then the short name: `int`, `float`, `str`, `bool`.',
           lines: [
             'type(12)',
             'type(3.5)',
@@ -139,13 +132,24 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Python answers with the word `class` and then the type name, which is a piece of vocabulary you can ignore for now; the part that matters is the short name at the end. Those are the four you will meet first: `int`, `float`, `str`, `bool`.\n\nLook at the last two lines again. `type(12)` and `type("12")` gave different answers, and the only difference between them is a pair of quote marks. That is the whole of the next section.',
+          kind: 'match',
+          ask: 'Match each kind of value to its short name.',
+          pairs: [
+            { left: 'A whole number', right: 'int' },
+            { left: 'A decimal number', right: 'float' },
+            { left: 'A piece of text', right: 'str' },
+            { left: 'True or False', right: 'bool' },
+          ],
         },
         {
-          kind: 'checkpoint',
-          prompt: 'Without running it, what type is `"3.5"`? And what type is `3.5`?',
-          answer: 'The first is `str` and the second is `float`. The quote marks decide it, not the characters inside them. Text that is made entirely of digits, dots and minus signs is still text, and Python will not quietly treat it as a number because it looks like one.',
+          kind: 'quiz',
+          prompt: 'Without running it: what type is `"3.5"`, and what type is `3.5`?',
+          options: [
+            { text: '`"3.5"` is `str`, `3.5` is `float`', correct: true, why: 'The quote marks decide it, not the characters inside them. Text made entirely of digits and a dot is still text.' },
+            { text: 'Both are `float`', why: 'Python does not look inside text to see whether it looks numeric. Quote marks always mean text, whatever is between them.' },
+            { text: 'Both are `str`', why: '`3.5` with no quote marks is a calculation-ready number to Python, not text.' },
+            { text: '`"3.5"` is `float`, `3.5` is `str`', why: "That's the two swapped. Quote marks make text; their absence, on a value that looks numeric, makes a number." },
+          ],
         },
       ],
     },
@@ -155,17 +159,13 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'The two programs below look nearly identical, and they do genuinely different things. Read the output of each before reading on.',
+          body: 'The two programs below look nearly identical and do genuinely different things.',
         },
         {
           kind: 'compare',
-          caption: 'The same digits, with and without quote marks.',
+          caption: 'On the left, `+` joins two pieces of text end to end, because that is what `+` means for text. On the right, `+` adds two numbers. Same symbol, different job, depending on the type either side of it.',
           left: { label: 'Text that looks like numbers', code: 'print("5" + "3")\n' },
           right: { label: 'Actual numbers', code: 'print(5 + 3)\n' },
-        },
-        {
-          kind: 'prose',
-          body: 'On the left, `+` joined two pieces of text end to end, because that is what `+` means for text. On the right, `+` added two numbers, because that is what `+` means for numbers.\n\nNothing went wrong on the left. It obeyed the rule for the type it was given. This is why type matters more than it first seems: the *same symbol* does a different job depending on what is either side of it, so if you are wrong about the type, you are wrong about what your program does, and often with no error at all to warn you.\n\nThe card below lets you hold the operation still and change only the type, which is the quickest way to feel how much the type is deciding.',
         },
         {
           kind: 'interactive',
@@ -200,11 +200,11 @@ const lesson: Lesson = {
               '1-0': 'Text and a number. Python will not choose between joining and adding, so it stops. The type line above the error already told you why: the value is text, whatever it looks like.',
               '1-1': 'No error, and no arithmetic either. For text, `*` repeats, so three copies come back stuck together. This is the dangerous kind: a wrong answer that nothing stops to warn you about.',
               '2-0': 'A decimal and a whole number mix happily, and the answer comes back as a decimal. Once a float is involved, the result is a float.',
-              '3-0': 'Adding to `True` gives an answer, which surprises most people. When a number is wanted, Python counts `True` as 1 and `False` as 0. Useful later for counting how many times something was true; confusing now if you did not know it.',
-              '1-2': 'Text compared to a number is `False`, not an error. Comparing is allowed between any two values, and two values of different types are simply not the same value.',
-              '2-2': 'The decimal 5.0 and the whole number 5 compare as equal. They are different types, and they stand for the same amount, and `==` asks about the amount.',
+              '3-0': 'Adding to `True` gives an answer, which surprises most people. When a number is wanted, Python counts `True` as 1 and `False` as 0.',
+              '1-2': 'Text compared to a number is `False`, not an error. Two values of different types are simply not the same value.',
+              '2-2': 'The decimal 5.0 and the whole number 5 compare as equal. They are different types standing for the same amount, and `==` asks about the amount.',
             },
-            takeaway: 'The symbol you type does not decide what happens. The type of the value either side of it does. Before you predict what a line will do, ask what type each part is, because `+` on two numbers, `+` on two pieces of text and `+` on one of each are three different events.',
+            takeaway: 'The symbol you type does not decide what happens. The type of the value either side of it does. Before predicting what a line will do, ask what type each part is.',
           },
         },
         {
@@ -221,11 +221,11 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'So `+` joins text and `+` adds numbers. What happens when there is one of each? Python refuses, rather than guessing, and the refusal is the error from the start of this lesson. The session below raises it on purpose and then fixes it two different ways.',
+          body: 'What happens when there is one piece of text and one number? Python refuses rather than guessing, which is the error from the start of this lesson. The way out is to **convert**: `int()` makes a whole number from text that holds one, `float()` makes a decimal number, and `str()` makes text from a number.',
         },
         {
           kind: 'shell',
-          caption: 'Lines 1 and 2 fail on purpose. The rest show the two ways out.',
+          caption: 'The first two lines fail on purpose. The rest show the two ways out, plus the one mixture Python does allow: a whole number and a decimal number together, which gives a decimal.',
           lines: [
             '"5" + 3',
             '5 + "3"',
@@ -236,23 +236,20 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Python could have picked one and carried on, and languages that do this exist. They are harder to work in, because the day it guesses wrong is the day you get a wrong answer with nothing to show you where it came from. Refusing is the kinder behaviour.\n\nThe way out is to **convert**: say which kind you want.\n\n- `int()` makes a whole number from text that holds one.\n- `float()` makes a decimal number.\n- `str()` makes text from a number.\n\nAnd the last line shows the one mixture Python does allow: a whole number and a decimal number together. Both are numbers, so it works out an answer and gives it to you as a decimal.',
-        },
-        {
           kind: 'callout',
           tone: 'warn',
           title: 'Converting makes a new value',
-          body: '`int("5")` does not change `"5"` into a number. Nothing in Python changes a value in place like that. It works out a new value and hands it back, and if you do not store or use it, it is thrown away exactly like any other unused answer.',
+          body: '`int("5")` does not change `"5"` into a number. It works out a new value and hands it back; if you do not store or use it, it is thrown away like any other unused answer.',
         },
         {
-          kind: 'checkpoint',
+          kind: 'quiz',
           prompt: 'You have the text `"7"` and the number `2`, and you want the result `9`. What do you write?',
-          answer: '`int("7") + 2`. Convert the text to a number first, then add. Writing `"7" + 2` raises the error you saw above. Writing `"7" + "2"` is worse: `+` joins text rather than adding it, as the comparison earlier showed, so you get the digits stuck together and nothing stops to tell you the answer is wrong.',
-        },
-        {
-          kind: 'prose',
-          body: 'This matters far beyond these examples, because everything a program reads from the outside world arrives as text. What somebody types, what is in a file, what comes back from a website: text, every time, however numeric it looks. Knowing that, and converting on purpose, is most of what keeps real programs working.',
+          options: [
+            { text: '`int("7") + 2`', correct: true, why: 'Convert the text to a number first, then add.' },
+            { text: '`"7" + 2`', why: 'This raises the mixing error: one side is text and one is a number, and Python refuses to guess.' },
+            { text: '`"7" + "2"`', why: '`+` joins text rather than adding it, so this gives the two characters stuck together, not the number nine, and nothing stops to warn you.' },
+            { text: '`str(7) + 2`', why: 'This makes both the wrong type: now `7` is text and still needs to be added to a number, so it fails the same way as `"7" + 2`.' },
+          ],
         },
       ],
     },

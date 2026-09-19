@@ -1,96 +1,32 @@
 {
   "s0-b1": {
-    "stdout": "len(m) -> TypeError: object of type 'Money' has no len()\nsorted -> TypeError: '<' not supported between instances of 'Money' and 'Money'\n250 in m -> TypeError: argument of type 'Money' is not a container or iterable\nm == Money(250) -> False\nstr(m) == repr(m) -> True\n"
-  },
-  "s0-b3": {
-    "stdout": "<__main__.Money object at 0x...>\nTrue\nTrue False\n"
+    "stdout": "len(m) -> TypeError: object of type 'Money' has no len()\nsorted -> TypeError: '<' not supported between instances of 'Money' and 'Money'\n250 in m -> TypeError: argument of type 'Money' is not a container or iterable\nm == Money(250) -> False\n"
   },
   "s1-b1": {
-    "stdout": "Money(250)\nMoney(250) Money(250)\n[Money(1), Money(2)]\n{'price': Money(999)}\nthe total is Money(250)\nTrue\n"
+    "stdout": "Money(250)\n[Money(1), Money(2)]\n{'price': Money(999)}\nthe total is Money(250)\n"
   },
-  "s1-b3": {
-    "stdout": "$2.50\nMoney(250)\n[Money(250), Money(50)]\nyou owe $2.50, or exactly Money(250)\n$2.50 vs Money(250)\n"
-  },
-  "s1-b5": {
-    "stdout": "$2.50\n[<__main__.Money 0x...>]\n"
+  "s1-b2": {
+    "stdout": "$2.50\n[Money(250), Money(50)]\n"
   },
   "s2-b1": {
-    "stdout": "3 0\nTrue False\nfull is truthy\nempty is falsy\n"
-  },
-  "s2-b3": {
-    "shell": [
-      {
-        "source": "bool([]), bool([0]), bool(0), bool(0.0)",
-        "stdout": "",
-        "value": "(False, True, False, False)"
-      },
-      {
-        "source": "bool(''), bool(' ')",
-        "stdout": "",
-        "value": "(False, True)"
-      },
-      {
-        "source": "bool({}), bool({0: 0})",
-        "stdout": "",
-        "value": "(False, True)"
-      },
-      {
-        "source": "len(''), len({}), len(set())",
-        "stdout": "",
-        "value": "(0, 0, 0)"
-      },
-      {
-        "source": "bool(None)",
-        "stdout": "",
-        "value": "False"
-      },
-      {
-        "source": "bool(range(0)), bool(range(1))",
-        "stdout": "",
-        "value": "(False, True)"
-      }
-    ]
+    "stdout": "3 0\nTrue False\nfull is truthy\n"
   },
   "s3-b1": {
-    "stdout": "True False False\nTrue\n1\nFalse\nFalse\n"
+    "stdout": "True False False\nTrue\nFalse\n"
   },
   "s3-b3": {
-    "error": {
-      "line": 9,
-      "message": "cannot use 'Money' as a set element (unhashable type: 'Money')",
-      "type": "TypeError"
-    },
-    "stdout": "True\n"
+    "stdout": "TypeError: cannot use 'Money' as a set element (unhashable type: 'Money')\n"
   },
   "s3-b5": {
-    "stdout": "2\n[100, 250]\nTrue\nlunch\n"
+    "stdout": "2\n[100, 250]\n"
   },
   "s4-b1": {
-    "error": {
-      "line": 17,
-      "message": "'<=' not supported between instances of 'Card' and 'Card'",
-      "type": "TypeError"
-    },
-    "stdout": "[Card('7', 7), Card('Q', 12), Card('A', 14)]\n[Card('A', 14), Card('Q', 12), Card('7', 7)]\nCard('A', 14) Card('7', 7)\nTrue False\n"
-  },
-  "s4-b3": {
-    "stdout": "True True False False False True\n[Card('7', 7), Card('Q', 12), Card('A', 14)]\n"
+    "stdout": "[Card('7', 7), Card('Q', 12), Card('A', 14)]\nCard('A', 14) Card('7', 7)\nTrue False\n"
   },
   "s5-b1": {
-    "stdout": "True False\n['a', 'k', 'q']\ncard: A\ncard: K\ncard: Q\n"
+    "stdout": "True True True\nFalse\n"
   },
-  "s5-b2": {
-    "stdout": "3\nTrue True True\nFalse\n['hammer', 'nail', 'saw']\n"
-  },
-  "s6-b1": {
-    "left": {
-      "stdout": "2\nReds\n['Blues', 'Reds']\nTrue\nFalse\n"
-    },
-    "right": {
-      "stdout": "2\nTeam('Reds', ['a', 'b'])\n[Team('Blues', ['c']), Team('Reds', ['a', 'b'])]\nTrue\nFalse True\n"
-    }
-  },
-  "s6-b3": {
+  "s6-b0": {
     "experiment": {
       "runs": {
         "0": {

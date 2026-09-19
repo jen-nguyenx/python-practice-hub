@@ -1004,6 +1004,9 @@
   "s1-b1": {
     "stdout": "digits in 0 by this loop: 0\nstill hot at 45\nstill hot at 43\nstill hot at 41\nthe loop ended with temperature = 39\n"
   },
+  "s1-b3": {
+    "stdout": "20\n17\n14\n11\n8\ndone, n = 5\n"
+  },
   "s2-b1": {
     "stdout": "pass 1   i = 0   reading = 0\npass 2   i = 1   reading = 0\npass 3   i = 2   reading = 3\npass 4   i = 2   reading = 3\npass 5   i = 2   reading = 3\npass 6   i = 2   reading = 3\ngave up after 6 passes, with i stuck at 2\n"
   },
@@ -1022,6 +1025,9 @@
     "right": {
       "stdout": "read 3 values\n"
     }
+  },
+  "s3-b3": {
+    "stdout": "13\n"
   },
   "s3-b4": {
     "stdout": "70\n65\n81\ndone\nreadings: 3\ntotal: 216\naverage: 72.0\n"

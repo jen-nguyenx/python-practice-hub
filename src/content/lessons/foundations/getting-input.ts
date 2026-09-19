@@ -23,23 +23,19 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Every program so far does the same thing every time it runs, because everything it works with is written into it. A program that can ask a question is a different kind of object: it works for the person using it rather than only for the person who wrote it.\n\n`input()` asks. Here is the whole idea in two lines. Somebody typed `Ada` when it ran.',
+          body: 'Every program so far does the same thing every time it runs, because everything it works with is written into it. `input()` asks a question instead, so a program can work for whoever is using it, not only for the person who wrote it.',
         },
         {
           kind: 'code',
-          caption: 'The person typed Ada. That is why it appears in the output.',
+          caption: 'The person typed Ada. Three things happened on line 1: the prompt was shown, the program waited for Enter, and what was typed was handed back and attached to `name`. The prompt is part of the output, which is why the question and the typed answer both appear above the greeting.',
           code: 'name = input("What is your name? ")\nprint("Hello,", name)\n',
           stdin: ['Ada'],
-        },
-        {
-          kind: 'prose',
-          body: 'Three things happened on line 1. The text inside the brackets, called the **prompt**, was shown so the person knows what is wanted. The program then stopped and waited, doing nothing at all, until a line was typed and Enter was pressed. And what was typed was handed back, where the assignment attached the name `name` to it.\n\nThe prompt is part of the output, which is why the question and the typed answer both appear above the greeting. That is what using the program looks like from the outside.',
         },
         {
           kind: 'callout',
           tone: 'note',
           title: 'Leave a space at the end of the prompt',
-          body: 'Writing `input("What is your name? ")` with a space before the closing quote keeps what the person types from butting straight up against the question mark. A small thing, and it is the difference between output that looks finished and output that does not.',
+          body: 'Writing `input("What is your name? ")` with a space before the closing quote keeps what the person types from butting straight up against the question mark.',
         },
       ],
     },
@@ -49,22 +45,23 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: '`input()` reads exactly one line: everything typed up to Enter, and not the Enter itself. The prompt is optional, and leaving it out means the program waits with nothing on the screen, which is confusing for whoever is sitting there.\n\nIn the shell you can see what comes back, because the shell shows the value of every line.',
+          body: '`input()` reads exactly one line, up to Enter, and not the Enter itself. The prompt is optional, though leaving it out means the program waits with nothing on screen. In the shell you can see what comes back, quote marks and all, because the shell shows the value of every line.',
         },
         {
           kind: 'shell',
-          caption: 'Two questions, and the person typed blue both times.',
+          caption: 'Two questions; the person typed blue both times.',
           stdin: ['blue', 'blue'],
           lines: [
             'input("Favourite colour? ")',
             'colour = input("And again? ")',
             'colour',
-            'len(colour)',
           ],
         },
         {
-          kind: 'prose',
-          body: 'Look closely at what came back from that first line and at what `colour` holds. Both have quote marks around them, which the last lesson explained is how the shell shows text. That is not a detail. It is the single most important fact about `input()`, and it has the whole of the next section to itself.',
+          kind: 'predict',
+          ask: 'If `colour` holds "blue", what does this print?',
+          code: 'colour = "blue"\nprint(len(colour))\n',
+          choices: ['4', '5', 'blue'],
         },
       ],
     },
@@ -74,15 +71,14 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Here is the rule, and there are no exceptions to it anywhere in Python:\n\n> `input()` hands back text. Always. However numeric what the person typed looks.\n\nIf they type `42`, you get the two characters four and two, not the number forty-two. If they type `3.5`, you get three characters. If they type nothing at all and press Enter, you get an empty piece of text. `input()` does not look at what was typed and decide.\n\nThe session below asks for an age, the person types `21`, and then we ask Python what it has.',
+          body: 'The rule, with no exceptions anywhere in Python:\n\n> `input()` hands back text. Always. However numeric what the person typed looks.\n\nType `42` and you get the two characters four and two, not the number forty-two.',
         },
         {
           kind: 'shell',
-          caption: 'The person typed 21. The last line fails, on purpose.',
+          caption: 'The person typed 21. Every line here is the same fact from a different angle: the value shows with quote marks, `type()` names it as text, it equals the text `"21"` but not the number `21`, and adding a number to it raises the mixing error from the types lesson.',
           stdin: ['21'],
           lines: [
             'age = input("Age? ")',
-            'age',
             'type(age)',
             'age == 21',
             'age == "21"',
@@ -90,13 +86,14 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Every line there is the same fact seen from a different angle. The value shows with quote marks. `type()` names it as text. Comparing it to the number `21` is `False` while comparing it to the text `"21"` is `True`. And adding a number to it raises the mixing error from the types lesson.\n\nNone of this is Python being awkward. It cannot know whether `007` is a number, a house number or the start of a password, so it hands you exactly the characters that were typed and lets you say what they are.',
-        },
-        {
-          kind: 'checkpoint',
+          kind: 'quiz',
           prompt: 'A program asks for two numbers with `input()` and prints their sum with `print(a + b)`. Somebody types 2 and then 3, and what comes out is not 5. What happened?',
-          answer: 'Every line did what it was told. Both names hold text, because that is what `input()` hands back, so `+` joined the two pieces of text end to end rather than adding numbers, exactly as it did in the types lesson. The fix is to convert both to numbers before adding, which is the next section. Notice there was no error at all: this is the kind of bug that gets past you.',
+          options: [
+            { text: 'Both names hold text, so `+` joined the two pieces of text end to end instead of adding numbers', correct: true, why: 'This is the kind of bug that gets past you: there is no error at all, just a wrong answer.' },
+            { text: '`input()` cannot read numbers, only words', why: '`input()` reads whatever is typed just fine. The issue is that what it hands back is always text, digits included, until you convert it.' },
+            { text: 'The program crashed before printing anything', why: 'It ran to completion and printed something; it is just not the sum you expected, because `+` joined text rather than adding numbers.' },
+            { text: '`a` and `b` were never given values', why: 'They were: `input()` handed each of them the typed text. The problem is the type of what they hold, not whether they hold anything.' },
+          ],
         },
       ],
     },
@@ -106,44 +103,35 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'You already have the tools. `int()` makes a whole number from text holding one, and `float()` makes a decimal number. The only new part is where to put them.',
+          body: '`int()` makes a whole number from text holding one, and `float()` makes a decimal number. Converting makes a new value and leaves the original text where it was, so the usual pattern attaches the name to the converted result.',
         },
         {
           kind: 'shell',
-          caption: 'The person typed 21 again.',
+          caption: 'The person typed 21. Line 3 converts and adds without changing `age`; line 5 converts and re-attaches the name, so from then on it holds a number.',
           stdin: ['21'],
           lines: [
             'age = input("Age? ")',
-            'type(age)',
             'int(age) + 1',
             'age',
             'age = int(age)',
             'type(age)',
-            'age + 1',
           ],
         },
         {
-          kind: 'prose',
-          body: 'Line 3 converted the text, added one, and showed the answer. Line 4 then shows `age` still holding text, because converting makes a new value and leaves the original where it was.\n\nLine 5 is what you usually want: convert, and attach the name to the converted value, so that from then on the name holds a number and you can stop thinking about it.',
-        },
-        {
-          kind: 'prose',
-          body: 'Because converting straight away is so common, it is normally written as one line, with the `input()` inside the `int()`. Read it from the inside out: the innermost brackets happen first.',
-        },
-        {
           kind: 'code',
-          caption: 'The usual shape. The person typed 21.',
+          caption: 'Because converting immediately is so common, it is usually written as one line, `input()` inside `int()`. Read it inside out: ask and get text, convert to a whole number, attach the name.',
           code: 'age = int(input("Age? "))\nprint("Next year you will be", age + 1)\n',
           stdin: ['21'],
         },
         {
-          kind: 'prose',
-          body: 'Three steps on that first line, innermost first: ask and get text back, convert the text to a whole number, attach the name to the number. Counting the brackets is worth doing while you are new to it, because a missing closing bracket here is a common typo and gives an error about the *next* line, which is bewildering until you know to expect it.',
-        },
-        {
-          kind: 'checkpoint',
+          kind: 'quiz',
           prompt: 'Which conversion would you use for a price like 4.50, and which for a number of people?',
-          answer: '`float()` for the price, because it has a decimal part and `int()` would refuse it. `int()` for the number of people, because there is no such thing as 2.5 people and a whole number makes that explicit. When you are unsure, `float()` accepts anything `int()` accepts and more, so it is the safer guess.',
+          options: [
+            { text: '`float()` for the price, `int()` for the number of people', correct: true, why: 'The price has a decimal part, which `int()` would refuse. There is no such thing as 2.5 people, so a whole number makes that explicit.' },
+            { text: '`int()` for both', why: '`int()` refuses text holding a decimal point outright, so this fails on the price.' },
+            { text: '`float()` for both', why: 'This works without error, but a count of people as `2.5` hides a mistake that `int()` would have caught.' },
+            { text: '`str()` for both, then compare the text', why: '`str()` makes text, not a number, and you cannot do arithmetic on text without converting it back.' },
+          ],
         },
       ],
     },
@@ -153,38 +141,26 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'You cannot control what somebody types. Ask for an age and you will eventually be given `twenty`, or `21 years`, or an empty line because they pressed Enter by mistake. `int()` cannot make a number out of any of those, so it stops and says so.\n\nThe session below is a tour of what converts and what does not. Several lines fail on purpose.',
+          body: "You cannot control what somebody types: `twenty`, `21 years`, or an empty line. `int()` cannot make a number out of any of those and stops with an error. `float()` and `int()` are the pair to remember: `float()` accepts text holding a decimal, `int()` does not, even though `3.5` reads as a perfectly good number to you, because turning it into a whole number means deciding whether to round, and Python will not decide that for you.",
         },
         {
           kind: 'shell',
-          caption: 'Four of these raise an error. Two do not.',
+          caption: 'Four of these raise an error. `int("3.5")` fails; `float("3.5")` does not.',
           lines: [
             'int("21")',
             'int("hello")',
-            'int("")',
-            'int("21 years")',
             'int("3.5")',
             'float("3.5")',
           ],
         },
         {
-          kind: 'prose',
-          body: 'The last two are the pair to remember. `float()` is happy with text holding a decimal, and `int()` is not, even though `3.5` reads as a perfectly good number to you. `int()` accepts text holding a whole number and nothing else, because turning 3.5 into a whole number means deciding whether to round it, and Python will not decide that for you.\n\nIf you want a whole number from text like that, convert to a decimal first and then cut it down yourself.',
-        },
-        {
           kind: 'shell',
-          caption: 'Getting a whole number out of decimal text.',
+          caption: 'To get a whole number out of decimal text, convert to a decimal first and cut it down yourself. `int()` on a decimal does not round, it cuts off everything after the point; `round()` is the one that rounds. Spaces around digits are ignored.',
           lines: [
             'int(float("3.5"))',
-            'int(float("3.9"))',
             'round(float("3.5"))',
-            'round(float("3.9"))',
             'int(" 7 ")',
           ],
-        },
-        {
-          kind: 'prose',
-          body: 'Those first two show that `int()` on a decimal number does not round: it cuts off everything after the point and keeps the whole part. `round()` is the one that rounds. Choosing the wrong one gives you an answer that is one out, sometimes, which is a horrible bug to find.\n\nThe last line is a small kindness: spaces around the digits are ignored, so somebody who types a stray space before their number does not break your program.',
         },
         {
           kind: 'interactive',
@@ -209,27 +185,24 @@ const lesson: Lesson = {
               '1': '3.5 has a decimal point in it. `int()` will not round it and will not cut it for you, because text holding a decimal is not text holding a whole number. It stops with a `ValueError`, right on the line with the conversion.',
               '2': 'hello has no digits in it at all. Same error, same reason: `int()` only accepts text that is entirely a whole number.',
             },
-            takeaway: '`int()` converts text only when the text is nothing but a whole number. A decimal point, a word, anything else at all, and it raises `ValueError` at the exact line doing the converting, never later where the number gets used. That is why the message names the value it could not take: it is telling you precisely what arrived.',
+            takeaway: '`int()` converts text only when the text is nothing but a whole number. A decimal point, a word, anything else at all, and it raises `ValueError` at the exact line doing the converting, never later where the number gets used.',
           },
         },
         {
-          kind: 'prose',
-          body: 'Now the whole thing together, as it happens in a real program. Somebody was asked for a number and typed a word.',
-        },
-        {
           kind: 'code',
-          caption: 'A deliberate failure. This is what your program does to a person who types the wrong thing.',
+          caption: 'The whole thing, as it happens in a real program: asked for a number, given a word. Read the message: it names the value it could not deal with, and it stops on the line with the conversion, not on the line that used the number.',
           code: 'age = int(input("Age? "))\nprint("Next year you will be", age + 1)\n',
           stdin: ['twenty'],
         },
         {
-          kind: 'prose',
-          body: 'Read what that message is telling you, because it is precise and it is helpful. It names the value it could not deal with, quote marks and all, so you can see exactly what arrived. And it stopped on the line with the conversion on it, not on the line that used the number, so the report points at where the bad value came in.\n\nA program that stops like this is not acceptable in something other people use, and handling it properly needs conditions and a way to catch errors, both of which come later. What matters now is recognising the error on sight and knowing that its cause is outside your program: somebody typed something the conversion could not take.',
-        },
-        {
-          kind: 'checkpoint',
-          prompt: 'Name the two different errors you have seen in this lesson, and what distinguishes them.',
-          answer: 'The first came from adding a number to text that `input()` handed back, which is a mismatch of *types*: the operation made no sense for the kinds of value involved. The second came from `int()` being given text of the right type but the wrong *content*, such as a word: the type was fine and the value inside it was impossible. That distinction is worth holding onto, because the first is always your mistake as the author and the second is usually the fault of what somebody typed.',
+          kind: 'quiz',
+          prompt: 'Name the two different errors you have met with converted input, and what distinguishes them.',
+          options: [
+            { text: 'Adding a number to un-converted text is a mismatch of type; converting a word with `int()` is the right type but impossible content', correct: true, why: 'The first is always the fault of the program, forgetting to convert; the second is usually the fault of what somebody typed.' },
+            { text: 'Both errors are the same `TypeError`, just triggered differently', why: 'They are different error types: adding text to a number raises `TypeError`, and `int()` failing on impossible text raises `ValueError`.' },
+            { text: 'One happens only in the shell, the other only in a program', why: 'Both happen the same way in either place. The shell and a program file run the same Python.' },
+            { text: 'They are both caused by a missing `print()`', why: 'Neither is about output at all. One is a type mismatch on `+`, the other is `int()` given text it cannot parse as a whole number.' },
+          ],
         },
       ],
     },
@@ -253,13 +226,19 @@ const lesson: Lesson = {
         },
         {
           kind: 'code',
-          caption: 'All four steps. The person typed 4.50 and then 3.',
+          caption: 'All four steps. The person typed 4.50 and then 3. Every idea in this track is in these four lines: values with types, names, arithmetic, conversion, output shaped for a person to read.',
           code: 'price = float(input("Price of one: "))\ncount = int(input("How many? "))\ntotal = price * count\nprint(f"{count} at {price:.2f} each comes to {total:.2f}")\n',
           stdin: ['4.50', '3'],
         },
         {
-          kind: 'prose',
-          body: 'Every idea in the foundations track is in those four lines: values with types, names attached to them, arithmetic, conversion, and output shaped for a person to read. It is a small program, and it is a real one.\n\nThe one habit worth carrying forward is this. Whenever a value comes into your program from outside it, the first question is what type it is, and the answer for anything typed by a person is text. Ask the question every time, and a whole category of confusing bugs never happens to you.',
+          kind: 'order',
+          ask: 'The same shape, with the two answers already typed in as `4.50` and `3` instead of asked for. Drag these four lines into an order that works.',
+          lines: [
+            { text: 'price = 4.50', indent: 0 },
+            { text: 'count = 3', indent: 0 },
+            { text: 'total = price * count', indent: 0 },
+            { text: 'print(f"{count} at {price:.2f} each comes to {total:.2f}")', indent: 0 },
+          ],
         },
       ],
     },

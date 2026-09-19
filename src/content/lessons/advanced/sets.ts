@@ -21,10 +21,11 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A list answers *what is at position 3* and *what order are these in*. A set answers a different pair of questions: *is this thing in here* and *what do these two collections have in common*.\n\nTo answer those quickly, a set gives up two things a list has. It holds no duplicates, and it has no order.',
+          body: 'A list answers *what is at position 3* and *what order are these in*. A set answers a different pair of questions — *is this thing in here* and *what do these two collections have in common* — and gives up duplicates and order to answer them fast. Every set below is shown through `sorted(...)`, because a set\'s own order is not something Python promises.',
         },
         {
           kind: 'shell',
+          caption: 'The duplicate "fig" collapses on the way in, and adding "plum" twice is a no-op, not an error.',
           lines: [
             'seen = {"fig", "apple", "fig", "kiwi"}',
             'len(seen)',
@@ -35,10 +36,6 @@ const lesson: Lesson = {
             'seen.add("plum")',
             'sorted(seen)',
           ],
-        },
-        {
-          kind: 'prose',
-          body: 'Two things happened there that a list would not do. The duplicate `"fig"` collapsed on the way in, so the length came out smaller than the number of items written. And `add` called twice with the same value left the set the size it already was, without raising anything. Adding something already present is not an error; it is a no-op.\n\nNearly every set in this lesson is shown through `sorted(...)`. That is deliberate, and the section on order explains why.',
         },
         {
           kind: 'table',
@@ -71,16 +68,16 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Everyone is told that `in` is faster on a set than on a list. It is worth seeing *why*, because the reason tells you when it stops being true.\n\nTo answer `x in some_list`, Python has no choice but to compare `x` against item 0, then item 1, then item 2, until it finds a match or runs out. A set does not compare at all to begin with: it computes a number from the value (its **hash**), goes straight to the one place that value could be, and does at most a comparison or two when it gets there.\n\nCounting the comparisons makes the difference visible. The class below is a string that keeps a tally every time it is compared.',
+          body: 'Everyone is told that `in` is faster on a set than on a list — it is worth seeing why, because the reason tells you when it stops being true. Checking `x in some_list` compares `x` against item 0, then item 1, then item 2, until it finds a match or runs out. A set does not compare at all to begin with: it computes a number from the value (its **hash**) and goes straight to the one place that value could be.',
         },
         {
           kind: 'code',
-          caption: 'The same search, over a list and over a set built from the same items.',
+          caption: 'The same search, over a list and over a set built from the same items. This class tallies every comparison it is asked to do.',
           code: 'comparisons = 0\n\nclass Word(str):\n    def __eq__(self, other):\n        global comparisons\n        comparisons += 1\n        return str.__eq__(self, other)\n\n    def __hash__(self):\n        return str.__hash__(self)\n\nitems = [Word(f"w{i}") for i in range(500)]\nas_list = items\nas_set = set(items)\nneedle = Word("w499")\n\ncomparisons = 0\nprint("found in list:", needle in as_list)\nprint("comparisons:", comparisons)\n\ncomparisons = 0\nprint("found in set: ", needle in as_set)\nprint("comparisons:", comparisons)\n',
         },
         {
           kind: 'prose',
-          body: 'The list had to walk the whole way. The set went more or less straight there, and the count it printed does not grow when the collection does: doubling the items would double the list figure and leave the set figure where it is.\n\nThat is the whole argument. If a collection is built once and then asked *is this in there* many times, a set is the right shape. If it is asked once, converting a list to a set to ask costs more than asking.',
+          body: 'The list walked the whole way; the set\'s comparison count does not grow as the collection does. If a collection is built once and then asked *is this in there* many times, a set is the right shape. If it is asked once, converting a list to a set to ask costs more than asking directly.',
         },
         {
           kind: 'callout',
@@ -89,9 +86,27 @@ const lesson: Lesson = {
           body: 'Building a set out of a list looks at every item, so `x in set(big_list)` inside a loop is slower than the list version, not faster: it rebuilds the whole set on every pass. Build the set once, outside the loop, then ask it as often as you like.',
         },
         {
-          kind: 'checkpoint',
-          prompt: 'You are reading a file of 200,000 words and want to report which of them appear in a list of 5,000 banned words. Where exactly does the set go, and why is putting the file words in a set instead the wrong choice?',
-          answer: 'The banned words go in the set, once, before the loop over the file. Then each of the 200,000 words is one fast `in` question.\n\nPutting the file words in a set answers the wrong question. You would then have to walk the 5,000 banned words asking about each, which gives the banned words in the file but loses how many times each appeared and in what order they turned up. Choose which collection becomes a set by which one you will be *asking about*, not by which one is bigger.',
+          kind: 'quiz',
+          prompt: 'You are reading a file of 200,000 words and checking each against a list of 5,000 banned words. Which is fastest, and why?',
+          options: [
+            {
+              text: 'Put the banned words in a set once, before the loop, then test each of the 200,000 words with in',
+              correct: true,
+              why: 'A one-time cost of building a 5,000-item set, then 200,000 fast hash lookups against it.',
+            },
+            {
+              text: 'Put the 200,000 file words in a set, then loop over the banned words checking each one',
+              why: 'This answers a different question — which banned words appear in the file — and loses how many times each file word appeared and in what order, since the file words are now an unordered set.',
+            },
+            {
+              text: 'Convert the banned-words list to a set inside the loop, once per word checked',
+              why: 'This rebuilds a 5,000-item set 200,000 times, far slower than building it once outside the loop.',
+            },
+            {
+              text: 'Use in on the plain banned-words list for every word',
+              why: 'This works but is the slow option: each of the 200,000 checks walks up to 5,000 items one at a time instead of hashing straight there.',
+            },
+          ],
         },
       ],
     },
@@ -113,6 +128,18 @@ const lesson: Lesson = {
             'sorted(monday - tuesday)',
             'sorted(tuesday - monday)',
             'sorted(monday ^ tuesday)',
+          ],
+        },
+        {
+          kind: 'match',
+          ask: 'Drag each operator onto the question it answers.',
+          pairs: [
+            { left: '`a | b`', right: 'Everyone who turned up on either day' },
+            { left: '`a & b`', right: 'Who came both days' },
+            { left: '`a - b`', right: 'Who came Monday and not Tuesday' },
+            { left: '`a ^ b`', right: 'Who came on exactly one of the two days' },
+            { left: '`a <= b`', right: 'Is everyone in a also in b' },
+            { left: '`a.isdisjoint(b)`', right: 'Do these two share nobody' },
           ],
         },
         {
@@ -144,21 +171,19 @@ const lesson: Lesson = {
           },
         },
         {
-          kind: 'table',
-          caption: 'Read the operator as a question.',
-          head: ['Written', 'Method', 'The question it answers'],
-          rows: [
-            ['`a | b`', '`a.union(b)`', 'Everyone who turned up on either day'],
-            ['`a & b`', '`a.intersection(b)`', 'Who came both days'],
-            ['`a - b`', '`a.difference(b)`', 'Who came Monday and not Tuesday'],
-            ['`a ^ b`', '`a.symmetric_difference(b)`', 'Who came on exactly one of the two days'],
-            ['`a <= b`', '`a.issubset(b)`', 'Is everyone in `a` also in `b`'],
-            ['`a.isdisjoint(b)`', 'no operator', 'Do these two share nobody'],
+          kind: 'predict',
+          ask: 'Two five-person teams share three members. Predict what these three lines print, in order.',
+          code: 'team_a = {"ana", "bo", "cy", "di", "eli"}\nteam_b = {"cy", "di", "eli", "fen", "gia"}\nprint(len(team_a | team_b))\nprint(len(team_a & team_b))\nprint(len(team_a ^ team_b))\n',
+          choices: [
+            '7\n3\n4',
+            '10\n3\n4',
+            '7\n3\n7',
+            '5\n5\n0',
           ],
         },
         {
           kind: 'prose',
-          body: 'Note that `-` is not symmetric: the two difference lines above gave different answers. That is the point of `^`, which asks the question that does not care which way round you wrote it.\n\nThe comparison operators answer shape questions rather than membership ones.',
+          body: '`-` is not symmetric — the difference lines in the shell above gave different answers — which is exactly why `^` exists: it does not care which way round you write it. `<=` and `<` follow the same pattern as on numbers: `<=` allows "the same set", `<` demands the right-hand side has something extra.',
         },
         {
           kind: 'shell',
@@ -173,8 +198,10 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'The last two lines are the same distinction as `<` and `<=` on numbers. `<=` allows "the same set"; `<` demands that the right-hand side has something extra.\n\nThe method forms take any iterable, while the operators demand a set on both sides. `monday.union(["eli"])` works; `monday | ["eli"]` does not. When one side is a list, use the method.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'Methods accept more than sets',
+          body: 'Every operator above also has a method spelling (`a.union(b)`, `a.intersection(b)`, `a.difference(b)`, `a.symmetric_difference(b)`, `a.issubset(b)`), and the methods take any iterable while the operators demand a set on both sides. `monday.union(["eli"])` works; `monday | ["eli"]` does not. When one side is a list, use the method.',
         },
       ],
     },
@@ -184,11 +211,11 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'The shortest way to remove duplicates from a list is to put it through a set and back. It works, and it costs you the order.\n\nWhen the order does not matter, that is the right answer. When it does, a dict does the job instead, because a dict also refuses duplicate keys but *does* remember the order they were first put in.',
+          body: 'The shortest way to remove duplicates from a list is to put it through a set and back — but that costs the order. When order matters, `dict.fromkeys(names)` does the job instead: a dict also refuses duplicate keys, but it *does* remember the order they were first put in.',
         },
         {
           kind: 'compare',
-          caption: 'The same list, deduplicated two ways.',
+          caption: 'The same list, deduplicated two ways. The left side is marked as the one not to copy only because order is so often wanted; as a way of just getting the distinct values, it is fine.',
           left: {
             label: 'Through a set: order gone',
             code: 'names = ["di", "ana", "cy", "ana", "bo", "di"]\nprint(sorted(set(names)))\n',
@@ -200,11 +227,14 @@ const lesson: Lesson = {
           },
         },
         {
-          kind: 'prose',
-          body: 'The left side is marked as the one not to copy only because it is so often written when the order *was* wanted. As a way of getting the distinct values it is fine, and it is wrapped in `sorted` here for a reason: printing the bare set would show an arrangement Python does not promise to repeat.\n\n`dict.fromkeys(names)` builds a dict whose keys are the names and whose values are all `None`. Taking `list(...)` of a dict gives its keys, in insertion order, and a repeated key does not move.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'Why the dict trick works',
+          body: '`dict.fromkeys(names)` builds a dict whose keys are the names and whose values are all `None`. `list(...)` of a dict gives its keys, in insertion order, and a repeated key does not move.',
         },
         {
           kind: 'shell',
+          caption: 'The last line is a one-liner worth stealing: comparing a list\'s length against its set\'s length answers "does this list contain a duplicate" without a loop.',
           lines: [
             'names = ["di", "ana", "cy", "ana", "bo", "di"]',
             'len(names)',
@@ -215,10 +245,6 @@ const lesson: Lesson = {
             'len(names) != len(set(names))',
           ],
         },
-        {
-          kind: 'prose',
-          body: 'The last line is a useful one-liner in its own right: comparing a list\'s length against the length of a set built from it answers "does this list contain a duplicate" without writing a loop.',
-        },
       ],
     },
     {
@@ -227,7 +253,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'The speed of a set comes from hashing each value, and that puts a condition on what can go in. A value can be hashed only if it cannot change, because a value that changed after it was filed away would be filed in the wrong place and could never be found again.\n\nNumbers, strings, `True`/`False`/`None` and tuples of those can go in a set. Lists, dicts and other sets cannot.',
+          body: 'The speed of a set comes from hashing each value, which requires the value to never change — a value that changed after being filed away would be filed in the wrong place and could never be found again. Numbers, strings, `True`/`False`/`None` and tuples of those can go in a set; lists, dicts and other sets cannot.',
         },
         {
           kind: 'code',
@@ -235,8 +261,10 @@ const lesson: Lesson = {
           code: 'points = {(0, 0), (1, 2), (0, 0)}\nprint(len(points))\nprint(sorted(points))\n\nmixed = {1, "one", True, None, (1, 2)}\nprint(len(mixed))\n\nbad = {[1, 2]}\n',
         },
         {
-          kind: 'prose',
-          body: '"Unhashable" is the word to recognise. It means *this kind of value cannot be used where hashing is needed*, and it appears for exactly two situations: putting something in a set, and using something as a dict key. The fix is nearly always to turn the list into a tuple.\n\nThe `mixed` line has a trap in it worth knowing. `True` equals `1` in Python and hashes the same, so a set cannot hold both.',
+          kind: 'callout',
+          tone: 'warn',
+          title: 'Read the word: unhashable',
+          body: '"Unhashable" means this kind of value cannot be used where hashing is needed — for a set, or as a dict key. The fix is nearly always to turn the list into a tuple. Watch the `mixed` line above too: `True` equals `1` in Python and hashes the same, so a set cannot hold both.',
         },
         {
           kind: 'shell',
@@ -255,16 +283,13 @@ const lesson: Lesson = {
         },
         {
           kind: 'shell',
+          caption: 'Two frozensets built from the same two names are equal even though the names were written in a different order, so the set kept one of them — a neat way to hold an unordered pair without caring which name came first.',
           lines: [
             'pairs = {frozenset({"ana", "bo"}), frozenset({"bo", "ana"}), frozenset({"cy", "di"})}',
             'len(pairs)',
             'sorted(sorted(p) for p in pairs)',
             'frozenset({"ana", "bo"}) in pairs',
           ],
-        },
-        {
-          kind: 'prose',
-          body: 'Two `frozenset`s built from the same two names are the same value, even though the names were written in a different order, so the set kept one of them. That is a neat way to hold unordered pairs, such as "these two people are partnered", without caring which was written first.',
         },
         {
           kind: 'checkpoint',
@@ -279,7 +304,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'This is the rule that catches people, because a set often *looks* ordered. Small whole numbers land in a pattern that tends to come out ascending, which is enough to convince someone the set sorted itself.\n\nIt did not. The arrangement you see is where the hashing happened to put things, and it is not the order the items went in.',
+          body: 'A set often *looks* ordered — small whole numbers tend to come out ascending, which is enough to convince someone it sorted itself. It did not: the arrangement is wherever hashing happened to put things, not the order items went in.',
         },
         {
           kind: 'shell',
@@ -295,7 +320,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'The two sets came back looking the same even though they were typed in different orders, and neither matches what was typed. The sets compared as equal, because equality for a set is about *what is in it*, full stop.\n\n`pop()` is the honest one. It takes an item out and hands it back, and Python does not promise which item. Never write code that depends on which.',
+          body: 'The two sets above came back looking the same though typed in different orders, and neither matches what was typed — sets compare equal by *what is in them*, full stop. `pop()` is the honest one: it takes an item out and hands it back, and Python does not promise which; never write code that depends on which.',
         },
         {
           kind: 'callout',
@@ -304,18 +329,33 @@ const lesson: Lesson = {
           body: 'The arrangement of a set can differ between runs of the same program, most visibly with strings. Output that a person or a test will read should go through `sorted(...)` first, so the program produces the same thing every time it runs.',
         },
         {
-          kind: 'prose',
-          body: 'Because there is no order, the things that depend on order are not there either. Indexing and slicing are not available on a set.',
-        },
-        {
           kind: 'code',
-          caption: 'Asking a set for its first item. This raises, and the message is the explanation.',
+          caption: 'No order means no position either, so indexing is not available. Asking a set for its first item raises, and the message is the explanation.',
           code: 'tags = {"red", "blue", "green"}\nprint(len(tags))\nprint(tags[0])\n',
         },
         {
-          kind: 'checkpoint',
-          prompt: 'A program reads a file of tags, builds `unique = set(tags)`, and prints `", ".join(unique)`. It passes on your machine and fails the marker\'s test. Give the likeliest reason and the one-word fix.',
-          answer: 'The join produced the tags in whatever arrangement the set happened to have, and that arrangement is not something Python promises, so the printed string can differ between runs and between machines. The test was written against one particular run.\n\nThe fix is `sorted`: `", ".join(sorted(unique))`. Any output built from a set needs a deliberate order imposed on it, and sorting is the usual choice because it is repeatable.',
+          kind: 'quiz',
+          prompt: 'A program reads a file of tags, builds `unique = set(tags)`, and prints `", ".join(unique)`. It passes on your machine but fails the marker\'s automated test. What is the likeliest reason?',
+          code: 'unique = set(tags)\nprint(", ".join(unique))\n',
+          options: [
+            {
+              text: 'The join order depends on the set\'s internal arrangement, which is not guaranteed to match between runs or machines, and the test expects one fixed order',
+              correct: true,
+              why: 'Any output built straight from a set needs a deliberate order imposed on it — `sorted(unique)` is the usual fix, because it is repeatable.',
+            },
+            {
+              text: 'join only works on lists, not sets, so this always raises',
+              why: 'It runs fine — join accepts any iterable of strings, sets included. The problem is the order it produces, not whether it runs.',
+            },
+            {
+              text: 'set(tags) drops tags that appear more than once, so the marker\'s test data must be different',
+              why: 'That is intended behaviour, not a bug, and a marker\'s test would account for real duplicates being removed — the failure here is about order, not which tags survive.',
+            },
+            {
+              text: 'The comma-space separator does not match the marker\'s expected format',
+              why: 'Nothing in the scenario points at the separator; the classic trap with set and join together is unordered output.',
+            },
+          ],
         },
       ],
     },
@@ -335,19 +375,15 @@ const lesson: Lesson = {
             ['Keep things in the order they arrived', 'list'],
             ['Ask "is this in there" over and over', 'set'],
             ['Allow the same value more than once', 'list'],
-            ['Count how many times each value appeared', 'dict, or `collections.Counter`'],
+            ['Count how many times each value appeared', 'dict, or collections.Counter'],
             ['Compare two collections for overlap', 'set'],
             ['Look something up by an index', 'list'],
             ['Attach a value to each key', 'dict'],
           ],
         },
         {
-          kind: 'prose',
-          body: 'One combination is worth naming, because it comes up constantly: walk a list in order, and carry a set alongside it to remember what has been seen. The list keeps the order, the set answers the question quickly, and neither is asked to do the other\'s job.',
-        },
-        {
           kind: 'code',
-          caption: 'Keeping the first time each name appears, in order, without a slow lookup.',
+          caption: 'One combination is worth naming: walk a list in order, carrying a set alongside it to remember what has been seen — the list keeps the order, the set answers fast, and neither is asked to do the other\'s job.',
           code: 'names = ["di", "ana", "cy", "ana", "bo", "di", "cy"]\n\nseen = set()\nfirsts = []\nfor name in names:\n    if name not in seen:\n        seen.add(name)\n        firsts.append(name)\n\nprint(firsts)\nprint(sorted(seen))\nprint(len(names) - len(firsts), "repeats dropped")\n',
         },
       ],

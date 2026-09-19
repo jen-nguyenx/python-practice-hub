@@ -3,7 +3,7 @@
 // Foundations assumes nothing at all, Core follows the unit, and Going further goes past it. A topic's
 // lesson also shows how far the reader has got with that topic's questions, so the library doubles as a
 // map of where they are.
-import { useMemo } from 'preact/hooks';
+import { useMemo, useState } from 'preact/hooks';
 import { href } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
 import { lessonsInTrack } from '../../content/lessons/index.ts';
@@ -11,9 +11,9 @@ import type { LessonMeta } from '../../content/lessons/index.ts';
 import { TRACK_BLURB, TRACK_LABEL, TRACKS } from '../../content/lessonSchema.ts';
 import type { Track } from '../../content/lessonSchema.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
-import { Icon } from '../components/Icon.tsx';
 import { InlineMd } from '../components/Markdown.tsx';
 import { lessonsRead, safeTopicProgress } from '../shell/progressData.ts';
+import { Icon } from '../components/Icon.tsx';
 import { storeReady } from '../shell/storeReady.ts';
 import '../lesson/lesson.css';
 
@@ -36,12 +36,22 @@ function Card({ lesson, done, solved, total }: { lesson: LessonMeta; done: boole
   );
 }
 
-function TrackSection({ track, read, progress }: {
+/** Matched against the title, the summary and the outcomes, so a search can be about what it teaches. */
+function matches(l: LessonMeta, q: string): boolean {
+  if (!q) return true;
+  const hay = `${l.title} ${l.summary} ${l.outcomes.join(' ')} ${(l.sectionTitles ?? []).join(' ')}`.toLowerCase();
+  return q.toLowerCase().split(/\s+/).filter(Boolean).every((w) => hay.includes(w));
+}
+
+function TrackSection({ track, read, progress, query }: {
   track: Track;
   read: Set<string>;
   progress: ReturnType<typeof safeTopicProgress> | null;
+  query: string;
 }) {
-  const lessons = lessonsInTrack(track);
+  const all = lessonsInTrack(track);
+  const lessons = all.filter((l) => matches(l, query));
+  if (query && lessons.length === 0) return null;
   if (lessons.length === 0) {
     return (
       <section class="lx-track" aria-labelledby={`lx-${track}`}>
@@ -56,7 +66,7 @@ function TrackSection({ track, read, progress }: {
     <section class="lx-track" aria-labelledby={`lx-${track}`}>
       <div class="lx-track-head">
         <h2 class="lx-track-title" id={`lx-${track}`}>{TRACK_LABEL[track]}</h2>
-        <p class="lx-track-count num">{lessons.length} lessons{readCount > 0 ? ` · ${readCount} read` : ''}</p>
+        <p class="lx-track-count num">{query ? `${lessons.length} of ${all.length}` : `${lessons.length} lessons`}{readCount > 0 ? ` · ${readCount} read` : ''}</p>
       </div>
       <p class="lx-track-blurb">{TRACK_BLURB[track]}</p>
       <div class="lx-grid">
@@ -83,6 +93,7 @@ export function LessonsIndex() {
   const settings = store.settings.value;
 
   const read = useMemo(() => lessonsRead(events), [events]);
+  const [query, setQuery] = useState('');
   const progress = useMemo(() => (ready ? safeTopicProgress(events, settings) : null), [ready, events, settings]);
 
   return (
@@ -94,7 +105,21 @@ export function LessonsIndex() {
           Everything Python prints here was produced by running the code, not typed by hand.
         </p>
       </header>
-      {TRACKS.map((t) => <TrackSection key={t} track={t} read={read} progress={progress} />)}
+      <div class="lx-search">
+        <Icon name="search" size={15} />
+        <input
+          type="search"
+          class="lx-search-in"
+          placeholder="Search lessons by what they teach"
+          aria-label="Search lessons"
+          value={query}
+          onInput={(e) => setQuery((e.currentTarget as HTMLInputElement).value)}
+        />
+      </div>
+      {TRACKS.map((t) => <TrackSection key={t} track={t} read={read} progress={progress} query={query} />)}
+      {query && TRACKS.every((t) => lessonsInTrack(t).every((l) => !matches(l, query)))
+        ? <p class="lx-none">Nothing matches “{query}”. Try a word that would appear in what you want to learn, like “slice” or “rounding”.</p>
+        : null}
     </div>
   );
 }

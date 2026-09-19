@@ -92,7 +92,7 @@
       }
     ]
   },
-  "s1-b3": {
+  "s1-b4": {
     "stdout": "[4, 7, 2]\n3\n13\n"
   },
   "s2-b1": {
@@ -143,7 +143,7 @@
   "s3-b1": {
     "stdout": "[('Subiaco', 12), ('Joondalup', 12), ('Armadale', 30)]\n[('Armadale', 30), ('Subiaco', 12), ('Joondalup', 12)]\n[('Armadale', 30), ('Subiaco', 12), ('Joondalup', 12)]\n"
   },
-  "s3-b4": {
+  "s3-b3": {
     "left": {
       "stdout": "[('Armadale', 30), ('Subiaco', 12), ('Joondalup', 12)]\n"
     },
@@ -151,7 +151,7 @@
       "stdout": "[('Armadale', 30), ('Joondalup', 12), ('Subiaco', 12)]\n"
     }
   },
-  "s3-b6": {
+  "s3-b5": {
     "experiment": {
       "runs": {
         "0": {

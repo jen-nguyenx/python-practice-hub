@@ -78,8 +78,15 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'The first edge is `int()` on a number that already has decimals: it does not round, it cuts. Compare the `int(3.99)` line with the `round(3.99)` line above and you can see the two disagree by a whole one.\n\nThe second edge is `int()` on text. It accepts text only when the text is a whole number, which is why `int(\'12.0\')` stopped the program while `float(\'12.0\')` would not have. The last line shows the way through when you genuinely need a whole number out of decimal text: `float()` first, then `int()`.',
+          kind: 'quiz',
+          prompt: 'What does `int(3.7)` return?',
+          code: 'print(int(3.7))',
+          options: [
+            { text: '3', correct: true, why: '`int()` on a number with decimals cuts off everything after the point rather than rounding, so 3.7 becomes 3.' },
+            { text: '4', why: 'That is what `round(3.7)` gives. `int()` never rounds; it only cuts, and cutting 3.7 leaves 3.' },
+            { text: '3.7', why: '`int()` always hands back a whole number. It never leaves the value as a float.' },
+            { text: 'An error', why: '`int()` on a number never raises. It only refuses text that is not a whole number, such as `int(\'12.5\')` above.' },
+          ],
         },
         {
           kind: 'callout',
@@ -119,8 +126,15 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Look hard at the `6 / 3` line. Plain `/` answers with a decimal point even when the division comes out exactly, which is how a program ends up printing a count of pages with a `.0` stuck on the end. When the answer is a count of whole things, the operator you want is `//`.\n\nThe last two lines are the ones to remember for the exam rather than reason about under pressure: `//` rounds **down**, towards negative infinity, not towards zero.',
+          kind: 'predict',
+          ask: 'Same two numbers, one dividing operator each. Predict both lines before you check.',
+          code: 'print(6 / 3)\nprint(6 // 3)\n',
+        },
+        {
+          kind: 'callout',
+          tone: 'note',
+          title: 'Floor division rounds down, not towards zero',
+          body: 'Look at the last two lines of the shell session above. `//` rounds towards negative infinity, so `-7 // 2` is `-4`, one lower than the `-3` you get by rounding towards zero. This is worth remembering for the exam rather than reasoning out under pressure.',
         },
         {
           kind: 'experiment',

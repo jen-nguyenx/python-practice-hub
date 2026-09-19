@@ -21,6 +21,8 @@ export interface LessonMeta {
   outcomes: string[];
   /** How many sections, for "7 steps" on the card. */
   sections: number;
+  /** Each section's title, so the library can be searched by what a lesson covers. */
+  sectionTitles: string[];
 }
 
 export const LESSON_INDEX = LESSON_INDEX_JSON as LessonMeta[];

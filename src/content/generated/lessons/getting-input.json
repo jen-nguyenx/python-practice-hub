@@ -17,24 +17,17 @@
         "source": "colour",
         "stdout": "",
         "value": "'blue'"
-      },
-      {
-        "source": "len(colour)",
-        "stdout": "",
-        "value": "4"
       }
     ]
+  },
+  "s1-b2": {
+    "stdout": "4\n"
   },
   "s2-b1": {
     "shell": [
       {
         "source": "age = input(\"Age? \")",
         "stdout": "Age? 21\n"
-      },
-      {
-        "source": "age",
-        "stdout": "",
-        "value": "'21'"
       },
       {
         "source": "type(age)",
@@ -69,11 +62,6 @@
         "stdout": "Age? 21\n"
       },
       {
-        "source": "type(age)",
-        "stdout": "",
-        "value": "<class 'str'>"
-      },
-      {
         "source": "int(age) + 1",
         "stdout": "",
         "value": "22"
@@ -91,15 +79,10 @@
         "source": "type(age)",
         "stdout": "",
         "value": "<class 'int'>"
-      },
-      {
-        "source": "age + 1",
-        "stdout": "",
-        "value": "22"
       }
     ]
   },
-  "s3-b4": {
+  "s3-b2": {
     "stdout": "Age? 21\nNext year you will be 22\n"
   },
   "s4-b1": {
@@ -121,24 +104,6 @@
       {
         "error": {
           "line": 1,
-          "message": "invalid literal for int() with base 10: ''",
-          "type": "ValueError"
-        },
-        "source": "int(\"\")",
-        "stdout": ""
-      },
-      {
-        "error": {
-          "line": 1,
-          "message": "invalid literal for int() with base 10: '21 years'",
-          "type": "ValueError"
-        },
-        "source": "int(\"21 years\")",
-        "stdout": ""
-      },
-      {
-        "error": {
-          "line": 1,
           "message": "invalid literal for int() with base 10: '3.5'",
           "type": "ValueError"
         },
@@ -152,7 +117,7 @@
       }
     ]
   },
-  "s4-b3": {
+  "s4-b2": {
     "shell": [
       {
         "source": "int(float(\"3.5\"))",
@@ -160,17 +125,7 @@
         "value": "3"
       },
       {
-        "source": "int(float(\"3.9\"))",
-        "stdout": "",
-        "value": "3"
-      },
-      {
         "source": "round(float(\"3.5\"))",
-        "stdout": "",
-        "value": "4"
-      },
-      {
-        "source": "round(float(\"3.9\"))",
         "stdout": "",
         "value": "4"
       },
@@ -181,7 +136,7 @@
       }
     ]
   },
-  "s4-b5": {
+  "s4-b3": {
     "experiment": {
       "runs": {
         "0": {
@@ -206,7 +161,7 @@
       }
     }
   },
-  "s4-b7": {
+  "s4-b4": {
     "error": {
       "line": 1,
       "message": "invalid literal for int() with base 10: 'twenty'",
@@ -216,5 +171,8 @@
   },
   "s5-b2": {
     "stdout": "Price of one: 4.50\nHow many? 3\n3 at 4.50 each comes to 13.50\n"
+  },
+  "s5-b3": {
+    "stdout": "3 at 4.50 each comes to 13.50\n"
   }
 }

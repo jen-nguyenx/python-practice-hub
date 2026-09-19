@@ -12,11 +12,6 @@
         "stdout": ""
       },
       {
-        "source": "price",
-        "stdout": "",
-        "value": "4.5"
-      },
-      {
         "source": "price * 2",
         "stdout": "",
         "value": "9.0"
@@ -48,11 +43,6 @@
         "stdout": ""
       },
       {
-        "source": "count",
-        "stdout": "",
-        "value": "3"
-      },
-      {
         "source": "count == 3",
         "stdout": "",
         "value": "True"
@@ -78,7 +68,7 @@
       }
     ]
   },
-  "s2-b4": {
+  "s2-b2": {
     "error": {
       "line": 2,
       "message": "cannot assign to literal here. Maybe you meant '==' instead of '='?",
@@ -121,7 +111,7 @@
       }
     ]
   },
-  "s3-b3": {
+  "s3-b2": {
     "experiment": {
       "runs": {
         "0-0": {
@@ -224,7 +214,7 @@
       }
     }
   },
-  "s3-b5": {
+  "s3-b4": {
     "shell": [
       {
         "source": "answer = 42",
@@ -263,7 +253,7 @@
     },
     "stdout": ""
   },
-  "s4-b4": {
+  "s4-b3": {
     "shell": [
       {
         "source": "Total = 10",
@@ -293,7 +283,7 @@
     },
     "stdout": ""
   },
-  "s5-b3": {
+  "s5-b2": {
     "error": {
       "line": 1,
       "message": "name 'count' is not defined. Did you mean: 'round'?",

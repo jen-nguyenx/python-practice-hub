@@ -173,13 +173,11 @@
         "source": "sorted(rows, key=lambda r: (r[1], r[0]))",
         "stdout": "",
         "value": "[('ana', 71), ('cy', 71), ('bo', 88)]"
-      },
-      {
-        "source": "sorted(rows, key=lambda r: (-r[1], r[0]))",
-        "stdout": "",
-        "value": "[('bo', 88), ('ana', 71), ('cy', 71)]"
       }
     ]
+  },
+  "s3-b2": {
+    "stdout": "[('bo', 88), ('ana', 71), ('cy', 71)]\n"
   },
   "s4-b1": {
     "shell": [
@@ -227,7 +225,7 @@
   "s5-b1": {
     "stdout": "after pass 1: [('ana', 71), ('bo', 88), ('cy', 71)]\nafter pass 2: [('ana', 71), ('cy', 71), ('bo', 88)]\ntuple key:    [('ana', 71), ('cy', 71), ('bo', 88)]\n"
   },
-  "s5-b4": {
+  "s5-b3": {
     "left": {
       "stdout": "[('bo', 88), ('ana', 71), ('cy', 71)]\n"
     },
@@ -235,7 +233,7 @@
       "stdout": "[('bo', 88), ('cy', 71), ('ana', 71)]\n"
     }
   },
-  "s5-b6": {
+  "s5-b5": {
     "experiment": {
       "runs": {
         "0": {

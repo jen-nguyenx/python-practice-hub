@@ -9,6 +9,8 @@ import { store } from '../../app/services.ts';
 import { FORMAT_LABEL } from '../../content/ids.ts';
 import { QUESTION_BY_ID, QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
+import { LESSON_INDEX } from '../../content/lessons/index.ts';
+import { TRACK_LABEL } from '../../content/lessonSchema.ts';
 import { Icon } from '../components/Icon.tsx';
 import type { IconName } from '../components/Icon.tsx';
 import '../components/controls.css';
@@ -18,7 +20,7 @@ import { safeTopicProgress } from './progressData.ts';
 import { toggleTheme } from './ThemeToggle.tsx';
 import { mainFill, paletteOpen, shortcutSheetOpen } from './uiState.ts';
 
-type Group = 'Pages and actions' | 'Topics' | 'Questions';
+type Group = 'Pages and actions' | 'Lessons' | 'Topics' | 'Questions';
 interface Item {
   id: string; group: Group; label: string; detail: string; icon: IconName; search: string; run: () => void;
   /** The question's topic is locked: shown as "Locked" and ranked below everything that is open. */
@@ -29,7 +31,7 @@ interface Item {
   unavailable?: string;
 }
 
-const GROUPS: Group[] = ['Pages and actions', 'Topics', 'Questions'];
+const GROUPS: Group[] = ['Pages and actions', 'Lessons', 'Topics', 'Questions'];
 const MAX_QUESTIONS = 40;
 
 function go(h: string) { return () => navigate(h); }
@@ -43,6 +45,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
     { id: 'a-lessons', group: 'Pages and actions', label: 'Lessons', detail: 'Explanations from the beginning to beyond the unit', icon: 'book', search: 'learn teach read tutorial guide', href: href.lessons(), run: go(href.lessons()) },
     { id: 'a-play', group: 'Pages and actions', label: 'Playground', detail: 'Write and run any Python', icon: 'code', search: 'editor run python', href: href.playground(), run: go(href.playground()) },
     { id: 'a-exam', group: 'Pages and actions', label: 'Exams', detail: 'Mock final paper or a timed practice test', icon: 'clock', search: 'exam final mock practice test timed', href: href.exam(), run: go(href.exam()) },
+    { id: 'a-review', group: 'Pages and actions', label: 'Review', detail: 'Practise the mistakes you have made', icon: 'refresh', search: 'mistakes weak spots revise repeat', href: href.review(), run: go(href.review()) },
     { id: 'a-report', group: 'Pages and actions', label: 'Report', detail: 'Strengths and weak spots', icon: 'chart', search: 'progress mistakes stats', href: href.report(), run: go(href.report()) },
     { id: 'a-settings', group: 'Pages and actions', label: 'Settings', detail: 'Theme, backup, unlock', icon: 'sliders', search: 'preferences backup export', href: href.settings(), run: go(href.settings()) },
     { id: 'a-theme', group: 'Pages and actions', label: 'Toggle theme', detail: 'Switch light and dark', icon: 'moon', search: 'dark light mode', run: toggleTheme },
@@ -67,6 +70,18 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
       search: t.short, locked, href: href.topic(t.id), run: go(href.topic(t.id)),
     };
   });
+  // Lessons are searchable by their outcomes too, so "sort by two keys" finds the lesson that teaches it
+  // even though those words are not in its title.
+  const lessons: Item[] = LESSON_INDEX.map((l) => ({
+    id: `l-${l.id}`,
+    group: 'Lessons',
+    label: l.title,
+    detail: `${TRACK_LABEL[l.track]} · ${l.minutes} min`,
+    icon: 'book',
+    search: `${l.summary} ${l.outcomes.join(' ')} ${(l.sectionTitles ?? []).join(' ')}`,
+    href: href.lesson(l.id),
+    run: go(href.lesson(l.id)),
+  }));
   const questions: Item[] = QUESTION_INDEX.map((q) => {
     const t = TOPIC_BY_ID[q.topicId];
     const locked = progress[q.topicId]?.state === 'locked';
@@ -88,7 +103,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
     const q = info.question;
     continueItem = { id: 'c-continue', group: 'Pages and actions', label: `Continue: ${q.title}`, detail: info.topic.short, icon: 'arrowRight', search: 'continue resume', run: go(href.question(q.qid)) };
   }
-  return { items: [...actions, ...topics, ...questions], continueItem };
+  return { items: [...actions, ...lessons, ...topics, ...questions], continueItem };
 }
 
 function filterItems(all: Item[], continueItem: Item | null, query: string): Item[] {

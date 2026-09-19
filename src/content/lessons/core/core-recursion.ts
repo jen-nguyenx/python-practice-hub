@@ -24,11 +24,11 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Recursion has a reputation for being hard, and almost all of it comes from trying to picture the whole thing at once. You do not have to. There is no special rule to learn: a function calling itself is an ordinary function call, and an ordinary function call starts a **new** call with its own copy of everything.\n\nThe name being the same is a coincidence as far as Python is concerned. What matters is that the new call is given a **smaller** problem than the one that made it.',
+          body: 'Recursion has a reputation for being hard, mostly from trying to picture the whole thing at once. There is no special rule to learn: a function calling itself is an ordinary function call, and an ordinary call starts a **new** call with its own copy of everything. What matters is that the new call gets a **smaller** problem than the one that made it.',
         },
         {
-          kind: 'code',
-          caption: 'The function reports what it was given before it does anything else.',
+          kind: 'predict',
+          ask: 'This function reports what it was given, every time it is called. What does `print(countdown(3))` print, in full?',
           code: `def countdown(n):
     print('  a call begins, with n =', n)
     if n == 0:
@@ -41,7 +41,17 @@ print(countdown(3))
         },
         {
           kind: 'prose',
-          body: 'Four calls happened there, each one holding a different `n` at the same moment. The first call has not finished: it is waiting, part-way through its last line, for the answer to `countdown(2)`. When the innermost call finally returns something, that value is handed back out through every call that was waiting.\n\nSo every recursive function has three parts, and it is worth naming them before you write one:\n\n- a **base case**: the smallest input you can answer with no further call;\n- a **recursive case**: a call on a smaller input;\n- a **combination**: what this call does with the value that comes back, and `return`s.',
+          body: 'Four calls happened there, each holding a different `n` at the same moment. Every recursive function has three parts, worth naming before you write one: a **base case** (the smallest input, answered with no further call), a **recursive case** (a call on a smaller input), and a **combination** (what this call does with the value that comes back, and `return`s).',
+        },
+        {
+          kind: 'quiz',
+          prompt: 'Which of the three parts is the one that actually stops the calls?',
+          options: [
+            { text: 'The base case', correct: true, why: 'The base case is the only part that returns without making another call. Every chain of calls only stops when one of them reaches it.' },
+            { text: 'The recursive case', why: 'The recursive case is what keeps the calls going, one smaller problem at a time — it is the opposite of what stops them.' },
+            { text: 'The combination step', why: 'Combining only happens after a call has already returned. It shapes the answer; it does not decide when calling stops.' },
+            { text: 'The function name being the same as the call inside it', why: 'Python does not treat a self-referencing name specially. Nothing about the name stops anything — only reaching the base case does.' },
+          ],
         },
       ],
     },
@@ -73,6 +83,17 @@ print(count_down(5))
           tone: 'warn',
           title: 'Write `<=`, not `==`',
           body: 'A base case that tests one exact value can be jumped over. Prefer `if n <= 0:` to `if n == 0:`, and `if len(text) <= 1:` to `if len(text) == 1:`. It costs nothing when the input lands exactly, and it saves you when the input steps past.',
+        },
+        {
+          kind: 'order',
+          ask: 'This function calculates a factorial. Drag the lines into an order that checks the base case before making the recursive call.',
+          lines: [
+            { text: 'def factorial(n):', indent: 0 },
+            { text: 'if n <= 1:', indent: 1 },
+            { text: 'return 1', indent: 2 },
+            { text: 'return n * factorial(n - 1)', indent: 1 },
+            { text: 'print(factorial(5))', indent: 0 },
+          ],
         },
         { kind: 'mistakes', only: ['missing_base_case'] },
       ],

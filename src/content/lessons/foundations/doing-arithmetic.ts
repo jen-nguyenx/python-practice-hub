@@ -23,21 +23,17 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'If you have ever avoided this subject because of maths, here is the good news: the arithmetic in programming is arithmetic you did at school. There is no advanced mathematics hiding in here. What there is instead is a handful of small differences between what Python does and what you would expect, and every one of them catches beginners. This lesson is about those differences.\n\nStart with the four operations you already know. Two of them use symbols you might not have typed before: `*` for multiply and `/` for divide.',
+          body: 'The arithmetic in programming is the arithmetic you did at school. What is different is a handful of small gaps between what Python does and what you would expect, and this lesson is about those gaps. Start with the four operators you already know: `*` for multiply and `/` for divide are the two you might not have typed before.',
         },
         {
           kind: 'shell',
-          caption: 'The four familiar operations.',
+          caption: 'The four familiar operations. Spaces around the symbols are optional; the spaced version is just easier to read.',
           lines: [
             '4 + 3',
             '4 - 3',
             '4 * 3',
             '4 / 3',
           ],
-        },
-        {
-          kind: 'prose',
-          body: 'No surprises yet. Spaces around the symbols are optional, and `4+3` works identically, but the spaced version is easier to read and is what Python programmers write.',
         },
       ],
     },
@@ -47,23 +43,27 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Here is the first difference, and it is small enough to ignore until the day it matters. `/` gives a decimal answer. Not usually, not when it needs to: always, even when the division comes out exactly.',
+          body: 'Here is the first gap. `/` gives a decimal answer: not usually, always, even when the division comes out exactly.',
         },
         {
           kind: 'shell',
-          caption: 'Even when it divides evenly.',
+          caption: 'Even when it divides evenly, the answer keeps a `.0` and `type()` confirms it is a `float`, not an `int`.',
           lines: [
             '10 / 2',
             '9 / 3',
-            '100 / 10',
             'type(10 / 2)',
             '7 / 2',
-            '1 / 3',
           ],
         },
         {
-          kind: 'prose',
-          body: 'Ten divided by two came back with a `.0` on the end, and `type()` confirms it is a `float`, a decimal number, and not an `int`.\n\nThis is a deliberate decision by the people who designed Python, and it is the safer one: the type of the answer does not depend on the values you happen to have, so your program behaves the same on every input rather than changing character when the numbers divide neatly.\n\nIt bites when you use the result somewhere that insists on a whole number, such as counting items or picking a position in a list. When that day comes, the operator in the next section is what you want.',
+          kind: 'quiz',
+          prompt: 'Which best explains why `10 / 2` gives `5.0` rather than `5`?',
+          options: [
+            { text: '`/` always produces a decimal, so a program behaves the same way whether or not its numbers happen to divide evenly', correct: true, why: 'This is a deliberate choice: the type of the answer never depends on the particular values you happen to have.' },
+            { text: "It's a display quirk and the value is really the whole number 5", why: '`type()` says otherwise: the value really is a `float`, not an `int` that merely looks decorated.' },
+            { text: 'It only happens because 10 is an even number', why: '`7 / 2`, which does not divide evenly, also gives a decimal. `/` gives a decimal every time, regardless of whether the division is exact.' },
+            { text: 'It only happens in the shell, not in a real program', why: 'The shell and a program file run the same Python. `/` gives a decimal wherever it is written.' },
+          ],
         },
       ],
     },
@@ -73,7 +73,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Before decimals, you did division with a quotient and a remainder: seven divided by two is three, remainder one. Python still has both halves of that, and they are two of the most useful operators in the language.\n\n`//` gives the whole-number part of a division, throwing away anything after the point. `%` gives what is left over, and is read aloud as "mod" or "modulo".',
+          body: "Before decimals, division had a quotient and a remainder: seven divided by two is three, remainder one. `//` gives the whole-number part of a division; `%` gives what is left over, read aloud as \"mod\". Together they split a quantity into groups and a leftover, `% 2` tells you whether a number is even, and `% n` giving zero means \"divides exactly by n\".",
         },
         {
           kind: 'shell',
@@ -83,24 +83,24 @@ const lesson: Lesson = {
             '7 % 2',
             '17 // 5',
             '17 % 5',
-            '8 % 2',
             '9 % 2',
             '20 % 5',
           ],
         },
         {
-          kind: 'prose',
-          body: 'Three patterns in there are worth keeping.\n\nTogether, `//` and `%` split a quantity into a number of groups and a leftover. That is exactly how you turn seconds into minutes and seconds, or pence into pounds and pence.\n\n`% 2` tells you whether a number is even: an even number has nothing left over.\n\nAnd `%` giving zero is how you ask "does this divide exactly?", which is the usual way of finding every third item, every tenth customer, or a leap year.',
-        },
-        {
           kind: 'code',
-          caption: 'Both halves used together.',
+          caption: 'Both halves used together, to split seconds into minutes and seconds.',
           code: 'seconds = 500\nminutes = seconds // 60\nleft_over = seconds % 60\nprint(minutes)\nprint(left_over)\n',
         },
         {
-          kind: 'checkpoint',
-          prompt: 'You have 47 eggs and boxes that hold 6. How many full boxes, and how many eggs left over?',
-          answer: '`47 // 6` gives the number of full boxes and `47 % 6` gives the eggs left over. Type both and check them against each other: the boxes multiplied by six, plus the leftovers, has to come back to 47. Using `47 / 6` here would give a decimal number of boxes, which is not something you can put eggs in.',
+          kind: 'quiz',
+          prompt: 'You have 47 eggs and boxes that hold 6. Which pair gives full boxes and eggs left over?',
+          options: [
+            { text: '`47 // 6` and `47 % 6`', correct: true, why: 'Whole division gives the number of full boxes; the remainder gives what does not fit in one.' },
+            { text: '`47 / 6` and `47 % 6`', why: '`47 / 6` gives a decimal number of boxes, which is not something you can put eggs in.' },
+            { text: '`47 % 6` and `47 // 6`', why: "That's the two swapped: `%` gives the leftover, `//` gives the count of full boxes, not the other way round." },
+            { text: '`47 // 6` and `47 // 6`', why: 'That names full boxes twice and never finds the leftover at all.' },
+          ],
         },
         {
           kind: 'interactive',
@@ -108,12 +108,12 @@ const lesson: Lesson = {
             id: 'remainder-pattern',
             title: 'The pattern a remainder makes',
             intro: 'Drag **divide by** and watch the bars. Each bar is one number from 0 to 15, and its height is the remainder that number leaves.',
-            template: 'divisor = \u27e6k\u27e7\nfor n in range(16):\n    print(n, "%", divisor, "=", n % divisor)\n',
+            template: 'divisor = ⟦k⟧\nfor n in range(16):\n    print(n, "%", divisor, "=", n % divisor)\n',
             knobs: [
               { id: 'k', kind: 'range', label: 'divide by', min: 1, max: 8, start: 3 },
             ],
             probes: {
-              remainders: '[n % \u27e6k\u27e7 for n in range(16)]',
+              remainders: '[n % ⟦k⟧ for n in range(16)]',
               numbers: '[str(n) for n in range(16)]',
             },
             visual: {
@@ -139,28 +139,28 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Two stars mean "to the power of". Three stars would mean nothing, and one star is multiply, so the count matters.',
+          body: 'Two stars mean "to the power of". Raising to the power `0.5` is the same as a square root, which saves looking anything up the first time you need one.',
         },
         {
           kind: 'shell',
-          caption: 'Powers, including a fractional one and a symbol that is not what it looks like.',
+          caption: 'Powers, including a fractional one.',
           lines: [
             '2 ** 3',
             '2 ** 10',
             '9 ** 0.5',
-            '2 ** 0.5',
-            '3 ^ 2',
           ],
         },
         {
-          kind: 'prose',
-          body: 'Raising to the power of `0.5` is the same as taking a square root, which saves you looking anything up the first time you need one.\n\nThe last line is the trap. In many places outside programming, `^` means "to the power of", so people reach for it. Python has a `^` and it does something else entirely, to do with the binary digits inside a number. Look at what it answered: whatever that is, it is not nine. It did not raise an error either, which is what makes this one dangerous.',
+          kind: 'predict',
+          ask: 'In many places, `^` means "to the power of", so people reach for it here. Python has a `^`, and it does something else entirely. What does this print?',
+          code: 'print(3 ^ 2)\n',
+          choices: ['9', '1', '5'],
         },
         {
           kind: 'callout',
           tone: 'warn',
           title: 'Wrong, without complaint',
-          body: 'Writing `^` where you meant `**` gives you a number, silently, and your program carries on with it. Errors that stop the program are the easy kind. This is the other kind.',
+          body: 'Writing `^` where you meant `**` gives you a number, silently, and your program carries on with it. Errors that stop the program are the easy kind to catch. This is the other kind.',
         },
       ],
     },
@@ -170,7 +170,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'When several operators appear in one line, Python does not work through them left to right. It follows the same precedence you were taught in school: powers first, then multiply and divide, then add and subtract. Brackets override all of it.',
+          body: 'When several operators appear in one line, Python follows the same precedence taught in school: powers first, then multiply and divide, then add and subtract. Brackets override all of it.',
         },
         {
           kind: 'table',
@@ -189,30 +189,25 @@ const lesson: Lesson = {
           lines: [
             '2 + 3 * 4',
             '(2 + 3) * 4',
-            '10 - 2 - 3',
-            '100 / 10 / 2',
             '2 * 3 ** 2',
             '(2 * 3) ** 2',
           ],
         },
         {
-          kind: 'prose',
-          body: 'The place this catches people almost every time is an average. Adding several numbers and dividing by how many there are reads naturally from left to right, and Python does the division first.',
-        },
-        {
           kind: 'compare',
-          caption: 'The average of 2, 4 and 9. One of these is not it.',
+          caption: 'The average of 2, 4 and 9. On the left, `9 / 3` happens first and gets added to the rest, answering a question nobody asked. On the right, the brackets force the addition to finish before anything divides.',
           left: { label: 'Written without brackets', code: 'print(2 + 4 + 9 / 3)\n', bad: true },
           right: { label: 'With brackets', code: 'print((2 + 4 + 9) / 3)\n' },
         },
         {
-          kind: 'prose',
-          body: 'On the left, `9 / 3` happened first and the result was added to the rest, which answers a question nobody asked. On the right, the brackets forced the addition to finish before anything was divided.\n\nThe practical advice is not to memorise the table. It is this: **when you are not certain, add brackets**. Extra brackets that agree with the rules cost nothing, change nothing, and make the line readable to somebody who also does not want to check the table.',
-        },
-        {
-          kind: 'checkpoint',
-          prompt: 'What does `10 - 4 / 2` give, and how would you write it so the subtraction happens first?',
-          answer: 'Division outranks subtraction, so `4 / 2` happens first and its result is then taken away from 10. The answer comes out as a decimal, because division always gives one. To make the subtraction happen first, write `(10 - 4) / 2`. Run both lines side by side: the two answers are far enough apart that you can see at a glance which one you meant.',
+          kind: 'quiz',
+          prompt: 'What does `10 - 4 / 2` give?',
+          options: [
+            { text: '`8.0`', correct: true, why: 'Division outranks subtraction, so `4 / 2` happens first, giving `2.0`, which is then taken from 10.' },
+            { text: '`3.0`', why: "That's what `(10 - 4) / 2` gives. Without brackets, the subtraction does not happen first." },
+            { text: '`8`', why: 'Close, but division always gives a decimal, so the result is `8.0`, not the whole number `8`.' },
+            { text: 'An error, because you cannot mix `-` and `/` in one line', why: 'Mixing operators in one line is completely normal; Python has a fixed order for working through them.' },
+          ],
         },
       ],
     },
@@ -222,11 +217,11 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Dividing by zero has no answer in mathematics, and Python does not invent one. It stops with an error. The lines below fail on purpose, all three of them, and the fourth is there to show that zero divided *by* something is perfectly fine.',
+          body: 'Dividing by zero has no answer in mathematics, and Python does not invent one: it stops with an error. This is rarely a typo. It usually happens because you divide by a name that turns out to hold zero: a total before anything is added, a count of an empty list.',
         },
         {
           kind: 'shell',
-          caption: 'Three deliberate failures, and one line that works.',
+          caption: 'Three of these fail on purpose. The last shows that zero divided *by* something is perfectly fine.',
           lines: [
             '10 / 0',
             '10 // 0',
@@ -235,8 +230,14 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'This is worth taking seriously because it is rarely a typo. Nobody writes `/ 0` on purpose. What happens is that you divide by a name, and one day that name holds zero: a total when nothing has been added yet, a count of items when the list is empty, a number somebody typed.\n\nThe cure is to check before you divide, which you will be able to write once you have met conditions. Until then, knowing the error by sight and knowing it means "something you divided by was zero" is enough to find the cause quickly.',
+          kind: 'quiz',
+          prompt: 'Three of these raise an error and one does not. Which one is safe?',
+          options: [
+            { text: '`0 / 10`', correct: true, why: 'Zero on top is fine. Only dividing *by* zero is the problem.' },
+            { text: '`10 / 0`', why: 'Dividing by zero has no answer, so Python raises `ZeroDivisionError`.' },
+            { text: '`10 // 0`', why: 'Whole division by zero fails for the same reason as `/`.' },
+            { text: '`10 % 0`', why: 'Asking for a remainder after dividing by zero fails the same way.' },
+          ],
         },
       ],
     },
@@ -246,22 +247,17 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'One last surprise, and it is the one that makes people doubt the computer. Run this.',
+          body: 'One last surprise. Decimal numbers are stored in binary, in a fixed amount of space, and some ordinary decimal fractions have no exact binary form, the way one third has no exact decimal form. The result is correct to about fifteen digits and wrong in the sixteenth. It never matters for ordinary arithmetic; it matters exactly when comparing two decimals with `==`.',
         },
         {
           kind: 'shell',
-          caption: 'Arithmetic you can do in your head. Python disagrees very slightly.',
+          caption: 'Arithmetic you can do in your head. Python disagrees very slightly, until you round.',
           lines: [
             '0.1 + 0.2',
             '0.1 + 0.2 == 0.3',
-            '1.1 * 3',
             'round(0.1 + 0.2, 2)',
             'round(0.1 + 0.2, 2) == 0.3',
           ],
-        },
-        {
-          kind: 'prose',
-          body: 'Python is not broken and neither is your computer. Decimal numbers are stored in binary, in a fixed amount of space, and some ordinary decimal fractions have no exact binary form, in the same way that one third has no exact decimal form however many 3s you write. The result is an answer that is correct to about fifteen digits and wrong in the sixteenth.\n\nFor almost everything you will write, the tiny error never matters and you never see it. It matters in exactly one place: comparing two decimal numbers with `==`, which asks whether they are identical to the last digit, and the answer is often no.',
         },
         {
           kind: 'callout',
@@ -270,9 +266,14 @@ const lesson: Lesson = {
           body: 'Comparing two whole numbers with `==` is exact and safe. Comparing two decimal numbers that came out of arithmetic is asking for the failure above. Round both first, or compare whole numbers where you can: count pence rather than pounds.',
         },
         {
-          kind: 'checkpoint',
-          prompt: 'Why does a program that adds up prices and checks `total == 100.00` sometimes fail when the receipt clearly says 100.00?',
-          answer: 'The prices were added as decimal numbers, so the total carries a tiny stored error and is not exactly 100.0 to the last digit. Printing it rounded shows 100.00 and hides the difference, while `==` sees it. Rounding the total before comparing, or working in whole pence and comparing to 10000, both avoid the problem.',
+          kind: 'quiz',
+          prompt: 'A program adds up prices and checks `total == 100.00`, and the check fails even though the receipt clearly shows 100.00. Why?',
+          options: [
+            { text: 'The total carries a tiny stored binary error, so it is not exactly 100.0 to the last digit, though it prints as 100.00 once rounded', correct: true, why: 'Printing rounds for display and hides the difference; `==` compares to the last digit and sees it.' },
+            { text: 'The prices were added in the wrong order', why: 'Order does not cause this. The rounding error comes from decimals not having an exact binary form, regardless of the order they are added in.' },
+            { text: '`==` does not work on decimal numbers at all', why: '`==` works on any two values; it simply compares them exactly, which is the source of the surprise here, not a broken operator.' },
+            { text: 'One of the prices must be text instead of a number', why: 'That would raise a `TypeError` on the addition itself, not a silent comparison failure after a normal-looking total.' },
+          ],
         },
       ],
     },

@@ -10,26 +10,18 @@
     },
     "stdout": "the first three claims passed\n"
   },
-  "s1-b4": {
-    "error": {
-      "line": 5,
-      "message": "value should be 1",
-      "type": "AssertionError"
-    },
-    "stdout": "the assert above passed, and it checked nothing\nTrue\n"
+  "s2-b1": {
+    "stdout": ""
   },
   "s2-b2": {
     "left": {
-      "stdout": "ok   odd length | got 2 want 2\nok   single item | got 10 want 10\nFAIL even length | got 3 want 2.5\n"
+      "stdout": "ok   odd length | got 2 want 2\nFAIL even length | got 3 want 2.5\n"
     },
     "right": {
-      "stdout": "ok   odd length | got 2 want 2\nok   single item | got 10 want 10\nok   even length | got 2.5 want 2.5\n"
+      "stdout": "ok   odd length | got 2 want 2\nok   even length | got 2.5 want 2.5\n"
     }
   },
   "s3-b2": {
-    "stdout": "ok   80 is HD | got 'HD' want 'HD'\nok   79 is D | got 'D' want 'D'\nok   70 is D | got 'D' want 'D'\nok   60 is CR | got 'CR' want 'CR'\nFAIL 50 is P | got 'N' want 'P'\nok   49 is N | got 'N' want 'N'\nok   0 is N | got 'N' want 'N'\n"
-  },
-  "s3-b4": {
     "experiment": {
       "runs": {
         "0": {
@@ -110,18 +102,10 @@
       }
     }
   },
-  "s3-b5": {
-    "error": {
-      "line": 2,
-      "message": "division by zero",
-      "type": "ZeroDivisionError"
-    },
-    "stdout": "3.0\n"
-  },
   "s4-b1": {
     "stdout": "tests run: 4\nfailures: 1 errors: 0\ntest_even_length -> AssertionError: 3 != 2.5\n"
   },
   "s4-b3": {
-    "stdout": "tests run: 4\nfailures: 0 errors: 0\nall passed\n"
+    "stdout": ""
   }
 }

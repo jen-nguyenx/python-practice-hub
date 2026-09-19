@@ -7,7 +7,7 @@
       "stdout": "[('b', 9)]\n{'data': list[tuple[str, int]], 'n': <class 'int'>, 'return': list[tuple[str, int]]}\n"
     }
   },
-  "s0-b3": {
+  "s0-b2": {
     "shell": [
       {
         "source": "list[int]",
@@ -25,11 +25,6 @@
         "value": "int | None"
       },
       {
-        "source": "type(list[int]).__name__",
-        "stdout": "",
-        "value": "'GenericAlias'"
-      },
-      {
         "source": "def half(n: int) -> float: return n / 2",
         "stdout": ""
       },
@@ -42,29 +37,16 @@
         "source": "half(7)",
         "stdout": "",
         "value": "3.5"
-      },
-      {
-        "source": "half.__annotations__['return']",
-        "stdout": "",
-        "value": "<class 'float'>"
-      },
-      {
-        "source": "list[int] == list[int]",
-        "stdout": "",
-        "value": "True"
       }
     ]
   },
-  "s1-b2": {
+  "s1-b1": {
     "stdout": "('apples', 5)\nNone\n{'apples': 8, 'pears': 2}\n"
   },
   "s2-b1": {
-    "stdout": "5\ntwothree\n[1, 2]\n4.0\nfloat but the hint said int\n{'a': <class 'int'>, 'b': <class 'int'>, 'return': <class 'int'>}\n"
+    "stdout": "5\ntwothree\n4.0\n"
   },
   "s2-b3": {
-    "stdout": "72.5 float\nthe annotation promised int and the body cannot deliver it\n"
-  },
-  "s2-b5": {
     "experiment": {
       "runs": {
         "0": {
@@ -88,31 +70,21 @@
     "stdout": "Student(name='Ada', mark=72, unit='CITS1401')\nTrue False\n"
   },
   "s3-b3": {
-    "stdout": "Student(name='Ada', mark=72, unit='CITS1401')\nAda 72 CITS1401\nTrue False\nStudent(name='Bob', mark=60, unit='CITS2401')\n[Student(name='Bob', mark=60, unit='CITS1401'), Student(name='Ada', mark=72, unit='CITS1401')]\n"
+    "stdout": "Student(name='Ada', mark=72, unit='CITS1401')\nTrue False\n"
   },
-  "s3-b5": {
-    "stdout": "Point(x=1, y=2)\n['x', 'y']\n{'x': 1, 'y': 2} (1, 2)\n['__eq__', '__hash__', '__init__', '__repr__']\nTrue\n"
+  "s3-b4": {
+    "stdout": "Point(x=1, y=2)\n['x', 'y']\n['__eq__', '__hash__', '__init__', '__repr__']\nTrue\n"
   },
   "s4-b1": {
-    "error": {
-      "line": 3,
-      "message": "mutable default <class 'list'> for field items is not allowed: use default_factory",
-      "type": "ValueError"
-    },
-    "stdout": ""
+    "stdout": "ValueError: mutable default <class 'list'> for field items is not allowed: use default_factory\n"
   },
   "s4-b2": {
     "stdout": "Basket(owner='Ada', items=['apple'])\nBasket(owner='Bob', items=[])\nFalse\n"
   },
   "s4-b4": {
-    "error": {
-      "line": 14,
-      "message": "cannot assign to field 'minor'",
-      "type": "FrozenInstanceError"
-    },
-    "stdout": "Version(major=1, minor=9) Version(major=2, minor=0)\nTrue Version(major=2, minor=0)\n[Version(major=1, minor=0), Version(major=2, minor=0), Version(major=2, minor=1)]\n2\n"
+    "stdout": "True Version(major=2, minor=0)\n[Version(major=1, minor=0), Version(major=2, minor=0), Version(major=2, minor=1)]\n2\nFrozenInstanceError cannot assign to field 'minor'\n"
   },
-  "s5-b1": {
-    "stdout": "{'name': 'Ada', 'mark': 72, 'makr': 100}\nStudent(name='Ada', mark=72)\n{'name': 'Ada', 'mark': 72, 'makr': 100}\n"
+  "s5-b2": {
+    "stdout": "{'name': 'Ada', 'mark': 72, 'makr': 100}\nStudent(name='Ada', mark=72)\n"
   }
 }

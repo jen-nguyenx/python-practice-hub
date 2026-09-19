@@ -91,6 +91,11 @@ const lesson: Lesson = {
           body: 'The first loop never ran, so `count` kept the 0 it started with. That happens to look like a right answer here, which is exactly the danger: a zero-pass loop leaves no trace of itself. Whenever you write a `while` loop, ask what the smallest possible input does to it.\n\nThe second loop shows where a loop variable ends up. The printed values stop above 40, but the variable finished holding the first value that broke the condition, not the last one printed. Reading that final value as though it were the last good one is a standard off-by-one.',
         },
         {
+          kind: 'predict',
+          ask: 'How many times does the body run before the condition turns false? Predict every line this prints, in order.',
+          code: "n = 20\nwhile n > 5:\n    print(n)\n    n = n - 3\nprint('done, n =', n)\n",
+        },
+        {
           kind: 'experiment',
           id: 't07-x1',
         },
@@ -154,11 +159,20 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: '`and` reads from left to right and stops at the first part that is false, which means the right-hand part is not even looked at when the left-hand part has already settled the question. Put the bounds check first and the list is never read past its end. Put it second and the reading happens before anybody has checked whether the position exists.\n\nBoth versions work on data that does contain a sentinel, which is why this survives testing.',
+          body: '`and` reads from left to right and stops at the first part that is false, which means the right-hand part is not even looked at when the left-hand part has already settled the question. Put the bounds check first and the list is never read past its end. Put it second and the reading happens before anybody has checked whether the position exists. Both versions work on data that does contain a sentinel, which is why this survives testing.\n\nWhen the values come from a person rather than a list, the shape changes slightly. You cannot test something you have not read yet, so the first value is read **before** the loop, and the last line of the body reads the next one. Forgetting that last line is the other classic way to hang a program.',
         },
         {
-          kind: 'prose',
-          body: 'When the values come from a person rather than a list, the shape is slightly different. You cannot test something you have not read yet, so the first value is read **before** the loop, and the last line of the body reads the next one. Forgetting that last line is the other classic way to hang a program.',
+          kind: 'order',
+          ask: 'This loop stops at the sentinel -1 and totals everything before it. Drag the lines into an order that works.',
+          lines: [
+            { text: 'readings = [4, 7, 2, -1, 9]', indent: 0 },
+            { text: 'i = 0', indent: 0 },
+            { text: 'total = 0', indent: 0 },
+            { text: 'while readings[i] != -1:', indent: 0 },
+            { text: 'total = total + readings[i]', indent: 1 },
+            { text: 'i = i + 1', indent: 1 },
+            { text: 'print(total)', indent: 0 },
+          ],
         },
         {
           kind: 'code',

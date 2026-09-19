@@ -213,6 +213,43 @@ print(values)
           title: 'Finish every handler deliberately',
           body: 'After an `except` block, the lines below it still run. So end the handler on purpose: `continue` to abandon this row, `return` to abandon the function, or give the variable a real value. Falling through on `pass` leaves the variable holding whatever the previous pass left in it, or nothing at all.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'handler-finishes-how',
+            title: 'What the handler does next',
+            intro: 'The same five values, the same ValueError, three different ways of finishing the handler. Watch how many bars there are, not just what is in them.',
+            template:
+              "values = ['42', '4.5', '', 'N/A', '007']\nkept = []\nlabels = []\nfor v in values:\n    try:\n        kept.append(int(v))\n        labels.append(repr(v))\n    except ValueError:\n        ⟦handle⟧\nprint(kept)\n",
+            knobs: [
+              {
+                id: 'handle',
+                label: 'when a value fails to convert',
+                choices: [
+                  { value: 'kept.append(0); labels.append(repr(v))', caption: 'count it as 0' },
+                  { value: 'continue', caption: 'skip it entirely' },
+                  { value: 'raise', caption: 'let it stop the program' },
+                ],
+              },
+            ],
+            probes: {
+              values: 'kept',
+              labels: 'labels',
+            },
+            visual: {
+              kind: 'bars',
+              values: 'values',
+              labels: 'labels',
+              caption: 'Each bar is a number that made it into `kept`.',
+            },
+            notes: {
+              '0': "Every one of 4.5, the empty text and N/A becomes a 0, in the same spot it would have held if it had converted. The bars are five wide, because nothing was left out, only replaced.",
+              '1': '`continue` removes the bad value instead of replacing it, so only the two real numbers, 42 and 7, ever reach `kept`. The bars are two wide, and neither one is a stand-in for something else.',
+              '2': "`raise` sends the ValueError straight back out, on the very first bad value, 4.5. The loop stops there and the program stops with it: 007 is never even looked at, even though it was a perfectly good number. There is nothing to draw, because there is no output — the crash is the lesson.",
+            },
+            takeaway: 'An `except` block does not decide by itself what "handled" means; the line you write inside it does. Replacing a bad value keeps every position filled; skipping it shortens the result; `raise` hands the same exception on to whoever called this code, which is a deliberate choice, not a bug. Decide which one the task actually wants before you write the line.',
+          },
+        },
         { kind: 'mistakes', only: ['invalid_row_not_skipped'] },
       ],
     },

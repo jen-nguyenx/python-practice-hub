@@ -4,7 +4,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadPyodide } from 'pyodide';
 import type { PyodideAPI } from 'pyodide';
-import { PY_ENTRY, PY_MODULES, PY_PACKAGE, PY_ROOT } from '../../src/runtime/python/manifest.ts';
+import { PY_ENTRY, PY_MODULES, PY_PACKAGE, PY_ROOT, PY_VERIFY_ENTRY } from '../../src/runtime/python/manifest.ts';
 import type { AstFinding, PairResult, PyError, RunResult, TestsResult, VirtualFile } from '../../src/runtime/protocol.ts';
 import type { RuleId } from '../../src/content/ids.ts';
 import type { Test } from '../../src/content/schema.ts';
@@ -57,12 +57,17 @@ export async function createHarness(opts: { hashSeed?: string } = {}): Promise<H
   }
   py.runPython(`import sys\nif ${JSON.stringify(PY_ROOT)} not in sys.path:\n    sys.path.insert(0, ${JSON.stringify(PY_ROOT)})`);
   const mod = py.pyimport(PY_ENTRY) as unknown as Record<string, PyFn>;
-  const fn = (name: string): PyFn => {
-    const f = mod[name];
-    if (typeof f !== 'function') throw new Error(`harness.${name} is missing`);
+  // probe() and repl() live in a module the browser never loads, so they are imported separately here.
+  const verifyMod = py.pyimport(PY_VERIFY_ENTRY) as unknown as Record<string, PyFn>;
+  const fnFrom = (where: Record<string, PyFn>, label: string) => (name: string): PyFn => {
+    const f = where[name];
+    if (typeof f !== 'function') throw new Error(`${label}.${name} is missing`);
     return f;
   };
+  const fn = fnFrom(mod, 'harness');
+  const vfn = fnFrom(verifyMod, 'verify');
   const call = <T>(name: string, ...args: unknown[]): T => JSON.parse(fn(name)(...args)) as T;
+  const vcall = <T>(name: string, ...args: unknown[]): T => JSON.parse(vfn(name)(...args)) as T;
   const j = (v: unknown) => JSON.stringify(v ?? null);
   return {
     py,
@@ -74,8 +79,8 @@ export async function createHarness(opts: { hashSeed?: string } = {}): Promise<H
     pair: (reference, buggy, fnName, argsRepr) => call('pair', reference, buggy, fnName, argsRepr),
     trace: (code, watch, anchorLine, stdin = []) => call('trace', code, j(watch), anchorLine, j(stdin)),
     runCapture: (code, stdin = []) => call('run_capture', code, j(stdin)),
-    probe: (code, probes) => call('probe', code, j(probes)),
-    repl: (lines, stdin = []) => call('repl', j(lines), j(stdin)),
+    probe: (code, probes) => vcall('probe', code, j(probes)),
+    repl: (lines, stdin = []) => vcall('repl', j(lines), j(stdin)),
     literalInfo: (expr) => call('literal_info', expr),
     defines: (code, fnName) => call('defines', code, fnName),
     constructs: (code) => call('constructs', code),

@@ -257,7 +257,11 @@ export type Probes = Record<string, string>;
  */
 export type Visual =
   | { kind: 'sequence'; items: string; picked?: string; caption?: Md }
-  | { kind: 'numberline'; min: number; max: number; picked: string; caption?: Md }
+  | {
+      kind: 'numberline'; min: number; max: number; picked: string; caption?: Md;
+      /** Probe returning one number to ring as "you are here", for a control that moves along the line. */
+      at?: string;
+    }
   /**
    * A bar per number, for anything with a size: a list's values, counts from a dictionary, a running
    * total growing pass by pass. `values` names a probe returning numbers; `labels` names one returning
@@ -268,7 +272,14 @@ export type Visual =
    * One or more curves, for anything where the shape is the lesson: how a cost grows with n, how a series
    * closes on its limit. Each series names a probe returning a list of [x, y] pairs.
    */
-  | { kind: 'plot'; series: { probe: string; label: string }[]; xLabel?: string; yLabel?: string; caption?: Md };
+  | {
+      kind: 'plot'; series: { probe: string; label: string }[]; xLabel?: string; yLabel?: string; caption?: Md;
+      /**
+       * Probe returning a list of [x, y] pairs to draw as dots on the curves: "you are here". This is what
+       * lets a control that picks a point still move the picture, rather than leaving a static shape.
+       */
+      marker?: string;
+    };
 
 export interface Experiment {
   /** e.g. "t03-x1". */

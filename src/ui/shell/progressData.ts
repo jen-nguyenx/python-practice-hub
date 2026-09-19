@@ -111,10 +111,17 @@ export function recentMistakes(events: readonly AppEvent[], days = 14, now = Dat
   return [...map.values()].sort((a, b) => b.count - a.count || b.lastTs - a.lastTs);
 }
 
-/** Topics whose lesson has been read through to the last step. */
+/** Lessons read through to the last step, by lesson id. Covers all three tracks. */
+export function lessonsRead(events: readonly AppEvent[]): Set<string> {
+  const out = new Set<string>();
+  for (const e of events) if (e.type === 'lesson_done') out.add(e.lessonId);
+  return out;
+}
+
+/** Topics whose lesson has been read. Only the 13 lessons that teach a topic can appear here. */
 export function lessonsDone(events: readonly AppEvent[]): Set<TopicId> {
   const out = new Set<TopicId>();
-  for (const e of events) if (e.type === 'lesson_done') out.add(e.topicId);
+  for (const e of events) if (e.type === 'lesson_done' && e.topicId) out.add(e.topicId);
   return out;
 }
 

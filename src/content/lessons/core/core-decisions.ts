@@ -224,13 +224,15 @@ print(grade)
             ],
             probes: {
               'inside-nums': '[k for k in range(-5, 16) if 1 <= k <= 9]',
+              'n-now': '⟦n⟧',
             },
             visual: {
               kind: 'numberline',
               min: -5,
               max: 15,
               picked: 'inside-nums',
-              caption: 'Every whole number from -5 to 15. The lit ones satisfy 1 <= n <= 9.',
+              at: 'n-now',
+              caption: 'Every whole number from -5 to 15. The lit ones satisfy 1 <= n <= 9; the ringed one is the number you are testing.',
             },
             notes: {
               '6': 'n = 1 is the low end of the chain, and `<=` on both sides means the ends count. `inside` is True here, and `outside`, its exact opposite, is False.',

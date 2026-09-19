@@ -13,7 +13,7 @@ import type { Track } from '../../content/lessonSchema.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd } from '../components/Markdown.tsx';
-import { lessonsDone, safeTopicProgress } from '../shell/progressData.ts';
+import { lessonsRead, safeTopicProgress } from '../shell/progressData.ts';
 import { storeReady } from '../shell/storeReady.ts';
 import '../lesson/lesson.css';
 
@@ -36,9 +36,9 @@ function Card({ lesson, done, solved, total }: { lesson: LessonMeta; done: boole
   );
 }
 
-function TrackSection({ track, done, progress }: {
+function TrackSection({ track, read, progress }: {
   track: Track;
-  done: Set<string>;
+  read: Set<string>;
   progress: ReturnType<typeof safeTopicProgress> | null;
 }) {
   const lessons = lessonsInTrack(track);
@@ -51,7 +51,7 @@ function TrackSection({ track, done, progress }: {
       </section>
     );
   }
-  const readCount = lessons.filter((l) => l.topicId && done.has(l.topicId)).length;
+  const readCount = lessons.filter((l) => read.has(l.id)).length;
   return (
     <section class="lx-track" aria-labelledby={`lx-${track}`}>
       <div class="lx-track-head">
@@ -66,7 +66,7 @@ function TrackSection({ track, done, progress }: {
             <Card
               key={l.id}
               lesson={l}
-              done={!!l.topicId && done.has(l.topicId)}
+              done={read.has(l.id)}
               solved={p?.solved ?? 0}
               total={p?.total ?? 0}
             />
@@ -82,7 +82,7 @@ export function LessonsIndex() {
   const events = store.events.value;
   const settings = store.settings.value;
 
-  const done = useMemo(() => lessonsDone(events), [events]);
+  const read = useMemo(() => lessonsRead(events), [events]);
   const progress = useMemo(() => (ready ? safeTopicProgress(events, settings) : null), [ready, events, settings]);
 
   return (
@@ -94,7 +94,7 @@ export function LessonsIndex() {
           Everything Python prints here was produced by running the code, not typed by hand.
         </p>
       </header>
-      {TRACKS.map((t) => <TrackSection key={t} track={t} done={done} progress={progress} />)}
+      {TRACKS.map((t) => <TrackSection key={t} track={t} read={read} progress={progress} />)}
     </div>
   );
 }

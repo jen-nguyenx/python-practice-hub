@@ -309,6 +309,45 @@ print(total, count)
           title: 'Test with a bad row in the middle',
           body: 'A bad row at the end of your test file proves nothing: the program was going to finish anyway. Put the unusable row between two good ones, as the file above does, and then check that the rows after it were still counted.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'guard-isolates-damage',
+            title: 'One bad row, and what happens around it',
+            intro: 'Four sites, and the second one is whatever you pick here. Watch the running total after every row: a guard should let the rows on either side keep working.',
+            template:
+              "rows = [\n    'Matilda Bay,12.4',\n    ⟦crawley⟧,\n    'Applecross,9.8',\n    'Point Walter,6.3',\n    'South Perth,15.1',\n]\ntotal = 0.0\nkept = 0\nprogress = []\nfor row in rows:\n    fields = row.split(',')\n    value = fields[1].strip()\n    if value == '' or value.upper() == 'N/A':\n        progress.append(round(total, 1))\n        continue\n    total = total + float(value)\n    kept = kept + 1\n    progress.append(round(total, 1))\nprint('kept', kept, 'of', len(rows))\nprint('total', round(total, 1))\n",
+            knobs: [
+              {
+                id: 'crawley',
+                label: 'the Crawley row says',
+                choices: [
+                  { value: "'Crawley,11.0'", caption: 'a normal reading' },
+                  { value: "'Crawley,N/A'", caption: 'sensor was down (N/A)' },
+                  { value: "'Crawley,'", caption: 'the reading is missing' },
+                  { value: "'Crawley, 11.0 '", caption: 'stray spaces around the number' },
+                ],
+              },
+            ],
+            probes: {
+              values: 'progress',
+              labels: "[r.split(',')[0] for r in rows]",
+            },
+            visual: {
+              kind: 'bars',
+              values: 'values',
+              labels: 'labels',
+              caption: 'The running total after each row. Whatever Crawley says, the rows after it should keep adding correctly.',
+            },
+            notes: {
+              '0': 'A normal reading, so the total after Crawley is 23.4 and every bar after it keeps climbing normally.',
+              '1': 'N/A is caught by the guard, so the bar after Crawley is exactly the same height as the bar before it — nothing was added, and nothing crashed either.',
+              '2': 'A missing value looks empty rather than absent, and the guard catches that too: the bar does not move on that row, but the three rows after it still climb exactly as before.',
+              '3': "Stray spaces are not a bad value at all. `' 11.0 '.strip()` is `'11.0'`, so this row is counted like any other and the bars are identical to the normal reading.",
+            },
+            takeaway: 'A guard that checks one row does not care what happened before it or after it. Whatever Crawley turns out to say, Applecross, Point Walter and South Perth are added exactly the same way every time — a bad row costs you that row, and nothing else, which is the entire point of checking before you use a value rather than trusting it.',
+          },
+        },
         { kind: 'mistakes', only: ['invalid_row_not_skipped'] },
       ],
     },

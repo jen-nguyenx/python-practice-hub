@@ -15,7 +15,7 @@ import type {
 } from '../../../content/schema.ts';
 import { Markdown } from '../../components/Markdown.tsx';
 import { Segmented } from '../../components/Segmented.tsx';
-import { pieceLines, pieces } from './whatIfLogic.ts';
+import { intsOrNull, labelsOrNull, numbersOrNull, pieceLines, pieces, pointsOrNull } from './whatIfLogic.ts';
 
 /** The program, with the fragment each control put there marked so a change is visible in place. */
 function KnobbedCode({ code, spans, label }: { code: string; spans: ReturnType<typeof fillTemplate>['spans']; label: string }) {
@@ -36,8 +36,15 @@ function KnobbedCode({ code, spans, label }: { code: string; spans: ReturnType<t
   );
 }
 
-/** `errorAt` is the index of the crash line, which outputLines puts last. -1 when the program finished. */
-function Output({ lines, changed, errorAt }: { lines: string[]; changed: boolean[]; errorAt: number }) {
+/**
+ * `errorAt` is the index of the crash line, which outputLines puts last. -1 when the program finished.
+ * `recorded` is false when this combination has no generated run, which can only happen if the data is
+ * stale against the content. Claiming "this prints nothing" then would put words in Python's mouth.
+ */
+function Output({ recorded, lines, changed, errorAt }: { recorded: boolean; lines: string[]; changed: boolean[]; errorAt: number }) {
+  if (!recorded) {
+    return <p class="wi-out is-empty">This combination was not recorded. Run the content verifier.</p>;
+  }
   if (lines.length === 0) {
     return (
       <div class="wi-out is-empty">
@@ -82,17 +89,6 @@ function WatchTable({ names, rows }: { names: string[]; rows: string[][] }) {
 }
 
 // ---------- pictures ----------
-// Probe values arrive from JSON, so nothing about their shape is guaranteed at runtime: coerce, never cast.
-
-function asList(v: unknown): unknown[] {
-  return Array.isArray(v) ? v : [];
-}
-function asLabels(v: unknown): string[] {
-  return asList(v).map((x) => (typeof x === 'string' ? x : JSON.stringify(x) ?? ''));
-}
-function asIntSet(v: unknown): Set<number> {
-  return new Set(asList(v).filter((x): x is number => typeof x === 'number' && Number.isInteger(x)));
-}
 
 /** One box per item with its position underneath: the shape of a slice, or of what a loop visited. */
 function Sequence({ items, picked }: { items: string[]; picked: Set<number> }) {
@@ -116,15 +112,15 @@ function Sequence({ items, picked }: { items: string[]; picked: Set<number> }) {
 }
 
 /** The whole numbers from min to max, with the ones the program produced marked. */
-function NumberLine({ min, max, picked }: { min: number; max: number; picked: Set<number> }) {
+function NumberLine({ min, max, picked, at }: { min: number; max: number; picked: Set<number>; at?: number }) {
   const marks: number[] = [];
   for (let v = min; v <= max; v++) marks.push(v);
   const hits = [...picked].sort((a, b) => a - b);
   return (
     <div class="wi-vis">
-      <div class="wi-nline" role="img" aria-label={hits.length ? `Numbers produced: ${hits.join(', ')}` : 'No numbers are produced'}>
+      <div class="wi-nline" role="img" aria-label={`${hits.length ? `Marked: ${hits.join(', ')}` : 'Nothing is marked'}${at !== undefined ? `. You are at ${at}` : ''}`}>
         {marks.map((v) => (
-          <div key={v} class={`wi-tick${picked.has(v) ? ' is-hit' : ''}`}>
+          <div key={v} class={`wi-tick${picked.has(v) ? ' is-hit' : ''}${v === at ? ' is-at' : ''}`}>
             <span class="wi-dot" aria-hidden="true" />
             <span class="wi-tick-n">{v}</span>
           </div>
@@ -170,10 +166,10 @@ const SERIES_CLASS = ['is-a', 'is-b', 'is-c', 'is-d'];
  * One or more curves on a single shared scale. The viewBox leaves room for the axis labels, so nothing
  * is drawn outside its own bounds, and every tick names a value the data actually reaches.
  */
-function Plot({ series, xLabel, yLabel }: {
-  series: { label: string; points: [number, number][] }[]; xLabel?: string; yLabel?: string;
+function Plot({ series, xLabel, yLabel, marker }: {
+  series: { label: string; points: [number, number][] }[]; xLabel?: string; yLabel?: string; marker?: [number, number][];
 }) {
-  const all = series.flatMap((s) => s.points);
+  const all = [...series.flatMap((s) => s.points), ...(marker ?? [])];
   if (all.length === 0) return <p class="wi-note">There is nothing to draw yet.</p>;
   const xs = all.map((p) => p[0]);
   const ys = all.map((p) => p[1]);
@@ -219,6 +215,9 @@ function Plot({ series, xLabel, yLabel }: {
             points={s.points.map((p) => `${px(p[0])},${py(p[1])}`).join(' ')}
           />
         ))}
+        {(marker ?? []).map((p, i) => (
+          <circle key={`m${i}`} class={`wi-dotm ${SERIES_CLASS[i % SERIES_CLASS.length]}`} cx={px(p[0])} cy={py(p[1])} r={3.5} />
+        ))}
       </svg>
       {series.length > 1 ? (
         <ul class="wi-legend">
@@ -231,29 +230,47 @@ function Plot({ series, xLabel, yLabel }: {
   );
 }
 
-function asNumbers(v: unknown): number[] {
-  return asList(v).filter((x): x is number => typeof x === 'number' && Number.isFinite(x));
-}
-function asPoints(v: unknown): [number, number][] {
-  return asList(v)
-    .filter((p): p is [number, number] => Array.isArray(p) && p.length === 2
-      && p.every((n) => typeof n === 'number' && Number.isFinite(n)))
-    .map((p) => [p[0], p[1]] as [number, number]);
-}
-
 function Drawing({ visual, values }: { visual: Visual; values: Record<string, unknown> }) {
   switch (visual.kind) {
     case 'sequence': {
-      const items = asLabels(values[visual.items]);
-      if (items.length === 0) return null;
-      return <Sequence items={items} picked={visual.picked ? asIntSet(values[visual.picked]) : new Set()} />;
+      const items = labelsOrNull(values[visual.items]);
+      if (!items || items.length === 0) return null;
+      const picked = visual.picked ? intsOrNull(values[visual.picked]) : [];
+      if (!picked) return null;
+      return <Sequence items={items} picked={new Set(picked)} />;
     }
-    case 'numberline':
-      return <NumberLine min={visual.min} max={visual.max} picked={asIntSet(values[visual.picked])} />;
-    case 'bars':
-      return <Bars values={asNumbers(values[visual.values])} labels={visual.labels ? asLabels(values[visual.labels]) : []} top={visual.max} />;
-    case 'plot':
-      return <Plot series={visual.series.map((s) => ({ label: s.label, points: asPoints(values[s.probe]) }))} xLabel={visual.xLabel} yLabel={visual.yLabel} />;
+    case 'numberline': {
+      const picked = intsOrNull(values[visual.picked]);
+      if (!picked) return null;
+      const raw = visual.at === undefined ? undefined : values[visual.at];
+      return (
+        <NumberLine
+          min={visual.min}
+          max={visual.max}
+          picked={new Set(picked)}
+          at={typeof raw === 'number' && Number.isFinite(raw) ? raw : undefined}
+        />
+      );
+    }
+    case 'bars': {
+      const nums = numbersOrNull(values[visual.values]);
+      if (!nums || nums.length === 0) return null;
+      const labels = visual.labels ? labelsOrNull(values[visual.labels]) : [];
+      // Labels that do not line up one-to-one would name the wrong bars, so they are dropped entirely.
+      const safe = labels && labels.length === nums.length ? labels : [];
+      return <Bars values={nums} labels={safe} top={visual.max} />;
+    }
+    case 'plot': {
+      const series: { label: string; points: [number, number][] }[] = [];
+      for (const one of visual.series) {
+        const pts = pointsOrNull(values[one.probe]);
+        if (!pts) return null;
+        series.push({ label: one.label, points: pts });
+      }
+      const marker = visual.marker ? pointsOrNull(values[visual.marker]) : undefined;
+      if (visual.marker && !marker) return null;
+      return <Plot series={series} xLabel={visual.xLabel} yLabel={visual.yLabel} marker={marker ?? undefined} />;
+    }
   }
 }
 
@@ -368,7 +385,7 @@ export function ExperimentCard({ x, gen, compact }: { x: Experiment; gen: Genera
         </div>
         <div class="wi-pane">
           <p class="tp-label">{run?.error ? 'What happens' : 'What it prints'}</p>
-          <Output lines={lines} changed={changed} errorAt={run?.error ? lines.length - 1 : -1} />
+          <Output recorded={run !== undefined} lines={lines} changed={changed} errorAt={run?.error ? lines.length - 1 : -1} />
         </div>
       </div>
 

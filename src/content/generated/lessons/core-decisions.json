@@ -119,67 +119,130 @@
     "experiment": {
       "runs": {
         "0": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": -5
+          }
         },
         "1": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": -4
+          }
         },
         "2": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": -3
+          }
         },
         "3": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": -2
+          }
         },
         "4": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": -1
+          }
         },
         "5": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": 0
+          }
         },
         "6": {
-          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n",
+          "values": {
+            "n-now": 1
+          }
         },
         "7": {
-          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n",
+          "values": {
+            "n-now": 2
+          }
         },
         "8": {
-          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n",
+          "values": {
+            "n-now": 3
+          }
         },
         "9": {
-          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n",
+          "values": {
+            "n-now": 4
+          }
         },
         "10": {
-          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n",
+          "values": {
+            "n-now": 5
+          }
         },
         "11": {
-          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n",
+          "values": {
+            "n-now": 6
+          }
         },
         "12": {
-          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n",
+          "values": {
+            "n-now": 7
+          }
         },
         "13": {
-          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n",
+          "values": {
+            "n-now": 8
+          }
         },
         "14": {
-          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n"
+          "stdout": "1 <= n <= 9   : True\nn < 1 or n > 9: False\n",
+          "values": {
+            "n-now": 9
+          }
         },
         "15": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": 10
+          }
         },
         "16": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": 11
+          }
         },
         "17": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": 12
+          }
         },
         "18": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": 13
+          }
         },
         "19": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": 14
+          }
         },
         "20": {
-          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n"
+          "stdout": "1 <= n <= 9   : False\nn < 1 or n > 9: True\n",
+          "values": {
+            "n-now": 15
+          }
         }
       },
       "shared": {

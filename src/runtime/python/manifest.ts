@@ -13,7 +13,7 @@ export const PY_PACKAGE = '_pl';
 /** Directory added to sys.path. The harness uses `${PY_ROOT}/work` as the virtual working directory. */
 export const PY_ROOT = '/pyladder';
 
-/** File names in load order (dependencies first). */
+/** File names in load order (dependencies first). Everything the verifier needs. */
 export const PY_MODULES: readonly string[] = [
   '__init__.py',
   'errors.py',
@@ -22,7 +22,18 @@ export const PY_MODULES: readonly string[] = [
   'astchecks.py',
   'tracer.py',
   'harness.py',
+  'verify.py',
 ];
+
+/**
+ * What the browser worker writes. `verify.py` is left out on purpose: probe() and repl() are wrappers
+ * around exec/eval that only the content verifier calls, and the sandbox's import denylist is a teaching
+ * aid rather than a boundary, so the surface simply is not shipped. See SECURITY.md.
+ */
+export const PY_BROWSER_MODULES: readonly string[] = PY_MODULES.filter((n) => n !== 'verify.py');
+
+/** Verifier-only module holding probe() and repl(). */
+export const PY_VERIFY_ENTRY = `${PY_PACKAGE}.verify`;
 
 /** Python entry module to pyimport after writing the files. */
 export const PY_ENTRY = `${PY_PACKAGE}.harness`;

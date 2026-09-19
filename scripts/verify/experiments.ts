@@ -29,6 +29,30 @@ const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const quote = (s: string) => JSON.stringify(s);
 const isInt = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
 
+/**
+ * An object's default repr carries its memory address, which differs on every run. Printing an object
+ * without a __repr__ is worth teaching, so the address is normalised rather than banned: otherwise the
+ * generated file changes on every verify and CI's staleness check fails for no real reason.
+ */
+export function stable(text: string): string {
+  // Only the default reprs Python builds from a type name, so a lesson that deliberately prints its own
+  // "<invoice 44 at 0x1F>" is recorded exactly as Python produced it.
+  return text.replace(
+    /(<(?:(?:bound |built-in )?(?:function|method)|[A-Za-z_][\w.]*(?: object)?) [^<>]*?at )0x[0-9a-fA-F]+(>)/g,
+    '$10x...$2',
+  );
+}
+
+/** The same, through any JSON value a probe can return. */
+export function stableValue(v: unknown): unknown {
+  if (typeof v === 'string') return stable(v);
+  if (Array.isArray(v)) return v.map(stableValue);
+  if (v && typeof v === 'object') {
+    return Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, x]) => [k, stableValue(x)]));
+  }
+  return v;
+}
+
 /** A run plus a verifier-only diagnostic, stripped again before the data is written for the browser. */
 type Diagnosed = GeneratedRun & { probeErrors?: Record<string, string> };
 
@@ -152,6 +176,7 @@ function checkVisual(sc: Scope, v: Visual, probeIds: Set<string>): void {
     if (!isInt(v.min) || !isInt(v.max) || v.max <= v.min) sc.error('visual: a number line needs whole-number min and max, with max above min');
     else if (v.max - v.min > 60) sc.error(`visual: a number line from ${v.min} to ${v.max} has too many marks to read`);
     needs(v.picked, 'picked');
+    if (v.at !== undefined) needs(v.at, 'at');
     return;
   }
   if (v.kind === 'bars') {
@@ -172,6 +197,7 @@ function checkVisual(sc: Scope, v: Visual, probeIds: Set<string>): void {
       if (!one || !nonEmpty(one.label)) sc.error(`visual: series ${i + 1} needs a label`);
       needs(one?.probe, `series ${i + 1} probe`);
     }
+    if (v.marker !== undefined) needs(v.marker, 'marker');
     return;
   }
   sc.error(`visual: unknown kind ${quote(String((v as Loose).kind))}`);
@@ -244,25 +270,25 @@ function runCombo(h: Harness, x: Experiment, picks: number[]): Diagnosed {
 
   if (watch.length > 0 && isInt(x.anchorLine)) {
     const r = h.trace(code, watch as string[], x.anchorLine, []);
-    run.stdout = r.stdout;
-    run.rows = r.rows;
-    if (r.error) run.error = { type: r.error.type, message: r.error.message, line: r.error.line ?? 0 };
+    run.stdout = stable(r.stdout);
+    run.rows = r.rows.map((row) => row.map(stable));
+    if (r.error) run.error = { type: r.error.type, message: stable(r.error.message), line: r.error.line ?? 0 };
   }
   if (probeEntries.length > 0) {
     // Probe expressions follow the controls too, so a picture can ask "which indexes did this slice take?".
     const filled = Object.fromEntries(probeEntries.map(([id, expr]) => [id, fillTemplate(expr, x.knobs, picks).code]));
     const r = h.probe(code, filled);
-    run.stdout = r.stdout;
-    run.values = r.values;
-    if (r.error) run.error = { type: r.error.type, message: r.error.message, line: r.error.line ?? 0 };
+    run.stdout = stable(r.stdout);
+    run.values = stableValue(r.values) as Record<string, unknown>;
+    if (r.error) run.error = { type: r.error.type, message: stable(r.error.message), line: r.error.line ?? 0 };
     if (r.probeErrors) run.probeErrors = r.probeErrors;
     return run;
   }
   if (watch.length > 0) return run;
 
   const r = h.runCapture(code, []);
-  run.stdout = r.stdout;
-  if (r.error) run.error = { type: r.error.type, message: r.error.message, line: r.error.line ?? 0 };
+  run.stdout = stable(r.stdout);
+  if (r.error) run.error = { type: r.error.type, message: stable(r.error.message), line: r.error.line ?? 0 };
   return run;
 }
 
@@ -271,6 +297,33 @@ function shown(run: GeneratedRun | undefined): string {
   const out = (run?.stdout ?? '').replace(/\r\n?/g, '\n').replace(/\s+$/, '');
   const pic = run?.values ? JSON.stringify(run.values) : '';
   return run?.error ? `${out}\n!${run.error.type}: ${run.error.message}${pic}` : `${out}${pic}`;
+}
+
+/** The probe ids a visual draws from. */
+function visualProbes(v: Visual): string[] {
+  if (v.kind === 'sequence') return [v.items, ...(v.picked ? [v.picked] : [])];
+  if (v.kind === 'numberline') return [v.picked, ...(v.at ? [v.at] : [])];
+  if (v.kind === 'bars') return [v.values, ...(v.labels ? [v.labels] : [])];
+  return [...v.series.map((one) => one.probe), ...(v.marker ? [v.marker] : [])];
+}
+
+/**
+ * A picture that never changes is decoration, not a visualisation: the whole promise of these cards is
+ * that moving a control redraws what you are looking at. At least one probe the picture draws from has
+ * to differ between two combinations. (A `sequence`'s `items` is allowed to be constant, which is why
+ * this asks for one varying probe rather than all of them.)
+ */
+function checkVisualMoves(sc: Scope, x: Experiment, runs: Record<string, Diagnosed>, combos: number[][]): void {
+  if (!x.visual || combos.length < 2) return;
+  const ids = visualProbes(x.visual).filter(Boolean);
+  const moves = ids.some((id) => {
+    const seen = new Set<string>();
+    for (const c of combos) seen.add(JSON.stringify(runs[comboKey(c)]?.values?.[id]));
+    return seen.size > 1;
+  });
+  if (!moves) {
+    sc.error(`the picture never changes: ${ids.map(quote).join(' and ')} evaluate to the same thing for every combination, so the controls move the output but not the visual`);
+  }
 }
 
 function checkProbeResults(sc: Scope, x: Experiment, runs: Record<string, Diagnosed>, combos: number[][]): void {
@@ -288,28 +341,51 @@ function checkProbeResults(sc: Scope, x: Experiment, runs: Record<string, Diagno
   }
   const v = x.visual;
   if (!v) return;
-  const first = combos.find((c) => runs[comboKey(c)] && !runs[comboKey(c)].error);
-  if (!first) return;
-  const values = runs[comboKey(first)].values ?? {};
-  const wantList = (id: string, what: string) => {
-    if (!Array.isArray(values[id])) sc.error(`probe ${quote(id)} must evaluate to a list for ${what} (got ${quote(String(values[id]))}); wrap it in list(...)`);
+  // Every clean combination, not just the first: a probe that returns None at one slider position would
+  // otherwise pass here and then quietly refuse to draw in the browser.
+  const clean = combos.filter((c) => runs[comboKey(c)] && !runs[comboKey(c)].error);
+  if (clean.length === 0) return;
+  let reported = false;
+  const fail = (msg: string) => {
+    if (reported) return;
+    reported = true;
+    sc.error(msg);
   };
+  for (const c of clean) {
+    const values = runs[comboKey(c)].values ?? {};
+    const at = ` (with ${describe(x.knobs, c)})`;
+    const wantList = (id: string, what: string) => {
+      if (!Array.isArray(values[id])) fail(`probe ${quote(id)} must evaluate to a list for ${what}${at}; got ${quote(String(values[id]))}, so wrap it in list(...)`);
+    };
+    checkOneVisual(v, values, wantList, fail, at);
+  }
+  return;
+}
+
+/** The shape a single combination's probe values must have for the picture to draw. */
+function checkOneVisual(
+  v: Visual, values: Record<string, unknown>,
+  wantList: (id: string, what: string) => void, fail: (msg: string) => void, at: string,
+): void {
   if (v.kind === 'sequence') {
     wantList(v.items, 'the boxes');
     if (v.picked) wantList(v.picked, 'the highlighted positions');
   } else if (v.kind === 'numberline') {
     wantList(v.picked, 'the marked numbers');
+    if (v.at && typeof values[v.at] !== 'number') {
+      fail(`probe ${quote(v.at)} must evaluate to one number for the "you are here" ring${at}`);
+    }
   } else if (v.kind === 'bars') {
     wantList(v.values, 'the bars');
     const nums = values[v.values];
     if (Array.isArray(nums) && !nums.every((n) => typeof n === 'number' && Number.isFinite(n))) {
-      sc.error(`probe ${quote(v.values)} must evaluate to a list of numbers for the bars`);
+      fail(`probe ${quote(v.values)} must evaluate to a list of numbers for the bars${at}`);
     }
     if (v.labels) {
       wantList(v.labels, 'the bar labels');
       const labels = values[v.labels];
       if (Array.isArray(nums) && Array.isArray(labels) && nums.length !== labels.length) {
-        sc.error(`probe ${quote(v.labels)} gives ${labels.length} labels for ${nums.length} bars; they must match`);
+        fail(`probe ${quote(v.labels)} gives ${labels.length} labels for ${nums.length} bars${at}; they must match or the labels name the wrong bars`);
       }
     }
   } else if (v.kind === 'plot') {
@@ -320,9 +396,17 @@ function checkProbeResults(sc: Scope, x: Experiment, runs: Record<string, Diagno
       const bad = pts.find((pt) => !Array.isArray(pt) || pt.length !== 2
         || !pt.every((n) => typeof n === 'number' && Number.isFinite(n)));
       if (bad !== undefined) {
-        sc.error(`probe ${quote(one.probe)} must evaluate to a list of [x, y] number pairs; got ${quote(String(JSON.stringify(bad)))}`);
+        fail(`probe ${quote(one.probe)} must evaluate to a list of [x, y] number pairs${at}; got ${JSON.stringify(bad)}`);
       } else if (pts.length < 2) {
-        sc.error(`probe ${quote(one.probe)} gives ${pts.length} point(s); a curve needs at least 2`);
+        fail(`probe ${quote(one.probe)} gives ${pts.length} point(s)${at}; a curve needs at least 2`);
+      }
+    }
+    if (v.marker) {
+      wantList(v.marker, 'the marker dots');
+      const pts = values[v.marker];
+      if (Array.isArray(pts) && !pts.every((pt) => Array.isArray(pt) && pt.length === 2
+        && pt.every((n) => typeof n === 'number' && Number.isFinite(n)))) {
+        fail(`probe ${quote(v.marker)} must evaluate to a list of [x, y] number pairs${at}`);
       }
     }
   }
@@ -384,6 +468,7 @@ function checkRuntime(sc: Scope, x: Experiment, runs: Record<string, Diagnosed>)
   });
 
   checkProbeResults(sc, x, runs, combos);
+  checkVisualMoves(sc, x, runs, combos);
 
   if ((x.watch ?? []).length > 0) {
     for (const c of combos) {

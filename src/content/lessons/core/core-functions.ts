@@ -298,12 +298,14 @@ print(is_century_heat(20.0))
             probes: {
               converted: '[[c, c_to_f(c)] for c in range(-40, 41)]',
               'same-number': '[[c, c] for c in range(-40, 41)]',
+              here: '[[⟦c⟧, c_to_f(⟦c⟧)], [⟦c⟧, ⟦c⟧]]',
             },
             visual: {
               kind: 'plot',
               xLabel: 'Celsius',
               yLabel: 'value',
-              caption: 'The return value across a range of arguments, next to the argument itself.',
+              marker: 'here',
+              caption: 'The return value across a range of arguments, next to the argument itself. The dots mark the temperature you chose.',
               series: [
                 { probe: 'converted', label: 'c_to_f(celsius)' },
                 { probe: 'same-number', label: 'celsius (for comparison)' },

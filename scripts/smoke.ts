@@ -185,6 +185,19 @@ for (const l of LESSONS) {
     }
     const body = (await page.locator('.ls-body').innerText()).trim();
     if (body.length < 40) failures.push(`lesson ${l.id}: step ${i + 1} renders almost nothing`);
+    // Every card on the step must have found its data. A card showing the empty state means its picks
+    // addressed a combination that does not exist -- which is what happens when component state leaks
+    // between sections, and is invisible to a check that only asks whether the page has content.
+    const cards = page.locator('.wi-card');
+    const cardCount = await cards.count();
+    for (let c = 0; c < cardCount; c++) {
+      const card = cards.nth(c);
+      const out = (await card.locator('.wi-out').first().innerText().catch(() => '')).trim();
+      const drew = await card.locator('.wi-vis').count();
+      if (out === 'This prints nothing at all.' && drew === 0) {
+        failures.push(`lesson ${l.id}: step ${i + 1} card ${c + 1} shows no output and no picture, so it found no data for its controls`);
+      }
+    }
   }
   // Every answer must be hidden until asked for, or the checkpoint teaches nothing.
   const open = await page.locator('.lb-check-answer').count();

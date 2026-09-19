@@ -187,12 +187,14 @@ const lesson: Lesson = {
             probes: {
               'no-brackets': '[[k, k + 6 / 2] for k in range(-10, 11)]',
               'with-brackets': '[[k, (k + 6) / 2] for k in range(-10, 11)]',
+              here: '[[⟦n⟧, ⟦n⟧ + 6 / 2], [⟦n⟧, (⟦n⟧ + 6) / 2]]',
             },
             visual: {
               kind: 'plot',
               xLabel: 'n',
               yLabel: 'value',
-              caption: 'Both expressions plotted against n. They cross exactly once.',
+              marker: 'here',
+              caption: 'Both expressions plotted against n. They cross exactly once, and the dots mark the n you chose.',
               series: [
                 { probe: 'no-brackets', label: 'n + 6 / 2' },
                 { probe: 'with-brackets', label: '(n + 6) / 2' },

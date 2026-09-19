@@ -68,6 +68,9 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
   Authoring rules are in `docs/build/CONTENT.md`.
 - **Styling uses tokens only** (`src/styles/tokens.css`), light on `:root`, dark via `prefers-color-scheme` or `data-theme`. No gradients, no purple (hue 250–320), no emoji icons, radius ≤ 8px. Plain student-facing words; never show internal ids.
 - **Never `innerHTML`**. Render Md strings with `Markdown`, code with `CodeBlock`.
+- **Verifier-only Python stays out of the browser.** `probe()` and `repl()` live in
+  `src/runtime/python/verify.py`; `PY_BROWSER_MODULES` excludes it and the glob in `sources.ts` excludes
+  it too (an eager glob bundles what it matches, so filtering the list alone is not enough).
 - **Never restore Python's JavaScript bridge.** `pyWorker.ts` runs `SEVER_JS_BRIDGE` after warm-up to drop
   Pyodide's `JsFinder`; without it, pasted student code can read the app's IndexedDB and post it anywhere.
   The denylist in `sandbox.py` is a teaching aid, not the boundary. `scripts/smoke.ts` fails the build if any

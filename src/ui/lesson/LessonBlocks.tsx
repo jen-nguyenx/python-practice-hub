@@ -13,8 +13,15 @@ function errorText(e: LessonError): string {
   return `${e.type}${e.message ? `: ${e.message}` : ''}`;
 }
 
-/** What a program printed, and the error it ended with when it ended with one. */
-function Output({ stdout, error, label }: { stdout?: string; error?: LessonError; label: string }) {
+/**
+ * What a program printed, and the error it ended with when it ended with one.
+ *
+ * `recorded` is false when the verifier left no output for this block, which only happens if the
+ * generated data is stale against the lesson file. Saying "this prints nothing" then would be the app
+ * claiming something about Python that Python never said, so it says nothing at all instead.
+ */
+function Output({ recorded, stdout, error, label }: { recorded: boolean; stdout?: string; error?: LessonError; label: string }) {
+  if (!recorded) return null;
   const text = (stdout ?? '').replace(/\r\n?/g, '\n').replace(/\n$/, '');
   const lines = text === '' ? [] : text.split('\n');
   if (lines.length === 0 && !error) {
@@ -89,7 +96,7 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
         <figure class="lb-fig">
           {block.caption ? <figcaption><Markdown text={block.caption} class="lb-md lb-cap" /></figcaption> : null}
           <CodeBlock code={block.code} numbered label="Example program" />
-          {block.hideOutput ? null : <Output stdout={gen?.stdout} error={gen?.error} label="What it prints" />}
+          {block.hideOutput ? null : <Output recorded={gen !== undefined} stdout={gen?.stdout} error={gen?.error} label="What it prints" />}
         </figure>
       );
 
@@ -113,7 +120,7 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
                   {spec.label}
                 </p>
                 <CodeBlock code={spec.code} label={spec.label} />
-                <Output stdout={out?.stdout} error={out?.error} label={`What ${spec.label} prints`} />
+                <Output recorded={out !== undefined} stdout={out?.stdout} error={out?.error} label={`What ${spec.label} prints`} />
               </div>
             ))}
           </div>
@@ -167,14 +174,16 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
     case 'interactive': {
       const runs = gen?.experiment;
       if (!runs || Object.keys(runs.runs ?? {}).length === 0) return null;
-      return <div class="lb-experiment tp-read"><ExperimentCard x={block.experiment} gen={runs} compact /></div>;
+      // Keyed by experiment id: without it Preact reuses the card instance across sections, and a
+      // one-slider card inherits a two-knob card's picks and looks up a combination that does not exist.
+      return <div class="lb-experiment tp-read"><ExperimentCard key={block.experiment.id} x={block.experiment} gen={runs} compact /></div>;
     }
 
     case 'experiment': {
       const x = ctx.topic?.experiments?.find((e: Experiment) => e.id === block.id);
       const data = ctx.experiments?.[block.id];
       if (!x || !data || Object.keys(data.runs ?? {}).length === 0) return null;
-      return <div class="lb-experiment tp-read"><ExperimentCard x={x} gen={data} compact /></div>;
+      return <div class="lb-experiment tp-read"><ExperimentCard key={x.id} x={x} gen={data} compact /></div>;
     }
 
     case 'workedExample':

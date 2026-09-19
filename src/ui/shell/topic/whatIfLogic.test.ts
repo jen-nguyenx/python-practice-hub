@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { fillTemplate } from '../../../content/experiments.ts';
 import type { Knob } from '../../../content/schema.ts';
-import { pieceLines, pieces } from './whatIfLogic.ts';
+import {
+  intsOrNull, labelsOrNull, numbersOrNull, pieceLines, pieces, pointsOrNull,
+} from './whatIfLogic.ts';
 
 const text = (ps: { text: string }[]) => ps.map((p) => p.text).join('');
 
@@ -58,5 +60,40 @@ describe('pieceLines', () => {
     const lines = pieceLines(pieces(code, spans));
     expect(lines.map(text)).toEqual(['for x in y:', '    print(t)']);
     expect(text(lines[1].filter((p) => p.knob !== null))).toBe('    print(t)');
+  });
+});
+
+describe('probe value coercion', () => {
+  it('accepts the shapes a picture needs', () => {
+    expect(labelsOrNull(['a', 'b'])).toEqual(['a', 'b']);
+    expect(labelsOrNull([1, 2])).toEqual(['1', '2']);
+    expect(numbersOrNull([1, 2.5, -3])).toEqual([1, 2.5, -3]);
+    expect(intsOrNull([0, 4])).toEqual([0, 4]);
+    expect(pointsOrNull([[0, 1], [2, 3]])).toEqual([[0, 1], [2, 3]]);
+  });
+
+  it('refuses a value that is not a list at all', () => {
+    for (const bad of [null, undefined, 'abc', 7, {}]) {
+      expect(labelsOrNull(bad), String(bad)).toBeNull();
+      expect(numbersOrNull(bad), String(bad)).toBeNull();
+      expect(intsOrNull(bad), String(bad)).toBeNull();
+      expect(pointsOrNull(bad), String(bad)).toBeNull();
+    }
+  });
+
+  it('fails the whole list rather than dropping one bad entry', () => {
+    // Dropping one would shift every label after it onto the wrong bar, which is worse than no picture.
+    expect(numbersOrNull([1, null, 3])).toBeNull();
+    expect(numbersOrNull([1, Infinity])).toBeNull();
+    expect(labelsOrNull(['a', {}, 'c'])).toBeNull();
+    expect(intsOrNull([1, 2.5])).toBeNull();
+    expect(pointsOrNull([[0, 1], [2]])).toBeNull();
+    expect(pointsOrNull([[0, 1], 'nope'])).toBeNull();
+    expect(pointsOrNull([[0, 1], [2, null]])).toBeNull();
+  });
+
+  it('keeps an empty list, which is a real answer', () => {
+    expect(numbersOrNull([])).toEqual([]);
+    expect(pointsOrNull([])).toEqual([]);
   });
 });

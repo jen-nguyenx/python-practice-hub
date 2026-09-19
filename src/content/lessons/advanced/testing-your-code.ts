@@ -163,13 +163,15 @@ const lesson: Lesson = {
             ],
             probes: {
               passing: "[m for m in range(45, 56) if grade(m) != 'N']",
+              'mark-now': '⟦mark⟧',
             },
             visual: {
               kind: 'numberline',
               min: 45,
               max: 55,
               picked: 'passing',
-              caption: 'Every mark from 45 to 55 that this `grade` actually treats as a pass.',
+              at: 'mark-now',
+              caption: 'Every mark from 45 to 55 that this `grade` actually treats as a pass. The ringed one is the mark you are testing.',
             },
             notes: {
               '0': 'At 45, both lines agree: it should not pass, and it does not.',

@@ -94,7 +94,7 @@
     "experiment": {
       "runs": {
         "0": {
-          "stdout": "str -> <__main__.Team object at 0x1513b78>\nlen -> TypeError\nsorted names -> TypeError\na in team -> TypeError\nequal -> False\n"
+          "stdout": "str -> <__main__.Team object at 0x...>\nlen -> TypeError\nsorted names -> TypeError\na in team -> TypeError\nequal -> False\n"
         },
         "1": {
           "stdout": "str -> Team('Reds')\nlen -> TypeError\nsorted names -> TypeError\na in team -> TypeError\nequal -> False\n"

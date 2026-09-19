@@ -15,7 +15,7 @@
 .ls-step-n { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--surface-3); color: var(--text-faint); font-family: var(--mono); font-size: var(--fs-11); font-weight: 600; }
 .ls-step.is-done .ls-step-n { background: var(--accent-soft); color: var(--text-muted); }
 .ls-step.is-current { color: var(--text); font-weight: 600; }
-.ls-step.is-current .ls-step-n { background: var(--blue); color: #ffffff; }
+.ls-step.is-current .ls-step-n { background: var(--blue); color: var(--on-accent); }
 .ls-step.is-current::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: -1px; height: 2px; background: var(--accent); }
 .ls-step:focus-visible { outline: 2px solid var(--focus); outline-offset: -4px; border-radius: var(--r-1); }
 
@@ -43,8 +43,10 @@
   .ls { padding: 24px 16px 100px; }
   .ls-title { font-size: var(--fs-24); }
   .ls-step-title { font-size: var(--fs-20); }
-  .ls-step-l { display: none; }
-  .ls-step.is-current .ls-step-l { display: inline; }
+  /* Hidden to the eye, not to a screen reader: display:none would leave every step named only by its
+     number, so the rail would read as "1 2 3" with no idea what any of them are. */
+  .ls-step-l { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .ls-step.is-current .ls-step-l { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }
   .ls-nav-mid { display: none; }
 }
 

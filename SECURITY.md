@@ -26,9 +26,21 @@ JavaScript; the check has been verified to fail when the fix is removed.
 The denylist stays as a teaching aid: it gives a clear "Importing sys is not available here" instead of a
 confusing traceback. It is not the security boundary.
 
+**Verifier-only code is not shipped.** `probe()` and `repl()` evaluate expressions in the namespace a
+program left behind, so a lesson's outputs and pictures come from the interpreter rather than an author.
+They are wrappers around `exec`/`eval` and only the content verifier calls them, so they live in
+`_pl/verify.py`, which `PY_BROWSER_MODULES` excludes and the browser glob in `sources.ts` does not match.
+They grant pasted code nothing it does not already have — the student can call `exec` directly — but
+there is no reason to ship the surface, and a build check confirms it stays out.
+
 What student code can still do, by design: use the in-memory virtual filesystem the CSV questions need, and
 read the harness and test expectations. Neither matters, because the whole question bank including answers
 already ships to the browser.
+
+**A lesson never asserts what Python did.** Every output, value and error message in the lesson library is
+recorded by the verifier running that code. The renderer will not fill a gap: when a block has no recorded
+run, it shows nothing rather than claiming the program printed nothing, and a picture whose data is not
+exactly the expected shape is not drawn at all rather than drawn from a filtered subset.
 
 **A runaway program is always stoppable.** `src/runtime/pyClient.ts` arms a watchdog and calls
 `Worker.terminate()`, which kills a thread spinning inside WebAssembly. Python code has no handle on it.

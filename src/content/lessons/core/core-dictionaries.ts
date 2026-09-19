@@ -107,6 +107,34 @@ const lesson: Lesson = {
           body: '`+=` has to read the old value before it can add to it, so on the very first sighting of any key it fails for the reason the previous section showed. The fix is not a special case for the first time; `get(song, 0)` handles the first time and every time after it with the same line.\n\nThe same pattern totals rather than counts. Swap the 1 for the amount, and the dictionary holds a running total per key instead of a tally.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'tally-grows',
+            title: 'Watching a tally fill up',
+            intro: 'Drag how many requests have come in so far. The counting line never changes; only how much data it has seen does.',
+            template: "requests = ['Solid Rock', 'Down Under', 'Solid Rock', 'Flame Trees', 'Down Under', 'Solid Rock', 'Khe Sanh', 'Down Under', 'Flame Trees', 'Solid Rock']\ncounts = {}\nfor song in requests[:⟦n⟧]:\n    counts[song] = counts.get(song, 0) + 1\nprint(counts)\n",
+            knobs: [
+              { id: 'n', kind: 'range', label: 'requests counted so far', min: 1, max: 10, start: 5 },
+            ],
+            probes: {
+              values: '[c for _, c in counts.items()]',
+              labels: '[k for k, _ in counts.items()]',
+            },
+            visual: {
+              kind: 'bars',
+              values: 'values',
+              labels: 'labels',
+              caption: 'One bar per song counted so far, in the order it was first requested.',
+            },
+            notes: {
+              '0': 'Only the first request has come in, so there is exactly one bar, and it is 1 tall. A tally starts the same way a running total does: from nothing.',
+              '2': 'By the third request, Solid Rock has already been asked for twice. Its bar is the tallest here even though only two different songs have been heard from at all.',
+              '9': 'All ten requests counted: four songs, each bar in the order it was first requested, tallest to the one asked for most. Nothing here needed sorting, because the dictionary already remembers the order the keys first appeared in.',
+            },
+            takeaway: 'A tally is a running total kept in more than one place at once. The line that updates it, `counts[key] = counts.get(key, 0) + 1`, does not change as more data arrives or as new keys turn up — it is the same line whether this is the first request or the last, which is exactly why it belongs inside the loop rather than needing a special case for the first sighting of anything.',
+          },
+        },
+        {
           kind: 'code',
           caption: 'Counting, then totalling, over the same trips.',
           code: "trips = [('SR001', 3.2), ('SR002', 4.8), ('SR001', 2.1)]\n\ncounts = {}\ntotals = {}\nfor card, fare in trips:\n    counts[card] = counts.get(card, 0) + 1\n    totals[card] = totals.get(card, 0) + fare\nprint(counts)\nprint(totals)\n",

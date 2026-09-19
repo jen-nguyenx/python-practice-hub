@@ -132,6 +132,42 @@ print(stops)
           kind: 'prose',
           body: 'Neither result is wrong; they answer different questions. What you must not do is guess which one you wrote.\n\nIn project code, prefer the left-hand style: do not change the lists or dictionaries you were given, build new ones and return them. A tester that calls your function twice with the same list expects the same answer both times, and a function that quietly edited its argument the first time will not give it.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'helper-changes-callers-list',
+            title: 'Does the caller see it, or not',
+            intro: 'One helper, one list of lap times. Change what the helper does to its parameter, and watch what the caller’s own variable holds afterwards.',
+            template: "times = [31.2, 29.8, 30.5]\n\ndef tidy(values):\n    ⟦action⟧\n    return values\n\ntidy(times)\nprint(times)\n",
+            knobs: [
+              {
+                id: 'action',
+                label: 'inside the helper',
+                choices: [
+                  { value: 'values.sort()', caption: 'sort it in place' },
+                  { value: "values.append(0.0)", caption: 'append a zero on the end' },
+                  { value: 'values = sorted(values)', caption: 'point values at a new sorted list' },
+                  { value: 'values = values + [0.0]', caption: 'build a new list with something added' },
+                ],
+              },
+            ],
+            probes: {
+              after: 'times',
+            },
+            visual: {
+              kind: 'bars',
+              values: 'after',
+              caption: 'The caller’s own list, `times`, read after the helper has returned.',
+            },
+            notes: {
+              '0': '`sort()` rearranges the one list that `times` and `values` both name, so the caller sees it reordered even though `times` was never mentioned inside the helper.',
+              '1': '`append()` adds directly to the shared list, so the caller’s list grows by an item it never asked to add itself, whether or not anything is done with what the helper returns.',
+              '2': '`sorted()` builds a brand new list and points the local name `values` at it. `times` outside still points at the original three-item list, untouched.',
+              '3': '`+` also builds a new list rather than changing the old one. `values` means something different from this line on, but `times` never moved.',
+            },
+            takeaway: 'Whether a helper can change what its caller sees depends entirely on what happens to the parameter, not on what the helper is named or what it returns. A method that changes the list in place — `append`, `sort`, `remove`, `insert` — is visible outside, because there is only one list with two names on it. Assigning the parameter to something new, sorted or rebuilt with `+`, only relabels the local name and leaves the caller’s list exactly as it was.',
+          },
+        },
       ],
     },
     {

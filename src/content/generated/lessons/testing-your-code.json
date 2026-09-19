@@ -33,37 +33,70 @@
     "experiment": {
       "runs": {
         "0": {
-          "stdout": "45 -> N\nshould pass: False   actually passed: False\n"
+          "stdout": "45 -> N\nshould pass: False   actually passed: False\n",
+          "values": {
+            "mark-now": 45
+          }
         },
         "1": {
-          "stdout": "46 -> N\nshould pass: False   actually passed: False\n"
+          "stdout": "46 -> N\nshould pass: False   actually passed: False\n",
+          "values": {
+            "mark-now": 46
+          }
         },
         "2": {
-          "stdout": "47 -> N\nshould pass: False   actually passed: False\n"
+          "stdout": "47 -> N\nshould pass: False   actually passed: False\n",
+          "values": {
+            "mark-now": 47
+          }
         },
         "3": {
-          "stdout": "48 -> N\nshould pass: False   actually passed: False\n"
+          "stdout": "48 -> N\nshould pass: False   actually passed: False\n",
+          "values": {
+            "mark-now": 48
+          }
         },
         "4": {
-          "stdout": "49 -> N\nshould pass: False   actually passed: False\n"
+          "stdout": "49 -> N\nshould pass: False   actually passed: False\n",
+          "values": {
+            "mark-now": 49
+          }
         },
         "5": {
-          "stdout": "50 -> N\nshould pass: True   actually passed: False\n"
+          "stdout": "50 -> N\nshould pass: True   actually passed: False\n",
+          "values": {
+            "mark-now": 50
+          }
         },
         "6": {
-          "stdout": "51 -> P\nshould pass: True   actually passed: True\n"
+          "stdout": "51 -> P\nshould pass: True   actually passed: True\n",
+          "values": {
+            "mark-now": 51
+          }
         },
         "7": {
-          "stdout": "52 -> P\nshould pass: True   actually passed: True\n"
+          "stdout": "52 -> P\nshould pass: True   actually passed: True\n",
+          "values": {
+            "mark-now": 52
+          }
         },
         "8": {
-          "stdout": "53 -> P\nshould pass: True   actually passed: True\n"
+          "stdout": "53 -> P\nshould pass: True   actually passed: True\n",
+          "values": {
+            "mark-now": 53
+          }
         },
         "9": {
-          "stdout": "54 -> P\nshould pass: True   actually passed: True\n"
+          "stdout": "54 -> P\nshould pass: True   actually passed: True\n",
+          "values": {
+            "mark-now": 54
+          }
         },
         "10": {
-          "stdout": "55 -> P\nshould pass: True   actually passed: True\n"
+          "stdout": "55 -> P\nshould pass: True   actually passed: True\n",
+          "values": {
+            "mark-now": 55
+          }
         }
       },
       "shared": {

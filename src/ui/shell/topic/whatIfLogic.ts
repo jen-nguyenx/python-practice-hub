@@ -46,3 +46,45 @@ export function pieceLines(all: readonly Piece[]): Piece[][] {
   while (lines.length > 1 && lines[lines.length - 1].length === 0) lines.pop();
   return lines;
 }
+
+// ---------- probe values ----------
+// Probe values arrive from generated JSON, so nothing about their shape is guaranteed at runtime. These
+// fail closed: a value that is not exactly the expected shape returns null and the picture is not drawn
+// at all, rather than being drawn from a filtered subset. A half-drawn chart is worse than none, because
+// dropping one bad entry shifts every label after it onto the wrong bar.
+
+export function labelsOrNull(v: unknown): string[] | null {
+  if (!Array.isArray(v)) return null;
+  const out: string[] = [];
+  for (const x of v) {
+    if (typeof x === 'string') out.push(x);
+    else if (typeof x === 'number' && Number.isFinite(x)) out.push(String(x));
+    else return null;
+  }
+  return out;
+}
+
+export function numbersOrNull(v: unknown): number[] | null {
+  if (!Array.isArray(v)) return null;
+  for (const x of v) if (typeof x !== 'number' || !Number.isFinite(x)) return null;
+  return v as number[];
+}
+
+export function intsOrNull(v: unknown): number[] | null {
+  if (!Array.isArray(v)) return null;
+  for (const x of v) if (typeof x !== 'number' || !Number.isInteger(x)) return null;
+  return v as number[];
+}
+
+export function pointsOrNull(v: unknown): [number, number][] | null {
+  if (!Array.isArray(v)) return null;
+  const out: [number, number][] = [];
+  for (const p of v) {
+    if (!Array.isArray(p) || p.length !== 2) return null;
+    const [x, y] = p;
+    if (typeof x !== 'number' || !Number.isFinite(x)) return null;
+    if (typeof y !== 'number' || !Number.isFinite(y)) return null;
+    out.push([x, y]);
+  }
+  return out;
+}

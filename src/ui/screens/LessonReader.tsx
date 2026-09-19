@@ -2,7 +2,7 @@
 //
 // Sections are the steps. Everything a reader sees that claims to be Python output was recorded by the
 // verifier running that code, so this screen never decides what Python does.
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { href } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
 import type { TopicId } from '../../content/ids.ts';
@@ -66,13 +66,13 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
   const [topic, setTopic] = useState<Topic | null>(null);
   const [experiments, setExperiments] = useState<GeneratedExperiments | null>(null);
   const [missing, setMissing] = useState(false);
-  const [index, setIndex] = useState(() => loadStep(`lesson:${lessonId}`));
+  const [index, setIndex] = useState(() => loadStep(lessonId));
 
   useEffect(() => {
     let alive = true;
     setLesson(null);
     setMissing(false);
-    setIndex(loadStep(`lesson:${lessonId}`));
+    setIndex(loadStep(lessonId));
     loadLesson(lessonId).then(
       (l) => {
         if (!alive) return;
@@ -97,10 +97,18 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
   const questions = topic ? topic.scenarios.flatMap((s) => s.questions) : [];
   const firstUnsolved = questions.find((q) => !stats.get(q.id)?.solved);
 
-  // Reaching the last section means the lesson was read through; that is what "done" records.
+  // Reaching the last section means the lesson was read through; that is what "done" records. Walking
+  // back and forward would otherwise append a new event each time, so it is recorded once per visit.
+  const recorded = useRef<string | null>(null);
   useEffect(() => {
-    if (!ready || !lesson?.topicId || sections.length === 0 || at !== sections.length - 1) return;
-    append({ type: 'lesson_done', topicId: lesson.topicId as TopicId });
+    if (!ready || !lesson || sections.length === 0 || at !== sections.length - 1) return;
+    if (recorded.current === lesson.id) return;
+    recorded.current = lesson.id;
+    append({
+      type: 'lesson_done',
+      lessonId: lesson.id,
+      ...(lesson.topicId ? { topicId: lesson.topicId as TopicId } : {}),
+    });
   }, [ready, lesson?.id, at, sections.length]);
 
   if (missing || (!meta && !lesson)) {
@@ -117,7 +125,7 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
   const go = (next: number) => {
     const clamped = clampStep(next, sections.length);
     setIndex(clamped);
-    saveStep(`lesson:${lessonId}`, clamped);
+    saveStep(lessonId, clamped);
     document.querySelector('.ls-body')?.scrollIntoView({ block: 'start', behavior: 'auto' });
   };
 
@@ -175,7 +183,9 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
             {at === 0 ? <Outcomes lesson={lesson} /> : null}
             <div class="lb-flow">
               {section.blocks.map((b, bi) => (
-                <Block key={bi} block={b} gen={outputs[blockKey(at, bi)]} ctx={ctx} />
+                // Keyed by section as well as index, so no block state (a picked slider, an opened
+                // checkpoint answer) can leak into the block at the same position in the next section.
+                <Block key={`${section.id}-${bi}`} block={b} gen={outputs[blockKey(at, bi)]} ctx={ctx} />
               ))}
             </div>
           </>

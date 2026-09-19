@@ -84,6 +84,69 @@
       "stdout": "25.5 2\n"
     }
   },
+  "s5-b5": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "kept 5 of 5\ntotal 54.6\n",
+          "values": {
+            "values": [
+              12.4,
+              23.4,
+              33.2,
+              39.5,
+              54.6
+            ]
+          }
+        },
+        "1": {
+          "stdout": "kept 4 of 5\ntotal 43.6\n",
+          "values": {
+            "values": [
+              12.4,
+              12.4,
+              22.2,
+              28.5,
+              43.6
+            ]
+          }
+        },
+        "2": {
+          "stdout": "kept 4 of 5\ntotal 43.6\n",
+          "values": {
+            "values": [
+              12.4,
+              12.4,
+              22.2,
+              28.5,
+              43.6
+            ]
+          }
+        },
+        "3": {
+          "stdout": "kept 5 of 5\ntotal 54.6\n",
+          "values": {
+            "values": [
+              12.4,
+              23.4,
+              33.2,
+              39.5,
+              54.6
+            ]
+          }
+        }
+      },
+      "shared": {
+        "labels": [
+          "Matilda Bay",
+          "Crawley",
+          "Applecross",
+          "Point Walter",
+          "South Perth"
+        ]
+      }
+    }
+  },
   "s6-b1": {
     "error": {
       "line": 2,

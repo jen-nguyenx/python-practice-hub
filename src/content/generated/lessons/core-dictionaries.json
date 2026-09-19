@@ -71,9 +71,165 @@
     }
   },
   "s2-b3": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "{'Solid Rock': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock"
+            ],
+            "values": [
+              1
+            ]
+          }
+        },
+        "1": {
+          "stdout": "{'Solid Rock': 1, 'Down Under': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock",
+              "Down Under"
+            ],
+            "values": [
+              1,
+              1
+            ]
+          }
+        },
+        "2": {
+          "stdout": "{'Solid Rock': 2, 'Down Under': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock",
+              "Down Under"
+            ],
+            "values": [
+              2,
+              1
+            ]
+          }
+        },
+        "3": {
+          "stdout": "{'Solid Rock': 2, 'Down Under': 1, 'Flame Trees': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock",
+              "Down Under",
+              "Flame Trees"
+            ],
+            "values": [
+              2,
+              1,
+              1
+            ]
+          }
+        },
+        "4": {
+          "stdout": "{'Solid Rock': 2, 'Down Under': 2, 'Flame Trees': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock",
+              "Down Under",
+              "Flame Trees"
+            ],
+            "values": [
+              2,
+              2,
+              1
+            ]
+          }
+        },
+        "5": {
+          "stdout": "{'Solid Rock': 3, 'Down Under': 2, 'Flame Trees': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock",
+              "Down Under",
+              "Flame Trees"
+            ],
+            "values": [
+              3,
+              2,
+              1
+            ]
+          }
+        },
+        "6": {
+          "stdout": "{'Solid Rock': 3, 'Down Under': 2, 'Flame Trees': 1, 'Khe Sanh': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock",
+              "Down Under",
+              "Flame Trees",
+              "Khe Sanh"
+            ],
+            "values": [
+              3,
+              2,
+              1,
+              1
+            ]
+          }
+        },
+        "7": {
+          "stdout": "{'Solid Rock': 3, 'Down Under': 3, 'Flame Trees': 1, 'Khe Sanh': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock",
+              "Down Under",
+              "Flame Trees",
+              "Khe Sanh"
+            ],
+            "values": [
+              3,
+              3,
+              1,
+              1
+            ]
+          }
+        },
+        "8": {
+          "stdout": "{'Solid Rock': 3, 'Down Under': 3, 'Flame Trees': 2, 'Khe Sanh': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock",
+              "Down Under",
+              "Flame Trees",
+              "Khe Sanh"
+            ],
+            "values": [
+              3,
+              3,
+              2,
+              1
+            ]
+          }
+        },
+        "9": {
+          "stdout": "{'Solid Rock': 4, 'Down Under': 3, 'Flame Trees': 2, 'Khe Sanh': 1}\n",
+          "values": {
+            "labels": [
+              "Solid Rock",
+              "Down Under",
+              "Flame Trees",
+              "Khe Sanh"
+            ],
+            "values": [
+              4,
+              3,
+              2,
+              1
+            ]
+          }
+        }
+      }
+    }
+  },
+  "s2-b4": {
     "stdout": "{'SR001': 2, 'SR002': 1}\n{'SR001': 5.300000000000001, 'SR002': 4.8}\n"
   },
-  "s2-b7": {
+  "s2-b8": {
     "stdout": "{'Perth': 1, 'perth': 1, 'Perth ': 1, 'Joondalup': 1}\n4\n{'perth': 3, 'joondalup': 1}\n2\n"
   },
   "s3-b1": {

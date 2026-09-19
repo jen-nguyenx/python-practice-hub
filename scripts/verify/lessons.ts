@@ -11,7 +11,7 @@ import { MISTAKE_IDS } from '../../src/content/ids.ts';
 import { blockKey, TRACKS } from '../../src/content/lessonSchema.ts';
 import type { GeneratedBlock, GeneratedLesson, Lesson, LessonBlock } from '../../src/content/lessonSchema.ts';
 import type { Experiment, Topic } from '../../src/content/schema.ts';
-import { checkOneExperiment } from './experiments.ts';
+import { checkOneExperiment, stable } from './experiments.ts';
 import { PROJECT_ROOT } from './pyodide.ts';
 import type { Harness } from './pyodide.ts';
 import type { Issues, Scope } from './report.ts';
@@ -193,6 +193,8 @@ function checkStatic(sc: Scope, x: Lesson, seen: Set<string>, topics: Map<string
 
   const experiments = new Set((topic?.experiments ?? []).map((e: Experiment) => e.id));
   const sectionIds = new Set<string>();
+  // Two interactive cards sharing an id would emit the same DOM ids for their slider labels.
+  const interactiveIds = new Set<string>();
   for (const [si, raw] of sections.entries()) {
     const s = raw as Loose;
     const sid = nonEmpty(s?.id) ? String(s.id) : `#${si + 1}`;
@@ -209,18 +211,15 @@ function checkStatic(sc: Scope, x: Lesson, seen: Set<string>, topics: Map<string
         continue;
       }
       checkBlock(sc, b, `section ${sid} block ${bi + 1}`, topic, experiments);
+      if (b.kind === 'interactive' && nonEmpty(b.experiment?.id)) {
+        if (interactiveIds.has(b.experiment.id)) {
+          sc.error(`section ${sid} block ${bi + 1}: another interactive block already uses the id ${quote(b.experiment.id)}; ids must be unique within a lesson`);
+        }
+        interactiveIds.add(b.experiment.id);
+      }
     }
   }
   return topic;
-}
-
-/**
- * An object's default repr carries its memory address, which differs on every run. Printing a function
- * without calling it is worth teaching, so the address is normalised rather than banned: otherwise the
- * generated file changes on every verify and CI's staleness check fails for no real reason.
- */
-function stable(text: string): string {
-  return text.replace(/(<[^<>]*? at )0x[0-9a-fA-F]+(>)/g, '$10x...$2');
 }
 
 const toErr = (e: { type: string; message: string; line?: number } | undefined) =>

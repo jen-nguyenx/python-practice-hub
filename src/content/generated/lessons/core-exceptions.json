@@ -85,6 +85,53 @@
       "stdout": "[3.2, 1.5, 4.0, 2.1]\n"
     }
   },
+  "s4-b5": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "[42, 0, 0, 0, 7]\n",
+          "values": {
+            "labels": [
+              "'42'",
+              "'4.5'",
+              "''",
+              "'N/A'",
+              "'007'"
+            ],
+            "values": [
+              42,
+              0,
+              0,
+              0,
+              7
+            ]
+          }
+        },
+        "1": {
+          "stdout": "[42, 7]\n",
+          "values": {
+            "labels": [
+              "'42'",
+              "'007'"
+            ],
+            "values": [
+              42,
+              7
+            ]
+          }
+        },
+        "2": {
+          "error": {
+            "line": 6,
+            "message": "invalid literal for int() with base 10: '4.5'",
+            "type": "ValueError"
+          },
+          "stdout": "",
+          "values": {}
+        }
+      }
+    }
+  },
   "s5-b1": {
     "stdout": "first call:\n  converted '72'\n  finished with '72'\nresult: 72\nsecond call:\n  could not use 'n/a'\n  finished with 'n/a'\nresult: None\n"
   },

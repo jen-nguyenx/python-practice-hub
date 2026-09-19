@@ -25,13 +25,17 @@ export interface LessonMeta {
 
 export const LESSON_INDEX = LESSON_INDEX_JSON as LessonMeta[];
 
-export const LESSON_BY_ID: Record<string, LessonMeta> = Object.fromEntries(
-  LESSON_INDEX.map((l) => [l.id, l]),
+// Null-prototype: a lesson id arrives from the URL, and a plain object would answer "#/lesson/toString"
+// with a function rather than undefined.
+export const LESSON_BY_ID: Record<string, LessonMeta> = Object.assign(
+  Object.create(null) as Record<string, LessonMeta>,
+  Object.fromEntries(LESSON_INDEX.map((l) => [l.id, l])),
 );
 
 /** Lesson id -> the lesson meta of the lesson teaching that topic, if one exists. */
-export const LESSON_FOR_TOPIC: Record<string, LessonMeta> = Object.fromEntries(
-  LESSON_INDEX.filter((l) => l.topicId).map((l) => [l.topicId as string, l]),
+export const LESSON_FOR_TOPIC: Record<string, LessonMeta> = Object.assign(
+  Object.create(null) as Record<string, LessonMeta>,
+  Object.fromEntries(LESSON_INDEX.filter((l) => l.topicId).map((l) => [l.topicId as string, l])),
 );
 
 const modules = import.meta.glob<{ default: Lesson }>('./*/*.ts');

@@ -145,8 +145,14 @@ export function sanitizeEvent(raw: unknown): AppEvent | null {
         durationMs, qids: r.qids.filter(idStr).slice(0, 200),
       };
     }
-    case 'lesson_done':
-      return topic(r.topicId) ? { ...base, type, topicId: r.topicId } : null;
+    case 'lesson_done': {
+      // Older events carry only a topicId; keep them by deriving the id they would have had.
+      const lessonId = idStr(r.lessonId) ? r.lessonId : (topic(r.topicId) ? `topic:${r.topicId}` : null);
+      if (lessonId === null) return null;
+      const ev: AppEvent = { ...base, type, lessonId: cap(lessonId, 128) };
+      if (topic(r.topicId)) ev.topicId = r.topicId;
+      return ev;
+    }
     case 'override':
       return r.what === 'unlockAll' && isBool(r.value) ? { ...base, type, what: 'unlockAll', value: r.value } : null;
     case 'flag':

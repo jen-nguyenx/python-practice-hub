@@ -142,6 +142,39 @@ const lesson: Lesson = {
           body: 'Compare how each column changes as `n` doubles. `later_pairs` does a little under half the work of `all_pairs`, but both of them quadruple, so both are quadratic — the half is a constant, and constants do not change the shape. `fixed_inner` doubles, because three is three no matter how much data arrives.\n\nThe habit to build: when you see a nested loop, ask what the inner one iterates. Over the same data? Quadratic. Over a fixed list of fields? Linear.',
         },
         {
+          kind: 'interactive',
+          experiment: {
+            id: 'how-cost-grows',
+            title: 'Watch the shapes pull apart',
+            intro: 'Drag **how much data** and see what each shape costs. The numbers are counted, not timed, so nothing here depends on the machine.',
+            template: 'n = \u27e6n\u27e7\nprint("linear     ", n)\nprint("n log n    ", round(n * (n.bit_length() - 1)) if n > 1 else n)\nprint("quadratic  ", n * n)\n',
+            knobs: [
+              { id: 'n', kind: 'range', label: 'how much data', min: 2, max: 40, start: 10 },
+            ],
+            probes: {
+              linear: '[[i, i] for i in range(1, \u27e6n\u27e7 + 1)]',
+              nlogn: '[[i, round(i * (i.bit_length() - 1)) if i > 1 else i] for i in range(1, \u27e6n\u27e7 + 1)]',
+              quadratic: '[[i, i * i] for i in range(1, \u27e6n\u27e7 + 1)]',
+            },
+            visual: {
+              kind: 'plot',
+              xLabel: 'n',
+              yLabel: 'steps',
+              caption: 'Steps taken against the amount of data, drawn from the counts Python worked out.',
+              series: [
+                { probe: 'linear', label: 'linear, O(n)' },
+                { probe: 'nlogn', label: 'n log n' },
+                { probe: 'quadratic', label: 'quadratic, O(n squared)' },
+              ],
+            },
+            notes: {
+              '8': 'At ten items the three shapes are close enough that guessing from a stopwatch would tell you nothing. This is why small tests hide a quadratic.',
+              '38': 'At forty items quadratic has left the other two flat against the axis. Nothing changed in the code; only the amount of data did.',
+            },
+            takeaway: 'The shapes are indistinguishable on small input and brutally different on large input, which is exactly why you reason about the shape instead of measuring one small run. The quadratic curve is not slower everywhere, it is slower **eventually**, and eventually arrives sooner than people expect.',
+          },
+        },
+        {
           kind: 'checkpoint',
           prompt: 'This function is a nested loop over two different inputs: `for name in names: for row in rows: if row[0] == name: ...`. With 500 names and 20,000 rows, how many comparisons is that, what shape is it, and what single data structure removes the inner loop?',
           answer: 'It is 500 × 20,000 = 10 million comparisons: the cost of a loop pair over two different inputs is the product, written O(n × m). Building a dict from the rows first — `by_name = {}` then one pass filling `by_name.setdefault(row[0], []).append(row)` — makes the inner loop a single lookup, so the total becomes 20,000 to build plus 500 to query. The point worth generalising: one extra pass over the data to build an index is almost always cheaper than searching the data repeatedly.',

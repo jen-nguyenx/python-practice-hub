@@ -135,21 +135,133 @@ function NumberLine({ min, max, picked }: { min: number; max: number; picked: Se
   );
 }
 
-function Picture({ visual, values }: { visual: Visual; values: Record<string, unknown> }) {
-  if (visual.kind === 'sequence') {
-    const items = asLabels(values[visual.items]);
-    if (items.length === 0) return null;
-    return (
-      <div class="wi-pane">
-        {visual.caption ? <Markdown text={visual.caption} class="tp-md wi-vis-cap" /> : null}
-        <Sequence items={items} picked={visual.picked ? asIntSet(values[visual.picked]) : new Set()} />
+
+/** A bar per number. The tallest bar names its own value, so the scale is never a mystery. */
+function Bars({ values, labels, top }: { values: number[]; labels: string[]; top?: number }) {
+  const peak = Math.max(top ?? 0, ...values.map((v) => Math.abs(v)), 1);
+  const hasNeg = values.some((v) => v < 0);
+  // Every bar that reaches the top is marked, not just the first: singling one out of a tie would say
+  // it was special when it is not.
+  const tallest = values.length ? Math.max(...values.map((v) => Math.abs(v))) : 0;
+  const round = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.?0+$/, ''));
+  return (
+    <div class="wi-vis">
+      <div class="wi-bars" role="img" aria-label={values.map((v, i) => `${labels[i] ?? i + 1}: ${round(v)}`).join(', ') || 'No bars'}>
+        {values.map((v, i) => (
+          <div key={i} class="wi-bar-col">
+            <span class="wi-bar-v">{round(v)}</span>
+            <div class={`wi-bar-track${hasNeg ? ' has-neg' : ''}`}>
+              <div
+                class={`wi-bar${v < 0 ? ' is-neg' : ''}${tallest > 0 && Math.abs(v) === tallest ? ' is-peak' : ''}`}
+                style={{ height: `${(Math.abs(v) / peak) * 100}%` }}
+              />
+            </div>
+            {labels[i] !== undefined ? <span class="wi-bar-l">{labels[i]}</span> : null}
+          </div>
+        ))}
       </div>
-    );
+    </div>
+  );
+}
+
+const SERIES_CLASS = ['is-a', 'is-b', 'is-c', 'is-d'];
+
+/**
+ * One or more curves on a single shared scale. The viewBox leaves room for the axis labels, so nothing
+ * is drawn outside its own bounds, and every tick names a value the data actually reaches.
+ */
+function Plot({ series, xLabel, yLabel }: {
+  series: { label: string; points: [number, number][] }[]; xLabel?: string; yLabel?: string;
+}) {
+  const all = series.flatMap((s) => s.points);
+  if (all.length === 0) return <p class="wi-note">There is nothing to draw yet.</p>;
+  const xs = all.map((p) => p[0]);
+  const ys = all.map((p) => p[1]);
+  const xMin = Math.min(...xs);
+  const xMax = Math.max(...xs);
+  const yMin = Math.min(0, ...ys);
+  const yMax = Math.max(...ys);
+  const spanX = xMax - xMin || 1;
+  const spanY = yMax - yMin || 1;
+
+  // Room inside the viewBox for every label: the axis names sit in the margins, not over the ticks.
+  const W = 320;
+  const H = 186;
+  const padL = 44;
+  const padR = 10;
+  const padT = 22;
+  const padB = 30;
+  const px = (x: number) => padL + ((x - xMin) / spanX) * (W - padL - padR);
+  const py = (y: number) => H - padB - ((y - yMin) / spanY) * (H - padT - padB);
+  const tidy = (n: number) => {
+    if (Number.isInteger(n)) return String(n);
+    if (Math.abs(n) >= 1000) return String(Math.round(n));
+    return n.toFixed(2).replace(/\.?0+$/, '');
+  };
+
+  return (
+    <div class="wi-vis">
+      <svg class="wi-plot" viewBox={`0 0 ${W} ${H}`} role="img" preserveAspectRatio="xMidYMid meet"
+        aria-label={series.map((s) => `${s.label}: from ${tidy(s.points[0]?.[1] ?? 0)} to ${tidy(s.points[s.points.length - 1]?.[1] ?? 0)}`).join('; ')}>
+        <line class="wi-axis" x1={padL} y1={padT} x2={padL} y2={H - padB} />
+        <line class="wi-axis" x1={padL} y1={H - padB} x2={W - padR} y2={H - padB} />
+        <text class="wi-tick-t" x={padL - 6} y={py(yMax) + 4} text-anchor="end">{tidy(yMax)}</text>
+        <text class="wi-tick-t" x={padL - 6} y={py(yMin) + 4} text-anchor="end">{tidy(yMin)}</text>
+        <text class="wi-tick-t" x={padL} y={H - padB + 14} text-anchor="start">{tidy(xMin)}</text>
+        <text class="wi-tick-t" x={W - padR} y={H - padB + 14} text-anchor="end">{tidy(xMax)}</text>
+        {yLabel ? <text class="wi-axis-t" x={0} y={10} text-anchor="start">{yLabel}</text> : null}
+        {xLabel ? <text class="wi-axis-t" x={W - padR} y={H - 4} text-anchor="end">{xLabel}</text> : null}
+        {series.map((s, i) => (
+          <polyline
+            key={s.label}
+            class={`wi-curve ${SERIES_CLASS[i % SERIES_CLASS.length]}`}
+            fill="none"
+            points={s.points.map((p) => `${px(p[0])},${py(p[1])}`).join(' ')}
+          />
+        ))}
+      </svg>
+      {series.length > 1 ? (
+        <ul class="wi-legend">
+          {series.map((s, i) => (
+            <li key={s.label}><span class={`wi-key ${SERIES_CLASS[i % SERIES_CLASS.length]}`} aria-hidden="true" />{s.label}</li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+function asNumbers(v: unknown): number[] {
+  return asList(v).filter((x): x is number => typeof x === 'number' && Number.isFinite(x));
+}
+function asPoints(v: unknown): [number, number][] {
+  return asList(v)
+    .filter((p): p is [number, number] => Array.isArray(p) && p.length === 2
+      && p.every((n) => typeof n === 'number' && Number.isFinite(n)))
+    .map((p) => [p[0], p[1]] as [number, number]);
+}
+
+function Drawing({ visual, values }: { visual: Visual; values: Record<string, unknown> }) {
+  switch (visual.kind) {
+    case 'sequence': {
+      const items = asLabels(values[visual.items]);
+      if (items.length === 0) return null;
+      return <Sequence items={items} picked={visual.picked ? asIntSet(values[visual.picked]) : new Set()} />;
+    }
+    case 'numberline':
+      return <NumberLine min={visual.min} max={visual.max} picked={asIntSet(values[visual.picked])} />;
+    case 'bars':
+      return <Bars values={asNumbers(values[visual.values])} labels={visual.labels ? asLabels(values[visual.labels]) : []} top={visual.max} />;
+    case 'plot':
+      return <Plot series={visual.series.map((s) => ({ label: s.label, points: asPoints(values[s.probe]) }))} xLabel={visual.xLabel} yLabel={visual.yLabel} />;
   }
+}
+
+function Picture({ visual, values }: { visual: Visual; values: Record<string, unknown> }) {
   return (
     <div class="wi-pane">
       {visual.caption ? <Markdown text={visual.caption} class="tp-md wi-vis-cap" /> : null}
-      <NumberLine min={visual.min} max={visual.max} picked={asIntSet(values[visual.picked])} />
+      <Drawing visual={visual} values={values} />
     </div>
   );
 }

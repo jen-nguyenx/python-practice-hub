@@ -257,7 +257,18 @@ export type Probes = Record<string, string>;
  */
 export type Visual =
   | { kind: 'sequence'; items: string; picked?: string; caption?: Md }
-  | { kind: 'numberline'; min: number; max: number; picked: string; caption?: Md };
+  | { kind: 'numberline'; min: number; max: number; picked: string; caption?: Md }
+  /**
+   * A bar per number, for anything with a size: a list's values, counts from a dictionary, a running
+   * total growing pass by pass. `values` names a probe returning numbers; `labels` names one returning
+   * the same number of strings.
+   */
+  | { kind: 'bars'; values: string; labels?: string; caption?: Md; max?: number }
+  /**
+   * One or more curves, for anything where the shape is the lesson: how a cost grows with n, how a series
+   * closes on its limit. Each series names a probe returning a list of [x, y] pairs.
+   */
+  | { kind: 'plot'; series: { probe: string; label: string }[]; xLabel?: string; yLabel?: string; caption?: Md };
 
 export interface Experiment {
   /** e.g. "t03-x1". */

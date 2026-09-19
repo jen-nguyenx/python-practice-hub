@@ -5,7 +5,7 @@
 // student is produced by running the code in real Python at verify time, exactly like the read-format
 // answers. If a lesson claims `int(3.7)` is 3, that 3 came from the interpreter.
 import type { MistakeId, TopicId } from './ids.ts';
-import type { Md } from './schema.ts';
+import type { Experiment, GeneratedExperiment, Md } from './schema.ts';
 
 /** Where a lesson sits in the library. */
 export type Track = 'foundations' | 'core' | 'advanced';
@@ -56,6 +56,12 @@ export type LessonBlock =
   | { kind: 'table'; caption?: Md; head: string[]; rows: string[][] }
   /** Pulls in one "what if" experiment from the lesson's topic, controls and all. */
   | { kind: 'experiment'; id: string }
+  /**
+   * An interactive card written for this lesson: controls the reader moves, and output, a table or a
+   * picture that redraws as they move. Same machinery as a topic's experiments, so every combination is
+   * run at verify time and a slider redraws with no lag. Available in every track, unlike `experiment`.
+   */
+  | { kind: 'interactive'; experiment: Experiment }
   /** Pulls in the topic's worked example. */
   | { kind: 'workedExample' }
   /** Pulls in the topic's common mistakes, or just the ones named. */
@@ -119,6 +125,8 @@ export interface GeneratedBlock {
   right?: { stdout: string; error?: LessonError };
   /** shell blocks record one entry per line. */
   shell?: ShellLine[];
+  /** interactive blocks record every combination of their controls. */
+  experiment?: GeneratedExperiment;
 }
 
 /** Block key ("s2-b1": section index, block index) -> what running it really did. */

@@ -164,6 +164,12 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
         </figure>
       );
 
+    case 'interactive': {
+      const runs = gen?.experiment;
+      if (!runs || Object.keys(runs.runs ?? {}).length === 0) return null;
+      return <div class="lb-experiment tp-read"><ExperimentCard x={block.experiment} gen={runs} compact /></div>;
+    }
+
     case 'experiment': {
       const x = ctx.topic?.experiments?.find((e: Experiment) => e.id === block.id);
       const data = ctx.experiments?.[block.id];

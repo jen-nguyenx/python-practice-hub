@@ -107,6 +107,12 @@ examples) and add `experiments` to the `Topic` in `index.ts`.
     `picked: 'list(range(len(word)))[⟦from⟧:⟦to⟧]'`. This is the one for slicing.
   - `numberline` draws the whole numbers from `min` to `max` and marks the ones produced, e.g.
     `picked: 'list(range(⟦start⟧, ⟦stop⟧, ⟦step⟧))'`. This is the one for `range()`.
+  - `bars` draws one bar per number from a probe returning numbers, with optional `labels` from a probe
+    returning the same count of strings. Every bar that reaches the top is marked. Use it for sizes: a
+    list's values, counts from a dictionary, a running total, the saw-tooth of `n % k`.
+  - `plot` draws up to four curves on one shared scale; each series names a probe returning a list of
+    `[x, y]` number pairs, at least two points. Use it where the **shape** is the lesson: how a cost grows
+    with n, how a series closes on its limit. Give it `xLabel` and `yLabel`.
   A probe must return a list for either kind, so wrap it in `list(...)`. Probe values that come out the
   same for every combination are stored once, so a constant probe like `list(word)` costs almost nothing.
 - `notes` explains one specific combination, keyed by choice indexes (`"1-0"`). Write notes for the
@@ -161,6 +167,11 @@ lowest first) or the library sorts them to the end. Core lessons are ordered by 
 - `steps` for a procedure, `table` for a small reference.
 - `experiment`, `workedExample`, `mistakes` and `practice` pull in the topic's own material and need
   `topicId`. Use them: a core lesson should not restate what the topic already has.
+- `interactive` is a card written **for this lesson**, available in every track including foundations and
+  advanced. It holds a whole `Experiment` inline (see the "What if" section above for the contract), so a
+  reader gets sliders and a picture that redraw as they drag. Every combination is run at verify time, so
+  there is no lag and no output that Python did not produce. Reach for one wherever the lesson would
+  otherwise say "as n grows, this gets slower" — show it instead.
 
 **A block that raises on purpose is good teaching** and is allowed everywhere; say so in the surrounding
 prose. A block that fails to *compile* is a bug and fails the verifier. Two shell mistakes are always

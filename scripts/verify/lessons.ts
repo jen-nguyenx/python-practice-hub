@@ -11,6 +11,7 @@ import { MISTAKE_IDS } from '../../src/content/ids.ts';
 import { blockKey, TRACKS } from '../../src/content/lessonSchema.ts';
 import type { GeneratedBlock, GeneratedLesson, Lesson, LessonBlock } from '../../src/content/lessonSchema.ts';
 import type { Experiment, Topic } from '../../src/content/schema.ts';
+import { checkOneExperiment } from './experiments.ts';
 import { PROJECT_ROOT } from './pyodide.ts';
 import type { Harness } from './pyodide.ts';
 import type { Issues, Scope } from './report.ts';
@@ -146,6 +147,10 @@ function checkBlock(sc: Scope, b: LessonBlock, where: string, topic: Topic | nul
       }
       return;
     }
+    case 'interactive':
+      // Fully checked and run below, where a harness is available; here only the shape.
+      if (!b.experiment || typeof b.experiment !== 'object') sc.error(`${where}: interactive needs an experiment`);
+      return;
     case 'practice':
       if (!topic) sc.error(`${where}: a practice block needs the lesson to set topicId`);
       return;
@@ -262,6 +267,15 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
             sc.error(`${where}: shell line ${li + 1} ${quote(line.source)} fails because an earlier line failed to set ${quote(missing)}; the rest of this session is not real output`);
           }
         });
+      } else if (b.kind === 'interactive') {
+        // Errors from the shared experiment checker need to say which block they came from.
+        const at: Scope = {
+          error: (m) => sc.error(`${where}: ${m}`),
+          warn: (m) => sc.warn(`${where}: ${m}`),
+        };
+        // A lesson-local id, so it cannot collide with a topic's t03-x1 style ids.
+        const gen = checkOneExperiment(at, b.experiment, h, KEBAB, 'a kebab-case id such as "growing-list"');
+        if (gen) out[key] = { experiment: gen };
       } else if (b.kind === 'compare') {
         const left = h.runCapture(b.left.code, []);
         const right = h.runCapture(b.right.code, []);

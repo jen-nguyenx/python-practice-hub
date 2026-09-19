@@ -102,6 +102,35 @@ const lesson: Lesson = {
           prompt: 'You have 47 eggs and boxes that hold 6. How many full boxes, and how many eggs left over?',
           answer: '`47 // 6` gives the number of full boxes and `47 % 6` gives the eggs left over. Type both and check them against each other: the boxes multiplied by six, plus the leftovers, has to come back to 47. Using `47 / 6` here would give a decimal number of boxes, which is not something you can put eggs in.',
         },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'remainder-pattern',
+            title: 'The pattern a remainder makes',
+            intro: 'Drag **divide by** and watch the bars. Each bar is one number from 0 to 15, and its height is the remainder that number leaves.',
+            template: 'divisor = \u27e6k\u27e7\nfor n in range(16):\n    print(n, "%", divisor, "=", n % divisor)\n',
+            knobs: [
+              { id: 'k', kind: 'range', label: 'divide by', min: 1, max: 8, start: 3 },
+            ],
+            probes: {
+              remainders: '[n % \u27e6k\u27e7 for n in range(16)]',
+              numbers: '[str(n) for n in range(16)]',
+            },
+            visual: {
+              kind: 'bars',
+              values: 'remainders',
+              labels: 'numbers',
+              caption: 'The remainder left by each number from 0 to 15.',
+            },
+            notes: {
+              '2': 'Dividing by 3 gives the repeating pattern 0, 1, 2, 0, 1, 2. A remainder counts how far past the last exact multiple you are, so it climbs and resets forever.',
+              '0': 'Every bar is flat. Every whole number divides exactly by 1, so nothing is ever left over.',
+              '1': 'Alternating 0 and 1: the zeros are the even numbers. This is why `n % 2 == 0` is how you ask whether something is even.',
+              '7': 'The saw gets wider as the divisor grows, but it never reaches 8. A remainder is always smaller than what you divided by, which is the single most useful fact about it.',
+            },
+            takeaway: 'A remainder always lands between 0 and one less than the divisor, and it resets to 0 on every exact multiple. That saw-tooth is why `%` is the tool for "every nth time", for "is this even", and for pulling the last digit off a number with `% 10`.',
+          },
+        },
       ],
     },
     {

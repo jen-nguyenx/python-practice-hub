@@ -154,18 +154,35 @@ function checkVisual(sc: Scope, v: Visual, probeIds: Set<string>): void {
     needs(v.picked, 'picked');
     return;
   }
+  if (v.kind === 'bars') {
+    needs(v.values, 'values');
+    if (v.labels !== undefined) needs(v.labels, 'labels');
+    if (v.max !== undefined && (typeof v.max !== 'number' || !Number.isFinite(v.max) || v.max <= 0)) {
+      sc.error('visual: max must be a positive number (the top of the scale)');
+    }
+    return;
+  }
+  if (v.kind === 'plot') {
+    const series = arr(v.series) as Loose[];
+    if (series.length === 0 || series.length > 4) {
+      sc.error(`visual: a plot needs 1 to 4 series (has ${series.length})`);
+      return;
+    }
+    for (const [i, one] of series.entries()) {
+      if (!one || !nonEmpty(one.label)) sc.error(`visual: series ${i + 1} needs a label`);
+      needs(one?.probe, `series ${i + 1} probe`);
+    }
+    return;
+  }
   sc.error(`visual: unknown kind ${quote(String((v as Loose).kind))}`);
 }
 
 /** Schema and authoring checks. Returns false when the experiment cannot be run. */
-function checkStatic(sc: Scope, x: Experiment, num: string): boolean {
+function checkStatic(sc: Scope, x: Experiment): boolean {
   const t = x as unknown as Loose;
   if (!x || typeof x !== 'object') {
     sc.error('experiment is not an object');
     return false;
-  }
-  if (!nonEmpty(t.id) || !new RegExp(`^t${num}-x[1-9]$`).test(String(t.id))) {
-    sc.error(`experiment id must look like t${num}-xK (K = 1..9)`);
   }
   if (!nonEmpty(t.title)) sc.error('title is empty');
   if (!nonEmpty(t.intro)) sc.error('intro is empty (say what to change and what to watch)');
@@ -282,6 +299,32 @@ function checkProbeResults(sc: Scope, x: Experiment, runs: Record<string, Diagno
     if (v.picked) wantList(v.picked, 'the highlighted positions');
   } else if (v.kind === 'numberline') {
     wantList(v.picked, 'the marked numbers');
+  } else if (v.kind === 'bars') {
+    wantList(v.values, 'the bars');
+    const nums = values[v.values];
+    if (Array.isArray(nums) && !nums.every((n) => typeof n === 'number' && Number.isFinite(n))) {
+      sc.error(`probe ${quote(v.values)} must evaluate to a list of numbers for the bars`);
+    }
+    if (v.labels) {
+      wantList(v.labels, 'the bar labels');
+      const labels = values[v.labels];
+      if (Array.isArray(nums) && Array.isArray(labels) && nums.length !== labels.length) {
+        sc.error(`probe ${quote(v.labels)} gives ${labels.length} labels for ${nums.length} bars; they must match`);
+      }
+    }
+  } else if (v.kind === 'plot') {
+    for (const one of v.series) {
+      wantList(one.probe, `the "${one.label}" curve`);
+      const pts = values[one.probe];
+      if (!Array.isArray(pts)) continue;
+      const bad = pts.find((pt) => !Array.isArray(pt) || pt.length !== 2
+        || !pt.every((n) => typeof n === 'number' && Number.isFinite(n)));
+      if (bad !== undefined) {
+        sc.error(`probe ${quote(one.probe)} must evaluate to a list of [x, y] number pairs; got ${quote(String(JSON.stringify(bad)))}`);
+      } else if (pts.length < 2) {
+        sc.error(`probe ${quote(one.probe)} gives ${pts.length} point(s); a curve needs at least 2`);
+      }
+    }
   }
 }
 
@@ -356,6 +399,23 @@ function checkRuntime(sc: Scope, x: Experiment, runs: Record<string, Diagnosed>)
   }
 }
 
+/**
+ * Check and run a single experiment. Shared by a topic's experiments and by a lesson's own interactive
+ * block, so both get exactly the same guarantees: every combination compiles, runs and is recorded.
+ */
+export function checkOneExperiment(
+  sc: Scope, x: Experiment, h: Harness | null, idPattern: RegExp, idHint: string,
+): GeneratedExperiment | null {
+  if (!nonEmpty((x as unknown as Loose).id) || !idPattern.test(String(x.id))) sc.error(`experiment id must look like ${idHint}`);
+  if (!checkStatic(sc, x)) return null;
+  if (!h) return null;
+  const runs: Record<string, Diagnosed> = {};
+  for (const picks of allCombos(x.knobs)) runs[comboKey(picks)] = runCombo(h, x, picks);
+  checkRuntime(sc, x, runs);
+  for (const r of Object.values(runs)) delete r.probeErrors;
+  return hoistShared(runs);
+}
+
 /** Static + runtime checks for a topic's experiments, and the data the browser reads. */
 export function checkTopicExperiments(
   issues: Issues, info: TopicInfo, topic: Topic, h: Harness | null,
@@ -372,14 +432,8 @@ export function checkTopicExperiments(
     const sc = scope(issues, info.id, id);
     if (seen.has(id)) sc.error('duplicate experiment id');
     seen.add(id);
-    if (!checkStatic(sc, x, info.num)) continue;
-    if (!h) continue;
-    const runs: Record<string, Diagnosed> = {};
-    for (const picks of allCombos(x.knobs)) runs[comboKey(picks)] = runCombo(h, x, picks);
-    checkRuntime(sc, x, runs);
-    // probeErrors is a verifier-only diagnostic; it must not reach the browser bundle.
-    for (const r of Object.values(runs)) delete r.probeErrors;
-    out[x.id] = hoistShared(runs);
+    const gen = checkOneExperiment(sc, x, h, new RegExp(`^t${info.num}-x[1-9]$`), `t${info.num}-xK (K = 1..9)`);
+    if (gen) out[x.id] = gen;
   }
   return out;
 }

@@ -321,3 +321,36 @@ a.tp-q:focus-visible { outline: 2px solid var(--focus); outline-offset: -3px; bo
 @media (prefers-reduced-motion: reduce) {
   .wi-cell-v, .wi-dot { transition: none; }
 }
+
+/* ---------- what if: bars and curves ---------- */
+.wi-bars { display: flex; align-items: flex-end; gap: 6px; min-height: 150px; padding-top: 4px; }
+.wi-bar-col { flex: 1 1 0; display: grid; gap: 4px; justify-items: center; min-width: 0; }
+.wi-bar-v { font-family: var(--mono); font-size: var(--fs-11); color: var(--text-faint); font-variant-numeric: tabular-nums; }
+.wi-bar-track { width: 100%; max-width: 44px; height: 110px; display: flex; align-items: flex-end; border-bottom: 1px solid var(--border-strong); }
+.wi-bar-track.has-neg { align-items: center; }
+.wi-bar { width: 100%; min-height: 2px; border-radius: 3px 3px 0 0; background: var(--blue-soft); box-shadow: inset 0 0 0 1px var(--blue-line); transition: height var(--dur) ease-out; }
+.wi-bar.is-peak { background: var(--blue); box-shadow: none; }
+.wi-bar.is-neg { background: var(--bad-soft); box-shadow: inset 0 0 0 1px var(--bad); border-radius: 0 0 3px 3px; }
+.wi-bar-l { font-family: var(--mono); font-size: var(--fs-11); color: var(--text-muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.wi-plot { width: 100%; max-width: 100%; height: auto; display: block; }
+.wi-plot .wi-axis { stroke: var(--border-strong); stroke-width: 1; }
+.wi-plot .wi-tick-t { fill: var(--text-faint); font-family: var(--mono); font-size: 9px; }
+.wi-plot .wi-axis-t { fill: var(--text-muted); font-family: var(--mono); font-size: 9px; }
+.wi-plot .wi-curve { stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; transition: d var(--dur) ease-out; }
+.wi-plot .wi-curve.is-a { stroke: var(--blue); }
+.wi-plot .wi-curve.is-b { stroke: var(--hint); }
+.wi-plot .wi-curve.is-c { stroke: var(--text); }
+.wi-plot .wi-curve.is-d { stroke: var(--bad); }
+
+.wi-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; padding: 0; font-size: var(--fs-13); color: var(--text-muted); }
+.wi-legend li { display: flex; align-items: center; gap: 6px; }
+.wi-key { width: 14px; height: 3px; border-radius: 2px; }
+.wi-key.is-a { background: var(--blue); }
+.wi-key.is-b { background: var(--hint); }
+.wi-key.is-c { background: var(--text); }
+.wi-key.is-d { background: var(--bad); }
+
+@media (prefers-reduced-motion: reduce) {
+  .wi-bar { transition: none; }
+}

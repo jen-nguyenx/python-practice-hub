@@ -60,6 +60,55 @@ const lesson: Lesson = {
           prompt: 'If you moved the third line of that program to the top and ran it again, what would come out first?',
           answer: '`Third instruction`. The computer does not know that "third" is a word about position, and it does not read the words for meaning at all. It reads line one, shows whatever that line says to show, and moves on. Order in the file is order in the output, always.',
         },
+        {
+          kind: 'prose',
+          body: 'You do not have to take that on trust. Below is a three-line program with a button for each line, so you can put the instructions in any order you like and see what comes out.',
+        },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'order-of-lines',
+            title: 'The same three instructions, in any order',
+            intro: 'Choose what goes on each line, and read the output underneath. Try an order that makes no sense to a person, and watch how little the computer minds.',
+            template: '⟦first⟧\n⟦second⟧\n⟦third⟧\n',
+            knobs: [
+              {
+                id: 'first',
+                label: 'line 1 says',
+                choices: [
+                  { value: 'print("Boil the water")', caption: 'boil the water' },
+                  { value: 'print("Put the tea in the pot")', caption: 'put the tea in' },
+                  { value: 'print("Pour it into a cup")', caption: 'pour it out' },
+                ],
+              },
+              {
+                id: 'second',
+                label: 'line 2 says',
+                choices: [
+                  { value: 'print("Boil the water")', caption: 'boil the water' },
+                  { value: 'print("Put the tea in the pot")', caption: 'put the tea in' },
+                  { value: 'print("Pour it into a cup")', caption: 'pour it out' },
+                ],
+              },
+              {
+                id: 'third',
+                label: 'line 3 says',
+                choices: [
+                  { value: 'print("Boil the water")', caption: 'boil the water' },
+                  { value: 'print("Put the tea in the pot")', caption: 'put the tea in' },
+                  { value: 'print("Pour it into a cup")', caption: 'pour it out' },
+                ],
+              },
+            ],
+            notes: {
+              '0-1-2': 'The order a person would use. Nothing about the program marks this one as correct; it is only the one that happens to describe making tea properly.',
+              '2-1-0': 'Poured out before the water is boiled. The program runs without a word of complaint, because the computer has no idea what tea is. It is moving down the lines, and that is all it is doing.',
+              '0-0-0': 'The same instruction three times. The computer does not notice the repetition or wonder whether you meant it. Three lines, three pieces of output.',
+              '1-0-2': 'The tea goes in before the water boils. Wrong to you, fine to the computer: it carried out line 1, then line 2, then line 3, exactly as written.',
+            },
+            takeaway: 'The order of the output is the order of the lines. The computer does not look ahead, does not reorder anything into a sensible sequence, and cannot tell a good order from a bad one. Getting the order right is your job, every time.',
+          },
+        },
       ],
     },
     {

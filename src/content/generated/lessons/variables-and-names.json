@@ -121,7 +121,110 @@
       }
     ]
   },
-  "s3-b4": {
+  "s3-b3": {
+    "experiment": {
+      "runs": {
+        "0-0": {
+          "stdout": "8 became 18 and then 28\n",
+          "values": {
+            "stages": [
+              8,
+              18,
+              28
+            ]
+          }
+        },
+        "0-1": {
+          "stdout": "8 became 18 and then 36\n",
+          "values": {
+            "stages": [
+              8,
+              18,
+              36
+            ]
+          }
+        },
+        "0-2": {
+          "stdout": "8 became 18 and then 15\n",
+          "values": {
+            "stages": [
+              8,
+              18,
+              15
+            ]
+          }
+        },
+        "1-0": {
+          "stdout": "8 became 16 and then 26\n",
+          "values": {
+            "stages": [
+              8,
+              16,
+              26
+            ]
+          }
+        },
+        "1-1": {
+          "stdout": "8 became 16 and then 32\n",
+          "values": {
+            "stages": [
+              8,
+              16,
+              32
+            ]
+          }
+        },
+        "1-2": {
+          "stdout": "8 became 16 and then 13\n",
+          "values": {
+            "stages": [
+              8,
+              16,
+              13
+            ]
+          }
+        },
+        "2-0": {
+          "stdout": "8 became 5 and then 15\n",
+          "values": {
+            "stages": [
+              8,
+              5,
+              15
+            ]
+          }
+        },
+        "2-1": {
+          "stdout": "8 became 5 and then 10\n",
+          "values": {
+            "stages": [
+              8,
+              5,
+              10
+            ]
+          }
+        },
+        "2-2": {
+          "stdout": "8 became 5 and then 2\n",
+          "values": {
+            "stages": [
+              8,
+              5,
+              2
+            ]
+          }
+        }
+      },
+      "shared": {
+        "stage-names": [
+          "at the start",
+          "after line 2",
+          "after line 4"
+        ]
+      }
+    }
+  },
+  "s3-b5": {
     "shell": [
       {
         "source": "answer = 42",

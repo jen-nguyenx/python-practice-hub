@@ -146,7 +146,53 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'Each line used the old value to work out the new one. Nothing circular happened, because the right-hand side was finished before the name moved.',
+          body: 'Each line used the old value to work out the new one. Nothing circular happened, because the right-hand side was finished before the name moved.\n\nBecause each step starts from wherever the last one left off, the order of two changes is not a detail. Swap them in the card below and watch the bars.',
+        },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'order-of-updates',
+            title: 'Two changes, two orders',
+            intro: 'Choose a change for line 2 and a change for line 4. Each one works out the right-hand side using whatever `score` holds at that moment. Line 3 puts a second label on the halfway value so the picture can show it, and changes nothing else.',
+            template: 'score = 8\nscore = ⟦first⟧\nhalfway = score\nscore = ⟦second⟧\nprint("8 became", halfway, "and then", score)\n',
+            knobs: [
+              {
+                id: 'first',
+                label: 'line 2 makes score',
+                choices: [
+                  { value: 'score + 10', caption: 'ten more' },
+                  { value: 'score * 2', caption: 'double' },
+                  { value: 'score - 3', caption: 'three less' },
+                ],
+              },
+              {
+                id: 'second',
+                label: 'line 4 makes score',
+                choices: [
+                  { value: 'score + 10', caption: 'ten more' },
+                  { value: 'score * 2', caption: 'double' },
+                  { value: 'score - 3', caption: 'three less' },
+                ],
+              },
+            ],
+            probes: {
+              stages: '[8, halfway, score]',
+              'stage-names': '["at the start", "after line 2", "after line 4"]',
+            },
+            visual: {
+              kind: 'bars',
+              values: 'stages',
+              labels: 'stage-names',
+              caption: 'What the name `score` is attached to at each stage.',
+            },
+            notes: {
+              '0-1': 'Ten more, then double. The ten is added first and then doubled along with everything else, so it is worth twenty by the end.',
+              '1-0': 'Double, then ten more. The same two instructions as the setting above, in the other order, and the final bar is shorter. `score` was a different number when the second line read it.',
+              '2-2': 'Three less, twice. Each line starts from what the line before left behind, so the total drop is six.',
+              '1-1': 'Double, then double again. Nothing is written down twice and nothing is circular: each line works out the right-hand side first, then moves the label onto the answer.',
+            },
+            takeaway: 'A line like `score = score + 10` reads right to left: work out the right-hand side using the value the name holds now, then attach the name to the answer. Because each line starts from the value the one before it left, changing the order of two updates changes the result.',
+          },
         },
         {
           kind: 'prose',

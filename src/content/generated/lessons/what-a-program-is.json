@@ -5,6 +5,93 @@
   "s1-b1": {
     "stdout": "First instruction\nSecond instruction\nThird instruction\n"
   },
+  "s1-b5": {
+    "experiment": {
+      "runs": {
+        "0-0-0": {
+          "stdout": "Boil the water\nBoil the water\nBoil the water\n"
+        },
+        "0-0-1": {
+          "stdout": "Boil the water\nBoil the water\nPut the tea in the pot\n"
+        },
+        "0-0-2": {
+          "stdout": "Boil the water\nBoil the water\nPour it into a cup\n"
+        },
+        "0-1-0": {
+          "stdout": "Boil the water\nPut the tea in the pot\nBoil the water\n"
+        },
+        "0-1-1": {
+          "stdout": "Boil the water\nPut the tea in the pot\nPut the tea in the pot\n"
+        },
+        "0-1-2": {
+          "stdout": "Boil the water\nPut the tea in the pot\nPour it into a cup\n"
+        },
+        "0-2-0": {
+          "stdout": "Boil the water\nPour it into a cup\nBoil the water\n"
+        },
+        "0-2-1": {
+          "stdout": "Boil the water\nPour it into a cup\nPut the tea in the pot\n"
+        },
+        "0-2-2": {
+          "stdout": "Boil the water\nPour it into a cup\nPour it into a cup\n"
+        },
+        "1-0-0": {
+          "stdout": "Put the tea in the pot\nBoil the water\nBoil the water\n"
+        },
+        "1-0-1": {
+          "stdout": "Put the tea in the pot\nBoil the water\nPut the tea in the pot\n"
+        },
+        "1-0-2": {
+          "stdout": "Put the tea in the pot\nBoil the water\nPour it into a cup\n"
+        },
+        "1-1-0": {
+          "stdout": "Put the tea in the pot\nPut the tea in the pot\nBoil the water\n"
+        },
+        "1-1-1": {
+          "stdout": "Put the tea in the pot\nPut the tea in the pot\nPut the tea in the pot\n"
+        },
+        "1-1-2": {
+          "stdout": "Put the tea in the pot\nPut the tea in the pot\nPour it into a cup\n"
+        },
+        "1-2-0": {
+          "stdout": "Put the tea in the pot\nPour it into a cup\nBoil the water\n"
+        },
+        "1-2-1": {
+          "stdout": "Put the tea in the pot\nPour it into a cup\nPut the tea in the pot\n"
+        },
+        "1-2-2": {
+          "stdout": "Put the tea in the pot\nPour it into a cup\nPour it into a cup\n"
+        },
+        "2-0-0": {
+          "stdout": "Pour it into a cup\nBoil the water\nBoil the water\n"
+        },
+        "2-0-1": {
+          "stdout": "Pour it into a cup\nBoil the water\nPut the tea in the pot\n"
+        },
+        "2-0-2": {
+          "stdout": "Pour it into a cup\nBoil the water\nPour it into a cup\n"
+        },
+        "2-1-0": {
+          "stdout": "Pour it into a cup\nPut the tea in the pot\nBoil the water\n"
+        },
+        "2-1-1": {
+          "stdout": "Pour it into a cup\nPut the tea in the pot\nPut the tea in the pot\n"
+        },
+        "2-1-2": {
+          "stdout": "Pour it into a cup\nPut the tea in the pot\nPour it into a cup\n"
+        },
+        "2-2-0": {
+          "stdout": "Pour it into a cup\nPour it into a cup\nBoil the water\n"
+        },
+        "2-2-1": {
+          "stdout": "Pour it into a cup\nPour it into a cup\nPut the tea in the pot\n"
+        },
+        "2-2-2": {
+          "stdout": "Pour it into a cup\nPour it into a cup\nPour it into a cup\n"
+        }
+      }
+    }
+  },
   "s2-b1": {
     "stdout": "15\n"
   },

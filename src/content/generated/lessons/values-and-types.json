@@ -150,6 +150,53 @@
       "stdout": "8\n"
     }
   },
+  "s5-b3": {
+    "experiment": {
+      "runs": {
+        "0-0": {
+          "stdout": "the type is <class 'int'>\nthe answer is 8\n"
+        },
+        "0-1": {
+          "stdout": "the type is <class 'int'>\nthe answer is 15\n"
+        },
+        "0-2": {
+          "stdout": "the type is <class 'int'>\nthe answer is True\n"
+        },
+        "1-0": {
+          "error": {
+            "line": 3,
+            "message": "can only concatenate str (not \"int\") to str",
+            "type": "TypeError"
+          },
+          "stdout": "the type is <class 'str'>\n"
+        },
+        "1-1": {
+          "stdout": "the type is <class 'str'>\nthe answer is 555\n"
+        },
+        "1-2": {
+          "stdout": "the type is <class 'str'>\nthe answer is False\n"
+        },
+        "2-0": {
+          "stdout": "the type is <class 'float'>\nthe answer is 8.0\n"
+        },
+        "2-1": {
+          "stdout": "the type is <class 'float'>\nthe answer is 15.0\n"
+        },
+        "2-2": {
+          "stdout": "the type is <class 'float'>\nthe answer is True\n"
+        },
+        "3-0": {
+          "stdout": "the type is <class 'bool'>\nthe answer is 4\n"
+        },
+        "3-1": {
+          "stdout": "the type is <class 'bool'>\nthe answer is 3\n"
+        },
+        "3-2": {
+          "stdout": "the type is <class 'bool'>\nthe answer is False\n"
+        }
+      }
+    }
+  },
   "s6-b1": {
     "shell": [
       {

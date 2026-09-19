@@ -191,6 +191,40 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
+          body: 'The card below puts that side by side. Drag the number of places and watch two things at once: the line that shows the value, and the line underneath that asks for the stored value again.',
+        },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'places-shown',
+            title: 'How many places to show',
+            intro: 'Pick a value, then drag **places**. The middle line is what a reader sees. The line under it asks Python what is still stored.',
+            template: 'price = ⟦value⟧\nprint("stored:", price)\nprint("shown: ", f"{price:.⟦places⟧f}")\nprint("stored, still:", price)\n',
+            knobs: [
+              {
+                id: 'value',
+                label: 'the value',
+                choices: [
+                  { value: '2 / 3', caption: 'two thirds' },
+                  { value: '1234.5678', caption: 'a big one' },
+                  { value: '2.5', caption: 'exactly a half' },
+                  { value: '0.1 + 0.2', caption: 'a tenth plus two tenths' },
+                ],
+              },
+              { id: 'places', kind: 'range', label: 'places', min: 0, max: 6, start: 2 },
+            ],
+            notes: {
+              '0-2': 'Two places is the usual choice for money. Notice the last line: the stored value still runs to as many digits as it ever did.',
+              '0-0': 'Zero places rounds all the way to a whole number for showing, and the stored value is untouched underneath it. Nothing has been lost, only hidden.',
+              '2-0': 'Exactly a half, shown to zero places, does not go up. That is not a typo and not a bug; the next part of this section explains which way halves go.',
+              '1-0': 'The big number is rounded rather than chopped, so the digit before the point changes. Shortening for display still looks at what it is throwing away.',
+              '3-2': 'Look at the stored line. A tenth plus two tenths is not quite three tenths, because decimals are kept in binary and some of them do not fit exactly. Shown to two places it reads as you expect, which is one reason to shorten only at the last moment.',
+            },
+            takeaway: 'An f-string format like `:.2f` changes what is shown and nothing else. The value under the name keeps every digit it had, which is what you want: do the arithmetic with the full number, and shorten it once, where a person is about to read it.',
+          },
+        },
+        {
+          kind: 'prose',
           body: 'One detail of `round()` surprises people, and it is not a bug. Watch what it does with a number exactly halfway.',
         },
         {

@@ -141,6 +141,96 @@
     ]
   },
   "s4-b4": {
+    "experiment": {
+      "runs": {
+        "0-0": {
+          "stdout": "stored: 0.6666666666666666\nshown:  1\nstored, still: 0.6666666666666666\n"
+        },
+        "0-1": {
+          "stdout": "stored: 0.6666666666666666\nshown:  0.7\nstored, still: 0.6666666666666666\n"
+        },
+        "0-2": {
+          "stdout": "stored: 0.6666666666666666\nshown:  0.67\nstored, still: 0.6666666666666666\n"
+        },
+        "0-3": {
+          "stdout": "stored: 0.6666666666666666\nshown:  0.667\nstored, still: 0.6666666666666666\n"
+        },
+        "0-4": {
+          "stdout": "stored: 0.6666666666666666\nshown:  0.6667\nstored, still: 0.6666666666666666\n"
+        },
+        "0-5": {
+          "stdout": "stored: 0.6666666666666666\nshown:  0.66667\nstored, still: 0.6666666666666666\n"
+        },
+        "0-6": {
+          "stdout": "stored: 0.6666666666666666\nshown:  0.666667\nstored, still: 0.6666666666666666\n"
+        },
+        "1-0": {
+          "stdout": "stored: 1234.5678\nshown:  1235\nstored, still: 1234.5678\n"
+        },
+        "1-1": {
+          "stdout": "stored: 1234.5678\nshown:  1234.6\nstored, still: 1234.5678\n"
+        },
+        "1-2": {
+          "stdout": "stored: 1234.5678\nshown:  1234.57\nstored, still: 1234.5678\n"
+        },
+        "1-3": {
+          "stdout": "stored: 1234.5678\nshown:  1234.568\nstored, still: 1234.5678\n"
+        },
+        "1-4": {
+          "stdout": "stored: 1234.5678\nshown:  1234.5678\nstored, still: 1234.5678\n"
+        },
+        "1-5": {
+          "stdout": "stored: 1234.5678\nshown:  1234.56780\nstored, still: 1234.5678\n"
+        },
+        "1-6": {
+          "stdout": "stored: 1234.5678\nshown:  1234.567800\nstored, still: 1234.5678\n"
+        },
+        "2-0": {
+          "stdout": "stored: 2.5\nshown:  2\nstored, still: 2.5\n"
+        },
+        "2-1": {
+          "stdout": "stored: 2.5\nshown:  2.5\nstored, still: 2.5\n"
+        },
+        "2-2": {
+          "stdout": "stored: 2.5\nshown:  2.50\nstored, still: 2.5\n"
+        },
+        "2-3": {
+          "stdout": "stored: 2.5\nshown:  2.500\nstored, still: 2.5\n"
+        },
+        "2-4": {
+          "stdout": "stored: 2.5\nshown:  2.5000\nstored, still: 2.5\n"
+        },
+        "2-5": {
+          "stdout": "stored: 2.5\nshown:  2.50000\nstored, still: 2.5\n"
+        },
+        "2-6": {
+          "stdout": "stored: 2.5\nshown:  2.500000\nstored, still: 2.5\n"
+        },
+        "3-0": {
+          "stdout": "stored: 0.30000000000000004\nshown:  0\nstored, still: 0.30000000000000004\n"
+        },
+        "3-1": {
+          "stdout": "stored: 0.30000000000000004\nshown:  0.3\nstored, still: 0.30000000000000004\n"
+        },
+        "3-2": {
+          "stdout": "stored: 0.30000000000000004\nshown:  0.30\nstored, still: 0.30000000000000004\n"
+        },
+        "3-3": {
+          "stdout": "stored: 0.30000000000000004\nshown:  0.300\nstored, still: 0.30000000000000004\n"
+        },
+        "3-4": {
+          "stdout": "stored: 0.30000000000000004\nshown:  0.3000\nstored, still: 0.30000000000000004\n"
+        },
+        "3-5": {
+          "stdout": "stored: 0.30000000000000004\nshown:  0.30000\nstored, still: 0.30000000000000004\n"
+        },
+        "3-6": {
+          "stdout": "stored: 0.30000000000000004\nshown:  0.300000\nstored, still: 0.30000000000000004\n"
+        }
+      }
+    }
+  },
+  "s4-b6": {
     "shell": [
       {
         "source": "round(2.5)",

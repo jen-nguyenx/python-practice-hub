@@ -165,7 +165,47 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'On the left, `+` joined two pieces of text end to end, because that is what `+` means for text. On the right, `+` added two numbers, because that is what `+` means for numbers.\n\nNothing went wrong on the left. It obeyed the rule for the type it was given. This is why type matters more than it first seems: the *same symbol* does a different job depending on what is either side of it, so if you are wrong about the type, you are wrong about what your program does, and often with no error at all to warn you.',
+          body: 'On the left, `+` joined two pieces of text end to end, because that is what `+` means for text. On the right, `+` added two numbers, because that is what `+` means for numbers.\n\nNothing went wrong on the left. It obeyed the rule for the type it was given. This is why type matters more than it first seems: the *same symbol* does a different job depending on what is either side of it, so if you are wrong about the type, you are wrong about what your program does, and often with no error at all to warn you.\n\nThe card below lets you hold the operation still and change only the type, which is the quickest way to feel how much the type is deciding.',
+        },
+        {
+          kind: 'interactive',
+          experiment: {
+            id: 'same-symbol-different-job',
+            title: 'One symbol, four kinds of value',
+            intro: 'Pick a value on the top row and an operation on the bottom row. The symbol never changes. What it does changes completely.',
+            template: 'value = ⟦value⟧\nprint("the type is", type(value))\nprint("the answer is", value ⟦operation⟧)\n',
+            knobs: [
+              {
+                id: 'value',
+                label: 'the value',
+                choices: [
+                  { value: '5', caption: 'the number 5' },
+                  { value: '"5"', caption: 'the text "5"' },
+                  { value: '5.0', caption: 'the decimal 5.0' },
+                  { value: 'True', caption: 'True' },
+                ],
+              },
+              {
+                id: 'operation',
+                label: 'what to do with it',
+                choices: [
+                  { value: '+ 3', caption: 'add 3' },
+                  { value: '* 3', caption: 'times 3' },
+                  { value: '== 5', caption: 'is it equal to 5?' },
+                ],
+              },
+            ],
+            notes: {
+              '0-0': 'Two numbers, added. This is the one everybody expects, and it is worth having on screen while you look at the others.',
+              '1-0': 'Text and a number. Python will not choose between joining and adding, so it stops. The type line above the error already told you why: the value is text, whatever it looks like.',
+              '1-1': 'No error, and no arithmetic either. For text, `*` repeats, so three copies come back stuck together. This is the dangerous kind: a wrong answer that nothing stops to warn you about.',
+              '2-0': 'A decimal and a whole number mix happily, and the answer comes back as a decimal. Once a float is involved, the result is a float.',
+              '3-0': 'Adding to `True` gives an answer, which surprises most people. When a number is wanted, Python counts `True` as 1 and `False` as 0. Useful later for counting how many times something was true; confusing now if you did not know it.',
+              '1-2': 'Text compared to a number is `False`, not an error. Comparing is allowed between any two values, and two values of different types are simply not the same value.',
+              '2-2': 'The decimal 5.0 and the whole number 5 compare as equal. They are different types, and they stand for the same amount, and `==` asks about the amount.',
+            },
+            takeaway: 'The symbol you type does not decide what happens. The type of the value either side of it does. Before you predict what a line will do, ask what type each part is, because `+` on two numbers, `+` on two pieces of text and `+` on one of each are three different events.',
+          },
         },
         {
           kind: 'callout',

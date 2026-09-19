@@ -72,7 +72,7 @@ console.log(`Visited ${seen.size} question samples across ${new Set(index.map((q
 
 // A fresh profile opens the first-run tour, whose dialog would swallow every click below and whose own
 // "Next" button collides with the lesson's.
-await page.getByRole('button', { name: /^Skip/ }).first().click({ timeout: 5000 }).catch(() => {});
+await page.getByRole('button', { name: /^Skip/ }).first().click({ timeout: 2500 }).catch(() => {});
 await page.keyboard.press('Escape').catch(() => {});
 await page.waitForTimeout(400);
 
@@ -105,7 +105,7 @@ for (const l of LESSONS) {
   let exercised = false;
   for (let i = 0; i < steps; i++) {
     if (i > 0) {
-      await page.getByRole('button', { name: /^Next/ }).click();
+      await page.getByRole('button', { name: 'Next', exact: true }).click();
       await page.waitForTimeout(120);
     }
     const body = (await page.locator('.ls-body').innerText()).trim();
@@ -117,7 +117,8 @@ for (const l of LESSONS) {
     const cardCount = await cards.count();
     for (let c = 0; c < cardCount; c++) {
       const card = cards.nth(c);
-      const out = (await card.locator('.wi-out').first().innerText().catch(() => '')).trim();
+      const outEl = card.locator('.wi-out').first();
+      const out = (await outEl.count()) ? (await outEl.innerText()).trim() : '';
       const drew = await card.locator('.wi-vis').count();
       if (out === 'This prints nothing at all.' && drew === 0) {
         failures.push(`lesson ${l.id}: step ${i + 1} card ${c + 1} shows no output and no picture, so it found no data for its controls`);
@@ -130,8 +131,12 @@ for (const l of LESSONS) {
         const shown = async () => {
           const text = await card.locator('.wi-out, .wi-table').allInnerTexts();
           const lit = await card.locator('.wi-cell.is-picked, .wi-tick.is-hit, .wi-bar, .wi-curve').count();
-          const geom = await card.locator('.wi-curve, .wi-bar').first().getAttribute('points').catch(() => null);
-          const style = await card.locator('.wi-bar').first().getAttribute('style').catch(() => null);
+          // Geometry, so a chart that redraws to the same element count still counts as having moved.
+          // Guarded by count(): a .catch() here would cost the full default timeout each time.
+          const curve = card.locator('.wi-curve').first();
+          const bar = card.locator('.wi-bar').first();
+          const geom = (await curve.count()) ? await curve.getAttribute('points') : null;
+          const style = (await bar.count()) ? await bar.getAttribute('style') : null;
           return `${text.join('|')}#${lit}#${geom ?? ''}#${style ?? ''}`;
         };
         const before = await shown();
@@ -177,7 +182,7 @@ const ESCAPES: [string, string][] = [
   ['pyodide.code.run_js', `import traceback; traceback.sys.modules["importlib"].import_module("pyodide.code").run_js("1"); ${MARK}`],
 ];
 // A fresh profile opens the first-run tour, whose dialog would swallow the clicks below.
-await page.getByRole('button', { name: /^Skip/ }).first().click({ timeout: 5000 }).catch(() => {});
+await page.getByRole('button', { name: /^Skip/ }).first().click({ timeout: 2500 }).catch(() => {});
 await page.keyboard.press('Escape').catch(() => {});
 await page.waitForTimeout(500);
 await page.locator('.monaco-editor').first().waitFor({ state: 'visible', timeout: 60000 });

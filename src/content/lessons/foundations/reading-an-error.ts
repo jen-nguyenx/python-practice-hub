@@ -24,8 +24,19 @@ const lesson: Lesson = {
           body: 'The first thing to unlearn is that a red error message means you have failed. It does not. An error is Python telling you, in detail and for free, exactly what it could not do and exactly where it gave up. Experienced programmers cause errors constantly. The difference is that they *read* them.\n\nA beginner sees a wall of red and scrolls away. That habit costs more time than any other single thing, because the answer is almost always written in the message.',
         },
         {
+          kind: 'quiz',
+          prompt: 'This program has one mistake in it. Commit to an answer before you look: what does Python say?',
+          code: "prices = [4, 3, 5]\ntotal = 0\nfor p in prices:\n    total = total + p\nprint(avarage)\n",
+          options: [
+            { text: 'NameError', correct: true, why: 'Python has never been given anything called `avarage`. It is a typo for `average`, and that name was never created either.' },
+            { text: '12', why: 'That is what the program was meant to print. The total is right; the name on the last line is not.' },
+            { text: 'SyntaxError', why: 'Every line here is written correctly, so Python reads the file fine. It only fails when it reaches a name it does not know, which is while the program runs.' },
+            { text: 'Nothing at all', why: 'A program that cannot finish still says why. Python stops and tells you exactly what it could not do.' },
+          ],
+        },
+        {
           kind: 'code',
-          caption: 'Here is a program with a mistake in it. Read what Python says before reading on.',
+          caption: 'Run it and Python says this.',
           code: "prices = [4, 3, 5]\ntotal = 0\nfor p in prices:\n    total = total + p\nprint(avarage)\n",
         },
         {
@@ -68,8 +79,13 @@ const lesson: Lesson = {
           code: "score = 10\nprint(scores)\n",
         },
         {
+          kind: 'predict',
+          ask: 'One of these values is text and one is a number. Type what this prints, then check.',
+          code: "age = '21'\nprint(age + age)\nprint(len(age))\n",
+        },
+        {
           kind: 'code',
-          caption: 'Text and a number, added. Python will not guess which you meant.',
+          caption: 'And adding a number to that same text does not work at all.',
           code: "age = input()\nprint(age + 1)\n",
           stdin: ['21'],
         },
@@ -79,9 +95,24 @@ const lesson: Lesson = {
           code: "days = ['Mon', 'Tue', 'Wed']\nprint(days[3])\n",
         },
         {
-          kind: 'checkpoint',
-          prompt: 'The list above has three items, and `days[3]` failed. What is the largest position that works, and why?',
-          answer: '`days[2]`, which is `Wed`. Positions start at 0, so three items occupy positions 0, 1 and 2. The last position is always one less than the length. This off-by-one is the single most common error in programming, and it has caught everyone who has ever written code.',
+          kind: 'quiz',
+          prompt: 'The list above has three items and `days[3]` failed. Which is the last position that works?',
+          code: "days = ['Mon', 'Tue', 'Wed']\n",
+          options: [
+            { text: 'days[2]', correct: true, why: 'Three items sit at positions 0, 1 and 2, so the last position is always one less than the length. This off-by-one has caught everyone who has ever written code.' },
+            { text: 'days[3]', why: 'That is the one that just failed. Counting from 0 means the third item is at position 2, not 3.' },
+            { text: 'days[1]', why: 'That works, but it is not the last one: it gives Tue, and Wed is still after it.' },
+          ],
+        },
+        {
+          kind: 'match',
+          ask: 'Four error types, four causes. Drag each cause onto the error it produces.',
+          pairs: [
+            { left: '`SyntaxError`', right: 'A bracket was never closed' },
+            { left: '`NameError`', right: 'A word was spelled differently from where it was created' },
+            { left: '`TypeError`', right: 'Text and a number were added together' },
+            { left: '`IndexError`', right: 'A position past the end of the list was asked for' },
+          ],
         },
         {
           kind: 'interactive',
@@ -128,7 +159,19 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'Python got to the end of line 1 with a bracket still open, carried on to line 2 hoping the rest was coming, and only gave up there. So the rule for a `SyntaxError` is: **look at the reported line, and then look at the line above it**. Nine times out of ten the missing bracket or quote is on the earlier one.',
+          body: 'Python got to the end of line 1 with a bracket still open, carried on to line 2 hoping the rest was coming, and only gave up there. So the rule is: **look at the reported line, then the line above it**.',
+        },
+        {
+          kind: 'annotate',
+          ask: 'Here is a working program. Click any numbered line to find out what it does.',
+          code: "prices = [4, 3, 5]\ntotal = 0\nfor p in prices:\n    total = total + p\nprint(total)\n",
+          notes: {
+            '1': 'Creates a list of three numbers and attaches the name `prices` to it.',
+            '2': 'Starts the running total at 0. Leave this line out and line 4 fails with a `NameError`, because it would be adding to a name that does not exist yet.',
+            '3': 'Takes one price at a time and calls it `p`. The indented lines below run once for each.',
+            '4': 'The accumulator: whatever the total was, plus this price. The name appears on both sides, which is what keeps the earlier prices.',
+            '5': 'Outside the loop, so it runs once at the end. Indent it and you would see the total after every price instead.',
+          },
         },
         {
           kind: 'compare',
@@ -177,6 +220,17 @@ const lesson: Lesson = {
       id: 'method',
       title: 'What to actually do',
       blocks: [
+        {
+          kind: 'order',
+          ask: 'This program prints a shopping total, but the lines are shuffled. Drag them into an order that works.',
+          lines: [
+            { text: "prices = [4, 3, 5]", indent: 0 },
+            { text: 'total = 0', indent: 0 },
+            { text: 'for p in prices:', indent: 0 },
+            { text: 'total = total + p', indent: 1 },
+            { text: 'print(total)', indent: 0 },
+          ],
+        },
         {
           kind: 'steps',
           title: 'When you hit an error',

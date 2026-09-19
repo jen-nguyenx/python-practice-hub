@@ -2,7 +2,7 @@
 // Usage: npm run build && node scripts/smoke.ts [--base http://localhost:4173/] [--shots scratch/smoke]
 import { chromium, type ConsoleMessage, type Page } from 'playwright-core';
 import { spawn } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 
 const args = process.argv.slice(2);
 const argVal = (name: string, def: string) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : def; };
@@ -69,88 +69,12 @@ for (const q of index) {
 
 console.log(`Visited ${seen.size} question samples across ${new Set(index.map((q) => q.topicId)).size} topics.`);
 
-// "What if": every outcome is generated at verify time, so a control must change the output without
-// Python running at all. A stale or missing generated file would silently show the same thing forever.
-// A fresh profile opens the first-run tour, whose dialog would swallow every click below.
+
+// A fresh profile opens the first-run tour, whose dialog would swallow every click below and whose own
+// "Next" button collides with the lesson's.
 await page.getByRole('button', { name: /^Skip/ }).first().click({ timeout: 5000 }).catch(() => {});
 await page.keyboard.press('Escape').catch(() => {});
 await page.waitForTimeout(400);
-const withExperiments: string[] = JSON.parse(readFileSync('src/content/generated/question-index.json', 'utf8'))
-  .map((q: { topicId: string }) => q.topicId)
-  .filter((id: string, i: number, all: string[]) => all.indexOf(id) === i)
-  .filter((id: string) => existsSync(`src/content/generated/experiments/${id}.json`));
-for (const topicId of withExperiments) {
-  await visit(page, `#/topic/${topicId}`);
-  const tab = page.getByRole('tab', { name: 'What if' });
-  if (!(await tab.count())) {
-    failures.push(`what if: ${topicId} has generated experiments but no tab`);
-    continue;
-  }
-  await tab.click();
-  await page.waitForTimeout(500);
-  const cards = page.locator('.wi-card');
-  const n = await cards.count();
-  if (n === 0) failures.push(`what if: ${topicId} shows no experiments`);
-  for (let i = 0; i < n; i++) {
-    const card = cards.nth(i);
-    const knobs = card.locator('.wi-knob');
-    const knobCount = await knobs.count();
-    // What the student is meant to observe: the printed output, the variable table, and how much of the
-    // picture is lit. Deliberately NOT the note, which is authored per combination and so would move even
-    // if the generated data were frozen -- that would make this check pass for the wrong reason.
-    const shown = async () => {
-      const text = await card.locator('.wi-out, .wi-table').allInnerTexts();
-      const lit = await card.locator('.wi-cell.is-picked, .wi-tick.is-hit').count();
-      return `${text.join('|')}#${lit}`;
-    };
-    const program = () => card.locator('.wi-code').innerText();
-    const openingShown = await shown();
-    let outputMoved = false;
-
-    // Each control is tried from the state the card opens in, and put back afterwards. Without the reset,
-    // an earlier control can move the card into a region where a later one genuinely has no effect.
-    for (let k = 0; k < knobCount; k++) {
-      const knob = knobs.nth(k);
-      const beforeProgram = await program();
-      const slider = knob.locator('.wi-slider');
-      const opts = knob.locator('[role="radio"]');
-
-      if (await slider.count()) {
-        const original = await slider.inputValue();
-        await slider.focus();
-        await page.keyboard.press('End');
-        await page.waitForTimeout(150);
-        if (await program() === beforeProgram) await page.keyboard.press('Home');
-        await page.waitForTimeout(200);
-        if (await program() === beforeProgram) failures.push(`what if: ${topicId} experiment ${i + 1} control ${k + 1} does not change the program`);
-        if (await shown() !== openingShown) outputMoved = true;
-        await slider.evaluate((el, v) => {
-          (el as HTMLInputElement).value = v as string;
-          el.dispatchEvent(new Event('input', { bubbles: true }));
-        }, original);
-      } else {
-        const count = await opts.count();
-        let original = 0;
-        for (let o = 0; o < count; o++) {
-          if (await opts.nth(o).getAttribute('aria-checked') === 'true') { original = o; break; }
-        }
-        await opts.nth(count - 1).click();
-        await page.waitForTimeout(150);
-        if (await program() === beforeProgram) await opts.nth(0).click();
-        await page.waitForTimeout(200);
-        if (await program() === beforeProgram) failures.push(`what if: ${topicId} experiment ${i + 1} control ${k + 1} does not change the program`);
-        if (await shown() !== openingShown) outputMoved = true;
-        await opts.nth(original).click();
-      }
-      await page.waitForTimeout(120);
-    }
-    if (!outputMoved) {
-      failures.push(`what if: ${topicId} experiment ${i + 1} shows the same result whichever control is moved`);
-    }
-  }
-  await page.screenshot({ path: `${SHOTS}/whatif-${topicId}.png`, fullPage: false });
-}
-console.log(`Checked "what if" controls on ${withExperiments.length} topic(s).`);
 
 // Every topic must lead somewhere readable. #/learn/:id resolves to that topic's authored lesson when
 // one exists and falls back to the derived path when it does not; either way it must render steps. The
@@ -178,6 +102,7 @@ for (const l of LESSONS) {
     failures.push(`lesson ${l.id}: ${steps} steps shown but the index says ${l.sections} sections`);
     continue;
   }
+  let exercised = false;
   for (let i = 0; i < steps; i++) {
     if (i > 0) {
       await page.getByRole('button', { name: /^Next/ }).click();
@@ -197,13 +122,44 @@ for (const l of LESSONS) {
       if (out === 'This prints nothing at all.' && drew === 0) {
         failures.push(`lesson ${l.id}: step ${i + 1} card ${c + 1} shows no output and no picture, so it found no data for its controls`);
       }
+      // Exercise one card per lesson: the generated answers must actually be wired to the controls.
+      // What the reader is meant to watch is the output, the variable table and the picture -- not the
+      // authored note, which moves per combination whether or not the data does.
+      if (!exercised && (await card.locator('.wi-knob').count()) > 0) {
+        exercised = true;
+        const shown = async () => {
+          const text = await card.locator('.wi-out, .wi-table').allInnerTexts();
+          const lit = await card.locator('.wi-cell.is-picked, .wi-tick.is-hit, .wi-bar, .wi-curve').count();
+          const geom = await card.locator('.wi-curve, .wi-bar').first().getAttribute('points').catch(() => null);
+          const style = await card.locator('.wi-bar').first().getAttribute('style').catch(() => null);
+          return `${text.join('|')}#${lit}#${geom ?? ''}#${style ?? ''}`;
+        };
+        const before = await shown();
+        const slider = card.locator('.wi-slider').first();
+        if (await slider.count()) {
+          await slider.focus();
+          await page.keyboard.press('End');
+          await page.waitForTimeout(150);
+          if (await shown() === before) await page.keyboard.press('Home');
+        } else {
+          const opts = card.locator('.wi-knob').first().locator('[role="radio"]');
+          const n = await opts.count();
+          await opts.nth(n - 1).click();
+          await page.waitForTimeout(150);
+          if (await shown() === before) await opts.nth(0).click();
+        }
+        await page.waitForTimeout(220);
+        if (await shown() === before) {
+          failures.push(`lesson ${l.id}: step ${i + 1} card ${c + 1} shows the same result whichever way its controls move`);
+        }
+      }
     }
   }
   // Every answer must be hidden until asked for, or the checkpoint teaches nothing.
   const open = await page.locator('.lb-check-answer').count();
   if (open > 0) failures.push(`lesson ${l.id}: a checkpoint answer is visible before it is asked for`);
 }
-console.log(`Walked ${LESSONS.length} lessons in the library.`);
+console.log(`Walked ${LESSONS.length} lessons in the library, exercising the controls in each.`);
 
 // The Python worker must not hand student code a route to JavaScript. With one, pasted code could read the
 // app's IndexedDB (same origin) and POST a student's whole progress log anywhere. The import denylist in

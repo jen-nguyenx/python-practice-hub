@@ -1,4 +1,5 @@
-// "What if" tab: change one part of a program with a control and see the real output change.
+// An interactive "what if" card: change one part of a program with a control and see the real output
+// change. Rendered inside a lesson; the topic page has no tab of its own for these.
 //
 // Nothing here runs Python. The verifier ran every combination of every control in real Python and wrote
 // the results to src/content/generated/experiments/<topic>.json, so a click answers instantly, works
@@ -10,9 +11,7 @@ import {
   changedLines, comboKey, defaultPicks, fillTemplate, isRange, knobChoices, noteFor, outputLines,
 } from '../../../content/experiments.ts';
 import type { Picks } from '../../../content/experiments.ts';
-import type {
-  Experiment, GeneratedExperiment, GeneratedExperiments, GeneratedRun, Knob, Topic, Visual,
-} from '../../../content/schema.ts';
+import type { Experiment, GeneratedExperiment, GeneratedRun, Knob, Visual } from '../../../content/schema.ts';
 import { Markdown } from '../../components/Markdown.tsx';
 import { Segmented } from '../../components/Segmented.tsx';
 import { intsOrNull, labelsOrNull, numbersOrNull, pieceLines, pieces, pointsOrNull } from './whatIfLogic.ts';
@@ -410,19 +409,3 @@ export function ExperimentCard({ x, gen, compact }: { x: Experiment; gen: Genera
   );
 }
 
-export function WhatIfTab({ topic, generated }: { topic: Topic; generated: GeneratedExperiments | null }) {
-  const list = topic.experiments ?? [];
-  if (list.length === 0) {
-    return <div class="tp-empty">The what-if experiments for this topic are being written.</div>;
-  }
-  if (!generated) return <div class="tp-empty">Loading…</div>;
-  const ready = list.filter((x) => Object.keys(generated[x.id]?.runs ?? {}).length > 0);
-  if (ready.length === 0) {
-    return <div class="tp-empty">The what-if experiments for this topic are being written.</div>;
-  }
-  return (
-    <div class="tp-read wi-list">
-      {ready.map((x) => <ExperimentCard key={x.id} x={x} gen={generated[x.id]} />)}
-    </div>
-  );
-}

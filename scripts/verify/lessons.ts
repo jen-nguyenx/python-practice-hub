@@ -15,7 +15,7 @@ import { checkOneExperiment, stable } from './experiments.ts';
 import { PROJECT_ROOT } from './pyodide.ts';
 import type { Harness } from './pyodide.ts';
 import type { Issues, Scope } from './report.ts';
-import { scope } from './report.ts';
+import { plural, scope } from './report.ts';
 
 const LESSONS_DIR = join(PROJECT_ROOT, 'src', 'content', 'lessons');
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -28,6 +28,7 @@ type Loose = Record<string, unknown>;
 const nonEmpty = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0;
 const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const quote = (s: string) => JSON.stringify(s);
+const isInt = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v);
 
 /**
  * Two fields are rendered as plain text and cannot carry marks: the lesson title, which also becomes a
@@ -147,6 +148,88 @@ function checkBlock(sc: Scope, b: LessonBlock, where: string, topic: Topic | nul
       }
       return;
     }
+    case 'quiz': {
+      if (!nonEmpty(b.prompt)) sc.error(`${where}: quiz prompt is empty`);
+      const options = arr(b.options) as Loose[];
+      if (options.length < 2 || options.length > 5) sc.error(`${where}: a quiz needs 2 to 5 options (has ${options.length})`);
+      if (!options.some((o) => o?.correct === true)) sc.error(`${where}: no option is marked correct`);
+      const seen = new Set<string>();
+      for (const [i, o] of options.entries()) {
+        if (!nonEmpty(o?.text)) sc.error(`${where}: option ${i + 1} has no text`);
+        else if (seen.has(String(o.text))) sc.error(`${where}: option ${quote(String(o.text))} appears twice`);
+        else seen.add(String(o.text));
+        // A wrong option without a reason teaches nothing: the reader learns they were wrong, not why.
+        if (!nonEmpty(o?.why)) sc.error(`${where}: option ${i + 1} has no "why"; every option needs a reason, especially the wrong ones`);
+      }
+      return;
+    }
+    case 'predict': {
+      if (!nonEmpty(b.code)) sc.error(`${where}: predict has no code`);
+      // input() echoes the typed line into the output, so the answer would include a line the reader had
+      // no way to predict and would be marked wrong for missing. Predict the logic, not the echo.
+      if (b.stdin !== undefined || /\binput\s*\(/.test(String(b.code ?? ''))) {
+        sc.error(`${where}: a predict block cannot call input(); the typed line is echoed into the output, so the expected answer would contain a line the reader cannot predict`);
+      }
+      const choices = b.choices;
+      if (choices !== undefined) {
+        if (!Array.isArray(choices) || choices.length < 2 || choices.length > 4) {
+          sc.error(`${where}: give 2 to 4 choices, or none at all so the reader types the answer`);
+        } else if (new Set(choices).size !== choices.length) {
+          sc.error(`${where}: two choices are identical`);
+        }
+      }
+      return;
+    }
+    case 'order': {
+      const lines = arr(b.lines) as Loose[];
+      if (lines.length < 3 || lines.length > 8) sc.error(`${where}: order needs 3 to 8 lines (has ${lines.length})`);
+      for (const [i, l] of lines.entries()) {
+        if (!nonEmpty(l?.text)) sc.error(`${where}: line ${i + 1} is empty`);
+        if (!isInt(l?.indent) || (l.indent as number) < 0 || (l.indent as number) > 3) {
+          sc.error(`${where}: line ${i + 1} needs an indent from 0 to 3`);
+        }
+      }
+      if (new Set(lines.map((l) => String(l?.text))).size !== lines.length) {
+        // Two identical lines make "the right order" ambiguous, so it could be marked wrong unfairly.
+        sc.error(`${where}: two lines are identical, so there is more than one correct order`);
+      }
+      return;
+    }
+    case 'match': {
+      const pairs = arr(b.pairs) as Loose[];
+      if (pairs.length < 2 || pairs.length > 6) sc.error(`${where}: match needs 2 to 6 pairs (has ${pairs.length})`);
+      const lefts = new Set<string>();
+      const rights = new Set<string>();
+      for (const [i, pr] of pairs.entries()) {
+        if (!nonEmpty(pr?.left) || !nonEmpty(pr?.right)) {
+          sc.error(`${where}: pair ${i + 1} needs both sides`);
+          continue;
+        }
+        // A repeated side would make two answers indistinguishable and a correct drop look wrong.
+        if (lefts.has(String(pr.left))) sc.error(`${where}: ${quote(String(pr.left))} appears on the left twice`);
+        if (rights.has(String(pr.right))) sc.error(`${where}: ${quote(String(pr.right))} appears on the right twice`);
+        lefts.add(String(pr.left));
+        rights.add(String(pr.right));
+      }
+      return;
+    }
+    case 'annotate': {
+      if (!nonEmpty(b.code)) {
+        sc.error(`${where}: annotate has no code`);
+        return;
+      }
+      const count = b.code.replace(/\n$/, '').split('\n').length;
+      const notes = Object.entries(b.notes ?? {});
+      if (notes.length === 0) sc.error(`${where}: annotate needs at least one note, or it is just a code block`);
+      for (const [line, note] of notes) {
+        const n = Number(line);
+        if (!Number.isInteger(n) || n < 1 || n > count) {
+          sc.error(`${where}: note ${quote(line)} is not a line of the code (1 to ${count})`);
+        }
+        if (!nonEmpty(note)) sc.error(`${where}: the note on line ${line} is empty`);
+      }
+      return;
+    }
     case 'interactive':
       // Fully checked and run below, where a harness is available; here only the shape.
       if (!b.experiment || typeof b.experiment !== 'object') sc.error(`${where}: interactive needs an experiment`);
@@ -232,7 +315,42 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
     section.blocks.forEach((b, bi) => {
       const key = blockKey(si, bi);
       const where = `section ${section.id} block ${bi + 1}`;
-      if (b.kind === 'code') {
+      if (b.kind === 'predict' || b.kind === 'annotate') {
+        const r = h.runCapture(b.code, b.kind === 'predict' ? (b.stdin ?? []) : []);
+        const gen: GeneratedBlock = { stdout: stable(r.stdout) };
+        const err = toErr(r.error);
+        if (err) gen.error = err;
+        if (err?.type === 'TimeoutError') sc.error(`${where}: the code never finishes`);
+        if (b.kind === 'predict') {
+          if (err && err.type !== 'TimeoutError') {
+            sc.error(`${where}: this code raises ${err.type}, so there is no output to predict; use a quiz asking which error it raises`);
+          } else if (!r.stdout.trim()) {
+            sc.error(`${where}: this code prints nothing, so there is nothing to predict`);
+          }
+          // The whole point is that the real answer is available: if it is not among the choices, the
+          // reader cannot be right however well they understood it.
+          const choices = b.choices;
+          if (Array.isArray(choices) && choices.length > 0) {
+            const norm = (t: string) => t.replace(/\r\n?/g, '\n').split('\n').map((l) => l.replace(/\s+$/, '')).join('\n').replace(/\n+$/, '');
+            const real = norm(r.stdout);
+            const hits = choices.filter((c) => norm(String(c)) === real);
+            if (hits.length === 0) sc.error(`${where}: none of the choices matches what the code prints (${quote(real)})`);
+            else if (hits.length > 1) sc.error(`${where}: ${hits.length} choices match the real output, so more than one is correct`);
+          }
+        }
+        out[key] = gen;
+      } else if (b.kind === 'order') {
+        // The assembled program must be a real program, or "the right order" is not right at all.
+        const code = (b.lines ?? []).map((l) => `${'    '.repeat(Math.max(0, l.indent))}${l.text}`).join('\n') + '\n';
+        const r = h.runCapture(code, []);
+        const gen: GeneratedBlock = { stdout: stable(r.stdout) };
+        const err = toErr(r.error);
+        if (err) {
+          gen.error = err;
+          sc.error(`${where}: the lines in the given order do not run (${err.type}: ${err.message})`);
+        }
+        out[key] = gen;
+      } else if (b.kind === 'code') {
         const r = h.runCapture(b.code, b.stdin ?? []);
         const gen: GeneratedBlock = { stdout: stable(r.stdout) };
         const err = toErr(r.error);
@@ -324,6 +442,27 @@ export async function checkLessons(
     for (const p of arr(lesson.prereqs)) {
       if (typeof p !== 'string' || !byId.has(p)) sc.error(`prereq ${quote(String(p))} is not a lesson id`);
       else if (p === lesson.id) sc.error('lists itself as a prerequisite');
+    }
+  }
+
+  // Every topic experiment must be embedded by that topic's lesson. The lesson is the only way to reach
+  // one now that the topic page has no "what if" tab, so an experiment nobody embeds is dead content.
+  for (const { lesson } of loaded) {
+    if (!lesson?.topicId) continue;
+    const topic = topics.get(lesson.topicId);
+    const all = (topic?.experiments ?? []).map((e: Experiment) => e.id);
+    if (all.length === 0) continue;
+    const used = new Set<string>();
+    for (const section of arr(lesson.sections) as { blocks?: LessonBlock[] }[]) {
+      for (const b of arr(section?.blocks) as LessonBlock[]) {
+        if (b?.kind === 'experiment') used.add(b.id);
+      }
+    }
+    const orphans = all.filter((id) => !used.has(id));
+    if (orphans.length) {
+      scope(issues, 'lessons', lesson.id).error(
+        `topic ${lesson.topicId} has ${plural(orphans.length, 'experiment')} no lesson embeds (${orphans.join(', ')}); nothing else links to them, so they would be unreachable`,
+      );
     }
   }
 

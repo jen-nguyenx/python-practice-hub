@@ -50,6 +50,31 @@ export type LessonBlock =
   | { kind: 'callout'; tone: 'note' | 'warn' | 'exam'; title?: string; body: Md }
   /** Check yourself: a question with the answer hidden until asked for. */
   | { kind: 'checkpoint'; prompt: Md; answer: Md }
+  /**
+   * A question answered in place, with a reason for every option, right or wrong. Prefer this to a
+   * paragraph explaining a distinction: a reader who has to choose finds out whether they actually knew.
+   */
+  | {
+      kind: 'quiz'; prompt: Md; code?: string;
+      /** 2 to 5 options, at least one correct. `why` is revealed when that option is chosen. */
+      options: { text: string; correct?: boolean; why: Md }[];
+    }
+  /**
+   * Commit to an answer before seeing it. The reader says what the code prints, then the real output is
+   * revealed. This is the strongest device in the library: reading code you have already bet on is a
+   * different act from reading code with the answer underneath.
+   */
+  | {
+      kind: 'predict'; code: string; stdin?: string[]; ask?: Md;
+      /** When set, the reader picks instead of typing. Exactly one must match the real output. */
+      choices?: string[];
+    }
+  /** Drag lines into the order that makes the program work. Indentation is given; only order is asked. */
+  | { kind: 'order'; lines: { text: string; indent: number }[]; ask?: Md }
+  /** Drag each answer onto the thing it belongs to. Replaces a table the reader would otherwise skim. */
+  | { kind: 'match'; pairs: { left: string; right: string }[]; ask?: Md }
+  /** Click a line to find out what it does. Replaces prose walking through a program line by line. */
+  | { kind: 'annotate'; code: string; notes: Record<string, Md>; ask?: Md }
   /** A numbered list of steps, for procedures ("how to read a traceback"). */
   | { kind: 'steps'; title?: string; items: Md[] }
   /** A small reference table. Rows are plain strings; the first row is the header. */

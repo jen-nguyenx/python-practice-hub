@@ -1,13 +1,13 @@
 // Topic page (#/topic/:id): a calm header (eyebrow, title, blurb, and a white progress card with one primary action)
 // and tabs for questions, cheat sheet, worked example and common mistakes. Locked topics stay readable; their
-// question rows are inert.
+// question rows are inert. Interactive experiments live in the topic's lesson, not here.
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { href } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
 import { markTopicOpened } from '../../app/session.ts';
 import type { TopicId } from '../../content/ids.ts';
-import { loadExperiments, loadTopic } from '../../content/index.ts';
-import type { GeneratedExperiments, Topic } from '../../content/schema.ts';
+import { loadTopic } from '../../content/index.ts';
+import type { Topic } from '../../content/schema.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
 import type { TopicMeta } from '../../content/topics.ts';
 import { Skeleton } from '../components/Skeleton.tsx';
@@ -15,11 +15,10 @@ import { TabPanel, Tabs } from '../components/Tabs.tsx';
 import { lessonsDone, recentMistakes, safeQuestionStats, safeTopicProgress } from '../shell/progressData.ts';
 import { storeReady } from '../shell/storeReady.ts';
 import type { TopicFilters, TopicTab } from '../shell/topic/filters.ts';
-import { loadFilters, loadTopicTab, rememberTopicTab, saveFilters } from '../shell/topic/filters.ts';
+import { loadFilters, loadTopicTab, rememberTopicTab, saveFilters, TOPIC_TABS } from '../shell/topic/filters.ts';
 import { QuestionsTab } from '../shell/topic/QuestionsTab.tsx';
 import { CheatSheetTab, MistakesTab, WorkedExampleTab } from '../shell/topic/ReadTabs.tsx';
 import { TopicHeader } from '../shell/topic/TopicHeader.tsx';
-import { WhatIfTab } from '../shell/topic/WhatIf.tsx';
 import '../shell/topic/topic.css';
 
 type LoadState = { status: 'loading' } | { status: 'ready'; topic: Topic } | { status: 'error'; message: string };
@@ -55,7 +54,6 @@ export function TopicPage({ topicId }: { topicId: string }) {
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
   const [tab, setTab] = useState<TopicTab>(() => loadTopicTab(topicId));
   const [filters, setFilters] = useState<TopicFilters>(() => loadFilters(topicId));
-  const [experiments, setExperiments] = useState<GeneratedExperiments | null>(null);
 
   // Tab and filters are remembered per topic; pick them up when moving between topics.
   useEffect(() => {
@@ -73,18 +71,6 @@ export function TopicPage({ topicId }: { topicId: string }) {
     );
     return () => { alive = false; };
   }, [meta?.id]);
-
-  // The recorded outcomes for "what if" are only fetched when that tab is open; every other tab stays light.
-  useEffect(() => {
-    if (!meta || tab !== 'whatif') return;
-    let alive = true;
-    setExperiments(null);
-    loadExperiments(meta.id).then(
-      (g) => { if (alive) setExperiments(g); },
-      () => { if (alive) setExperiments({}); },
-    );
-    return () => { alive = false; };
-  }, [meta?.id, tab]);
 
   const progressAll = useMemo(() => safeTopicProgress(events, settings), [events, settings]);
   const stats = useMemo(() => safeQuestionStats(events), [events]);
@@ -118,18 +104,16 @@ export function TopicPage({ topicId }: { topicId: string }) {
   const allSolved = questions.length > 0 && !firstUnsolved;
   const target = firstUnsolved ?? questions[0];
 
-  // The "what if" tab only appears for topics that have experiments written.
-  const hasExperiments = (topic?.experiments?.length ?? 0) > 0;
   const tabs = [
     { id: 'questions' as const, label: 'Questions' },
     { id: 'cheatsheet' as const, label: 'Cheat sheet' },
     { id: 'example' as const, label: <ShortLabel long="Worked example" short="Example" /> },
-    ...(hasExperiments ? [{ id: 'whatif' as const, label: 'What if' }] : []),
     { id: 'mistakes' as const, label: <ShortLabel long="Common mistakes" short="Mistakes" /> },
   ];
   const idBase = `topic-${meta.id}`;
 
-  const shown: TopicTab = tab === 'whatif' && !hasExperiments ? 'questions' : tab;
+  // A tab remembered from an older visit may no longer exist.
+  const shown: TopicTab = (TOPIC_TABS as readonly string[]).includes(tab) ? tab : 'questions';
 
   let panel;
   if (load.status === 'error') {
@@ -147,7 +131,6 @@ export function TopicPage({ topicId }: { topicId: string }) {
         break;
       case 'cheatsheet': panel = <CheatSheetTab topic={topic} />; break;
       case 'example': panel = <WorkedExampleTab topic={topic} />; break;
-      case 'whatif': panel = <WhatIfTab topic={topic} generated={experiments} />; break;
       case 'mistakes': panel = <MistakesTab topic={topic} />; break;
     }
   }

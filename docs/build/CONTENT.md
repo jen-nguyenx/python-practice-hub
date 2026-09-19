@@ -163,7 +163,20 @@ lowest first) or the library sorts them to the end. Core lessons are ordered by 
   showing what an expression *is*. Add `stdin` if any line calls `input()`.
 - `compare` runs two versions side by side; mark the wrong one `bad: true`.
 - `callout` with tone `note`, `warn` or `exam` (`exam` means "this comes up in the paper").
-- `checkpoint` is a question with the answer hidden until asked for. Two or three per lesson.
+- **Blocks the reader answers, not reads. Prefer these to prose wherever one fits:**
+  - `quiz` — a question answered in place, 2 to 5 options, **every option needs a `why`**, including the
+    wrong ones. Use it instead of a paragraph explaining a distinction.
+  - `predict` — show code, the reader commits to what it prints, then the real output is revealed. The
+    strongest device here. Either free typing or 2 to 4 `choices`, exactly one of which must match what
+    Python really prints. The code must actually print something and **must not call `input()`**: the
+    typed line is echoed into the output, so the answer would contain a line nobody could predict.
+  - `order` — 3 to 8 shuffled lines the reader drags into a working order. Indentation is given. The
+    lines as written must run, and no two may be identical.
+  - `match` — 2 to 6 pairs dragged together. Use it instead of a `table` the reader would skim.
+  - `annotate` — code where clicking a line reveals what it does. Use it instead of prose walking
+    through a program line by line.
+- `checkpoint` is a question with the answer hidden until asked for. Prefer `quiz`, which tells you
+  whether you were right; a checkpoint only tells you what the answer was.
 - `steps` for a procedure, `table` for a small reference.
 - `experiment`, `workedExample`, `mistakes` and `practice` pull in the topic's own material and need
   `topicId`. Use them: a core lesson should not restate what the topic already has.
@@ -180,6 +193,13 @@ failed to set the name it uses (everything after that point is not real output).
 
 **Write for someone who is not sure they can do this.** Plain words, short sentences, and say why something
 matters before saying what it is. Never write "simply", "just" or "obviously".
+
+**Show, do not tell.** A lesson that is mostly `prose` has failed, however well written. A reader who has
+answered a question remembers it; a reader who has read a paragraph about it does not. Aim for **at most
+half the blocks being prose**, and never more than two `prose` blocks in a row without something to do
+between them. When you catch yourself explaining a difference, make it a `quiz`; explaining what code
+prints, make it a `predict`; explaining what each line does, make it an `annotate`; listing pairs, make it
+a `match`; explaining why order matters, make it an `order`.
 
 **Generated output must be the same on every run,** or `verify:check` fails in CI. Three things leak
 run-to-run variation into a block and must be avoided:

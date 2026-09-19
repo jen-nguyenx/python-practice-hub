@@ -44,6 +44,14 @@ const lesson: Lesson = {
           kind: 'prose',
           body: 'The line that assigns to `stops[1]` is the whole difference between a list and a string. A string refuses that and raises an error; a list accepts it and the change is there on the next line. A list can be altered in place. Everything else in this lesson follows from that.',
         },
+        {
+          kind: 'prose',
+          body: 'A slice of a list works exactly like a slice of a string, and the positions can be counted from either end. Drag both ends below and watch which items a slice actually takes.',
+        },
+        {
+          kind: 'experiment',
+          id: 't06-x1',
+        },
       ],
     },
     {

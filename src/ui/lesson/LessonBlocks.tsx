@@ -6,6 +6,7 @@ import type { Experiment, GeneratedExperiments, Topic } from '../../content/sche
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd, Markdown } from '../components/Markdown.tsx';
+import { Annotate, Match, Order, Predict, Quiz } from './Interactive.tsx';
 import { MistakesTab, WorkedExampleTab } from '../shell/topic/ReadTabs.tsx';
 import { ExperimentCard } from '../shell/topic/WhatIf.tsx';
 
@@ -139,6 +140,21 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
 
     case 'checkpoint':
       return <Checkpoint prompt={block.prompt} answer={block.answer} />;
+
+    case 'quiz':
+      return <Quiz prompt={block.prompt} code={block.code} options={block.options} />;
+
+    case 'predict':
+      return <Predict code={block.code} ask={block.ask} choices={block.choices} stdout={gen?.stdout} error={gen?.error} />;
+
+    case 'order':
+      return <Order lines={block.lines} ask={block.ask} stdout={gen?.stdout} />;
+
+    case 'match':
+      return <Match pairs={block.pairs} ask={block.ask} />;
+
+    case 'annotate':
+      return <Annotate code={block.code} notes={block.notes} ask={block.ask} />;
 
     case 'steps':
       return (

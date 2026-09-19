@@ -1,8 +1,8 @@
 // Topic page filter and tab state, remembered per topic for this browser tab (sessionStorage).
 import type { Diff, Format, Ladder } from '../../../content/ids.ts';
 
-export type TopicTab = 'questions' | 'cheatsheet' | 'example' | 'whatif' | 'mistakes';
-export const TOPIC_TABS: readonly TopicTab[] = ['questions', 'cheatsheet', 'example', 'whatif', 'mistakes'];
+export type TopicTab = 'questions' | 'cheatsheet' | 'example' | 'mistakes';
+export const TOPIC_TABS: readonly TopicTab[] = ['questions', 'cheatsheet', 'example', 'mistakes'];
 
 export interface TopicFilters {
   diff: 'all' | Diff;

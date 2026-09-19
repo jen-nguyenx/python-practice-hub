@@ -9,10 +9,13 @@ they grant pasted student code nothing it does not already have, there is no rea
 """
 import math
 import random
+import sys
+import types
 
-from .errors import StudentTimeout, register_source, runtime_error, syntax_error
+from .errors import STUDENT, StudentTimeout, register_source, runtime_error, syntax_error
 from .harness import (
-    TEST_SEED, _budget, _compile, _dump, _fresh_ns, _json_value, _list_arg, _str_arg, _truncate,
+    _FUNCTION_TYPES, TEST_SEED, _budget, _compile, _dump, _fresh_ns, _json_value, _list_arg, _str_arg,
+    _truncate,
 )
 from .sandbox import Sandbox, reset_workdir
 
@@ -142,3 +145,119 @@ def _safe_repr(value):
         return repr(value)
     except Exception as e:  # noqa: BLE001
         return '<repr failed: %s>' % type(e).__name__
+
+
+# ---------------- walkthrough (verifier only) ----------------
+
+MAX_WALK_STEPS = 80
+MAX_WALK_NAMES = 8
+
+
+def _walk_value(value):
+    """A short repr for the variable panel. Anything unprintable becomes a placeholder."""
+    try:
+        r = repr(value)
+    except Exception as e:  # noqa: BLE001
+        return '<repr failed: %s>' % type(e).__name__
+    return r if len(r) <= 60 else r[:57] + '...'
+
+
+def _interesting(name, value):
+    """Names a reader would recognise from the program: not machinery, not imports, not functions."""
+    if name.startswith('_'):
+        return False
+    if isinstance(value, types.ModuleType) or isinstance(value, _FUNCTION_TYPES):
+        return False
+    return not isinstance(value, type)
+
+
+class _Walker:
+    """Records the state after every line of the program, so a reader can step through it afterwards.
+
+    The snapshot is taken at the NEXT line event in the same frame, which is the moment the line just
+    recorded has finished. That is the same trick RowRecorder uses for a single anchor line, widened to
+    every line so the result is a full walkthrough rather than a trace table.
+    """
+
+    def __init__(self, watch, sandbox):
+        self.watch = [str(w) for w in watch] if watch else None
+        self.sb = sandbox
+        self.steps = []
+        self.pending = {}
+        self.overflow = False
+
+    def _snapshot(self, frame, line):
+        if len(self.steps) >= MAX_WALK_STEPS:
+            self.overflow = True
+            return
+        scope = dict(frame.f_globals)
+        scope.update(frame.f_locals)
+        names = self.watch if self.watch is not None else [
+            k for k, v in scope.items() if _interesting(k, v)
+        ][:MAX_WALK_NAMES]
+        seen = {}
+        for name in names:
+            if name in scope:
+                seen[name] = _walk_value(scope[name])
+        self.steps.append({'line': line, 'vars': seen, 'out': len(self.sb.stdout_value())})
+
+    def _local(self, frame, event, arg):
+        if event in ('line', 'return'):
+            key = id(frame)
+            was = self.pending.pop(key, None)
+            if was is not None:
+                self._snapshot(frame, was)
+            if event == 'line':
+                self.pending[key] = frame.f_lineno
+        return self._local
+
+    def _global(self, frame, event, arg):
+        return self._local if frame.f_code.co_filename == STUDENT else None
+
+    def install(self):
+        sys.settrace(self._global)
+
+    def uninstall(self):
+        sys.settrace(None)
+        for key, line in list(self.pending.items()):
+            self.pending.pop(key, None)
+
+
+def walk(code, watch_json=None, budget_ms=None):
+    """Record the state after every line, for a step-through walkthrough (verifier only).
+
+    Returns {steps: [{line, vars, out}], stdout, error?, overflow}. `out` is how many characters had been
+    printed by that point, so the reader sees output appear as they step rather than all at once.
+    """
+    code = _str_arg(code)
+    watch = [str(w) for w in _list_arg(watch_json)] or None
+    budget = _budget(budget_ms, 5000)
+    res = {'steps': [], 'stdout': ''}
+    register_source(code)
+    with Sandbox('test') as sb:
+        reset_workdir([])
+        try:
+            code_obj = _compile(code)
+        except SyntaxError as e:
+            res['error'] = syntax_error(e)
+            return _dump(res)
+        random.seed(TEST_SEED)
+        sb.set_stdin([])
+        ns = _fresh_ns()
+        walker = _Walker(watch, sb)
+
+        def run():
+            walker.install()
+            try:
+                exec(code_obj, ns)
+            finally:
+                walker.uninstall()
+
+        out = sb.call(run, budget_ms=budget)
+        res['stdout'] = sb.stdout_value()
+        res['steps'] = walker.steps
+        if walker.overflow:
+            res['overflow'] = True
+        if not out.ok and not isinstance(out.exc, SystemExit):
+            res['error'] = runtime_error(out.exc)
+    return _dump(res)

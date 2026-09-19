@@ -213,6 +213,15 @@ function checkBlock(sc: Scope, b: LessonBlock, where: string, topic: Topic | nul
       }
       return;
     }
+    case 'walkthrough': {
+      if (!nonEmpty(b.code)) sc.error(`${where}: walkthrough has no code`);
+      const lines = String(b.code ?? '').replace(/\n$/, '').split('\n').length;
+      if (lines > 14) sc.error(`${where}: ${lines} lines is too long to step through; keep a walkthrough under 14`);
+      if (b.watch !== undefined && (!arr(b.watch).length || !arr(b.watch).every(nonEmpty))) {
+        sc.error(`${where}: watch must be a non-empty list of variable names`);
+      }
+      return;
+    }
     case 'annotate': {
       if (!nonEmpty(b.code)) {
         sc.error(`${where}: annotate has no code`);
@@ -315,7 +324,20 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
     section.blocks.forEach((b, bi) => {
       const key = blockKey(si, bi);
       const where = `section ${section.id} block ${bi + 1}`;
-      if (b.kind === 'predict' || b.kind === 'annotate') {
+      if (b.kind === 'walkthrough') {
+        const r = h.walk(b.code, b.watch ?? []);
+        const gen: GeneratedBlock = { stdout: stable(r.stdout), steps: r.steps };
+        const err = toErr(r.error);
+        if (err) {
+          gen.error = err;
+          // A walkthrough that stops partway shows a reader a program that does not work, with no
+          // explanation of why. Teach a crash with a quiz or a code block instead.
+          sc.error(`${where}: this program raises ${err.type}, so the walkthrough stops partway; a walkthrough must run cleanly`);
+        }
+        if (r.overflow) sc.error(`${where}: the program runs for too many steps to step through; use fewer loop passes`);
+        if (r.steps.length < 2) sc.error(`${where}: only ${r.steps.length} step(s) recorded; there is nothing to walk through`);
+        out[key] = gen;
+      } else if (b.kind === 'predict' || b.kind === 'annotate') {
         const r = h.runCapture(b.code, b.kind === 'predict' ? (b.stdin ?? []) : []);
         const gen: GeneratedBlock = { stdout: stable(r.stdout) };
         const err = toErr(r.error);

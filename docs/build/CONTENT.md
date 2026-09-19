@@ -175,6 +175,12 @@ lowest first) or the library sorts them to the end. Core lessons are ordered by 
   - `match` — 2 to 6 pairs dragged together. Use it instead of a `table` the reader would skim.
   - `annotate` — code where clicking a line reveals what it does. Use it instead of prose walking
     through a program line by line.
+  - `walkthrough` — step through the program one line at a time, watching the variables change and the
+    output appear. The whole run is recorded by the verifier, so stepping is instant. This is the answer
+    to "I can read it but I cannot see what is happening", and it is the best thing in the library for a
+    loop, an accumulator or a swap. Under 14 lines, must run cleanly, and must not run so long that
+    stepping through it is a chore. `watch` names the variables to show; leave it out to show whatever
+    the program defines.
 - `checkpoint` is a question with the answer hidden until asked for. Prefer `quiz`, which tells you
   whether you were right; a checkpoint only tells you what the answer was.
 - `steps` for a procedure, `table` for a small reference.

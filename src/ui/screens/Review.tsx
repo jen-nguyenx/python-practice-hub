@@ -103,6 +103,9 @@ export function Review() {
           The mistakes you have actually made, worth another attempt. Ordered by how long it has been and
           how often each one has caught you, not by topic order.
         </p>
+        <p class="rv-tool">
+          Hit an error somewhere else? <a href={href.decode()}>Decode it here</a>.
+        </p>
       </header>
 
       {queue.length === 0 ? (

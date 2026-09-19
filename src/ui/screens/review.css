@@ -29,3 +29,5 @@
   .rv { padding: 24px 16px 80px; }
   .rv-h1 { font-size: var(--fs-28); }
 }
+.rv-tool { margin: 0; font-size: var(--fs-15); color: var(--text-muted); }
+.rv-tool a { color: var(--blue); }

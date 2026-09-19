@@ -2,7 +2,7 @@
   "s0-b1": {
     "stdout": "calling the function\ngot back a: generator\nfirst next()\n  [body starts]\n  [about to yield] 3\nvalue: 3\nsecond next()\n  [about to yield] 2\nvalue: 2\n"
   },
-  "s0-b4": {
+  "s0-b3": {
     "stdout": "tick 3\ntick 2\ntick 1\ndone\n[5, 4, 3, 2, 1]\n15\n"
   },
   "s1-b1": {
@@ -13,7 +13,7 @@
       "stdout": "computing 0\ncomputing 1\nfirst two: 0 1\n"
     }
   },
-  "s1-b3": {
+  "s1-b4": {
     "stdout": "333332833333500000\n18 digits\n"
   },
   "s2-b1": {
@@ -51,7 +51,7 @@
       }
     ]
   },
-  "s2-b6": {
+  "s2-b5": {
     "experiment": {
       "runs": {
         "0": {
@@ -267,10 +267,10 @@
       }
     ]
   },
-  "s3-b4": {
+  "s3-b3": {
     "stdout": "14\n3, 1, 2\n[9, 4, 1]\n"
   },
-  "s3-b5": {
+  "s3-b4": {
     "error": {
       "line": 2,
       "message": "Generator expression must be parenthesized",
@@ -278,7 +278,7 @@
     },
     "stdout": ""
   },
-  "s3-b7": {
+  "s3-b6": {
     "shell": [
       {
         "source": "nums = [3, 1, 2]",
@@ -301,26 +301,10 @@
     ]
   },
   "s4-b1": {
+    "stdout": "[0, 1, 4, 9]\n[]\n"
+  },
+  "s4-b2": {
     "shell": [
-      {
-        "source": "squares = (n * n for n in range(4))",
-        "stdout": ""
-      },
-      {
-        "source": "list(squares)",
-        "stdout": "",
-        "value": "[0, 1, 4, 9]"
-      },
-      {
-        "source": "list(squares)",
-        "stdout": "",
-        "value": "[]"
-      },
-      {
-        "source": "sum(squares)",
-        "stdout": "",
-        "value": "0"
-      },
       {
         "source": "again = (n * n for n in range(4))",
         "stdout": ""
@@ -342,7 +326,7 @@
       }
     ]
   },
-  "s4-b3": {
+  "s4-b4": {
     "shell": [
       {
         "source": "values = (n for n in range(6))",
@@ -373,7 +357,7 @@
       "stdout": "biggest: 8\ncount:   5\naverage: 5.0\n"
     }
   },
-  "s5-b3": {
+  "s5-b2": {
     "stdout": "  read: ana,71,PASS\ngot: Ana\n  read: bo,48,FAIL\n  read: cy,83,PASS\ngot: Cy\n"
   }
 }

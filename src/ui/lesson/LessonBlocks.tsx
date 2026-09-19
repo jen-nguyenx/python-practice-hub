@@ -6,7 +6,7 @@ import type { Experiment, GeneratedExperiments, Topic } from '../../content/sche
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd, Markdown } from '../components/Markdown.tsx';
-import { Annotate, Match, Order, Predict, Quiz } from './Interactive.tsx';
+import { Annotate, Match, Order, Predict, Quiz, Walkthrough } from './Interactive.tsx';
 import { openInPlayground } from '../workbench/openInPlayground.ts';
 import { MistakesTab, WorkedExampleTab } from '../shell/topic/ReadTabs.tsx';
 import { ExperimentCard } from '../shell/topic/WhatIf.tsx';
@@ -172,6 +172,16 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
 
     case 'match':
       return <Match pairs={block.pairs} ask={block.ask} />;
+
+    case 'walkthrough': {
+      if (!gen?.steps?.length) return null;
+      return (
+        <>
+          <Walkthrough code={block.code} steps={gen.steps} stdout={gen.stdout ?? ''} ask={block.ask} />
+          <TryIt code={block.code} name={`${ctx.slug}.py`} />
+        </>
+      );
+    }
 
     case 'annotate':
       return (

@@ -87,42 +87,10 @@
       }
     ]
   },
-  "s1-b3": {
-    "shell": [
-      {
-        "source": "a = [1, 2]",
-        "stdout": ""
-      },
-      {
-        "source": "b = a",
-        "stdout": ""
-      },
-      {
-        "source": "b.append(3)",
-        "stdout": ""
-      },
-      {
-        "source": "a",
-        "stdout": "",
-        "value": "[1, 2, 3]"
-      },
-      {
-        "source": "b = [7, 8]",
-        "stdout": ""
-      },
-      {
-        "source": "a",
-        "stdout": "",
-        "value": "[1, 2, 3]"
-      },
-      {
-        "source": "a is b",
-        "stdout": "",
-        "value": "False"
-      }
-    ]
+  "s1-b2": {
+    "stdout": "[1, 2, 3]\n[1, 2, 3]\n"
   },
-  "s1-b6": {
+  "s1-b4": {
     "shell": [
       {
         "source": "a = [1, 2, 3]",
@@ -169,7 +137,7 @@
       "stdout": "returned: [70, 80, 100]\noriginal: [70, 80]\nsame object: False\n"
     }
   },
-  "s2-b5": {
+  "s2-b4": {
     "stdout": "[95, 80, 70] original: [70, 95, 80, 65]\n[95, 80, 70] original: [95, 80, 70, 65]\n"
   },
   "s3-b1": {
@@ -178,7 +146,7 @@
   "s3-b3": {
     "stdout": "shallow shares inner: True\ndeep shares inner:    False\noriginal after deep change:  [[1, 2], [3, 4]]\noriginal after shallow change: [[1, 2, 99], [3, 4]]\n"
   },
-  "s3-b5": {
+  "s3-b4": {
     "experiment": {
       "runs": {
         "0": {
@@ -225,7 +193,7 @@
       }
     }
   },
-  "s3-b7": {
+  "s3-b5": {
     "left": {
       "stdout": "[[0, 0, 0], [0, 0, 0], [0, 0, 0]]\nrows are the same object: True\n[[9, 0, 0], [9, 0, 0], [9, 0, 0]]\n"
     },
@@ -241,7 +209,7 @@
       "stdout": "['a']\n['b']\n['c']\n['own bag', 'x']\n['d']\n"
     }
   },
-  "s4-b3": {
+  "s4-b2": {
     "stdout": "same object: True\nstored on the function: ([],)\n"
   },
   "s5-b1": {
@@ -252,7 +220,7 @@
     },
     "stdout": "treasure\n[(0, 0), (2, 3)]\n"
   },
-  "s5-b4": {
+  "s5-b3": {
     "shell": [
       {
         "source": "hash((1, 2))",
@@ -280,7 +248,7 @@
       }
     ]
   },
-  "s5-b6": {
+  "s5-b4": {
     "stdout": "('2026-03', 'ana') 71\n('2026-03', 'bo') 88\n('2026-04', 'ana') 95\n95\n"
   }
 }

@@ -46,6 +46,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
     { id: 'a-play', group: 'Pages and actions', label: 'Playground', detail: 'Write and run any Python', icon: 'code', search: 'editor run python', href: href.playground(), run: go(href.playground()) },
     { id: 'a-exam', group: 'Pages and actions', label: 'Exams', detail: 'Mock final paper or a timed practice test', icon: 'clock', search: 'exam final mock practice test timed', href: href.exam(), run: go(href.exam()) },
     { id: 'a-review', group: 'Pages and actions', label: 'Review', detail: 'Practise the mistakes you have made', icon: 'refresh', search: 'mistakes weak spots revise repeat', href: href.review(), run: go(href.review()) },
+    { id: 'a-decode', group: 'Pages and actions', label: 'Decode an error', detail: 'Paste a traceback, get it in plain words', icon: 'help', search: 'traceback exception meaning what does this mean stuck', href: href.decode(), run: go(href.decode()) },
     { id: 'a-report', group: 'Pages and actions', label: 'Report', detail: 'Strengths and weak spots', icon: 'chart', search: 'progress mistakes stats', href: href.report(), run: go(href.report()) },
     { id: 'a-settings', group: 'Pages and actions', label: 'Settings', detail: 'Theme, backup, unlock', icon: 'sliders', search: 'preferences backup export', href: href.settings(), run: go(href.settings()) },
     { id: 'a-theme', group: 'Pages and actions', label: 'Toggle theme', detail: 'Switch light and dark', icon: 'moon', search: 'dark light mode', run: toggleTheme },

@@ -42,36 +42,6 @@
       }
     ]
   },
-  "s0-b10": {
-    "shell": [
-      {
-        "source": "a, b = \"left\", \"right\"",
-        "stdout": ""
-      },
-      {
-        "source": "a, b = b, a",
-        "stdout": ""
-      },
-      {
-        "source": "(a, b)",
-        "stdout": "",
-        "value": "('right', 'left')"
-      },
-      {
-        "source": "nums = [1, 2, 3]",
-        "stdout": ""
-      },
-      {
-        "source": "nums[0], nums[2] = nums[2], nums[0]",
-        "stdout": ""
-      },
-      {
-        "source": "nums",
-        "stdout": "",
-        "value": "[3, 2, 1]"
-      }
-    ]
-  },
   "s0-b3": {
     "error": {
       "line": 1,
@@ -143,8 +113,38 @@
       }
     }
   },
-  "s0-b7": {
+  "s0-b6": {
     "stdout": "('Ada', 'Lovelace') <class 'tuple'>\nAda\nLovelace\n"
+  },
+  "s0-b7": {
+    "shell": [
+      {
+        "source": "a, b = \"left\", \"right\"",
+        "stdout": ""
+      },
+      {
+        "source": "a, b = b, a",
+        "stdout": ""
+      },
+      {
+        "source": "(a, b)",
+        "stdout": "",
+        "value": "('right', 'left')"
+      },
+      {
+        "source": "nums = [1, 2, 3]",
+        "stdout": ""
+      },
+      {
+        "source": "nums[0], nums[2] = nums[2], nums[0]",
+        "stdout": ""
+      },
+      {
+        "source": "nums",
+        "stdout": "",
+        "value": "[3, 2, 1]"
+      }
+    ]
   },
   "s1-b1": {
     "shell": [
@@ -281,7 +281,10 @@
       }
     ]
   },
-  "s2-b3": {
+  "s2-b2": {
+    "stdout": "Ana (24) from Perth\n"
+  },
+  "s2-b4": {
     "error": {
       "line": 9,
       "message": "'int' object is not iterable",

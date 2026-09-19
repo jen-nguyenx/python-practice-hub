@@ -75,6 +75,12 @@ export type LessonBlock =
   | { kind: 'match'; pairs: { left: string; right: string }[]; ask?: Md }
   /** Click a line to find out what it does. Replaces prose walking through a program line by line. */
   | { kind: 'annotate'; code: string; notes: Record<string, Md>; ask?: Md }
+  /**
+   * Step through the program one line at a time and watch the variables change. The whole run is
+   * recorded by the verifier, so stepping is instant and shows exactly what Python did. This is the
+   * answer to "I can read it but I cannot see what is happening".
+   */
+  | { kind: 'walkthrough'; code: string; watch?: string[]; ask?: Md }
   /** A numbered list of steps, for procedures ("how to read a traceback"). */
   | { kind: 'steps'; title?: string; items: Md[] }
   /** A small reference table. Rows are plain strings; the first row is the header. */
@@ -152,6 +158,8 @@ export interface GeneratedBlock {
   shell?: ShellLine[];
   /** interactive blocks record every combination of their controls. */
   experiment?: GeneratedExperiment;
+  /** walkthrough blocks record the state after every line that ran. */
+  steps?: { line: number; vars: Record<string, string>; out: number }[];
 }
 
 /** Block key ("s2-b1": section index, block index) -> what running it really did. */

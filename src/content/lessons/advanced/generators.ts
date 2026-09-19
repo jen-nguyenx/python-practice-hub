@@ -22,7 +22,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'An ordinary function runs from top to bottom, hands one value back, and forgets everything it was doing. A function containing `yield` behaves differently enough that it is given a different name: a **generator function**.\n\nCalling it does not run the body. It hands back a generator object with the body inside it, wound up and ready. The body runs a little at a time, and pauses at each `yield`, remembering exactly where it was.',
+          body: 'An ordinary function runs top to bottom, hands back one value, and forgets everything. A function containing `yield` is different enough to get its own name — a **generator function**. Calling it does not run the body: it hands back a generator object, wound up and ready, that runs a little at a time and pauses at each `yield`, remembering exactly where it was.',
         },
         {
           kind: 'code',
@@ -30,27 +30,21 @@ const lesson: Lesson = {
           code: 'def countdown(n):\n    print("  [body starts]")\n    while n > 0:\n        print("  [about to yield]", n)\n        yield n\n        n = n - 1\n    print("  [body ends]")\n\nprint("calling the function")\ncounter = countdown(3)\nprint("got back a:", type(counter).__name__)\n\nprint("first next()")\nprint("value:", next(counter))\n\nprint("second next()")\nprint("value:", next(counter))\n',
         },
         {
-          kind: 'prose',
-          body: 'Read the order of those lines carefully, because it is the whole idea. Calling `countdown(3)` printed nothing from inside the body. The body only started on the first `next()`, ran as far as the first `yield`, and stopped there. The second `next()` picked up on the line **after** the `yield`, with `n` still holding what it held before.\n\nThat is what a generator is: a function you can stop in the middle and come back to.',
-        },
-        {
-          kind: 'prose',
-          body: 'You rarely call `next()` by hand. A `for` loop does it for you, and stops when the generator runs out.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'Read the order of those prints',
+          body: 'Calling `countdown(3)` printed nothing from inside the body — it only started on the first `next()`, ran to the first `yield`, and stopped. The second `next()` picked up on the line **after** the yield, with `n` still holding what it held before. A generator is a function you can stop in the middle and come back to.',
         },
         {
           kind: 'code',
-          caption: 'The same generator, driven by a loop.',
+          caption: 'You rarely call next() by hand — a for loop does it for you, driving the same generator, and stops when it runs out.',
           code: 'def countdown(n):\n    while n > 0:\n        yield n\n        n = n - 1\n\nfor value in countdown(3):\n    print("tick", value)\nprint("done")\n\nprint(list(countdown(5)))\nprint(sum(countdown(5)))\n',
-        },
-        {
-          kind: 'prose',
-          body: 'When the body finishes, the generator is finished, and the `for` loop ends. `list(...)` and `sum(...)` drive it the same way a loop does, which is how you get all the values at once when you do want them all.',
         },
         {
           kind: 'callout',
           tone: 'note',
           title: 'return in a generator',
-          body: 'A bare `return` inside a generator stops it early, exactly like falling off the end of the body. It does not produce a value the way `return` does in an ordinary function.',
+          body: 'When the body finishes, the generator is finished and a `for` loop over it ends; `list(...)` and `sum(...)` drive it the same way, which is how you get all the values at once when you do want them all. A bare `return` inside a generator stops it early, exactly like falling off the end of the body — it does not produce a value the way `return` does in an ordinary function.',
         },
       ],
     },
@@ -60,7 +54,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Because the body only runs when a value is asked for, work you never ask for is never done. That is not a saving in principle; it is a saving you can watch.\n\nThe two blocks below do the same "expensive" step, once per item. One builds a list, the other yields. Both are then asked for two values.',
+          body: 'Because the body only runs when a value is asked for, work you never ask for is never done — not a saving in principle, but one you can watch. The two blocks below do the same "expensive" step, once per item; both are then asked for two values.',
         },
         {
           kind: 'compare',
@@ -76,17 +70,38 @@ const lesson: Lesson = {
           },
         },
         {
-          kind: 'prose',
-          body: 'The list version did all six pieces of work before the first value was read. The generator did two, because two were asked for. If the program had stopped after the first match it found, the difference would be larger still.\n\nThis is also where the memory argument comes from. A list of a million results holds a million results. A generator holds one function, paused.',
+          kind: 'quiz',
+          prompt: 'The compare above asks both versions for their first two values. Why does the list version print "computing" six times while the generator prints it only twice?',
+          options: [
+            {
+              text: 'The list comprehension runs its expression for every item immediately, building the whole list before anything is read; the generator only runs expensive() when next() actually asks for a value',
+              correct: true,
+              why: 'That is the whole idea of laziness: work happens exactly when a value is demanded, no earlier.',
+            },
+            {
+              text: 'Generators are faster at arithmetic, so expensive() finishes without printing every time',
+              why: 'expensive() always prints when it runs — the difference is how many times it is called, not how fast it runs.',
+            },
+            {
+              text: 'The list version has a bug that skips some print statements',
+              why: 'There is no bug — the list comprehension deliberately evaluates its expression once for every item in range(6), which is why all six computations happen.',
+            },
+            {
+              text: 'Both actually compute all six values; the generator just delays printing them to the screen',
+              why: 'The generator has not computed the other four squares at all yet — they do not exist until a further next() reaches them, they are not merely unprinted.',
+            },
+          ],
+        },
+        {
+          kind: 'callout',
+          tone: 'note',
+          title: 'Laziness is provable, not assumed',
+          body: 'The list version did all six pieces of work before the first value was read; the generator did two, because two were asked for. If the program had stopped after the first match it found, the difference would be larger still. This is also where the memory argument comes from: a list of a million results holds a million results, a generator holds one function, paused.',
         },
         {
           kind: 'code',
-          caption: 'Adding up a million squares without ever building a list of them.',
+          caption: 'Adding up a million squares without ever building a list of them — nothing in this line ever holds more than one square at a time. The same sum written with square brackets inside builds the whole list first, uses it once, and throws it away.',
           code: 'total = sum(n * n for n in range(1_000_000))\nprint(total)\nprint(len(str(total)), "digits")\n',
-        },
-        {
-          kind: 'prose',
-          body: 'Nothing in that line ever held more than one square at a time. The same sum written with square brackets inside — `sum([n * n for n in range(1_000_000)])` — builds the whole list first, uses it once, and throws it away.',
         },
         {
           kind: 'callout',
@@ -102,7 +117,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A list has to finish being built before anything can use it, so a list of every even number is not a thing you can have. A generator has no such problem: it produces values for as long as it is asked, and nobody has to decide in advance how many that will be.\n\nA generator with `while True` in it is normal, not a bug. What would be a bug is asking such a generator for *all* of its values.',
+          body: 'A list has to finish being built before anything can use it, so a list of every even number is not a thing you can have. A generator has no such problem: it produces values for as long as it is asked. A generator with `while True` in it is normal, not a bug — asking it for *all* of its values would be.',
         },
         {
           kind: 'code',
@@ -110,11 +125,14 @@ const lesson: Lesson = {
           code: 'def evens():\n    n = 0\n    while True:\n        yield n\n        n = n + 2\n\nfirst_five = []\nfor value in evens():\n    if len(first_five) == 5:\n        break\n    first_five.append(value)\nprint(first_five)\n\nstream = evens()\nprint(next(stream), next(stream), next(stream))\n',
         },
         {
-          kind: 'prose',
-          body: 'The `break` is what ends it. Control over how many values are taken has moved out of the generator and into whoever is reading it, and that is often exactly the right split: the generator knows how to make evens, the caller knows how many it wants.\n\n`itertools` has the standard tools for taking a piece of something endless, and they read better than a loop with a counter in it.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'The caller decides how much',
+          body: 'The `break` above is what ends it — control over how many values are taken moves out of the generator and into whoever is reading it, and that is often exactly the right split: the generator knows how to make evens, the caller knows how many it wants. `itertools` has the standard tools for taking a piece of something endless, reading better than a loop with a counter in it.',
         },
         {
           kind: 'shell',
+          caption: '`itertools.count(1)` counts upward for ever, and the generator expression built on it is endless the same way `evens()` is — `islice` takes the first few, and `takewhile` takes values until one fails a test, which is how you say "while they are still small enough" without knowing how many that will be.',
           lines: [
             'import itertools',
             'squares = (n * n for n in itertools.count(1))',
@@ -123,10 +141,6 @@ const lesson: Lesson = {
             'list(itertools.takewhile(lambda n: n < 30, (n * n for n in itertools.count(1))))',
             'list(itertools.islice(itertools.cycle("ab"), 5))',
           ],
-        },
-        {
-          kind: 'prose',
-          body: '`itertools.count(1)` counts upwards for ever, and the generator expression built on top of it is endless in exactly the same way `evens()` is. Neither one is asked for all of its values.\n\n`islice` takes the first few. `takewhile` takes values until one fails a test and then stops, which is how you say "while they are still small enough" without knowing how many that will be.',
         },
         {
           kind: 'callout',
@@ -174,7 +188,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A generator expression is a comprehension with round brackets instead of square ones. It has the same three pieces and the same optional filter, and it produces the values lazily instead of building a list.',
+          body: 'A generator expression is a comprehension with round brackets instead of square ones — the same three pieces, the same optional filter — but it produces the values lazily instead of building a list.',
         },
         {
           kind: 'shell',
@@ -191,12 +205,10 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Compare the first two results. Square brackets produced a list, with its contents right there. Round brackets produced something of an entirely different type, and no values at all — none have been computed yet. Getting at them means consuming the generator, which is what the `list(...)` on the next line does.\n\nThe lines after it are where generator expressions earn their keep. When a comprehension sits directly inside a function that is going to consume it once — `sum`, `max`, `any`, `all`, `sorted`, `min`, `"".join` — the square brackets build a list for no reason.',
-        },
-        {
-          kind: 'prose',
-          body: '`any` and `all` also stop early, which only works because the generator is lazy. `any(is_bad(x) for x in huge)` stops at the first bad one; the list version tests every item before `any` sees anything.\n\nThe brackets can be dropped when the generator expression is the only argument to a function. When there is another argument, they are required.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'Round brackets earn their keep',
+          body: 'Square brackets built a list with its contents right there; round brackets built something of an entirely different type with no values computed yet — getting at them means consuming the generator. When a comprehension sits directly inside a function that consumes it once (`sum`, `max`, `any`, `all`, `sorted`, `min`, `"".join`), square brackets build a list for no reason. `any` and `all` also stop early, which only works because the generator is lazy: `any(is_bad(x) for x in huge)` stops at the first bad one, while the list version tests every item first. The brackets can be dropped only when the generator expression is the sole argument to a call — with another argument, they are required.',
         },
         {
           kind: 'code',
@@ -209,15 +221,14 @@ const lesson: Lesson = {
           code: 'nums = [3, 1, 2]\nprint(sorted(n * n for n in nums, reverse=True))\n',
         },
         {
-          kind: 'table',
-          caption: 'Which bracket.',
-          head: ['You want', 'Write'],
-          rows: [
-            ['A list to index, slice, or use more than once', 'square brackets'],
-            ['To pass straight into `sum`, `max`, `any`, `all`, `join`', 'round brackets, or none'],
-            ['To loop over once and discard', 'round brackets'],
-            ['Something endless', 'round brackets, or a generator function'],
-            ['To know the length', 'square brackets: a generator has no `len()`'],
+          kind: 'match',
+          ask: 'Drag each need onto the brackets that answer it.',
+          pairs: [
+            { left: 'A list to index, slice, or use more than once', right: 'square brackets' },
+            { left: 'To pass straight into sum, max, any, all, join', right: 'round brackets, or none' },
+            { left: 'To loop over once and discard', right: 'round brackets' },
+            { left: 'Something endless', right: 'round brackets, or a generator function' },
+            { left: 'To know the length', right: 'square brackets — a generator has no len()' },
           ],
         },
         {
@@ -237,16 +248,23 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'This is the trap, and it catches everyone at least once. A generator is not a collection. It is a single pass over one. When the pass is finished, the generator is finished, and it does not go back to the start.\n\nIt does not raise when you use it again. It behaves as though it were empty, which is much worse, because the program carries on with a wrong answer.',
+          body: 'This is the trap that catches everyone at least once: a generator is not a collection, it is a single pass over one. When the pass finishes, the generator is finished, and it does not go back to the start. It does not raise when used again — it behaves as though empty, which is worse, because the program carries on with a wrong answer.',
+        },
+        {
+          kind: 'predict',
+          ask: 'Predict the last two lines this prints.',
+          code: 'squares = (n * n for n in range(4))\nprint(list(squares))\nprint(list(squares))\n',
+          choices: [
+            '[0, 1, 4, 9]\n[]',
+            '[0, 1, 4, 9]\n[0, 1, 4, 9]',
+            '[]\n[0, 1, 4, 9]',
+            '[0, 1, 4, 9]\n[0]',
+          ],
         },
         {
           kind: 'shell',
-          caption: 'The same generator, consumed twice.',
+          caption: 'The same pattern with sum: the second call gets a suspiciously plausible zero instead of an error.',
           lines: [
-            'squares = (n * n for n in range(4))',
-            'list(squares)',
-            'list(squares)',
-            'sum(squares)',
             'again = (n * n for n in range(4))',
             'sum(again)',
             'sum(again)',
@@ -254,12 +272,14 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'The second `list(squares)` came back empty and the second `sum(again)` came back as zero. No error, no warning. A total of zero looks like a plausible answer, and that is how this bug reaches production.\n\nPartial consumption is the sneakier version: anything that reads part of a generator leaves the rest behind, and the next reader starts from wherever the last one stopped.',
+          kind: 'callout',
+          tone: 'warn',
+          title: 'No error, no warning',
+          body: 'A second pass returns empty or zero rather than raising, and a total of zero looks like a plausible answer — that is how this bug reaches production. Partial consumption is the sneakier version: anything that reads part of a generator leaves the rest behind, and the next reader starts from wherever the last one stopped.',
         },
         {
           kind: 'shell',
-          caption: 'A membership test reads until it finds a match, and leaves the rest.',
+          caption: 'A membership test reads until it finds a match, and leaves the rest — `3 in values` reads 0, 1, 2 and 3 to answer, and those four are gone; what is left is what comes after, so the final line finds nothing.',
           lines: [
             'values = (n for n in range(6))',
             '3 in values',
@@ -268,12 +288,8 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: '`3 in values` had to read 0, 1, 2 and 3 to answer, and those four are gone. What was left when the list was taken is what came after. The final line then found nothing at all.',
-        },
-        {
           kind: 'compare',
-          caption: 'Two passes over the same data. The left one gets a wrong answer without complaining.',
+          caption: 'Two passes over the same data. The left one gets a wrong answer without complaining. The rule: if the values are needed more than once, keep them — build a list, or call the generator function again for a fresh one, which is why generator *functions* are more reusable than generator *expressions*.',
           left: {
             label: 'Reusing a generator',
             code: 'readings = (n for n in [3, 8, 5, 8, 1])\n\nbiggest = max(readings)\ncount = len(list(readings))\naverage = sum(readings) / 5\n\nprint("biggest:", biggest)\nprint("count:  ", count)\nprint("average:", average)\n',
@@ -283,10 +299,6 @@ const lesson: Lesson = {
             label: 'Keeping the values you need twice',
             code: 'readings = [n for n in [3, 8, 5, 8, 1]]\n\nbiggest = max(readings)\ncount = len(readings)\naverage = sum(readings) / 5\n\nprint("biggest:", biggest)\nprint("count:  ", count)\nprint("average:", average)\n',
           },
-        },
-        {
-          kind: 'prose',
-          body: 'The rule that falls out of this is short. **If the values are needed more than once, keep them.** A generator is for one pass. When you want a second pass, either build a list, or call the generator function again to get a fresh generator.\n\nThat second option is the reason generator *functions* are more reusable than generator *expressions*: `countdown(3)` can be called as many times as you like, and each call gives a new one.',
         },
         {
           kind: 'checkpoint',
@@ -301,14 +313,14 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A generator is not automatically better. It trades away the ability to look twice, to index, and to know the length, in return for laziness and memory. When the data is small and you want it all, a list is the honest choice and the simpler one to debug.',
+          body: 'A generator is not automatically better — it trades away looking twice, indexing, and knowing the length, for laziness and memory. When the data is small and you want it all, a list is the honest, simpler-to-debug choice.',
         },
         {
           kind: 'table',
           caption: 'Reading the trade.',
           head: ['Question', 'List', 'Generator'],
           rows: [
-            ['Can you take `len()`?', 'yes', 'no'],
+            ['Can you take len()?', 'yes', 'no'],
             ['Can you index or slice it?', 'yes', 'no'],
             ['Can you loop over it twice?', 'yes', 'no, it is spent'],
             ['How much does it hold?', 'every item', 'one item, and where it was'],
@@ -317,17 +329,15 @@ const lesson: Lesson = {
           ],
         },
         {
-          kind: 'prose',
-          body: 'Where a generator really pays is as a **pipeline**. Each stage takes values one at a time from the stage before, does its bit, and passes them on, so however many stages there are, only one value is ever in flight.',
-        },
-        {
           kind: 'code',
-          caption: 'Three stages, and a trace showing that the value goes all the way through before the next one starts.',
+          caption: 'Where a generator really pays is as a **pipeline**: three stages, each taking values one at a time from the stage before and passing them on, so only one value is ever in flight — the trace below shows reads and results interleaved rather than in two blocks, proof that no stage waited for the one before it to finish.',
           code: 'def read_rows(lines):\n    for line in lines:\n        print("  read:", line)\n        yield line.split(",")\n\ndef only_passes(rows):\n    for row in rows:\n        if row[2] == "PASS":\n            yield row\n\ndef names(rows):\n    for row in rows:\n        yield row[0].title()\n\nlines = ["ana,71,PASS", "bo,48,FAIL", "cy,83,PASS"]\n\npipeline = names(only_passes(read_rows(lines)))\nfor name in pipeline:\n    print("got:", name)\n',
         },
         {
-          kind: 'prose',
-          body: 'The reads and the results are interleaved rather than coming in two blocks, which shows that no stage waited for the one before it to finish. Swap the list of lines for a file with ten million rows and nothing about that code changes, including how much memory it uses.\n\nThat is the shape worth taking away. Write each stage as a small generator that does one thing, and let the last consumer decide how much to pull through.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'The shape worth taking away',
+          body: 'Swap the list of lines for a file with ten million rows and nothing about that code changes, including how much memory it uses. Write each stage as a small generator that does one thing, and let the last consumer decide how much to pull through.',
         },
       ],
     },

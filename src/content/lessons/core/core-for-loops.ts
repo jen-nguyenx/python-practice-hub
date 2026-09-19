@@ -73,6 +73,12 @@ print('Done')
           body: 'When a question says "from 1 to n", including n, the stop has to be `n + 1`. When it says "the first n values", starting at zero, `range(n)` is already right.\n\nA loop over an empty range is not an error. The body runs zero times, quietly, and whatever comes after the loop still runs. A loop that prints nothing is almost always a range whose start and stop are the wrong way round for its step.',
         },
         {
+          kind: 'walkthrough',
+          ask: 'Step through it one line at a time. Watch `total` climb, and watch `p` change on every pass.',
+          code: "prices = [4, 3, 5]\ntotal = 0\nfor p in prices:\n    total = total + p\nprint(total)\n",
+          watch: ['prices', 'p', 'total'],
+        },
+        {
           kind: 'experiment',
           id: 't03-x1',
         },

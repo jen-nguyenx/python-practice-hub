@@ -342,3 +342,97 @@ export function Annotate({ code, notes, ask }: { code: string; notes: Record<str
     </div>
   );
 }
+
+// ---------- walkthrough ----------
+
+export interface WalkStep { line: number; vars: Record<string, string>; out: number }
+
+/**
+ * Step through a recorded run: the current line, the variables as they stand, and the output so far.
+ *
+ * The whole run was recorded at verify time, so stepping is instant and nothing here works out what
+ * Python would do. A value that changed on this step is marked, because "which one moved" is the
+ * question a reader is actually asking.
+ */
+export function Walkthrough({ code, steps, stdout, ask }: {
+  code: string; steps: readonly WalkStep[]; stdout: string; ask?: string;
+}) {
+  const [at, setAt] = useState(0);
+  const lines = code.replace(/\n$/, '').split('\n');
+  const step = steps[Math.min(at, steps.length - 1)];
+  const prev = at > 0 ? steps[at - 1] : undefined;
+  const printed = stdout.slice(0, step?.out ?? 0);
+  const names = Object.keys(step?.vars ?? {});
+
+  return (
+    <div class="ib ib-walk">
+      <p class="ib-tag">Step through it</p>
+      <Markdown text={ask ?? 'Step through the program one line at a time and watch the values change.'} class="lb-md" />
+
+      <div class="ib-walk-main">
+        <pre class="code-block numbered ib-walk-code" aria-label="Program being stepped through">
+          <code>
+            {lines.map((l, i) => (
+              <span key={i} class={`ln${step && step.line === i + 1 ? ' is-now' : ''}`}>{l || ' '}{'\n'}</span>
+            ))}
+          </code>
+        </pre>
+
+        <div class="ib-walk-side">
+          <p class="ib-walk-h">Variables</p>
+          {names.length === 0 ? (
+            <p class="ib-walk-none">Nothing has been given a name yet.</p>
+          ) : (
+            <table class="ib-walk-vars">
+              <tbody>
+                {names.map((n) => {
+                  const changed = prev && prev.vars[n] !== step.vars[n];
+                  return (
+                    <tr key={n} class={changed ? 'is-changed' : ''}>
+                      <th scope="row">{n}</th>
+                      <td>{step.vars[n]}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+          <p class="ib-walk-h">Printed so far</p>
+          {printed === '' ? (
+            <p class="ib-walk-none">Nothing yet.</p>
+          ) : (
+            <pre class="ib-walk-out"><code>{printed.replace(/\n$/, '')}</code></pre>
+          )}
+        </div>
+      </div>
+
+      <div class="ib-walk-bar">
+        <button type="button" class="btn ghost" disabled={at === 0} onClick={() => setAt(0)} aria-label="Back to the start">
+          <Icon name="refresh" size={14} />
+        </button>
+        <button type="button" class="btn ghost" disabled={at === 0} onClick={() => setAt(at - 1)}>
+          <Icon name="chevronLeft" size={14} /> Back
+        </button>
+        <input
+          type="range"
+          class="wi-slider ib-walk-scrub"
+          min={0}
+          max={Math.max(0, steps.length - 1)}
+          step={1}
+          value={at}
+          aria-label={`Step ${at + 1} of ${steps.length}, on line ${step?.line ?? 1}`}
+          onInput={(e) => setAt(Number((e.currentTarget as HTMLInputElement).value))}
+        />
+        <span class="ib-walk-count num">{at + 1} / {steps.length}</span>
+        <button
+          type="button"
+          class="btn primary"
+          disabled={at >= steps.length - 1}
+          onClick={() => setAt(at + 1)}
+        >
+          Next line <Icon name="chevronRight" size={14} />
+        </button>
+      </div>
+    </div>
+  );
+}

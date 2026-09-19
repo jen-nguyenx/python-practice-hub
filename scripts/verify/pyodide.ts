@@ -17,6 +17,8 @@ export interface TraceResult { rows: string[][]; stdout: string; error?: PyError
 export interface CaptureResult { stdout: string; error?: PyError; timedOut?: boolean }
 export interface ReplLine { source: string; stdout: string; value?: string; error?: PyError }
 export interface ReplResult { lines: ReplLine[] }
+export interface WalkStep { line: number; vars: Record<string, string>; out: number }
+export interface WalkResult { steps: WalkStep[]; stdout: string; error?: PyError; overflow?: boolean }
 export interface ProbeResult { stdout: string; values: Record<string, unknown>; error?: PyError; timedOut?: boolean; probeErrors?: Record<string, string> }
 export interface LiteralInfo { ok: boolean; error?: string; hasFloat: boolean; isTuple: boolean; typeName: string }
 export interface DefinesResult { defined: boolean; compileError?: PyError; error?: PyError }
@@ -38,6 +40,8 @@ export interface Harness {
   probe(code: string, probes: Record<string, string>): ProbeResult;
   /** Run lines as a shell session, recording each line's value or output. */
   repl(lines: readonly string[], stdin?: readonly string[]): ReplResult;
+  /** Record the state after every line, for a step-through walkthrough. */
+  walk(code: string, watch?: readonly string[]): WalkResult;
   literalInfo(expr: string): LiteralInfo;
   defines(code: string, fnName: string): DefinesResult;
   constructs(code: string): ConstructsResult;
@@ -81,6 +85,7 @@ export async function createHarness(opts: { hashSeed?: string } = {}): Promise<H
     runCapture: (code, stdin = []) => call('run_capture', code, j(stdin)),
     probe: (code, probes) => vcall('probe', code, j(probes)),
     repl: (lines, stdin = []) => vcall('repl', j(lines), j(stdin)),
+    walk: (code, watch = []) => vcall('walk', code, j(watch)),
     literalInfo: (expr) => call('literal_info', expr),
     defines: (code, fnName) => call('defines', code, fnName),
     constructs: (code) => call('constructs', code),

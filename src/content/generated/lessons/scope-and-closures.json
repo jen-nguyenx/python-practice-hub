@@ -2,10 +2,10 @@
   "s0-b1": {
     "stdout": "inner sees:  local name\nouter sees:  enclosing name\nmodule sees: global name\nlen is a built-in: <built-in function len>\n"
   },
-  "s0-b3": {
+  "s0-b2": {
     "stdout": "the outer function defines a name:\n  inner sees: enclosing name\nthe outer function does not:\n  inner sees: global name\n"
   },
-  "s0-b5": {
+  "s0-b3": {
     "error": {
       "line": 7,
       "message": "'list' object is not callable",
@@ -21,7 +21,7 @@
     },
     "stdout": ""
   },
-  "s1-b3": {
+  "s1-b2": {
     "left": {
       "stdout": "150 is over the limit of 100\n50 is fine\n"
     },
@@ -34,7 +34,7 @@
       "stdout": ""
     }
   },
-  "s1-b5": {
+  "s1-b3": {
     "error": {
       "line": 8,
       "message": "cannot access free variable 'name' where it is not associated with a value in enclosing scope",
@@ -42,22 +42,25 @@
     },
     "stdout": "the if runs:\n  inner sees: enclosing name\nthe if does not run:\n"
   },
-  "s1-b8": {
+  "s1-b5": {
     "stdout": "raised the limit to 150 -> limit is now 150\n50 is fine -> limit is now 150\n"
   },
   "s2-b1": {
     "stdout": "bump_local returns: 1 module count: 0\nbump_global returns: 1 module count: 1\nbump_global returns: 2 module count: 2\n"
   },
-  "s2-b3": {
+  "s2-b2": {
     "stdout": "1 2 3\n1\n4\n"
   },
   "s3-b1": {
     "stdout": "15\n50\n30\n3\n10\n"
   },
-  "s3-b3": {
+  "s3-b2": {
     "stdout": "label is before\nlabel is after\nlabel is after\n"
   },
   "s4-b1": {
+    "stdout": "[2, 2, 2]\n"
+  },
+  "s4-b2": {
     "left": {
       "stdout": "[2, 2, 2]\n[2, 2, 2]\n"
     },
@@ -210,10 +213,10 @@
   "s5-b1": {
     "stdout": "-> area(3, 4)\n<- area gave 12\nanswer: 12\n"
   },
-  "s5-b3": {
+  "s5-b2": {
     "stdout": "-> area(3, 4)\n<- area gave 12\nanswer: 12\n-> greet('ana',)\n<- greet gave hello, ana\nanswer: hello, ana\n"
   },
-  "s5-b5": {
+  "s5-b4": {
     "left": {
       "stdout": "wrapper\nNone\n"
     },
@@ -221,7 +224,7 @@
       "stdout": "area\nArea of a rectangle.\n"
     }
   },
-  "s5-b9": {
+  "s5-b6": {
     "error": {
       "line": 3,
       "message": "area() missing 2 required positional arguments: 'width' and 'height'",

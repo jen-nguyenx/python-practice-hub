@@ -21,33 +21,36 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Timing a program tells you about your laptop today: what else was running, how warm the machine is, which interpreter you used. Counting **operations** tells you about the program, and that number is the same everywhere.\n\nThe question worth asking is not "how long does this take?" but "if the input gets ten times bigger, what happens to the work?" There are only a few answers you meet in practice.',
+          body: 'Timing a program tells you about your laptop today; counting **operations** tells you about the program itself, the same everywhere. The question worth asking is not "how long does this take?" but "if the input gets ten times bigger, what happens to the work?"',
         },
         {
-          kind: 'table',
-          caption: 'The shapes of growth, in the order you want them.',
-          head: ['Name', 'Work when the input doubles', 'Something that does it'],
-          rows: [
-            ['Constant', 'Unchanged', 'Reading `x[0]`, `len(x)`, a dict lookup'],
-            ['Logarithmic', 'One more step', 'Binary search in a sorted list'],
-            ['Linear', 'Doubles', 'One loop over the data, `sum`, `max`, `in` on a list'],
-            ['Linear-logarithmic', 'A bit more than doubles', '`sorted()`'],
-            ['Quadratic', 'Four times as much', 'A loop inside a loop over the same data'],
-            ['Exponential', 'Squares', 'Trying every subset of the data'],
+          kind: 'match',
+          ask: 'Drag each shape of growth onto something that does it.',
+          pairs: [
+            { left: 'Constant', right: 'Reading x[0], len(x), a dict lookup' },
+            { left: 'Logarithmic', right: 'Binary search in a sorted list' },
+            { left: 'Linear', right: 'One loop over the data, sum, max, in on a list' },
+            { left: 'Linear-logarithmic', right: 'sorted()' },
+            { left: 'Quadratic', right: 'A loop inside a loop over the same data' },
+            { left: 'Exponential', right: 'Trying every subset of the data' },
           ],
         },
         {
-          kind: 'prose',
-          body: 'Those names are the whole of "big O" for everyday purposes: linear is written O(n), quadratic O(n²), and so on, where n is the size of the input. The notation ignores constants on purpose — a linear loop that does three things per item is still linear — because what matters at scale is the shape, not the multiplier.\n\nThe rest of this lesson counts real operations, so you can see the shapes rather than take them on trust.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'From growth shape to O(...)',
+          body: 'Doubling the input: constant work stays unchanged, logarithmic adds one more step, linear doubles, linear-logarithmic a bit more than doubles, quadratic is four times as much, exponential squares. Those shapes are the whole of "big O" for everyday purposes — linear is O(n), quadratic O(n²) — and the notation ignores constants on purpose, because what matters at scale is the shape, not the multiplier.',
         },
         {
           kind: 'code',
-          caption: 'Three loops over the same list, with the work each one does counted.',
+          caption: 'The rest of this lesson counts real operations rather than taking the shapes on trust — three loops over the same list, with the work each one does counted.',
           code: "def count_single(values):\n    steps = 0\n    for v in values:\n        steps += 1\n    return steps\n\ndef count_two_passes(values):\n    steps = 0\n    for v in values:\n        steps += 1\n    for v in values:\n        steps += 1\n    return steps\n\ndef count_nested(values):\n    steps = 0\n    for a in values:\n        for b in values:\n            steps += 1\n    return steps\n\nfor n in [10, 20, 40, 80]:\n    data = list(range(n))\n    print(n, count_single(data), count_two_passes(data), count_nested(data))\n",
         },
         {
-          kind: 'prose',
-          body: 'Read the columns down, not across. The first two both double when `n` doubles — one is twice the other, and that constant is exactly what big O throws away, because both stay in step with the data. The third column quadruples. That is a different kind of thing, and no amount of tuning inside the loop will change it.',
+          kind: 'callout',
+          tone: 'note',
+          title: 'Read the columns down, not across',
+          body: 'The first two columns both double when n doubles — one is twice the other, and that constant is exactly what big O throws away, because both stay in step with the data. The third column quadruples: a different kind of thing that no amount of tuning inside the loop will change.',
         },
       ],
     },
@@ -57,25 +60,17 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: '`x in some_list` has no choice but to compare `x` against the items one at a time until it finds a match or runs out. `x in some_set` computes a hash and goes straight to the one place the value could be.\n\nYou do not have to take that on trust either. Here is an object that counts every time it is compared.',
+          body: '`x in some_list` compares `x` against the items one at a time until it finds a match or runs out; `x in some_set` computes a hash and goes straight to the one place the value could be. Here is an object that counts every time it is compared, so the difference does not have to be taken on trust.',
         },
         {
           kind: 'code',
-          caption: 'The same 1000 values, in a list and in a set. The counter is the number of `==` comparisons.',
+          caption: 'The same 1000 values, in a list and in a set — the counter is the number of == comparisons. The list walks the whole way; the set does almost nothing, and for the absent value it compares nothing at all, because the hash says there is nothing in that place to check. Invisible in a 10-item list, decisive in a 100,000-item one, and it does not depend on how fast your computer is.',
           code: "class Counted:\n    checks = 0\n\n    def __init__(self, n):\n        self.n = n\n\n    def __eq__(self, other):\n        Counted.checks += 1\n        return self.n == other.n\n\n    def __hash__(self):\n        return hash(self.n)\n\nitems = [Counted(i) for i in range(1000)]\nas_list = items\nas_set = set(items)\n\nfor label, box in [('list', as_list), ('set', as_set)]:\n    Counted.checks = 0\n    found = Counted(999) in box\n    print(label, 'last item:', found, 'comparisons:', Counted.checks)\n    Counted.checks = 0\n    found = Counted(-1) in box\n    print(label, 'absent:', found, 'comparisons:', Counted.checks)\n",
         },
         {
-          kind: 'prose',
-          body: 'The list had to walk the whole way; the set did almost nothing, and for the absent value it did not compare anything at all, because the hash told it there was nothing in that place to compare against.\n\nThat difference is invisible in a 10-item list and decisive in a 100,000-item one. And it does not depend on how fast your computer is.',
-        },
-        {
           kind: 'code',
-          caption: 'Where this actually bites: checking for duplicates two ways, with the steps counted.',
+          caption: 'Where this actually bites: checking for duplicates two ways, with the steps counted. Same answer, same loop shape at a glance, and the step counts grow at completely different rates — the only change is what seen is. This is the single highest-value efficiency habit in everyday Python: if a collection exists to answer "have I seen this?", make it a set.',
           code: "def duplicates_by_scanning(values):\n    steps = 0\n    seen = []\n    out = []\n    for v in values:\n        for s in seen:\n            steps += 1\n            if s == v:\n                out.append(v)\n                break\n        else:\n            seen.append(v)\n    return out, steps\n\ndef duplicates_by_set(values):\n    steps = 0\n    seen = set()\n    out = []\n    for v in values:\n        steps += 1\n        if v in seen:\n            out.append(v)\n        else:\n            seen.add(v)\n    return out, steps\n\nfor n in [100, 200, 400]:\n    data = list(range(n))\n    print(n, 'scanning:', duplicates_by_scanning(data)[1], ' set:', duplicates_by_set(data)[1])\nprint(duplicates_by_scanning([1, 2, 2, 3, 1])[0], duplicates_by_set([1, 2, 2, 3, 1])[0])\n",
-        },
-        {
-          kind: 'prose',
-          body: 'Same answer, same loop shape at a glance, and the step counts grow at completely different rates. The only change is what `seen` is. This is the single highest-value efficiency habit in everyday Python: **if a collection exists to answer "have I seen this?", make it a set.**',
         },
         {
           kind: 'callout',
@@ -84,9 +79,27 @@ const lesson: Lesson = {
           body: 'Looking a key up in a dict costs the same as checking membership in a set, and for the same reason. `counts[word] = counts.get(word, 0) + 1` over a million words is linear; the same tally kept in a list of pairs, searched each time, is quadratic.',
         },
         {
-          kind: 'checkpoint',
-          prompt: 'A program reads 20,000 names and keeps a list `seen`, testing `if name in seen:` on each one before appending. Roughly how many comparisons does that do in total when every name is new, and what is the exact change that fixes it? What does the fix cost you?',
-          answer: 'The first name compares against nothing, the second against one, and so on, so it is 0 + 1 + 2 + ... + 19,999, which is about 200 million comparisons — n²/2. Changing `seen = []` to `seen = set()` and `seen.append(name)` to `seen.add(name)` makes it 20,000 lookups. What it costs: a set does not keep the order the names arrived in, cannot hold unhashable items such as lists, and uses more memory per item. If order matters, keep both — a set for the membership test and a list for the order — which is a normal and unembarrassing thing to do.',
+          kind: 'quiz',
+          prompt: 'A program reads 20,000 names into a list `seen`, testing `if name in seen:` on each one before appending, and every name turns out to be new. Roughly how many comparisons does that do in total?',
+          options: [
+            {
+              text: 'About 200 million — 0 + 1 + 2 + ... + 19,999, since each new name is compared against everyone seen so far',
+              correct: true,
+              why: 'That sum is about n squared over two, which is the shape a growing list produces when every check scans everything already in it.',
+            },
+            {
+              text: 'About 20,000 — one comparison per name',
+              why: 'That would be true if seen were a set; against a growing list, each check compares against everyone already in it, not just once.',
+            },
+            {
+              text: 'About 400 million — every name compared against every other name twice',
+              why: 'Each name is only ever compared against the names already in seen at that point, not against every other name in both directions.',
+            },
+            {
+              text: 'About 20,000 squared exactly, since every name is compared to every position in a 20,000-slot list',
+              why: 'The list is not full-length from the start — it grows one name at a time, so early checks compare against far fewer than 20,000 items; the true total is about half of n squared, not n squared itself.',
+            },
+          ],
         },
       ],
     },
@@ -96,16 +109,12 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Strings in Python cannot be changed. `s = s + piece` does not extend `s`; it builds a **new** string containing everything that was in `s` plus the piece, and points `s` at that. The old contents are copied every single time.\n\nSo a loop that grows a string one piece at a time copies 1 character, then 2, then 3, and so on. Count that up.',
+          body: 'Strings in Python cannot be changed. `s = s + piece` builds a **new** string containing everything in `s` plus the piece, copying the old contents every time — so a loop that grows a string one piece at a time copies 1 character, then 2, then 3, and so on.',
         },
         {
           kind: 'code',
-          caption: 'The characters copied by each approach, for a text built from n one-character pieces.',
+          caption: 'The characters copied by each approach, for a text built from n one-character pieces. Doubling the input multiplies one of these by about four and the other by exactly two — the difference between quadratic and linear, arrived at without a stopwatch. Both versions produce identical text, which is what makes the slow one so easy to write and so hard to notice.',
           code: "def characters_copied_by_plus(n):\n    copied = 0\n    length = 0\n    for _ in range(n):\n        copied += length        # everything so far is copied into the new string\n        length += 1\n    return copied\n\ndef characters_copied_by_join(n):\n    return n                    # every piece is copied once, into the finished string\n\nprint('n     plus      join')\nfor n in [100, 200, 400, 800]:\n    print(n, characters_copied_by_plus(n), characters_copied_by_join(n))\n\nprint('plus, doubling n:', characters_copied_by_plus(800) / characters_copied_by_plus(400))\nprint('join, doubling n:', characters_copied_by_join(800) / characters_copied_by_join(400))\n",
-        },
-        {
-          kind: 'prose',
-          body: 'Doubling the input multiplied one of those by about four and the other by exactly two. That is the difference between quadratic and linear, arrived at without a stopwatch.\n\nThe two versions produce identical text, which is what makes the slow one so easy to write and so hard to notice.',
         },
         {
           kind: 'code',
@@ -120,7 +129,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'One honest caveat: CPython has an optimisation that can sometimes extend a string in place when nothing else is using it, so a timed test of `+` in a loop occasionally looks fine. The optimisation is not a promise, it disappears as soon as a second name refers to the string, and it does not exist in other Python implementations. The counting above is what the language guarantees, and `join` is what you should write.',
+          body: 'One honest caveat: CPython has an optimisation that can sometimes extend a string in place when nothing else is using it, so a timed test of `+` in a loop occasionally looks fine — it is not a promise, it disappears the moment a second name refers to the string, and it does not exist in other Python implementations. The counting above is what the language guarantees, and `join` is what you should write.',
         },
       ],
     },
@@ -130,16 +139,35 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'A loop inside a loop is not automatically quadratic. What matters is **what the inner loop runs over**. If the inner range grows with the input, the costs multiply. If it is fixed, the inner loop is a constant that big O ignores.',
+          body: 'A loop inside a loop is not automatically quadratic — what matters is **what the inner loop runs over**. If the inner range grows with the input, the costs multiply; if it is fixed, the inner loop is a constant that big O ignores.',
         },
         {
           kind: 'code',
-          caption: 'Three nested loops. Only some of them are quadratic.',
+          caption: 'Three nested loops. Only some of them are quadratic — compare how each column changes as n doubles.',
           code: "def all_pairs(values):\n    steps = 0\n    for a in values:\n        for b in values:\n            steps += 1\n    return steps\n\ndef later_pairs(values):\n    steps = 0\n    for i in range(len(values)):\n        for j in range(i + 1, len(values)):\n            steps += 1\n    return steps\n\ndef fixed_inner(values):\n    steps = 0\n    for v in values:\n        for field in ['name', 'mark', 'unit']:\n            steps += 1\n    return steps\n\nprint('n    all_pairs  later_pairs  fixed_inner')\nfor n in [10, 20, 40, 80]:\n    data = list(range(n))\n    print(n, all_pairs(data), later_pairs(data), fixed_inner(data))\n",
         },
         {
-          kind: 'prose',
-          body: 'Compare how each column changes as `n` doubles. `later_pairs` does a little under half the work of `all_pairs`, but both of them quadruple, so both are quadratic — the half is a constant, and constants do not change the shape. `fixed_inner` doubles, because three is three no matter how much data arrives.\n\nThe habit to build: when you see a nested loop, ask what the inner one iterates. Over the same data? Quadratic. Over a fixed list of fields? Linear.',
+          kind: 'quiz',
+          prompt: 'later_pairs does a little under half the work of all_pairs in the trace above, but both quadruple when n doubles while fixed_inner only doubles. Which of the three are quadratic?',
+          options: [
+            {
+              text: 'all_pairs and later_pairs — both nest a loop over the same growing data, so both are O(n squared); fixed_inner nests over a fixed 3-item list, so it stays O(n)',
+              correct: true,
+              why: 'Growing at the same rate as each other, both quadruple when n doubles — the shape, not the exact count, is what decides.',
+            },
+            {
+              text: 'Only all_pairs — later_pairs does less work, so it must be a cheaper shape, O(n log n)',
+              why: 'Doing less work is not the same as growing more slowly: later_pairs still quadruples when n doubles, exactly like all_pairs — less work by a constant factor, same shape.',
+            },
+            {
+              text: 'All three, since every one of them is a loop nested inside another loop',
+              why: "Nesting alone is not enough — fixed_inner's inner loop runs over a fixed three items regardless of n, so its total only doubles when n doubles.",
+            },
+            {
+              text: 'None of them — the interactive block below already showed nested loops can be linear',
+              why: 'That block shows a fixed-size inner loop is linear; all_pairs and later_pairs both loop the inner one over the same n-sized data, which is genuinely quadratic.',
+            },
+          ],
         },
         {
           kind: 'interactive',
@@ -198,16 +226,12 @@ const lesson: Lesson = {
         },
         {
           kind: 'prose',
-          body: 'Step three is where most surprises live, because the expensive things do not look like loops. `if name in names_list` is a loop. `values.remove(x)` is a loop. `sorted(data)` inside a loop over the data is n loops, each costing n log n.',
+          body: 'Step three is where most surprises live, because the expensive things do not look like loops: `if name in names_list` is a loop, `values.remove(x)` is a loop, `sorted(data)` inside a loop over the data is n loops, each costing n log n.',
         },
         {
           kind: 'code',
-          caption: 'A function whose cost is not what its one visible loop suggests.',
+          caption: 'A function whose cost is not what its one visible loop suggests. Both functions produce the same list of running maximums — the counted numbers understate the first one, because they count only the items handed to sorted, not the comparisons sorted makes inside itself: the expensive work is hidden inside a call that occupies one line.',
           code: "def max_by_sorting(rows):\n    comparisons = 0\n    out = []\n    for i in range(len(rows)):\n        ordered = sorted(rows[:i + 1])      # sorts everything so far, every pass\n        comparisons += (i + 1)\n        out.append(ordered[-1])\n    return out, comparisons\n\ndef running_max(rows):\n    comparisons = 0\n    out = []\n    best = None\n    for row in rows:\n        comparisons += 1\n        if best is None or row > best:\n            best = row\n        out.append(best)\n    return out, comparisons\n\nfor n in [50, 100, 200]:\n    data = list(range(n))\n    print(n, max_by_sorting(data)[1], running_max(data)[1])\nprint(max_by_sorting([3, 1, 2])[0] == running_max([3, 1, 2])[0])\n",
-        },
-        {
-          kind: 'prose',
-          body: 'Both functions produce the same list of running maximums. The counted numbers above understate the first one, because they count only the items handed to `sorted` and not the comparisons `sorted` makes inside itself — which is the point: the expensive work was hidden inside a call that occupies one line.',
         },
         {
           kind: 'checkpoint',
@@ -231,9 +255,9 @@ const lesson: Lesson = {
             ['a_list.insert(0, v), a_list.pop(0), del a_list[0]', 'Linear', 'Everything after the hole has to shuffle along'],
             ['sum, min, max, any, all', 'Linear', 'One pass'],
             ['sorted(x), x.sort()', 'n log n', 'Cheaper than you fear, but not free'],
-            ['s + piece in a loop', 'Quadratic overall', 'Use a list and `join`'],
+            ['s + piece in a loop', 'Quadratic overall', 'Use a list and join'],
             ['a_list[a:b]', 'Linear in the slice', 'Slicing in a loop is a loop in a loop'],
-            ['A loop inside a loop over the same data', 'Quadratic', 'The commonest accidental n²'],
+            ['A loop inside a loop over the same data', 'Quadratic', 'The commonest accidental n squared'],
           ],
         },
         {

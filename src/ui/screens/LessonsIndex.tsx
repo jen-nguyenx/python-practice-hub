@@ -9,6 +9,7 @@ import { store } from '../../app/services.ts';
 import { lessonsInTrack } from '../../content/lessons/index.ts';
 import type { LessonMeta } from '../../content/lessons/index.ts';
 import { TRACK_BLURB, TRACK_LABEL, TRACKS } from '../../content/lessonSchema.ts';
+import { ProgressBar } from '../components/ProgressBar.tsx';
 import type { Track } from '../../content/lessonSchema.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
 import { InlineMd } from '../components/Markdown.tsx';
@@ -87,6 +88,52 @@ function TrackSection({ track, read, progress, query }: {
   );
 }
 
+/**
+ * The next lesson to read, in reading order across all three tracks. A library of 35 cards answers
+ * "what is there"; a beginner also needs an answer to "what now", and picking for themselves is exactly
+ * the decision they are least equipped to make.
+ */
+function nextUnread(read: Set<string>): LessonMeta | null {
+  for (const t of TRACKS) {
+    for (const l of lessonsInTrack(t)) if (!read.has(l.id)) return l;
+  }
+  return null;
+}
+
+function UpNext({ read }: { read: Set<string> }) {
+  const total = TRACKS.reduce((n, t) => n + lessonsInTrack(t).length, 0);
+  const next = nextUnread(read);
+  const done = read.size;
+  if (!next) {
+    return (
+      <section class="lx-next is-done">
+        <p class="lx-next-tag">All read</p>
+        <h2 class="lx-next-t">You have been through every lesson.</h2>
+        <p class="lx-next-p">Reading them again is worth less than practising, so go and answer some questions.</p>
+        <p><a class="btn" href={href.landing()}>Go to the topics</a></p>
+      </section>
+    );
+  }
+  return (
+    <section class="lx-next">
+      <p class="lx-next-tag">{done === 0 ? 'Start here' : 'Up next'}</p>
+      <h2 class="lx-next-t">{next.title}</h2>
+      <p class="lx-next-p">{next.summary}. About {next.minutes} minutes.</p>
+      <div class="lx-next-row">
+        <a class="btn primary" href={href.lesson(next.id)}>
+          {done === 0 ? 'Start reading' : 'Continue'}<Icon name="arrowRight" size={16} />
+        </a>
+        {done > 0 ? (
+          <div class="lx-next-bar">
+            <span class="lx-next-n num">{done} of {total} read</span>
+            <ProgressBar value={done} max={total} label="Lessons read" thin />
+          </div>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
 export function LessonsIndex() {
   const ready = storeReady.value;
   const events = store.events.value;
@@ -105,6 +152,7 @@ export function LessonsIndex() {
           Everything Python prints here was produced by running the code, not typed by hand.
         </p>
       </header>
+      <UpNext read={read} />
       <div class="lx-search">
         <Icon name="search" size={15} />
         <input

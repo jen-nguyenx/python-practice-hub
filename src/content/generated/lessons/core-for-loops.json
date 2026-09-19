@@ -53,6 +53,98 @@
   "s1-b2": {
     "stdout": "[2, 4, 6, 8]\n"
   },
+  "s1-b4": {
+    "stdout": "12\n",
+    "steps": [
+      {
+        "line": 1,
+        "out": 0,
+        "vars": {
+          "prices": "[4, 3, 5]"
+        }
+      },
+      {
+        "line": 2,
+        "out": 0,
+        "vars": {
+          "prices": "[4, 3, 5]",
+          "total": "0"
+        }
+      },
+      {
+        "line": 3,
+        "out": 0,
+        "vars": {
+          "p": "4",
+          "prices": "[4, 3, 5]",
+          "total": "0"
+        }
+      },
+      {
+        "line": 4,
+        "out": 0,
+        "vars": {
+          "p": "4",
+          "prices": "[4, 3, 5]",
+          "total": "4"
+        }
+      },
+      {
+        "line": 3,
+        "out": 0,
+        "vars": {
+          "p": "3",
+          "prices": "[4, 3, 5]",
+          "total": "4"
+        }
+      },
+      {
+        "line": 4,
+        "out": 0,
+        "vars": {
+          "p": "3",
+          "prices": "[4, 3, 5]",
+          "total": "7"
+        }
+      },
+      {
+        "line": 3,
+        "out": 0,
+        "vars": {
+          "p": "5",
+          "prices": "[4, 3, 5]",
+          "total": "7"
+        }
+      },
+      {
+        "line": 4,
+        "out": 0,
+        "vars": {
+          "p": "5",
+          "prices": "[4, 3, 5]",
+          "total": "12"
+        }
+      },
+      {
+        "line": 3,
+        "out": 0,
+        "vars": {
+          "p": "5",
+          "prices": "[4, 3, 5]",
+          "total": "12"
+        }
+      },
+      {
+        "line": 5,
+        "out": 3,
+        "vars": {
+          "p": "5",
+          "prices": "[4, 3, 5]",
+          "total": "12"
+        }
+      }
+    ]
+  },
   "s2-b1": {
     "stdout": "P\ne\nr\nt\nh\n"
   },

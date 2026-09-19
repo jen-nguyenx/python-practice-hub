@@ -91,6 +91,9 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
 
   const sections = lesson?.sections ?? [];
   const at = clampStep(index, Math.max(1, sections.length));
+  // The key handler is registered once per lesson, so it reads the position through a ref.
+  const atRef = useRef(at);
+  atRef.current = at;
   const section = sections[at];
 
   const stats = useMemo(() => safeQuestionStats(events), [events]);
@@ -121,6 +124,26 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
       </div>
     );
   }
+
+  // Left and right move through the lesson, but only when the key would otherwise do nothing: a slider,
+  // a textarea and a held drag item all use arrows themselves.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target as HTMLElement | null;
+      const tag = el?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el?.isContentEditable) return;
+      if (el?.closest('[role="button"][aria-grabbed="true"], .ib-order-item, .wi-slider')) return;
+      const delta = e.key === 'ArrowRight' ? 1 : -1;
+      const next = clampStep(atRef.current + delta, sections.length);
+      if (next === atRef.current) return;
+      e.preventDefault();
+      go(next);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [sections.length, lessonId]);
 
   const go = (next: number) => {
     const clamped = clampStep(next, sections.length);

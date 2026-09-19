@@ -5,13 +5,13 @@
   "s1-b1": {
     "stdout": "list last item: True comparisons: 1000\nlist absent: False comparisons: 1000\nset last item: True comparisons: 1\nset absent: False comparisons: 0\n"
   },
-  "s1-b3": {
+  "s1-b2": {
     "stdout": "100 scanning: 4950  set: 100\n200 scanning: 19900  set: 200\n400 scanning: 79800  set: 400\n[2, 1] [2, 1]\n"
   },
   "s2-b1": {
     "stdout": "n     plus      join\n100 4950 100\n200 19900 200\n400 79800 400\n800 319600 800\nplus, doubling n: 4.005012531328321\njoin, doubling n: 2.0\n"
   },
-  "s2-b3": {
+  "s2-b2": {
     "stdout": "'apples,5\\npears,2\\nplums,9\\n'\n'apples,5\\npears,2\\nplums,9\\n'\nTrue\n"
   },
   "s3-b1": {

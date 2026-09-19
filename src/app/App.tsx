@@ -4,6 +4,7 @@ import { Landing } from '../ui/screens/Landing.tsx';
 import { LessonReader } from '../ui/screens/LessonReader.tsx';
 import { TopicLesson } from '../ui/screens/TopicLesson.tsx';
 import { LessonsIndex } from '../ui/screens/LessonsIndex.tsx';
+import { DecodeError } from '../ui/screens/DecodeError.tsx';
 import { Review } from '../ui/screens/Review.tsx';
 import { TopicPage } from '../ui/screens/TopicPage.tsx';
 import { QuestionPage } from '../ui/screens/QuestionPage.tsx';
@@ -27,6 +28,7 @@ export function App() {
     case 'playground': screen = <Playground />; break;
     case 'report': screen = <Report topicId={r.topicId} />; break;
     case 'review': screen = <Review />; break;
+    case 'decode': screen = <DecodeError />; break;
     case 'topic-test': screen = <TopicTest topicId={r.topicId} />; break;
     case 'exam': screen = <ExamPractice />; break;
     case 'settings': screen = <Settings />; break;

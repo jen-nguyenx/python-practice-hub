@@ -45,7 +45,7 @@ export type AppEvent =
       mistakes: MistakeId[];
       /** Compact student response (option ids, typed output, code). Truncated to 4 KB. */
       response?: unknown;
-      confidence?: 'sure' | 'unsure';
+      confidence?: Confidence;
       /** AST idiom/mistake flags from the checked code (code formats only). Feeds pattern cards. */
       flags?: AstFlag[];
     })
@@ -69,6 +69,9 @@ export type NewEvent = AppEvent extends infer E ? (E extends AppEvent ? Omit<E, 
 export type AccentId = 'mono' | 'blue-gold' | 'navy-coral' | 'ink-tangerine';
 export const ACCENT_IDS: readonly AccentId[] = ['mono', 'blue-gold', 'navy-coral', 'ink-tangerine'];
 
+/** What a student said about their own answer before checking it. */
+export type Confidence = 'sure' | 'unsure';
+
 export interface Settings {
   theme: 'system' | 'light' | 'dark';
   /** Two-colour accent preset: primary buttons + progress/markers. */
@@ -78,13 +81,15 @@ export interface Settings {
   unlockAll: boolean;
   reducedMotion: 'system' | 'on' | 'off';
   singleKeyShortcuts: boolean;
+  /** Ask "how sure are you?" before the first check on a question, and report how well it matched. */
+  askConfidence: boolean;
   seenTour: boolean;
   lastExportTs: number | null;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system', accent: 'blue-gold', layout: 'full', editorFontSize: 14, unlockAll: false,
-  reducedMotion: 'system', singleKeyShortcuts: true, seenTour: false, lastExportTs: null,
+  reducedMotion: 'system', singleKeyShortcuts: true, askConfidence: true, seenTour: false, lastExportTs: null,
 };
 
 // ---------- format components ----------

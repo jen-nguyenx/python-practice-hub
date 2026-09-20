@@ -181,6 +181,16 @@
 .rp-cchips { display: flex; flex-wrap: wrap; gap: 8px; padding: 2px 0 8px; }
 .rp-cchip { padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-2); font-size: var(--fs-13); }
 
+/* how sure were you, against what happened */
+.rp-cal { margin-top: 20px; padding: 22px 26px; display: grid; gap: 14px; }
+.rp-cal-sides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.rp-cal-side { display: grid; gap: 2px; align-content: start; }
+.rp-cal-said { font-size: var(--fs-14); color: var(--text-muted); }
+.rp-cal-rate { font-family: var(--mono); font-size: var(--fs-28); font-weight: 600; line-height: 1.2; }
+.rp-cal-of { font-family: var(--mono); font-size: var(--fs-13); color: var(--text-muted); }
+.rp-cal-quiet { font-size: var(--fs-14); color: var(--text-faint); padding-top: 6px; }
+.rp-cal-say { font-size: var(--fs-14); line-height: 1.6; max-width: 72ch; margin: 0; padding-top: 2px; border-top: 1px solid var(--border); padding-block-start: 14px; }
+
 /* ---------- readiness ---------- */
 .rp-figures { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
 .rp-figure { display: flex; flex-direction: column; gap: 2px; padding: 22px 24px; min-width: 0; }
@@ -268,7 +278,7 @@
   .rp-stat-sub { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.4; }
 }
 @media (max-width: 860px) {
-  .rp-duo, .rp-cgrid { grid-template-columns: minmax(0, 1fr); }
+  .rp-duo, .rp-cgrid, .rp-cal-sides { grid-template-columns: minmax(0, 1fr); }
   .rp-col-hints, .rp-col-last, .rp-col-new { display: none; }
 }
 @media (max-width: 700px) {

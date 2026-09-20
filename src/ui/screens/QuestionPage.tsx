@@ -9,7 +9,7 @@ import type { GeneratedQuestion, Question, Scenario, Topic } from '../../content
 import { loadGenerated, loadTopic, questionsOf, topicIdOfQuestion } from '../../content/index.ts';
 import { QUESTION_BY_ID, QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
-import type { DetectionChannel, FormatProps, GradeResult, Mode } from '../../engine/types.ts';
+import type { Confidence, DetectionChannel, FormatProps, GradeResult, Mode } from '../../engine/types.ts';
 import { HINT_MULTIPLIER } from '../../engine/types.ts';
 import { questionStats, topicProgressAll } from '../../engine/progress.ts';
 import type { QuestionStats } from '../../engine/progress.ts';
@@ -22,6 +22,7 @@ import { Callout } from '../components/Callout.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { Markdown } from '../components/Markdown.tsx';
 import { AnswerBlock, RevealControl } from '../workbench/AnswerPanel.tsx';
+import { ConfidenceRow } from '../workbench/ConfidenceRow.tsx';
 import { WorkbenchContext } from '../workbench/context.ts';
 import type { WorkbenchContextValue } from '../workbench/context.ts';
 import { ShellSession, examplesFromTests } from '../workbench/EditorCard.tsx';
@@ -252,6 +253,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   const [revealedHere, setRevealedHere] = useState(false);
   const [shown, setShown] = useState<ShownResult | null>(null);
   const [hintTierHere, setHintTier] = useState<0 | 1 | 2 | 3>(0);
+  const [confidence, setConfidence] = useState<Confidence | null>(null);
   const shownAt = useRef<number[]>([0, 0, 0, 0]);
   const checksAt = useRef<number[]>([0, 0, 0, 0]);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -275,8 +277,11 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
   const failed = Math.max(failedHere, priorChecks.failed);
 
   // Latest values for callbacks that formats call after async work.
-  const live = useRef({ checkNo, failed, revealed, hintTier, solved });
-  live.current = { checkNo, failed, revealed: revealed || live.current.revealed, hintTier, solved: solved || live.current.solved };
+  const live = useRef({ checkNo, failed, revealed, hintTier, solved, confidence });
+  live.current = {
+    checkNo, failed, revealed: revealed || live.current.revealed, hintTier,
+    solved: solved || live.current.solved, confidence,
+  };
 
   useEffect(() => {
     markTopicOpened(topicId);
@@ -329,6 +334,9 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
       correct: res.correct, score: res.score, credit, hintTier: cur.hintTier, revealed: cur.revealed,
       timeMs: Math.round(visibleMs()), mistakes: [...new Set(mistakes.map((m) => m.id))],
       response: compactResponse(response), flags: flagsOf(response),
+      // Only the first check: after a result has been seen, what the student says is a memory of the
+      // answer, not a prediction about it.
+      ...(n === 1 && cur.confidence ? { confidence: cur.confidence } : {}),
     });
     for (const m of mistakes) safeAppend({ type: 'mistake', qid: q.id, topicId, mistake: m.id, channel: m.channel });
     setShown({ res, credit, hints: cur.hintTier, answerShown: cur.revealed });
@@ -458,6 +466,13 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
     />
   ) : null;
 
+  // Asked once, before the first check, and only where a check is still ahead: not in a test (where the
+  // pace is the point), not after a check, not on a revealed or already-solved question.
+  const askConfidence = store.settings.value.askConfidence && !testMode && checkNo === 0 && !revealed && !solved && !before.solved;
+  const confidenceRow = askConfidence
+    ? <ConfidenceRow value={confidence} onPick={(v) => setConfidence(v)} />
+    : null;
+
   const hintsUsedText = total === 0 ? '' : `${hintTier} of ${total} hints used`;
   const parsonsHelp = (
     <div class="qp-bar-help">
@@ -504,7 +519,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
             </div>
           )}
         </section>
-        <div class="qp-work"><Format {...formatProps} /></div>
+        <div class="qp-work">{confidenceRow}<Format {...formatProps} /></div>
       </div>
     );
   } else if (family === 'parsons') {
@@ -520,6 +535,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
           </div>
           {examples.length ? <ShellSession lines={examples} label="Example calls and results" /> : null}
         </section>
+        {confidenceRow}
         <Format {...formatProps} />
         {answer}
       </div>
@@ -532,7 +548,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
           <h1 class="qp-title big" id="qp-title">{q.title}</h1>
           {story}
           <Markdown class="qp-prompt" text={q.prompt} />
-          <div class="qp-format"><Format {...formatProps} /></div>
+          <div class="qp-format">{confidenceRow}<Format {...formatProps} /></div>
           {resultCard}
           {testMode ? null : (
             <>

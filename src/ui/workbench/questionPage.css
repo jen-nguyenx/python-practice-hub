@@ -134,3 +134,14 @@
   .qdot::before { left: 2px; }
   .qp-brief, .qp-top { padding: var(--sp-4); }
 }
+
+/* ---------- how sure are you? ---------- */
+/* Quiet by design: it sits above the answer area and must never look like the thing to do next. */
+.qp-conf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; }
+.qp-conf-q { display: inline-flex; align-items: center; gap: 6px; margin-right: 2px; font-size: var(--fs-13); color: var(--text-muted); }
+.qp-conf-btn {
+  padding: 5px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface);
+  font: inherit; font-size: var(--fs-13); color: var(--text); cursor: pointer;
+}
+.qp-conf-btn:hover { background: var(--surface-2); }
+.qp-conf-btn.is-on { border-color: var(--accent); background: var(--surface-2); font-weight: 600; }

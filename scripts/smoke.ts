@@ -112,6 +112,28 @@ if (await page.locator('.rp-stats').count() === 0) {
   if (leaked.length) failures.push(`#/report: Skills shows raw tags: ${leaked.slice(0, 3).join(', ')}`);
 }
 
+// "How sure are you?" is asked before the first check, on a question that has not been finished. It is
+// the one control that has to reach every format from a single place, so one real question is checked.
+{
+  // Past the seeded history: on a question with checks already recorded the control is meant to be gone,
+  // because the first check is the only moment the question means anything.
+  // Just past the seeded history, in a topic that history has unlocked: on a question with checks already
+  // recorded the control is meant to be gone, because the first check is the only moment it means anything.
+  const fresh = index[41] ?? index[index.length - 1];
+  if (fresh) {
+    await visit(page, `#/q/${fresh.qid}`);
+    const conf = page.locator('.qp-conf');
+    if (await conf.count() === 0) {
+      failures.push(`#/q/${fresh.qid}: the confidence question was not asked`);
+    } else {
+      const sure = page.getByRole('button', { name: "I'm sure" });
+      await sure.click();
+      await page.waitForTimeout(200);
+      if (await sure.getAttribute('aria-pressed') !== 'true') failures.push('the confidence question did not record an answer');
+    }
+  }
+}
+
 // The palette is where a question gets typed from any page, so the reference has to be reachable there
 // and has to land on the entry that was chosen, not on the whole shelf.
 await visit(page, '#/');

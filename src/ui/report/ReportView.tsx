@@ -4,9 +4,11 @@
 import type { ComponentChildren } from 'preact';
 import type { TopicId } from '../../content/ids.ts';
 import { QUESTION_INDEX } from '../../content/loadIndex.ts';
+import { calibration } from '../../engine/calibration.ts';
 import type { ReportData } from '../../engine/report.ts';
 import type { AppEvent } from '../../engine/types.ts';
 import { Icon } from '../components/Icon.tsx';
+import { Calibration } from './Calibration.tsx';
 import { Concepts } from './Concepts.tsx';
 import { formatMinutes, pct, toPercent } from './format.ts';
 import { MistakeProfile } from './MistakeProfile.tsx';
@@ -148,6 +150,7 @@ export function ReportBody({ data, events, topicId, now, unlockAll }: {
 
       <Section id="rp-concepts" title="Skills" note="What the questions you answered were leaning on">
         <Concepts events={events} index={topicId ? QUESTION_INDEX.filter((q) => q.topicId === topicId) : QUESTION_INDEX} />
+        <Calibration data={calibration(events)} />
       </Section>
 
       <Section id="rp-mistakes" title="Mistakes" note={mistakeTotal ? `${mistakeTotal} in this range` : undefined}>

@@ -204,6 +204,13 @@ export function Settings() {
             >
               <Switch checked={s.unlockAll} onChange={setUnlockAll} labelledBy="set-unlock-label" describedBy="set-unlock-desc" />
             </SettingRow>
+            <SettingRow
+              id="set-confidence"
+              label="Ask how sure I am"
+              desc="Before the first check, a question asks whether you are sure. Your report then compares what you said with what happened."
+            >
+              <Switch checked={s.askConfidence} onChange={(v) => set({ askConfidence: v })} labelledBy="set-confidence-label" describedBy="set-confidence-desc" />
+            </SettingRow>
             <SettingRow id="set-tour" label="Welcome tour" desc="The short introduction from your first visit.">
               <button type="button" class="btn sm" onClick={() => { tourOpen.value = true; }} aria-describedby="set-tour-desc">Show the tour again</button>
             </SettingRow>

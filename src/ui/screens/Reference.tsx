@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { href } from '../../app/router.ts';
 import { RECIPES } from '../../content/recipes/index.ts';
-import { GROUP_LABEL, matchesRecipe, RECIPE_GROUPS } from '../../content/recipeSchema.ts';
+import { GROUP_LABEL, matchesRecipe, RECIPE_GROUPS, scoreRecipe } from '../../content/recipeSchema.ts';
 import type { RecipeEntry, RecipeGroup } from '../../content/recipeSchema.ts';
 import { LESSON_FOR_TOPIC } from '../../content/lessons/index.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
@@ -67,10 +67,16 @@ export function Reference() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const hits = useMemo(
-    () => RECIPES.filter((r) => (group === 'all' || r.group === group) && matchesRecipe(r, query)),
-    [query, group],
-  );
+  const searching = query.trim().length > 0;
+  const hits = useMemo(() => {
+    const found = RECIPES.filter((r) => (group === 'all' || r.group === group) && matchesRecipe(r, query));
+    if (!searching) return found;
+    // Best answer first. Browsing is a different act from searching, so the areas only group the shelf.
+    return found
+      .map((r) => ({ r, s: scoreRecipe(r, query) }))
+      .sort((a, b) => b.s - a.s || a.r.task.localeCompare(b.r.task))
+      .map((x) => x.r);
+  }, [query, group, searching]);
   const groups = useMemo(() => {
     const out: { g: RecipeGroup; items: RecipeEntry[] }[] = [];
     for (const g of RECIPE_GROUPS) {
@@ -120,7 +126,13 @@ export function Reference() {
           “count” or “round”.
         </p>
       ) : (
-        groups.map(({ g, items }) => (
+        searching ? (
+          <section class="rf-group" aria-label="Search results">
+            <div class="rf-list">
+              {hits.map((r) => <Entry key={r.id} r={r} />)}
+            </div>
+          </section>
+        ) : groups.map(({ g, items }) => (
           <section key={g} class="rf-group" aria-labelledby={`rf-${g}`}>
             <h2 class="rf-group-h" id={`rf-${g}`}>{GROUP_LABEL[g]}</h2>
             <div class="rf-list">

@@ -56,6 +56,13 @@ try {
   await page.waitForFunction(() => /ready/i.test(document.body.innerText), null, { timeout: 90000 });
 } catch { failures.push('Python runtime never showed ready'); }
 
+// The welcome tour opens over the landing page on a first visit and swallows clicks everywhere after it,
+// so it is shown, photographed, and then dismissed exactly as a student would dismiss it.
+await page.getByRole('button', { name: 'Skip' }).click({ timeout: 5000 }).catch(() => {
+  failures.push('#/: the welcome tour did not offer a way out');
+});
+await page.waitForTimeout(300);
+
 for (const hash of ['#/playground', '#/report', '#/exam', '#/settings', '#/review', '#/error', '#/reference']) {
   await visit(page, hash, hash.replace(/[#/]/g, '') || 'root');
 }
@@ -78,7 +85,11 @@ const seedPath = join(SHOTS, 'seed-progress.json');
       hintTier: 0, revealed: false, timeMs: 45000, mistakes: [],
     })),
   ];
-  writeFileSync(seedPath, JSON.stringify({ format: 'pyladder-export', version: 1, exportedAt: start, settings: {}, events }));
+  // Replacing progress replaces settings too, so the file carries a student who has already seen the
+  // welcome tour — otherwise the tour reopens over every page checked after the import.
+  writeFileSync(seedPath, JSON.stringify({
+    format: 'pyladder-export', version: 1, exportedAt: start, settings: { seenTour: true }, events,
+  }));
 }
 await visit(page, '#/settings');
 await page.locator('#set-import').scrollIntoViewIfNeeded().catch(() => {});
@@ -104,10 +115,14 @@ if (await page.locator('.rp-stats').count() === 0) {
 // The reference is only useful if searching it finds things, so one real search is run end to end.
 await visit(page, '#/reference');
 const refBox = page.locator('.rf-search-in');
-await refBox.fill('sort a list');
-await page.waitForTimeout(250);
+await refBox.click();
+await refBox.type('sort a dict by value', { delay: 10 });
+await page.waitForTimeout(400);
 const refHits = await page.locator('.rf-card').count();
-if (refHits === 0) failures.push('#/reference: searching for "sort a list" found nothing');
+if (refHits === 0) failures.push('#/reference: searching for "sort a dict by value" found nothing');
+// Finding it is not enough: the entry that IS the search has to be the one at the top.
+const top = await page.locator('.rf-card .rf-task').first().innerText().catch(() => '');
+if (refHits > 0 && !/sort a dict/i.test(top)) failures.push(`#/reference: top result for that search was "${top}"`);
 const refOut = await page.locator('.rf-card .rf-out').count();
 if (refOut === 0) failures.push('#/reference: no entry shows what it prints');
 

@@ -38,6 +38,7 @@ export function crumbsFor(r: Route): Crumb[] {
     case 'lessons': return [{ label: 'Lessons' }];
     case 'review': return [{ label: 'Review' }];
     case 'decode': return [{ label: 'Decode an error' }];
+    case 'reference': return [{ label: 'Reference' }];
     case 'lesson-read': return [
       { label: 'Lessons', href: href.lessons() },
       { label: LESSON_BY_ID[r.lessonId]?.title ?? 'Lesson not found' },

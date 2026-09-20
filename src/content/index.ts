@@ -19,7 +19,15 @@ const loaders: Record<TopicId, () => Promise<{ default: Topic }>> = {
   recursion: () => import('./topics/13-recursion/index.ts'),
 };
 
-const generatedLoaders = import.meta.glob<GeneratedTopic>(['./generated/*.json', '!./generated/question-index.json'], { import: 'default' });
+const generatedLoaders = import.meta.glob<GeneratedTopic>([
+  './generated/*.json',
+  '!./generated/question-index.json',
+  // The reference has its own loader and is fetched whole; leaving it in this glob makes it both a
+  // dynamic and a static import, so the bundler gives up and folds it into the main chunk.
+  '!./generated/recipe-index.json',
+  '!./generated/recipes.json',
+  '!./generated/lesson-index.json',
+], { import: 'default' });
 
 const topicCache = new Map<TopicId, Promise<Topic>>();
 export function loadTopic(id: TopicId): Promise<Topic> {

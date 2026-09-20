@@ -4,7 +4,7 @@
 //   node scripts/verify-content.ts --topic strings verify one topic (repeatable)
 //   node scripts/verify-content.ts --check         regenerate in memory, exit 1 if files on disk are stale
 //   node scripts/verify-content.ts --static        schema checks only (no Python)
-//   node scripts/verify-content.ts --lessons       lessons only (skips every topic; fast while writing one)
+//   node scripts/verify-content.ts --lessons       lessons and the reference only (skips every topic)
 import { existsSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -18,6 +18,7 @@ import { jsonEqual, readJson, stableStringify, writeIfChanged } from './verify/j
 import { formatIssue, Issues, plural, topicHeader } from './verify/report.ts';
 import { checkTopicExperiments } from './verify/experiments.ts';
 import { checkLessons } from './verify/lessons.ts';
+import { checkRecipes } from './verify/recipes.ts';
 import { checkTopicRuntime } from './verify/runtime.ts';
 import type { RuntimeContext } from './verify/runtime.ts';
 import { checkTopicStatic, isStub, questionsOf } from './verify/static.ts';
@@ -135,6 +136,11 @@ const lessons = wholeRun
   ? await checkLessons(issues, topicsById, staticOnly ? null : () => ctx.harness())
   : { generated: new Map<string, GeneratedLesson>(), index: [] as unknown[] };
 
+// ---------- the reference (checked on a whole run) ----------
+const recipes = wholeRun
+  ? await checkRecipes(issues, staticOnly ? null : () => ctx.harness())
+  : { index: [] as unknown[], generated: {} as Record<string, unknown> };
+
 // ---------- question index (always from all topics) ----------
 const index: QuestionMeta[] = [];
 for (const { info, topic } of loaded) {
@@ -183,9 +189,11 @@ if (!staticOnly) {
   for (const [id, gen] of generated) emit(join(GENERATED_DIR, `${id}.json`), gen);
   for (const [id, x] of experiments) emitOrRemove(join(GENERATED_DIR, 'experiments', `${id}.json`), x);
   for (const [id, gen] of lessons.generated) emitOrRemove(join(GENERATED_DIR, 'lessons', `${id}.json`), gen);
+  if (wholeRun) emit(join(GENERATED_DIR, 'recipes.json'), recipes.generated);
 }
 if (!lessonsOnly) emit(join(GENERATED_DIR, 'question-index.json'), index);
 if (wholeRun) emit(join(GENERATED_DIR, 'lesson-index.json'), lessons.index);
+if (wholeRun) emit(join(GENERATED_DIR, 'recipe-index.json'), recipes.index);
 
 // ---------- report ----------
 const lines: string[] = [];
@@ -199,10 +207,14 @@ const lessonWarns = issues.count('warn', 'lessons');
 if (wholeRun) {
   lines.push(`${lessonErrors > 0 ? 'FAIL' : 'ok  '} -- lessons: ${plural(lessons.index.length, 'lesson')}, ${plural(lessonErrors, 'error')}, ${plural(lessonWarns, 'warning')}`);
   for (const i of issues.forTopic('lessons')) lines.push(formatIssue(i));
+  const refErrors = issues.count('error', 'reference');
+  const refWarns = issues.count('warn', 'reference');
+  lines.push(`${refErrors > 0 ? 'FAIL' : 'ok  '} -- reference: ${recipes.index.length} ${recipes.index.length === 1 ? 'entry' : 'entries'}, ${plural(refErrors, 'error')}, ${plural(refWarns, 'warning')}`);
+  for (const i of issues.forTopic('reference')) lines.push(formatIssue(i));
 }
 console.log(lines.join('\n'));
-const errors = targets.reduce((n, t) => n + issues.count('error', t.info.id), 0) + lessonErrors;
-const warns = targets.reduce((n, t) => n + issues.count('warn', t.info.id), 0) + lessonWarns;
+const errors = targets.reduce((n, t) => n + issues.count('error', t.info.id), 0) + lessonErrors + issues.count('error', 'reference');
+const warns = targets.reduce((n, t) => n + issues.count('warn', t.info.id), 0) + lessonWarns + issues.count('warn', 'reference');
 const qTotal = targets.reduce((n, t) => n + (t.topic ? questionsOf(t.topic).length : 0), 0);
 const scopeText = lessonsOnly ? plural(lessons.index.length, 'lesson') : `${plural(targets.length, 'topic')}, ${plural(qTotal, 'question')}`;
 console.log(`\n${scopeText}: ${plural(errors, 'error')}, ${plural(warns, 'warning')}.${staticOnly ? ' (static checks only)' : ''}`);

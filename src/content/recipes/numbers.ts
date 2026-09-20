@@ -1,0 +1,91 @@
+// Reference: numbers and maths.
+import type { Recipe } from '../recipeSchema.ts';
+
+const recipes: Recipe[] = [
+  {
+    id: 'round-to-n-places',
+    task: 'Round a number to 2 decimal places',
+    group: 'numbers',
+    also: ['decimal places', 'round()', 'money'],
+    topicId: 'variables-expressions',
+    code: "price = 19.995\nprint(round(price, 2))\nprint(round(2.5))\nprint(round(3.5))\n",
+    note: '`round()` on a whole number uses "round half to even", so `round(2.5)` is `2` and `round(3.5)` is `4`. It is not the "round 0.5 up" rule taught in school.',
+  },
+  {
+    id: 'integer-division-and-remainder',
+    task: 'Get the whole part and the leftover of a division',
+    group: 'numbers',
+    also: ['floor division', 'modulo', 'remainder', '//', '%'],
+    topicId: 'variables-expressions',
+    code: "total = 17\nprint(total // 5)\nprint(total % 5)\nprint(divmod(total, 5))\n",
+    note: '`//` throws away the remainder and `%` keeps only the remainder; `divmod()` gives both at once as a tuple.',
+  },
+  {
+    id: 'text-to-number-safely',
+    task: 'Convert text to a number without crashing on bad input',
+    group: 'numbers',
+    also: ['valueerror', 'parse', 'int()', 'float()'],
+    topicId: 'exceptions',
+    code: "for text in ['42', 'oops']:\n    try:\n        print(int(text))\n    except ValueError:\n        print('not a number:', text)\n",
+    note: '`int()` and `float()` raise `ValueError` on text that is not a number, so wrap the conversion in `try`/`except` whenever the text came from a user or a file.',
+  },
+  {
+    id: 'absolute-value',
+    task: 'Get the absolute value or the difference between two numbers',
+    group: 'numbers',
+    also: ['abs()', 'distance', 'difference'],
+    code: "a, b = 3, 9\nprint(abs(a - b))\nprint(abs(-4.5))\n",
+    note: '`abs()` strips the sign, which is the usual way to measure "how far apart" two numbers are regardless of which is bigger.',
+  },
+  {
+    id: 'powers-and-square-root',
+    task: 'Raise a number to a power or take a square root',
+    group: 'numbers',
+    also: ['exponent', 'sqrt', '**', 'power'],
+    code: "print(2 ** 10)\nprint(9 ** 0.5)\nimport math\nprint(math.sqrt(9))\n",
+    note: '`**` works for any power, including fractional ones like `0.5` for a square root. `math.sqrt` is the more readable spelling when you specifically want a square root.',
+  },
+  {
+    id: 'check-even-or-odd',
+    task: 'Check whether a number is even or odd',
+    group: 'numbers',
+    also: ['even', 'odd', 'divisible'],
+    topicId: 'if-elif-else',
+    code: "for n in [4, 7]:\n    if n % 2 == 0:\n        print(n, 'even')\n    else:\n        print(n, 'odd')\n",
+    note: 'A number is even exactly when its remainder after dividing by 2 is 0; `n % 2 == 0` is the whole idea, no matter how large or negative `n` is.',
+  },
+  {
+    id: 'min-max-of-two-values',
+    task: 'Find the larger or smaller of two values',
+    group: 'numbers',
+    also: ['min', 'max', 'compare two numbers'],
+    code: "a, b = 12, 7\nprint(max(a, b))\nprint(min(a, b))\n",
+    note: '`max()` and `min()` take any number of arguments, so `max(a, b, c)` works too; you only need a comparison chain if the values are more complicated than plain numbers.',
+  },
+  {
+    id: 'why-point-one-plus-point-two',
+    task: 'Understand why 0.1 + 0.2 is not exactly 0.3',
+    group: 'numbers',
+    also: ['floating point', 'rounding error', 'float equality'],
+    code: "print(0.1 + 0.2)\nprint(round(0.1 + 0.2, 2) == 0.3)\nprint(abs((0.1 + 0.2) - 0.3) < 1e-9)\n",
+    note: 'Computers store most decimals as an approximation in binary, so `0.1 + 0.2 == 0.3` is `False`. Compare floats by rounding first or by checking the difference is tiny, never with `==`.',
+  },
+  {
+    id: 'random-number-with-a-seed',
+    task: 'Generate a random number that is the same every run',
+    group: 'numbers',
+    also: ['random', 'seed', 'reproducible'],
+    code: "import random\nrandom.seed(1)\nprint(random.randint(1, 6))\nprint(random.choice(['a', 'b', 'c']))\n",
+    note: '`random.seed(n)` makes every "random" call after it produce the same sequence, which is why tests and worked examples seed it: real randomness would make the output different every run.',
+  },
+  {
+    id: 'format-as-currency',
+    task: 'Format a number as currency',
+    group: 'numbers',
+    also: ['dollars', 'money format', 'two decimal places'],
+    code: "price = 7\ntotal = 42.5\nprint(f'${price:.2f}')\nprint(f'${total:,.2f}')\n",
+    note: 'The `.2f` inside an f-string always shows two decimal places, even for a whole number like `7`, and adding a comma before it (`,.2f`) inserts thousands separators.',
+  },
+];
+
+export default recipes;

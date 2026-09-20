@@ -2,7 +2,8 @@
 // Usage: npm run build && node scripts/smoke.ts [--base http://localhost:4173/] [--shots scratch/smoke]
 import { chromium, type ConsoleMessage, type Page } from 'playwright-core';
 import { spawn } from 'node:child_process';
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const args = process.argv.slice(2);
 const argVal = (name: string, def: string) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : def; };
@@ -55,7 +56,60 @@ try {
   await page.waitForFunction(() => /ready/i.test(document.body.innerText), null, { timeout: 90000 });
 } catch { failures.push('Python runtime never showed ready'); }
 
-for (const hash of ['#/playground', '#/report', '#/exam', '#/settings']) await visit(page, hash, hash.replace(/[#/]/g, '') || 'root');
+for (const hash of ['#/playground', '#/report', '#/exam', '#/settings', '#/review', '#/error', '#/reference']) {
+  await visit(page, hash, hash.replace(/[#/]/g, '') || 'root');
+}
+
+// A fresh profile has no practice, so the report shows its "not enough practice" card and none of the
+// sections that read the event log ever render. Importing a small made-up history through the app's own
+// import path is the only way to see them, and it exercises that path at the same time.
+const seedPath = join(SHOTS, 'seed-progress.json');
+{
+  const picked = index.slice(0, 40);
+  const day = 24 * 60 * 60 * 1000;
+  const start = Date.now() - 6 * day;
+  const events = [
+    { eid: 'seed-s', v: 1, ts: start, sessionId: 'seed', type: 'session_start' },
+    ...picked.map((q, i) => ({
+      eid: `seed-a${i}`, v: 1, ts: start + i * 60000, sessionId: 'seed', type: 'attempt',
+      qid: q.qid, topicId: q.topicId, format: q.format, diff: q.diff, mode: 'practice',
+      // Every third one wrong, so both "Worth another go" and "Holding up" have something in them.
+      checkNo: 1, correct: i % 3 !== 0, score: i % 3 !== 0 ? 1 : 0, credit: i % 3 !== 0 ? 1 : 0,
+      hintTier: 0, revealed: false, timeMs: 45000, mistakes: [],
+    })),
+  ];
+  writeFileSync(seedPath, JSON.stringify({ format: 'pyladder-export', version: 1, exportedAt: start, settings: {}, events }));
+}
+await visit(page, '#/settings');
+await page.locator('#set-import').scrollIntoViewIfNeeded().catch(() => {});
+await page.locator('input[type="file"]').setInputFiles(seedPath);
+await page.locator('input[name="import-mode"][value="replace"]').check();
+await page.getByRole('button', { name: 'Replace my progress' }).click();
+await page.waitForTimeout(1200);
+
+await visit(page, '#/report', 'report-seeded');
+if (await page.locator('.rp-stats').count() === 0) {
+  failures.push('#/report: importing a history did not produce a report');
+} else {
+  // The Skills section reads concept tags nothing else reads, so it is the one most likely to drop out
+  // silently: it must be present, and it must have named at least one skill.
+  if (await page.locator('#rp-concepts').count() === 0) failures.push('#/report: the Skills section is missing');
+  if (await page.locator('.rp-cq, .rp-cchip').count() === 0) failures.push('#/report: Skills named nothing after 40 attempts');
+  // Tags are ours, not the reader's: a lowercase kebab run in that section is a leaked id.
+  const skills = await page.locator('#rp-concepts').locator('xpath=..').innerText();
+  const leaked = skills.split('\n').filter((line) => /^[a-z0-9]+(-[a-z0-9]+)+$/.test(line.trim()));
+  if (leaked.length) failures.push(`#/report: Skills shows raw tags: ${leaked.slice(0, 3).join(', ')}`);
+}
+
+// The reference is only useful if searching it finds things, so one real search is run end to end.
+await visit(page, '#/reference');
+const refBox = page.locator('.rf-search-in');
+await refBox.fill('sort a list');
+await page.waitForTimeout(250);
+const refHits = await page.locator('.rf-card').count();
+if (refHits === 0) failures.push('#/reference: searching for "sort a list" found nothing');
+const refOut = await page.locator('.rf-card .rf-out').count();
+if (refOut === 0) failures.push('#/reference: no entry shows what it prints');
 
 // One question per (topic, format).
 const seen = new Set<string>();

@@ -1,0 +1,87 @@
+// Reference: functions.
+import type { Recipe } from '../recipeSchema.ts';
+
+const recipes: Recipe[] = [
+  {
+    id: 'define-a-function-that-returns',
+    task: 'Define a function that returns a value',
+    group: 'functions',
+    also: ['def', 'return'],
+    topicId: 'functions-basics',
+    code: "def square(n):\n    return n * n\n\nresult = square(5)\nprint(result)\n",
+    note: '`return` hands a value back to whoever called the function; the function stops running the moment it hits a `return`, so any code after it in the same branch never runs.',
+  },
+  {
+    id: 'return-more-than-one-value',
+    task: 'Return more than one value from a function',
+    group: 'functions',
+    also: ['multiple return values', 'tuple return'],
+    topicId: 'functions-basics',
+    code: "def min_and_max(nums):\n    return min(nums), max(nums)\n\nlow, high = min_and_max([4, 9, 2])\nprint(low, high)\n",
+    note: 'Writing `return a, b` actually returns one tuple `(a, b)`; unpacking it into `low, high` on the way out is what makes it look like two values.',
+  },
+  {
+    id: 'default-parameter-value',
+    task: 'Give a function a parameter with a default value',
+    group: 'functions',
+    also: ['default argument', 'optional parameter'],
+    topicId: 'functions-basics',
+    code: "def greet(name, greeting='Hello'):\n    return f'{greeting}, {name}!'\n\nprint(greet('Ada'))\nprint(greet('Bo', 'Hi'))\n",
+    note: 'A parameter with a default becomes optional, so callers can leave it out entirely; never use a mutable default like `[]` or `{}` here, since that same object is reused on every call.',
+  },
+  {
+    id: 'call-with-keyword-arguments',
+    task: 'Call a function using keyword arguments',
+    group: 'functions',
+    also: ['keyword arguments', 'named arguments'],
+    topicId: 'functions-basics',
+    code: "def describe(name, age):\n    return f'{name} is {age}'\n\nprint(describe(name='Ada', age=36))\nprint(describe(age=28, name='Bo'))\n",
+    note: 'Naming the arguments lets you pass them in any order and makes a call with several similar-looking values much easier to read at the call site.',
+  },
+  {
+    id: 'function-that-takes-a-list',
+    task: 'Write a function that takes a list and works on it',
+    group: 'functions',
+    also: ['pass a list', 'list parameter'],
+    topicId: 'functions-basics',
+    code: "def total_over(nums, cutoff):\n    return sum(n for n in nums if n > cutoff)\n\nprint(total_over([10, 25, 40], 20))\n",
+    note: 'A list argument is passed by reference, so changes the function makes to the list itself (like `.append()`) are visible to the caller too, unlike changes to a number or a string.',
+  },
+  {
+    id: 'return-early-from-a-function',
+    task: 'Return early from a function to avoid nested code',
+    group: 'functions',
+    also: ['early return', 'guard clause'],
+    topicId: 'functions-basics',
+    code: "def safe_divide(a, b):\n    if b == 0:\n        return None\n    return a / b\n\nprint(safe_divide(10, 2))\nprint(safe_divide(10, 0))\n",
+    note: 'Handling the edge case first and returning right away keeps the normal case unindented; the alternative, wrapping the normal case in an `else`, nests deeper for no benefit.',
+  },
+  {
+    id: 'write-a-docstring',
+    task: 'Write a docstring for a function',
+    group: 'functions',
+    also: ['docstring', 'documentation', '__doc__'],
+    topicId: 'functions-basics',
+    code: "def area(width, height):\n    \"\"\"Return the area of a rectangle.\"\"\"\n    return width * height\n\nprint(area(3, 4))\nprint(area.__doc__)\n",
+    note: 'A docstring is the first statement in the function body, written as a string literal rather than a `#` comment; tools and `help()` can read it back because it is stored on the function itself.',
+  },
+  {
+    id: 'why-print-is-not-return',
+    task: 'Understand why print is not the same as return',
+    group: 'functions',
+    also: ['print vs return', 'none'],
+    topicId: 'functions-basics',
+    code: "def add_print(a, b):\n    print(a + b)\n\ndef add_return(a, b):\n    return a + b\n\nresult = add_print(3, 4)\nprint(result, add_return(3, 4))\n",
+    note: '`print()` only displays a value on the screen; it does not hand anything back to the caller, so `result` ends up `None` even though `7` was shown. Use `return` whenever the value needs to be used afterwards.',
+  },
+  {
+    id: 'pass-a-function-as-an-argument',
+    task: 'Pass a function as an argument to another function',
+    group: 'functions',
+    also: ['higher order function', 'callback', 'pass a function'],
+    code: "def apply_twice(f, x):\n    return f(f(x))\n\ndef increment(n):\n    return n + 1\n\nprint(apply_twice(increment, 5))\n",
+    note: 'Writing `increment` without parentheses passes the function itself, not its result; `increment()` would call it immediately and pass whatever it returns instead.',
+  },
+];
+
+export default recipes;

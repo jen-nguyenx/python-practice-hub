@@ -1,10 +1,13 @@
-// The report page body: stat cards, Strengths / Work on next, then Topics, Mistakes, Readiness, Sessions, Patterns.
+// The report page body: stat cards, Strengths / Work on next, then Topics, Skills, Mistakes, Readiness,
+// Sessions, Patterns.
 // Every number comes from ReportData. The same components render the one-topic report (#/report/:topicId).
 import type { ComponentChildren } from 'preact';
 import type { TopicId } from '../../content/ids.ts';
+import { QUESTION_INDEX } from '../../content/loadIndex.ts';
 import type { ReportData } from '../../engine/report.ts';
 import type { AppEvent } from '../../engine/types.ts';
 import { Icon } from '../components/Icon.tsx';
+import { Concepts } from './Concepts.tsx';
 import { formatMinutes, pct, toPercent } from './format.ts';
 import { MistakeProfile } from './MistakeProfile.tsx';
 import { PatternCards } from './Patterns.tsx';
@@ -141,6 +144,10 @@ export function ReportBody({ data, events, topicId, now, unlockAll }: {
           </p>
         ) : null}
         <TopicMap rows={data.topics} ladder={data.ladder} now={now} single={!!topicId} />
+      </Section>
+
+      <Section id="rp-concepts" title="Skills" note="What the questions you answered were leaning on">
+        <Concepts events={events} index={topicId ? QUESTION_INDEX.filter((q) => q.topicId === topicId) : QUESTION_INDEX} />
       </Section>
 
       <Section id="rp-mistakes" title="Mistakes" note={mistakeTotal ? `${mistakeTotal} in this range` : undefined}>

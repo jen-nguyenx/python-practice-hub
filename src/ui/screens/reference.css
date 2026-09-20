@@ -1,0 +1,42 @@
+/* Reference: how do I …? Built for the two minutes before you remember. */
+.rf { container-type: inline-size; container-name: rf; max-width: 1000px; margin: 0 auto; padding: 32px 24px 80px; display: grid; gap: 18px; }
+.rf-top { display: grid; gap: 8px; }
+.rf-h1 { font-family: var(--display); font-size: var(--fs-40); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; margin: 0; }
+.rf-lede { margin: 0; max-width: 64ch; font-size: var(--fs-16); line-height: 1.6; color: var(--text-muted); }
+.rf-lede kbd { padding: 1px 6px; border: 1px solid var(--border-strong); border-bottom-width: 2px; border-radius: 4px; background: var(--surface); font-family: var(--mono); font-size: var(--fs-12); }
+
+.rf-search { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 0 14px; border: 1px solid var(--border-control); border-radius: var(--r-2); background: var(--surface); color: var(--text-muted); }
+.rf-search:focus-within { border-color: var(--focus); box-shadow: 0 0 0 3px var(--blue-soft); }
+.rf-search-in { flex: 1 1 auto; min-width: 0; padding: 12px 0; border: 0; background: transparent; color: var(--text); font-family: var(--sans); font-size: var(--fs-16); }
+.rf-search-in:focus { outline: none; }
+.rf-count { flex: 0 0 auto; font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); }
+
+.rf-groups { display: flex; flex-wrap: wrap; gap: 6px; }
+.rf-chip { padding: 5px 12px; border: 1px solid var(--border); border-radius: var(--r-1); background: var(--surface); color: var(--text-muted); font-size: var(--fs-13); cursor: pointer; }
+.rf-chip:hover { border-color: var(--border-strong); color: var(--text); }
+.rf-chip.is-on { background: var(--accent-soft); border-color: var(--border-strong); color: var(--text); font-weight: 600; }
+.rf-chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.rf-group { display: grid; gap: 10px; }
+.rf-group-h { font-family: var(--display); font-size: var(--fs-18); font-weight: 600; margin: 8px 0 0; }
+.rf-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; align-items: start; }
+
+.rf-card { display: grid; gap: 8px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); box-shadow: var(--shadow-card); min-width: 0; }
+.rf-task { font-family: var(--display); font-size: var(--fs-16); font-weight: 600; line-height: 1.3; margin: 0; text-wrap: balance; }
+.rf-card .code-block { margin: 0; padding: 10px 14px; border: 0; border-radius: var(--r-1); background: var(--bg-inset); font-size: var(--fs-13); line-height: 1.65; overflow-x: auto; }
+.rf-out { border-left: 2px solid var(--blue); border-radius: 0 var(--r-1) var(--r-1) 0; background: var(--surface-2); overflow-x: auto; }
+.rf-out pre { margin: 0; padding: 8px 12px; font-family: var(--mono); font-size: var(--fs-13); line-height: 1.6; }
+.rf-note { font-size: var(--fs-14); line-height: 1.6; color: var(--text-muted); }
+.rf-note > :first-child { margin-top: 0; }
+.rf-note > :last-child { margin-bottom: 0; }
+.rf-links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; }
+.rf-link { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: transparent; color: var(--blue); font-family: var(--sans); font-size: var(--fs-13); text-decoration: none; cursor: pointer; }
+.rf-link:hover { text-decoration: underline; }
+.rf-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 3px; }
+.rf-none { margin: 0; font-size: var(--fs-15); color: var(--text-muted); }
+
+@container rf (max-width: 640px) {
+  .rf { padding: 24px 16px 80px; }
+  .rf-h1 { font-size: var(--fs-28); }
+  .rf-list { grid-template-columns: minmax(0, 1fr); }
+}

@@ -1,0 +1,230 @@
+{
+  "absolute-value": {
+    "stdout": "6\n4.5\n"
+  },
+  "add-and-remove": {
+    "stdout": "['start', 'a', 'b', 'c']\nc\nstart\n['a', 'b']\n"
+  },
+  "align-columns-in-output": {
+    "stdout": "Ada     91\nBo       7\n"
+  },
+  "append-to-a-file": {
+    "stdout": "start\nmore\n\n"
+  },
+  "biggest-and-total": {
+    "stdout": "91 45 276\n69.0\n69.0\n"
+  },
+  "break-and-continue": {
+    "stdout": "1\n3\n"
+  },
+  "build-a-string-in-a-loop": {
+    "stdout": "Ada, Bo, Cy\n"
+  },
+  "call-with-keyword-arguments": {
+    "stdout": "Ada is 36\nBo is 28\n"
+  },
+  "case-insensitive-compare": {
+    "stdout": "False\nTrue\n"
+  },
+  "catch-a-specific-exception": {
+    "stdout": "5.0\nNone\n"
+  },
+  "catch-two-kinds-of-exception": {
+    "stdout": "failed: ValueError\nfailed: ZeroDivisionError\n"
+  },
+  "check-even-or-odd": {
+    "stdout": "4 even\n7 odd\n"
+  },
+  "check-if-string-is-a-number": {
+    "stdout": "42 True\n-3 True\n4.5 True\n"
+  },
+  "check-is-a-number-before-using-it": {
+    "stdout": "expected a number, got str\n"
+  },
+  "convert-a-field-to-a-number-safely": {
+    "stdout": "Ada 36\nBo skipped: bad age\nCy 28\n"
+  },
+  "copy-a-list": {
+    "stdout": "[1, 2, 3, 4] [1, 2, 3, 4] [1, 2, 3]\n"
+  },
+  "count-from-a-to-b": {
+    "stdout": "2\n3\n4\n5\n"
+  },
+  "count-matches-in-a-loop": {
+    "stdout": "3\n"
+  },
+  "count-things": {
+    "stdout": "{'tea': 3, 'cocoa': 1}\n"
+  },
+  "default-parameter-value": {
+    "stdout": "Hello, Ada!\nHi, Bo!\n"
+  },
+  "define-a-function-that-returns": {
+    "stdout": "25\n"
+  },
+  "find-a-column-by-header-name": {
+    "stdout": "36\n"
+  },
+  "find-inside-a-string": {
+    "stdout": "True\n-1\n"
+  },
+  "format-as-currency": {
+    "stdout": "$7.00\n$42.50\n"
+  },
+  "format-to-2dp-in-fstring": {
+    "stdout": "Total: 19.50\nTotal: 20\n"
+  },
+  "fstrings-basics": {
+    "stdout": "Ada scored 91\nAda scored 100 with bonus\n"
+  },
+  "function-that-takes-a-list": {
+    "stdout": "65\n"
+  },
+  "group-rows": {
+    "stdout": "{'Perth': ['Ada', 'Bo'], 'Broome': ['Cy']}\n"
+  },
+  "integer-division-and-remainder": {
+    "stdout": "3\n2\n(3, 2)\n"
+  },
+  "loop-a-dict": {
+    "stdout": "tea\ncocoa\ntea 6\ncocoa 10\n"
+  },
+  "loop-over-a-string": {
+    "stdout": "C\nA\nT\n"
+  },
+  "loop-two-lists-together": {
+    "stdout": "Ada 72\nBo 91\n"
+  },
+  "loop-with-the-index": {
+    "stdout": "0 Ada\n1 Bo\n2 Cy\n"
+  },
+  "min-max-of-two-values": {
+    "stdout": "12\n7\n"
+  },
+  "missing-key": {
+    "stdout": "None\n0\nFalse\n"
+  },
+  "nested-loop-over-pairs": {
+    "stdout": "red S\nred M\nblue S\nblue M\n"
+  },
+  "pad-or-align-text": {
+    "stdout": "Ada     |  3\nBo      |  2\n"
+  },
+  "pass-a-function-as-an-argument": {
+    "stdout": "7\n"
+  },
+  "powers-and-square-root": {
+    "stdout": "1024\n3.0\n3.0\n"
+  },
+  "print-a-dict-readably": {
+    "stdout": "tea: 6\ncocoa: 10\n"
+  },
+  "print-a-list-one-item-per-line": {
+    "stdout": "Ada\nBo\nCy\n"
+  },
+  "print-several-values": {
+    "stdout": "Ada 36\nAda - 36\n"
+  },
+  "print-without-a-newline": {
+    "stdout": "1 2 3 \n"
+  },
+  "raise-your-own-error": {
+    "stdout": "rejected: age cannot be negative: -5\n"
+  },
+  "random-number-with-a-seed": {
+    "stdout": "2\nc\n"
+  },
+  "read-a-file-line-by-line": {
+    "stdout": "first\nsecond\n"
+  },
+  "read-a-traceback": {
+    "stdout": "IndexError: list index out of range\nthe last line names the exception type and the reason\n"
+  },
+  "read-the-whole-file": {
+    "stdout": "line one\nline two\n"
+  },
+  "repeat-a-fixed-number-of-times": {
+    "stdout": "hi\nhi\nhi\n"
+  },
+  "replace-part-of-a-string": {
+    "stdout": "see fido run\nsee spot run\n"
+  },
+  "return-early-from-a-function": {
+    "stdout": "5.0\nNone\n"
+  },
+  "return-empty-result-instead-of-crashing": {
+    "stdout": "[1, 3]\n"
+  },
+  "return-more-than-one-value": {
+    "stdout": "2 9\n"
+  },
+  "reverse-a-string": {
+    "stdout": "nohtyp\n"
+  },
+  "round-to-n-places": {
+    "stdout": "20.0\n2\n4\n"
+  },
+  "running-total-in-a-loop": {
+    "stdout": "208\n"
+  },
+  "show-a-percentage": {
+    "stdout": "85.0%\n"
+  },
+  "skip-a-header-row": {
+    "stdout": "['Ada', '36']\n['Bo', '28']\n"
+  },
+  "slice-a-string": {
+    "stdout": "prog\ning\nogra\n"
+  },
+  "sort-a-dict-by-value": {
+    "stdout": "[('cocoa', 10), ('tea', 6), ('milk', 4)]\ncocoa\n"
+  },
+  "sort-a-list": {
+    "stdout": "[45, 68, 72, 91]\n[91, 72, 68, 45]\n[72, 45, 91, 68]\n"
+  },
+  "sort-by-a-key": {
+    "stdout": "['fig', 'kiwi', 'apple']\n[('Bo', 91), ('Ada', 72)]\n"
+  },
+  "sort-with-a-tie-break": {
+    "stdout": "[('Cy', 91), ('Ada', 72), ('Bo', 72)]\n"
+  },
+  "split-a-csv-line-into-fields": {
+    "stdout": "['Ada', '36', 'Perth']\n"
+  },
+  "split-and-join": {
+    "stdout": "['apple', 'banana', 'cherry']\napple-banana-cherry\n"
+  },
+  "starts-or-ends-with": {
+    "stdout": "True\nTrue\n"
+  },
+  "strip-whitespace": {
+    "stdout": "'Ada Lovelace'\n'Ada Lovelace  \\n'\n"
+  },
+  "text-to-number-safely": {
+    "stdout": "42\nnot a number: oops\n"
+  },
+  "try-except-else-finally": {
+    "stdout": "parsed: 42\ndone\n"
+  },
+  "while-loop-until-condition": {
+    "stdout": "7\n"
+  },
+  "why-bare-except-is-bad": {
+    "stdout": "caught: ZeroDivisionError division by zero\n"
+  },
+  "why-point-one-plus-point-two": {
+    "stdout": "0.30000000000000004\nTrue\nTrue\n"
+  },
+  "why-print-is-not-return": {
+    "stdout": "7\nNone 7\n"
+  },
+  "write-a-csv-row": {
+    "stdout": "name,age\nAda,36\nBo,28\n\n"
+  },
+  "write-a-docstring": {
+    "stdout": "12\nReturn the area of a rectangle.\n"
+  },
+  "write-a-file": {
+    "stdout": "hello\nworld\n\n"
+  }
+}

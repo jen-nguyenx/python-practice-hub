@@ -1,0 +1,978 @@
+[
+  {
+    "also": [
+      "rank",
+      "top",
+      "most common",
+      "highest",
+      "order a dict"
+    ],
+    "code": "sales = {'tea': 6, 'cocoa': 10, 'milk': 4}\nranked = sorted(sales.items(), key=lambda kv: kv[1], reverse=True)\nprint(ranked)\nprint(ranked[0][0])\n",
+    "group": "dictionaries",
+    "id": "sort-a-dict-by-value",
+    "note": "`items()` gives `(key, value)` pairs, and sorting those gives a list of tuples rather than a dictionary. A dictionary has no order of its own, so ranking always ends in a list.",
+    "task": "Sort a dictionary by its values",
+    "topicId": "dictionaries"
+  },
+  {
+    "also": [
+      "tally",
+      "frequency",
+      "how many",
+      "occurrences"
+    ],
+    "code": "words = ['tea', 'cocoa', 'tea', 'tea']\ncounts = {}\nfor w in words:\n    counts[w] = counts.get(w, 0) + 1\nprint(counts)\n",
+    "group": "dictionaries",
+    "id": "count-things",
+    "note": "`get(w, 0)` is the whole trick: it hands back 0 for a word not seen yet, so the first `+ 1` works without a special case.",
+    "task": "Count how many times each thing appears",
+    "topicId": "dictionaries"
+  },
+  {
+    "also": [
+      "keyerror",
+      "default",
+      "get",
+      "safe lookup"
+    ],
+    "code": "stock = {'tea': 6}\nprint(stock.get('cocoa'))\nprint(stock.get('cocoa', 0))\nprint('cocoa' in stock)\n",
+    "group": "dictionaries",
+    "id": "missing-key",
+    "note": "`stock[\"cocoa\"]` raises `KeyError`. `.get()` returns `None` instead, and `.get(key, 0)` returns something you can do arithmetic with.",
+    "task": "Look something up without crashing when it is missing",
+    "topicId": "dictionaries"
+  },
+  {
+    "also": [
+      "bucket",
+      "collect by",
+      "group by",
+      "setdefault"
+    ],
+    "code": "rows = [('Perth', 'Ada'), ('Perth', 'Bo'), ('Broome', 'Cy')]\nby_city = {}\nfor city, name in rows:\n    by_city.setdefault(city, []).append(name)\nprint(by_city)\n",
+    "group": "dictionaries",
+    "id": "group-rows",
+    "note": "`setdefault(city, [])` returns the existing list, or puts an empty one there first. One pass to build an index like this beats searching the rows over and over.",
+    "task": "Group things by a shared value",
+    "topicId": "dictionaries"
+  },
+  {
+    "also": [
+      "iterate",
+      "keys",
+      "values",
+      "items"
+    ],
+    "code": "stock = {'tea': 6, 'cocoa': 10}\nfor name in stock:\n    print(name)\nfor name, n in stock.items():\n    print(name, n)\n",
+    "group": "dictionaries",
+    "id": "loop-a-dict",
+    "note": "Looping over a dictionary gives you its **keys**, not its values and not its pairs. Use `.items()` when you want both.",
+    "task": "Loop over a dictionary",
+    "topicId": "dictionaries"
+  },
+  {
+    "also": [
+      "try except",
+      "valueerror",
+      "zerodivisionerror"
+    ],
+    "code": "def safe_divide(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return None\n\nprint(safe_divide(10, 2))\nprint(safe_divide(10, 0))\n",
+    "group": "errors",
+    "id": "catch-a-specific-exception",
+    "note": "Naming the exact exception, `ZeroDivisionError` here, means an unrelated bug still crashes loudly instead of being silently swallowed.",
+    "task": "Catch a specific exception instead of crashing",
+    "topicId": "exceptions"
+  },
+  {
+    "also": [
+      "multiple except",
+      "tuple of exceptions"
+    ],
+    "code": "for text in ['abc', '0']:\n    try:\n        print(10 / int(text))\n    except (ValueError, ZeroDivisionError) as e:\n        print('failed:', type(e).__name__)\n",
+    "group": "errors",
+    "id": "catch-two-kinds-of-exception",
+    "note": "A tuple of exception types in one `except` catches any of them; separate `except` blocks are only needed when each kind should be handled differently.",
+    "task": "Catch two different kinds of exception in one try block",
+    "topicId": "exceptions"
+  },
+  {
+    "also": [
+      "else",
+      "finally",
+      "cleanup"
+    ],
+    "code": "try:\n    n = int('42')\nexcept ValueError:\n    print('bad input')\nelse:\n    print('parsed:', n)\nfinally:\n    print('done')\n",
+    "group": "errors",
+    "id": "try-except-else-finally",
+    "note": "`else` runs only when the `try` block raised nothing, and `finally` runs no matter what happened, even if an exception was raised and not caught; it is the right place for cleanup like closing a resource.",
+    "task": "Use try, except, else and finally together",
+    "topicId": "exceptions"
+  },
+  {
+    "also": [
+      "raise",
+      "custom message",
+      "valueerror"
+    ],
+    "code": "def set_age(age):\n    if age < 0:\n        raise ValueError(f'age cannot be negative: {age}')\n    return age\n\ntry:\n    set_age(-5)\nexcept ValueError as e:\n    print('rejected:', e)\n",
+    "group": "errors",
+    "id": "raise-your-own-error",
+    "note": "Raising a built-in type like `ValueError` with a clear message is usually enough; a custom exception class is only worth it when callers need to catch your error specifically, separately from other `ValueError`s.",
+    "task": "Raise your own error with a message",
+    "topicId": "exceptions"
+  },
+  {
+    "also": [
+      "type check",
+      "isinstance",
+      "validate input"
+    ],
+    "code": "def double(x):\n    if not isinstance(x, (int, float)):\n        raise TypeError(f'expected a number, got {type(x).__name__}')\n    return x * 2\n\ntry:\n    double('5')\nexcept TypeError as e:\n    print(e)\n",
+    "group": "errors",
+    "id": "check-is-a-number-before-using-it",
+    "note": "`isinstance(x, (int, float))` checks against a tuple of types at once; checking `type(x) == int` instead would wrongly reject a `bool`, which counts as an `int` in Python, or a valid `float`.",
+    "task": "Check something is a number before doing arithmetic with it",
+    "topicId": "exceptions"
+  },
+  {
+    "also": [
+      "bare except",
+      "except:",
+      "catch everything"
+    ],
+    "code": "try:\n    result = 10 / 0\nexcept Exception as e:\n    print('caught:', type(e).__name__, e)\n",
+    "group": "errors",
+    "id": "why-bare-except-is-bad",
+    "note": "A bare `except:` catches everything, including typos like a misspelled variable name and even `Ctrl+C`, which hides real bugs instead of surfacing them; naming `Exception`, or better, the specific type, keeps the safety net without the blindfold.",
+    "task": "Understand why a bare except is a bad idea",
+    "topicId": "exceptions"
+  },
+  {
+    "also": [
+      "graceful failure",
+      "empty list on error"
+    ],
+    "code": "def parse_all(values):\n    result = []\n    for v in values:\n        try:\n            result.append(int(v))\n        except ValueError:\n            pass\n    return result\nprint(parse_all(['1', 'x', '3']))\n",
+    "group": "errors",
+    "id": "return-empty-result-instead-of-crashing",
+    "note": "Skipping a bad item with `except ValueError: pass` lets the rest of the batch succeed; this only makes sense when losing the odd bad item is acceptable, not when every item matters.",
+    "task": "Return an empty result instead of letting a function crash",
+    "topicId": "exceptions"
+  },
+  {
+    "also": [
+      "traceback",
+      "stack trace",
+      "error message"
+    ],
+    "code": "try:\n    nums = [1, 2, 3]\n    print(nums[5])\nexcept IndexError as e:\n    print('IndexError:', e)\n    print('the last line names the exception type and the reason')\n",
+    "group": "errors",
+    "id": "read-a-traceback",
+    "note": "A traceback reads bottom to top: the last line names the exception type and the message, and the lines above it show the chain of calls that led there, starting from where the program began.",
+    "task": "Read what a traceback is telling you",
+    "topicId": "exceptions"
+  },
+  {
+    "also": [
+      "open",
+      "readlines",
+      "for line in file"
+    ],
+    "code": "with open('notes.txt', 'w') as f:\n    f.write('first\\nsecond\\n')\nwith open('notes.txt') as f:\n    for line in f:\n        print(line.strip())\n",
+    "group": "files",
+    "id": "read-a-file-line-by-line",
+    "note": "Each line still has its trailing `\\n` on it when you read it, so `.strip()` is almost always needed before you use or compare the text.",
+    "task": "Read a file line by line",
+    "topicId": "files-csv"
+  },
+  {
+    "also": [
+      "read()",
+      "whole file"
+    ],
+    "code": "with open('notes.txt', 'w') as f:\n    f.write('line one\\nline two')\nwith open('notes.txt') as f:\n    text = f.read()\nprint(text)\n",
+    "group": "files",
+    "id": "read-the-whole-file",
+    "note": "`f.read()` gives back the entire file as one string, newlines and all; it is fine for a small file, but reading line by line is kinder to memory for a large one.",
+    "task": "Read the whole contents of a file at once",
+    "topicId": "files-csv"
+  },
+  {
+    "also": [
+      "open mode 'w'",
+      "save to a file"
+    ],
+    "code": "with open('out.txt', 'w') as f:\n    f.write('hello\\n')\n    f.write('world\\n')\nwith open('out.txt') as f:\n    print(f.read())\n",
+    "group": "files",
+    "id": "write-a-file",
+    "note": "Opening a file with mode `\"w\"` erases whatever was already there before writing the new content, even if the write happens to fail partway through.",
+    "task": "Write text to a file",
+    "topicId": "files-csv"
+  },
+  {
+    "also": [
+      "open mode 'a'",
+      "add to a file"
+    ],
+    "code": "with open('log.txt', 'w') as f:\n    f.write('start\\n')\nwith open('log.txt', 'a') as f:\n    f.write('more\\n')\nwith open('log.txt') as f:\n    print(f.read())\n",
+    "group": "files",
+    "id": "append-to-a-file",
+    "note": "Mode `\"a\"` opens the file for writing at the end instead of from the start, so earlier content stays and new lines are added after it.",
+    "task": "Add more lines to the end of a file without erasing it",
+    "topicId": "files-csv"
+  },
+  {
+    "also": [
+      "csv",
+      "comma separated",
+      "fields"
+    ],
+    "code": "line = 'Ada,36,Perth'\nfields = line.strip().split(',')\nprint(fields)\n",
+    "group": "files",
+    "id": "split-a-csv-line-into-fields",
+    "note": "A plain `.split(\",\")` is enough for CSV without quoted commas, which is what CITS1401 files use; strip the newline first or it ends up stuck to the last field.",
+    "task": "Split a CSV line into its fields",
+    "topicId": "files-csv"
+  },
+  {
+    "also": [
+      "header",
+      "first line",
+      "skip line"
+    ],
+    "code": "with open('data.csv', 'w') as f:\n    f.write('name,age\\nAda,36\\nBo,28\\n')\nwith open('data.csv') as f:\n    lines = f.readlines()\nfor line in lines[1:]:\n    print(line.strip().split(','))\n",
+    "group": "files",
+    "id": "skip-a-header-row",
+    "note": "`lines[1:]` is a slice that skips the first element, the header; forgetting it means the header text gets processed as if it were a real data row.",
+    "task": "Skip the header row when reading a CSV file",
+    "topicId": "files-csv"
+  },
+  {
+    "also": [
+      "header lookup",
+      "column index",
+      "by name"
+    ],
+    "code": "with open('data.csv', 'w') as f:\n    f.write('name,age,city\\nAda,36,Perth\\n')\nwith open('data.csv') as f:\n    header = f.readline().strip().split(',')\n    age_i = header.index('age')\n    for line in f:\n        print(line.strip().split(',')[age_i])\n",
+    "group": "files",
+    "id": "find-a-column-by-header-name",
+    "note": "Looking up `header.index(\"age\")` once and reusing that position survives the columns being reordered later, unlike hard-coding `row[1]` and hoping age is always second.",
+    "task": "Find a column by its header name instead of its position",
+    "topicId": "files-csv"
+  },
+  {
+    "also": [
+      "invalid row",
+      "bad data",
+      "skip invalid"
+    ],
+    "code": "rows = ['Ada,36', 'Bo,n/a', 'Cy,28']\nfor row in rows:\n    name, age_text = row.split(',')\n    try:\n        print(name, int(age_text))\n    except ValueError:\n        print(name, 'skipped: bad age')\n",
+    "group": "files",
+    "id": "convert-a-field-to-a-number-safely",
+    "note": "Real data always has at least one row that does not convert cleanly; wrapping the conversion in `try`/`except` lets the good rows still get processed instead of the whole program crashing.",
+    "task": "Convert a CSV field to a number without crashing on a bad row",
+    "topicId": "files-csv"
+  },
+  {
+    "also": [
+      "write csv",
+      "comma join"
+    ],
+    "code": "rows = [('Ada', 36), ('Bo', 28)]\nwith open('out.csv', 'w') as f:\n    f.write('name,age\\n')\n    for name, age in rows:\n        f.write(f'{name},{age}\\n')\nwith open('out.csv') as f:\n    print(f.read())\n",
+    "group": "files",
+    "id": "write-a-csv-row",
+    "note": "Building the row as `\",\".join(str(v) for v in values)` is safer than an f-string when a value might itself already contain a comma, though neither handles quoting properly.",
+    "task": "Write a row of values to a CSV file",
+    "topicId": "files-csv"
+  },
+  {
+    "also": [
+      "def",
+      "return"
+    ],
+    "code": "def square(n):\n    return n * n\n\nresult = square(5)\nprint(result)\n",
+    "group": "functions",
+    "id": "define-a-function-that-returns",
+    "note": "`return` hands a value back to whoever called the function; the function stops running the moment it hits a `return`, so any code after it in the same branch never runs.",
+    "task": "Define a function that returns a value",
+    "topicId": "functions-basics"
+  },
+  {
+    "also": [
+      "multiple return values",
+      "tuple return"
+    ],
+    "code": "def min_and_max(nums):\n    return min(nums), max(nums)\n\nlow, high = min_and_max([4, 9, 2])\nprint(low, high)\n",
+    "group": "functions",
+    "id": "return-more-than-one-value",
+    "note": "Writing `return a, b` actually returns one tuple `(a, b)`; unpacking it into `low, high` on the way out is what makes it look like two values.",
+    "task": "Return more than one value from a function",
+    "topicId": "functions-basics"
+  },
+  {
+    "also": [
+      "default argument",
+      "optional parameter"
+    ],
+    "code": "def greet(name, greeting='Hello'):\n    return f'{greeting}, {name}!'\n\nprint(greet('Ada'))\nprint(greet('Bo', 'Hi'))\n",
+    "group": "functions",
+    "id": "default-parameter-value",
+    "note": "A parameter with a default becomes optional, so callers can leave it out entirely; never use a mutable default like `[]` or `{}` here, since that same object is reused on every call.",
+    "task": "Give a function a parameter with a default value",
+    "topicId": "functions-basics"
+  },
+  {
+    "also": [
+      "keyword arguments",
+      "named arguments"
+    ],
+    "code": "def describe(name, age):\n    return f'{name} is {age}'\n\nprint(describe(name='Ada', age=36))\nprint(describe(age=28, name='Bo'))\n",
+    "group": "functions",
+    "id": "call-with-keyword-arguments",
+    "note": "Naming the arguments lets you pass them in any order and makes a call with several similar-looking values much easier to read at the call site.",
+    "task": "Call a function using keyword arguments",
+    "topicId": "functions-basics"
+  },
+  {
+    "also": [
+      "pass a list",
+      "list parameter"
+    ],
+    "code": "def total_over(nums, cutoff):\n    return sum(n for n in nums if n > cutoff)\n\nprint(total_over([10, 25, 40], 20))\n",
+    "group": "functions",
+    "id": "function-that-takes-a-list",
+    "note": "A list argument is passed by reference, so changes the function makes to the list itself (like `.append()`) are visible to the caller too, unlike changes to a number or a string.",
+    "task": "Write a function that takes a list and works on it",
+    "topicId": "functions-basics"
+  },
+  {
+    "also": [
+      "early return",
+      "guard clause"
+    ],
+    "code": "def safe_divide(a, b):\n    if b == 0:\n        return None\n    return a / b\n\nprint(safe_divide(10, 2))\nprint(safe_divide(10, 0))\n",
+    "group": "functions",
+    "id": "return-early-from-a-function",
+    "note": "Handling the edge case first and returning right away keeps the normal case unindented; the alternative, wrapping the normal case in an `else`, nests deeper for no benefit.",
+    "task": "Return early from a function to avoid nested code",
+    "topicId": "functions-basics"
+  },
+  {
+    "also": [
+      "docstring",
+      "documentation",
+      "__doc__"
+    ],
+    "code": "def area(width, height):\n    \"\"\"Return the area of a rectangle.\"\"\"\n    return width * height\n\nprint(area(3, 4))\nprint(area.__doc__)\n",
+    "group": "functions",
+    "id": "write-a-docstring",
+    "note": "A docstring is the first statement in the function body, written as a string literal rather than a `#` comment; tools and `help()` can read it back because it is stored on the function itself.",
+    "task": "Write a docstring for a function",
+    "topicId": "functions-basics"
+  },
+  {
+    "also": [
+      "print vs return",
+      "none"
+    ],
+    "code": "def add_print(a, b):\n    print(a + b)\n\ndef add_return(a, b):\n    return a + b\n\nresult = add_print(3, 4)\nprint(result, add_return(3, 4))\n",
+    "group": "functions",
+    "id": "why-print-is-not-return",
+    "note": "`print()` only displays a value on the screen; it does not hand anything back to the caller, so `result` ends up `None` even though `7` was shown. Use `return` whenever the value needs to be used afterwards.",
+    "task": "Understand why print is not the same as return",
+    "topicId": "functions-basics"
+  },
+  {
+    "also": [
+      "higher order function",
+      "callback",
+      "pass a function"
+    ],
+    "code": "def apply_twice(f, x):\n    return f(f(x))\n\ndef increment(n):\n    return n + 1\n\nprint(apply_twice(increment, 5))\n",
+    "group": "functions",
+    "id": "pass-a-function-as-an-argument",
+    "note": "Writing `increment` without parentheses passes the function itself, not its result; `increment()` would call it immediately and pass whatever it returns instead.",
+    "task": "Pass a function as an argument to another function"
+  },
+  {
+    "also": [
+      "order",
+      "ascending",
+      "descending",
+      "smallest",
+      "largest"
+    ],
+    "code": "marks = [72, 45, 91, 68]\nprint(sorted(marks))\nprint(sorted(marks, reverse=True))\nprint(marks)\n",
+    "group": "lists",
+    "id": "sort-a-list",
+    "note": "`sorted()` hands back a new list and leaves the original alone. `marks.sort()` reorders the list itself and returns `None`, which is why `x = marks.sort()` is almost always a mistake.",
+    "task": "Sort a list",
+    "topicId": "lists-tuples"
+  },
+  {
+    "also": [
+      "key",
+      "by length",
+      "by second item",
+      "custom order"
+    ],
+    "code": "words = ['fig', 'apple', 'kiwi']\nprint(sorted(words, key=len))\npairs = [('Ada', 72), ('Bo', 91)]\nprint(sorted(pairs, key=lambda p: p[1], reverse=True))\n",
+    "group": "lists",
+    "id": "sort-by-a-key",
+    "note": "`key` takes a function that turns each item into the thing you want to sort on. It is called once per item, not once per comparison.",
+    "task": "Sort by something other than the value itself",
+    "topicId": "lists-tuples"
+  },
+  {
+    "also": [
+      "tie break",
+      "two keys",
+      "secondary sort"
+    ],
+    "code": "rows = [('Bo', 72), ('Ada', 72), ('Cy', 91)]\nprint(sorted(rows, key=lambda r: (-r[1], r[0])))\n",
+    "group": "lists",
+    "id": "sort-with-a-tie-break",
+    "note": "Return a tuple from `key` and Python compares the first element, then the second only where the first ties. Negating a number sorts it downwards while everything else stays ascending.",
+    "task": "Sort by one thing, then another when they tie",
+    "topicId": "lists-tuples"
+  },
+  {
+    "also": [
+      "append",
+      "pop",
+      "insert",
+      "delete",
+      "push"
+    ],
+    "code": "q = ['a', 'b']\nq.append('c')\nq.insert(0, 'start')\nprint(q)\nprint(q.pop())\nprint(q.pop(0))\nprint(q)\n",
+    "group": "lists",
+    "id": "add-and-remove",
+    "note": "`append` adds at the end, `pop()` takes from the end, and `pop(0)` takes from the front. All of them change the list in place.",
+    "task": "Add to or remove from a list",
+    "topicId": "lists-tuples"
+  },
+  {
+    "also": [
+      "duplicate",
+      "clone",
+      "aliasing",
+      "same list"
+    ],
+    "code": "a = [1, 2, 3]\nsame = a\ncopy = list(a)\nsame.append(4)\nprint(a, same, copy)\n",
+    "group": "lists",
+    "id": "copy-a-list",
+    "note": "`same = a` gives the same list a second name, so changing either changes both. `list(a)` or `a[:]` makes a real copy, one level deep.",
+    "task": "Copy a list so changing one does not change the other",
+    "topicId": "lists-tuples"
+  },
+  {
+    "also": [
+      "max",
+      "min",
+      "sum",
+      "mean",
+      "average"
+    ],
+    "code": "marks = [72, 45, 91, 68]\nprint(max(marks), min(marks), sum(marks))\nprint(sum(marks) / len(marks))\nprint(round(sum(marks) / len(marks), 2))\n",
+    "group": "lists",
+    "id": "biggest-and-total",
+    "note": "All of these raise `ValueError` on an empty list, and the average also divides by zero, so guard with `if marks:` when the data might be empty.",
+    "task": "Find the largest, smallest, total or average",
+    "topicId": "lists-tuples"
+  },
+  {
+    "also": [
+      "range",
+      "for loop",
+      "counting"
+    ],
+    "code": "for n in range(2, 6):\n    print(n)\n",
+    "group": "loops",
+    "id": "count-from-a-to-b",
+    "note": "`range(2, 6)` gives `2, 3, 4, 5`: the start is included and the stop is not, which is the usual place students are off by one.",
+    "task": "Count from one number up to another",
+    "topicId": "for-loops-range"
+  },
+  {
+    "also": [
+      "enumerate",
+      "index",
+      "position"
+    ],
+    "code": "names = ['Ada', 'Bo', 'Cy']\nfor i, name in enumerate(names):\n    print(i, name)\n",
+    "group": "loops",
+    "id": "loop-with-the-index",
+    "note": "`enumerate(names)` is the idiom; `for i in range(len(names))` and then indexing `names[i]` does the same job but is easier to get wrong.",
+    "task": "Loop over a list and also get the position of each item",
+    "topicId": "for-loops-range"
+  },
+  {
+    "also": [
+      "zip",
+      "pair up",
+      "parallel lists"
+    ],
+    "code": "names = ['Ada', 'Bo']\nmarks = [72, 91]\nfor name, mark in zip(names, marks):\n    print(name, mark)\n",
+    "group": "loops",
+    "id": "loop-two-lists-together",
+    "note": "`zip()` stops at the shorter list without raising, so if the two lists are supposed to be the same length, check `len(names) == len(marks)` yourself first.",
+    "task": "Loop over two lists at the same time",
+    "topicId": "for-loops-range"
+  },
+  {
+    "also": [
+      "repeat",
+      "n times"
+    ],
+    "code": "for _ in range(3):\n    print('hi')\n",
+    "group": "loops",
+    "id": "repeat-a-fixed-number-of-times",
+    "note": "`_` is a normal variable name, used by convention to say \"the loop variable itself does not matter here\", only the number of repeats does.",
+    "task": "Repeat something a fixed number of times",
+    "topicId": "for-loops-range"
+  },
+  {
+    "also": [
+      "accumulator",
+      "sum in a loop",
+      "total"
+    ],
+    "code": "marks = [72, 45, 91]\ntotal = 0\nfor m in marks:\n    total += m\nprint(total)\n",
+    "group": "loops",
+    "id": "running-total-in-a-loop",
+    "note": "The accumulator (`total = 0`) has to be created before the loop starts; setting it inside the loop resets it back to 0 on every pass.",
+    "task": "Keep a running total while looping",
+    "topicId": "for-loops-range"
+  },
+  {
+    "also": [
+      "break",
+      "continue",
+      "skip",
+      "exit loop"
+    ],
+    "code": "for n in range(10):\n    if n == 5:\n        break\n    if n % 2 == 0:\n        continue\n    print(n)\n",
+    "group": "loops",
+    "id": "break-and-continue",
+    "note": "`break` leaves the loop right away; `continue` skips only the rest of that one pass and moves on to the next item. Neither works outside a loop.",
+    "task": "Stop a loop early or skip one item in it",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "also": [
+      "while",
+      "until",
+      "condition loop"
+    ],
+    "code": "n = 20\nsteps = 0\nwhile n != 1:\n    n = n // 2 if n % 2 == 0 else n * 3 + 1\n    steps += 1\nprint(steps)\n",
+    "group": "loops",
+    "id": "while-loop-until-condition",
+    "note": "A `while` loop needs something inside it that moves the condition towards being false; leave that out and the loop never ends.",
+    "task": "Loop until something happens rather than a fixed number of times",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "also": [
+      "characters",
+      "iterate string"
+    ],
+    "code": "word = 'cat'\nfor ch in word:\n    print(ch.upper())\n",
+    "group": "loops",
+    "id": "loop-over-a-string",
+    "note": "A string is a sequence of characters, so `for ch in word` works exactly like looping over a list — no need to index into it with `word[i]`.",
+    "task": "Loop over the characters of a string",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "nested loop",
+      "combinations",
+      "grid"
+    ],
+    "code": "colours = ['red', 'blue']\nsizes = ['S', 'M']\nfor c in colours:\n    for s in sizes:\n        print(c, s)\n",
+    "group": "loops",
+    "id": "nested-loop-over-pairs",
+    "note": "The inner loop runs completely for every single pass of the outer loop, so two lists of length 2 give 4 pairs, and lengths `m` and `n` give `m * n`.",
+    "task": "Loop over every pair from two lists",
+    "topicId": "while-nested-loops"
+  },
+  {
+    "also": [
+      "count if",
+      "tally",
+      "how many match"
+    ],
+    "code": "marks = [72, 45, 91, 38, 68]\npasses = 0\nfor m in marks:\n    if m >= 50:\n        passes += 1\nprint(passes)\n",
+    "group": "loops",
+    "id": "count-matches-in-a-loop",
+    "note": "This is the same accumulator pattern as a running total, except each pass adds either 0 or 1 depending on the condition instead of adding the value itself.",
+    "task": "Count how many items in a loop match a condition",
+    "topicId": "for-loops-range"
+  },
+  {
+    "also": [
+      "decimal places",
+      "round()",
+      "money"
+    ],
+    "code": "price = 19.995\nprint(round(price, 2))\nprint(round(2.5))\nprint(round(3.5))\n",
+    "group": "numbers",
+    "id": "round-to-n-places",
+    "note": "`round()` on a whole number uses \"round half to even\", so `round(2.5)` is `2` and `round(3.5)` is `4`. It is not the \"round 0.5 up\" rule taught in school.",
+    "task": "Round a number to 2 decimal places",
+    "topicId": "variables-expressions"
+  },
+  {
+    "also": [
+      "floor division",
+      "modulo",
+      "remainder",
+      "//",
+      "%"
+    ],
+    "code": "total = 17\nprint(total // 5)\nprint(total % 5)\nprint(divmod(total, 5))\n",
+    "group": "numbers",
+    "id": "integer-division-and-remainder",
+    "note": "`//` throws away the remainder and `%` keeps only the remainder; `divmod()` gives both at once as a tuple.",
+    "task": "Get the whole part and the leftover of a division",
+    "topicId": "variables-expressions"
+  },
+  {
+    "also": [
+      "valueerror",
+      "parse",
+      "int()",
+      "float()"
+    ],
+    "code": "for text in ['42', 'oops']:\n    try:\n        print(int(text))\n    except ValueError:\n        print('not a number:', text)\n",
+    "group": "numbers",
+    "id": "text-to-number-safely",
+    "note": "`int()` and `float()` raise `ValueError` on text that is not a number, so wrap the conversion in `try`/`except` whenever the text came from a user or a file.",
+    "task": "Convert text to a number without crashing on bad input",
+    "topicId": "exceptions"
+  },
+  {
+    "also": [
+      "abs()",
+      "distance",
+      "difference"
+    ],
+    "code": "a, b = 3, 9\nprint(abs(a - b))\nprint(abs(-4.5))\n",
+    "group": "numbers",
+    "id": "absolute-value",
+    "note": "`abs()` strips the sign, which is the usual way to measure \"how far apart\" two numbers are regardless of which is bigger.",
+    "task": "Get the absolute value or the difference between two numbers"
+  },
+  {
+    "also": [
+      "exponent",
+      "sqrt",
+      "**",
+      "power"
+    ],
+    "code": "print(2 ** 10)\nprint(9 ** 0.5)\nimport math\nprint(math.sqrt(9))\n",
+    "group": "numbers",
+    "id": "powers-and-square-root",
+    "note": "`**` works for any power, including fractional ones like `0.5` for a square root. `math.sqrt` is the more readable spelling when you specifically want a square root.",
+    "task": "Raise a number to a power or take a square root"
+  },
+  {
+    "also": [
+      "even",
+      "odd",
+      "divisible"
+    ],
+    "code": "for n in [4, 7]:\n    if n % 2 == 0:\n        print(n, 'even')\n    else:\n        print(n, 'odd')\n",
+    "group": "numbers",
+    "id": "check-even-or-odd",
+    "note": "A number is even exactly when its remainder after dividing by 2 is 0; `n % 2 == 0` is the whole idea, no matter how large or negative `n` is.",
+    "task": "Check whether a number is even or odd",
+    "topicId": "if-elif-else"
+  },
+  {
+    "also": [
+      "min",
+      "max",
+      "compare two numbers"
+    ],
+    "code": "a, b = 12, 7\nprint(max(a, b))\nprint(min(a, b))\n",
+    "group": "numbers",
+    "id": "min-max-of-two-values",
+    "note": "`max()` and `min()` take any number of arguments, so `max(a, b, c)` works too; you only need a comparison chain if the values are more complicated than plain numbers.",
+    "task": "Find the larger or smaller of two values"
+  },
+  {
+    "also": [
+      "floating point",
+      "rounding error",
+      "float equality"
+    ],
+    "code": "print(0.1 + 0.2)\nprint(round(0.1 + 0.2, 2) == 0.3)\nprint(abs((0.1 + 0.2) - 0.3) < 1e-9)\n",
+    "group": "numbers",
+    "id": "why-point-one-plus-point-two",
+    "note": "Computers store most decimals as an approximation in binary, so `0.1 + 0.2 == 0.3` is `False`. Compare floats by rounding first or by checking the difference is tiny, never with `==`.",
+    "task": "Understand why 0.1 + 0.2 is not exactly 0.3"
+  },
+  {
+    "also": [
+      "random",
+      "seed",
+      "reproducible"
+    ],
+    "code": "import random\nrandom.seed(1)\nprint(random.randint(1, 6))\nprint(random.choice(['a', 'b', 'c']))\n",
+    "group": "numbers",
+    "id": "random-number-with-a-seed",
+    "note": "`random.seed(n)` makes every \"random\" call after it produce the same sequence, which is why tests and worked examples seed it: real randomness would make the output different every run.",
+    "task": "Generate a random number that is the same every run"
+  },
+  {
+    "also": [
+      "dollars",
+      "money format",
+      "two decimal places"
+    ],
+    "code": "price = 7\ntotal = 42.5\nprint(f'${price:.2f}')\nprint(f'${total:,.2f}')\n",
+    "group": "numbers",
+    "id": "format-as-currency",
+    "note": "The `.2f` inside an f-string always shows two decimal places, even for a whole number like `7`, and adding a comma before it (`,.2f`) inserts thousands separators.",
+    "task": "Format a number as currency"
+  },
+  {
+    "also": [
+      "print multiple values",
+      "sep"
+    ],
+    "code": "name = 'Ada'\nage = 36\nprint(name, age)\nprint(name, age, sep=' - ')\n",
+    "group": "showing",
+    "id": "print-several-values",
+    "note": "`print()` joins its arguments with a single space by default and adds a newline at the end; both are changeable with the `sep` and `end` keyword arguments.",
+    "task": "Print several values on one line"
+  },
+  {
+    "also": [
+      "f-string",
+      "string formatting",
+      "interpolation"
+    ],
+    "code": "name = 'Ada'\nscore = 91\nprint(f'{name} scored {score}')\nprint(f'{name} scored {score + 9} with bonus')\n",
+    "group": "showing",
+    "id": "fstrings-basics",
+    "note": "Anything inside the `{}` of an f-string is a real Python expression, evaluated on the spot, so `{score + 9}` works exactly like it would outside the string.",
+    "task": "Build a string with values inside it using an f-string",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      ".2f",
+      "decimal places in fstring"
+    ],
+    "code": "total = 19.5\nprint(f'Total: {total:.2f}')\nprint(f'Total: {total:.0f}')\n",
+    "group": "showing",
+    "id": "format-to-2dp-in-fstring",
+    "note": "The part after the `:` is a format spec; `.2f` always shows exactly two decimal places, padding with a zero when needed, unlike `round()` which can still print fewer digits.",
+    "task": "Format a number to 2 decimal places inside an f-string"
+  },
+  {
+    "also": [
+      "end=",
+      "same line",
+      "no newline"
+    ],
+    "code": "for n in [1, 2, 3]:\n    print(n, end=' ')\nprint()\n",
+    "group": "showing",
+    "id": "print-without-a-newline",
+    "note": "The `end` keyword argument replaces the newline `print()` normally adds; a final plain `print()` is a common way to add the newline back at the end of the loop.",
+    "task": "Print without moving to a new line afterwards"
+  },
+  {
+    "also": [
+      "print each item",
+      "list one per line"
+    ],
+    "code": "names = ['Ada', 'Bo', 'Cy']\nfor name in names:\n    print(name)\n",
+    "group": "showing",
+    "id": "print-a-list-one-item-per-line",
+    "note": "Printing the list itself, `print(names)`, shows it as one line with brackets and commas; looping over it prints each item plainly, which usually reads better as a report.",
+    "task": "Print a list with one item per line"
+  },
+  {
+    "also": [
+      "table",
+      "columns",
+      "align output"
+    ],
+    "code": "rows = [('Ada', 91), ('Bo', 7)]\nfor name, mark in rows:\n    print(f'{name:<6}{mark:>4}')\n",
+    "group": "showing",
+    "id": "align-columns-in-output",
+    "note": "`{value:<6}` pads with spaces up to width 6 on the left side of the text, and `{value:>4}` pads on the left so the text ends up right-aligned within width 4; together they line columns up regardless of how long each value is.",
+    "task": "Align columns when printing a table of results"
+  },
+  {
+    "also": [
+      "percent",
+      "%",
+      "percentage format"
+    ],
+    "code": "correct, total = 17, 20\nrate = correct / total\nprint(f'{rate:.1%}')\n",
+    "group": "showing",
+    "id": "show-a-percentage",
+    "note": "The `%` format spec multiplies the number by 100 and adds the percent sign for you, so pass the plain fraction like `0.85`, not `85`, or the result comes out one hundred times too large.",
+    "task": "Show a value as a percentage"
+  },
+  {
+    "also": [
+      "print dict",
+      "readable dictionary"
+    ],
+    "code": "stock = {'tea': 6, 'cocoa': 10}\nfor name, count in stock.items():\n    print(f'{name}: {count}')\n",
+    "group": "showing",
+    "id": "print-a-dict-readably",
+    "note": "Printing the dictionary directly, `print(stock)`, shows Python's own `{...}` notation; looping over `.items()` lets you choose wording and layout that make sense to a reader.",
+    "task": "Print a dictionary in a readable way",
+    "topicId": "dictionaries"
+  },
+  {
+    "also": [
+      "slicing",
+      "substring",
+      "first n characters",
+      "last n characters"
+    ],
+    "code": "word = 'programming'\nprint(word[:4])\nprint(word[-3:])\nprint(word[2:6])\n",
+    "group": "text",
+    "id": "slice-a-string",
+    "note": "A slice `s[start:stop]` never raises even when the numbers run past the ends of the string; it just stops at whatever is there.",
+    "task": "Take a piece out of a string",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "backwards",
+      "flip"
+    ],
+    "code": "word = 'python'\nprint(word[::-1])\n",
+    "group": "text",
+    "id": "reverse-a-string",
+    "note": "The slice `[::-1]` means \"step backwards through the whole thing\", which is the shortest way to reverse any sequence, not only a string.",
+    "task": "Reverse a string",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "upper",
+      "lower",
+      "case sensitive"
+    ],
+    "code": "a = 'Perth'\nb = 'PERTH'\nprint(a == b)\nprint(a.lower() == b.lower())\n",
+    "group": "text",
+    "id": "case-insensitive-compare",
+    "note": "`==` on strings is always case sensitive, so `\"Perth\" != \"PERTH\"`. Lower-casing both sides before comparing is the standard fix.",
+    "task": "Compare two strings ignoring upper and lower case",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "strip",
+      "trim",
+      "whitespace"
+    ],
+    "code": "raw = '  Ada Lovelace  \\n'\nprint(repr(raw.strip()))\nprint(repr(raw.lstrip()))\n",
+    "group": "text",
+    "id": "strip-whitespace",
+    "note": "`strip()` removes spaces, tabs and newlines from both ends only, never from the middle. `lstrip()`/`rstrip()` do just one end.",
+    "task": "Remove leading and trailing whitespace from a string",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "split",
+      "join",
+      "parts",
+      "tokens"
+    ],
+    "code": "line = 'apple, banana, cherry'\nparts = line.split(', ')\nprint(parts)\nprint('-'.join(parts))\n",
+    "group": "text",
+    "id": "split-and-join",
+    "note": "`split()` with no argument at all splits on any run of whitespace, which is handy for text with uneven spacing; give it a string like `\", \"` to split on something exact.",
+    "task": "Split a string into parts and join them back together",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "replace",
+      "substitute"
+    ],
+    "code": "msg = 'see spot run'\nprint(msg.replace('spot', 'fido'))\nprint(msg)\n",
+    "group": "text",
+    "id": "replace-part-of-a-string",
+    "note": "Strings are immutable, so `.replace()` returns a new string and leaves `msg` untouched; you have to assign the result if you want to keep it.",
+    "task": "Replace part of a string with something else",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "startswith",
+      "endswith",
+      "prefix",
+      "suffix"
+    ],
+    "code": "name = 'report_final.csv'\nprint(name.startswith('report'))\nprint(name.endswith('.csv'))\n",
+    "group": "text",
+    "id": "starts-or-ends-with",
+    "note": "`startswith`/`endswith` beat slicing to compare the start or end of a string: they read clearly and never raise, even on a short string.",
+    "task": "Check what a string starts or ends with",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "contains",
+      "substring search",
+      "in"
+    ],
+    "code": "sentence = 'the quick brown fox'\nprint('quick' in sentence)\nprint(sentence.find('slow'))\n",
+    "group": "text",
+    "id": "find-inside-a-string",
+    "note": "`in` gives a plain `True`/`False`. `.find()` gives the index where the match starts, or `-1` when it is not there — never `-1` and `True` mixed up in the same check.",
+    "task": "Find whether one string is inside another",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "isdigit",
+      "isnumeric",
+      "validate"
+    ],
+    "code": "for text in ['42', '-3', '4.5']:\n    print(text, text.lstrip('-').replace('.', '', 1).isdigit())\n",
+    "group": "text",
+    "id": "check-if-string-is-a-number",
+    "note": "`str.isdigit()` alone is `False` for `\"-3\"` and `\"4.5\"` because it only recognises plain digits; a real check usually strips a leading sign and one decimal point first, or just tries `float(text)` in a `try`.",
+    "task": "Check if a string looks like a number",
+    "topicId": "strings"
+  },
+  {
+    "also": [
+      "concatenate",
+      "accumulate string"
+    ],
+    "code": "names = ['Ada', 'Bo', 'Cy']\nline = ''\nfor name in names:\n    line += name + ', '\nprint(line.rstrip(', '))\n",
+    "group": "text",
+    "id": "build-a-string-in-a-loop",
+    "note": "Adding to a string in a loop with `+=` works fine for a handful of pieces; for a lot of pieces, building a list and calling `\", \".join(list)` once is faster and usually clearer.",
+    "task": "Build up a string piece by piece in a loop",
+    "topicId": "for-loops-range"
+  },
+  {
+    "also": [
+      "padding",
+      "align",
+      "columns",
+      "ljust",
+      "rjust"
+    ],
+    "code": "for name in ['Ada', 'Bo']:\n    print(f'{name:<8}|{len(name):>3}')\n",
+    "group": "text",
+    "id": "pad-or-align-text",
+    "note": "Inside an f-string, `{value:<8}` left-aligns to a width of 8 and `{value:>3}` right-aligns to 3; the same characters work outside f-strings as `s.ljust(8)` and `s.rjust(3)`.",
+    "task": "Pad or align text to a fixed width"
+  }
+]

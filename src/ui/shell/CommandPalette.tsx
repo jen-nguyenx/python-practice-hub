@@ -43,6 +43,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
   const actions: Item[] = [
     { id: 'a-home', group: 'Pages and actions', label: 'Topics', detail: 'Home', icon: 'ladder', search: 'home ladder', href: href.landing(), run: go(href.landing()) },
     { id: 'a-lessons', group: 'Pages and actions', label: 'Lessons', detail: 'Explanations from the beginning to beyond the unit', icon: 'book', search: 'learn teach read tutorial guide', href: href.lessons(), run: go(href.lessons()) },
+    { id: 'a-ref', group: 'Pages and actions', label: 'Reference', detail: 'How do I…? Snippets that really run', icon: 'search', search: 'how do i syntax cheat sheet snippet lookup recipe', href: href.reference(), run: go(href.reference()) },
     { id: 'a-play', group: 'Pages and actions', label: 'Playground', detail: 'Write and run any Python', icon: 'code', search: 'editor run python', href: href.playground(), run: go(href.playground()) },
     { id: 'a-exam', group: 'Pages and actions', label: 'Exams', detail: 'Mock final paper or a timed practice test', icon: 'clock', search: 'exam final mock practice test timed', href: href.exam(), run: go(href.exam()) },
     { id: 'a-review', group: 'Pages and actions', label: 'Review', detail: 'Practise the mistakes you have made', icon: 'refresh', search: 'mistakes weak spots revise repeat', href: href.review(), run: go(href.review()) },

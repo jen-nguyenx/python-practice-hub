@@ -165,6 +165,22 @@
 .rp-bg.bad .rp-bg-label svg { color: var(--bad); }
 .rp-bg.good .rp-bg-label svg { color: var(--ok); }
 
+/* ---------- skills (concepts) ---------- */
+/* Left card is a ranked list and right card a loose set of chips, so neither is forced to the other's height. */
+.rp-cgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 20px; }
+.rp-cq-list { display: grid; }
+.rp-cq {
+  display: grid; grid-template-columns: minmax(0, 1fr) 84px auto auto; align-items: center; gap: 14px; padding: 11px 0;
+}
+.rp-cq + .rp-cq { border-top: 1px solid var(--border); }
+.rp-cq-name { font-size: var(--fs-15); line-height: 1.4; min-width: 0; }
+.rp-cq-bar { width: 100%; }
+.rp-cq-num { font-family: var(--mono); font-size: var(--fs-13); color: var(--text-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rp-cq-go { display: inline-flex; align-items: center; gap: 4px; min-width: 62px; justify-content: flex-end; font-size: var(--fs-13); color: var(--blue); text-decoration: none; white-space: nowrap; }
+.rp-cq-go:hover { text-decoration: underline; }
+.rp-cchips { display: flex; flex-wrap: wrap; gap: 8px; padding: 2px 0 8px; }
+.rp-cchip { padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-2); font-size: var(--fs-13); }
+
 /* ---------- readiness ---------- */
 .rp-figures { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
 .rp-figure { display: flex; flex-direction: column; gap: 2px; padding: 22px 24px; min-width: 0; }
@@ -252,11 +268,14 @@
   .rp-stat-sub { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.4; }
 }
 @media (max-width: 860px) {
-  .rp-duo { grid-template-columns: minmax(0, 1fr); }
+  .rp-duo, .rp-cgrid { grid-template-columns: minmax(0, 1fr); }
   .rp-col-hints, .rp-col-last, .rp-col-new { display: none; }
 }
 @media (max-width: 700px) {
   .page.rp { gap: 32px; }
+  /* Four columns do not fit a phone; the bar is the one that repeats the number beside it. */
+  .rp-cq { grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; }
+  .rp-cq-bar { display: none; }
   .rp-title h1 { font-size: var(--fs-28); }
   .rp-head { align-items: flex-start; }
   .rp-head-actions { width: 100%; }

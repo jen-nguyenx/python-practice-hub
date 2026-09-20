@@ -10,7 +10,7 @@ export function TopicLesson({ topicId }: { topicId: string }) {
   const meta = LESSON_FOR_TOPIC[topicId];
 
   useEffect(() => {
-    if (meta) navigate(href.lesson(meta.id));
+    if (meta) navigate(href.lesson(meta.id), true);
   }, [meta?.id]);
 
   if (meta) {

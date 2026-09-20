@@ -10,7 +10,7 @@ import { TOPIC_BY_ID } from '../../src/content/topics.ts';
 import { MISTAKE_IDS } from '../../src/content/ids.ts';
 import { blockKey, TRACKS } from '../../src/content/lessonSchema.ts';
 import type { GeneratedBlock, GeneratedLesson, Lesson, LessonBlock } from '../../src/content/lessonSchema.ts';
-import type { Experiment, Topic } from '../../src/content/schema.ts';
+import type { Experiment, Test, Topic } from '../../src/content/schema.ts';
 import { checkOneExperiment, stable } from './experiments.ts';
 import { PROJECT_ROOT } from './pyodide.ts';
 import type { Harness } from './pyodide.ts';
@@ -243,6 +243,27 @@ function checkBlock(sc: Scope, b: LessonBlock, where: string, topic: Topic | nul
       // Fully checked and run below, where a harness is available; here only the shape.
       if (!b.experiment || typeof b.experiment !== 'object') sc.error(`${where}: interactive needs an experiment`);
       return;
+    case 'task': {
+      if (!nonEmpty(b.prompt)) sc.error(`${where}: the task has no prompt`);
+      if (b.run !== 'function' && b.run !== 'program') sc.error(`${where}: run must be 'function' or 'program'`);
+      if (b.run === 'function' && !nonEmpty(b.fnName)) sc.error(`${where}: a function task needs fnName`);
+      if (!nonEmpty(b.starter)) sc.error(`${where}: the task has no starter code`);
+      if (!nonEmpty(b.solution)) sc.error(`${where}: the task has no solution to check against`);
+      const tests = arr(b.tests) as Loose[];
+      if (tests.length < 2) sc.error(`${where}: a task needs at least 2 tests (has ${tests.length})`);
+      if (!tests.some((t) => t?.hidden === false)) {
+        sc.error(`${where}: at least one test must be visible, or the reader cannot see what is being asked of them`);
+      }
+      const ids = new Set<string>();
+      for (const [i, t] of tests.entries()) {
+        if (!nonEmpty(t?.id)) sc.error(`${where}: test ${i + 1} has no id`);
+        else if (ids.has(String(t.id))) sc.error(`${where}: duplicate test id ${quote(String(t.id))}`);
+        else ids.add(String(t.id));
+        if (!nonEmpty(t?.label)) sc.error(`${where}: test ${i + 1} has no label`);
+        if (typeof t?.hidden !== 'boolean') sc.error(`${where}: test ${i + 1} must say whether it is hidden`);
+      }
+      return;
+    }
     case 'practice':
       if (!topic) sc.error(`${where}: a practice block needs the lesson to set topicId`);
       return;
@@ -303,15 +324,32 @@ function checkStatic(sc: Scope, x: Lesson, seen: Set<string>, topics: Map<string
         continue;
       }
       checkBlock(sc, b, `section ${sid} block ${bi + 1}`, topic, experiments);
-      if (b.kind === 'interactive' && nonEmpty(b.experiment?.id)) {
-        if (interactiveIds.has(b.experiment.id)) {
-          sc.error(`section ${sid} block ${bi + 1}: another interactive block already uses the id ${quote(b.experiment.id)}; ids must be unique within a lesson`);
+      // Every card on a page emits DOM ids built from its experiment id, which its slider labels and
+      // <output for> point at. Two cards sharing one would make both resolve to the first.
+      const cardId = b.kind === 'interactive' ? b.experiment?.id : b.kind === 'experiment' ? b.id : null;
+      if (nonEmpty(cardId)) {
+        if (interactiveIds.has(cardId)) {
+          sc.error(`section ${sid} block ${bi + 1}: ${quote(cardId)} is already used by another card in this lesson; each card needs its own id`);
         }
-        interactiveIds.add(b.experiment.id);
+        interactiveIds.add(cardId);
       }
     }
   }
   return topic;
+}
+
+/**
+ * Python randomises string hashes per process, so a set of strings iterates differently on every run.
+ * Recording one would make the generated file change with no content change, and `verify:check` would
+ * then fail in CI at random. Sets of small integers are stable, so only the risky shape is refused.
+ */
+// A set of strings has no "key: value" pair, which is what separates {'a', 'b'} from {'a': 1}. Dicts
+// keep insertion order in Python 3.7+ and are perfectly stable, so they must not be caught here.
+const SET_REPR = /\{[^{}:]*['"][^{}:]*\}/;
+function checkStable(sc: Scope, where: string, text: string): void {
+  if (SET_REPR.test(text)) {
+    sc.error(`${where}: this prints a set of strings, which iterates in a different order on every run; show it through sorted(...) so the recorded output is stable`);
+  }
 }
 
 const toErr = (e: { type: string; message: string; line?: number } | undefined) =>
@@ -324,7 +362,20 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
     section.blocks.forEach((b, bi) => {
       const key = blockKey(si, bi);
       const where = `section ${section.id} block ${bi + 1}`;
-      if (b.kind === 'walkthrough') {
+      if (b.kind === 'task') {
+        const tests = (b.tests ?? []) as Test[];
+        const opts = { kind: b.run, fnName: b.fnName };
+        // The answer must work, or the task cannot be completed.
+        const solved = h.runTests(b.solution, tests, opts.kind, opts.fnName, [], 1000, false);
+        const failed = solved.outcomes.filter((o) => !o.pass).map((o) => o.id);
+        if (solved.compileError) sc.error(`${where}: the solution does not compile (${solved.compileError.type}: ${solved.compileError.message})`);
+        else if (solved.missingFunction) sc.error(`${where}: the solution does not define ${solved.missingFunction}()`);
+        else if (failed.length) sc.error(`${where}: the solution fails its own tests (${failed.join(', ')})`);
+        // And the starter must NOT, or the reader is asked to do something already done.
+        const start = h.runTests(b.starter, tests, opts.kind, opts.fnName, [], 1000, false);
+        const startPassed = !start.compileError && !start.missingFunction && start.outcomes.every((o) => o.pass);
+        if (startPassed) sc.error(`${where}: the starter already passes every test, so there is nothing for the reader to do`);
+      } else if (b.kind === 'walkthrough') {
         const r = h.walk(b.code, b.watch ?? []);
         const gen: GeneratedBlock = { stdout: stable(r.stdout), steps: r.steps };
         const err = toErr(r.error);
@@ -335,6 +386,7 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
           sc.error(`${where}: this program raises ${err.type}, so the walkthrough stops partway; a walkthrough must run cleanly`);
         }
         if (r.overflow) sc.error(`${where}: the program runs for too many steps to step through; use fewer loop passes`);
+        checkStable(sc, where, gen.stdout ?? '');
         if (r.steps.length < 2) sc.error(`${where}: only ${r.steps.length} step(s) recorded; there is nothing to walk through`);
         out[key] = gen;
       } else if (b.kind === 'predict' || b.kind === 'annotate') {
@@ -343,6 +395,7 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
         const err = toErr(r.error);
         if (err) gen.error = err;
         if (err?.type === 'TimeoutError') sc.error(`${where}: the code never finishes`);
+        checkStable(sc, where, gen.stdout ?? '');
         if (b.kind === 'predict') {
           if (err && err.type !== 'TimeoutError') {
             sc.error(`${where}: this code raises ${err.type}, so there is no output to predict; use a quiz asking which error it raises`);
@@ -378,6 +431,7 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
         const err = toErr(r.error);
         if (err) gen.error = err;
         if (err?.type === 'TimeoutError') sc.error(`${where}: the code never finishes`);
+        checkStable(sc, where, gen.stdout ?? '');
         if (!r.stdout && !err && !b.hideOutput) sc.warn(`${where}: prints nothing and raises nothing, so there is no output to show`);
         out[key] = gen;
       } else if (b.kind === 'shell') {

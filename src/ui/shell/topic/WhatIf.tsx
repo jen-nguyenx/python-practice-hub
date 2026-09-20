@@ -20,7 +20,7 @@ import { intsOrNull, labelsOrNull, numbersOrNull, pieceLines, pieces, pointsOrNu
 function KnobbedCode({ code, spans, label }: { code: string; spans: ReturnType<typeof fillTemplate>['spans']; label: string }) {
   const lines = useMemo(() => pieceLines(pieces(code, spans)), [code, spans]);
   return (
-    <pre class="code-block numbered wi-code" aria-label={label}>
+    <pre class="code-block numbered wi-code" role="group" aria-label={label}>
       <code>
         {lines.map((line, i) => (
           <span key={i} class="ln">
@@ -52,7 +52,7 @@ function Output({ recorded, lines, changed, errorAt }: { recorded: boolean; line
     );
   }
   return (
-    <pre class="wi-out" aria-label="What this prints">
+    <pre class="wi-out" role="group" aria-label="What this prints">
       <code>
         {lines.map((line, i) => (
           <span key={i} class={`wi-line${changed[i] ? ' is-changed' : ''}${i === errorAt ? ' is-error' : ''}`}>{line || ' '}{'\n'}</span>

@@ -101,9 +101,11 @@ function nextUnread(read: Set<string>): LessonMeta | null {
 }
 
 function UpNext({ read }: { read: Set<string> }) {
-  const total = TRACKS.reduce((n, t) => n + lessonsInTrack(t).length, 0);
+  const all = TRACKS.flatMap((t) => lessonsInTrack(t));
+  const total = all.length;
   const next = nextUnread(read);
-  const done = read.size;
+  // Count only lessons that still exist: a renamed or removed one would push this past the total.
+  const done = all.filter((l) => read.has(l.id)).length;
   if (!next) {
     return (
       <section class="lx-next is-done">

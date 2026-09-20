@@ -50,7 +50,11 @@ export function loadLesson(id: string): Promise<Lesson | null> {
   let p = cache.get(id);
   if (!p) {
     const key = Object.keys(modules).find((k) => k.endsWith(`/${id}.ts`));
-    p = key ? modules[key]().then((m) => m.default ?? null) : Promise.resolve(null);
+    // A rejected import (a dropped connection, a stale chunk after a deploy) must not be cached, or the
+    // lesson reads as "does not exist" until the whole page is reloaded.
+    p = key
+      ? modules[key]().then((m) => m.default ?? null, (err) => { cache.delete(id); throw err; })
+      : Promise.resolve(null);
     cache.set(id, p);
   }
   return p;

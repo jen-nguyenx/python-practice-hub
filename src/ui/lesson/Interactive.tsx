@@ -3,8 +3,12 @@
 //
 // Nothing here decides what Python does. A prediction is checked against the output the verifier
 // recorded, and an ordering is checked against the order the verifier proved runs.
-import { useMemo, useRef, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { LessonError } from '../../content/lessonSchema.ts';
+import type { Test } from '../../content/schema.ts';
+import type { TestsResult } from '../../runtime/protocol.ts';
+import { py } from '../../app/services.ts';
+import { runTestsLogged } from '../workbench/runner.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd, Markdown } from '../components/Markdown.tsx';
@@ -45,22 +49,26 @@ export function Quiz({ prompt, code, options }: {
       <ul class="ib-options">
         {options.map((o, i) => {
           const chosen = picked.has(i);
-          const state = !chosen ? '' : o.correct ? ' is-right' : ' is-wrong';
+          // Once the right answer is found every reason is revealed, including the ones not chosen:
+          // knowing why the others were wrong is most of the value, and a reader who got it first time
+          // would otherwise never see any of it.
+          const revealed = chosen || found;
+          const state = !revealed ? '' : o.correct ? ' is-right' : ' is-wrong';
           return (
             <li key={o.text}>
               <button
                 type="button"
                 class={`ib-option${state}`}
                 aria-pressed={chosen}
-                disabled={found && !chosen}
+                disabled={found}
                 onClick={() => setPicked((s) => new Set(s).add(i))}
               >
                 <span class="ib-mark" aria-hidden="true">
-                  {chosen ? <Icon name={o.correct ? 'check' : 'x'} size={12} /> : null}
+                  {revealed ? <Icon name={o.correct ? 'check' : 'x'} size={12} /> : null}
                 </span>
                 <span class="ib-option-t"><InlineMd text={o.text} /></span>
               </button>
-              {chosen ? <div class="ib-why"><Markdown text={o.why} class="lb-md" /></div> : null}
+              {revealed ? <div class="ib-why" role={chosen ? 'status' : undefined}><Markdown text={o.why} class="lb-md" /></div> : null}
             </li>
           );
         })}
@@ -71,10 +79,13 @@ export function Quiz({ prompt, code, options }: {
 
 // ---------- predict ----------
 
-export function Predict({ code, ask, choices, stdout, error, slug, back }: {
+export function Predict({ code, ask, choices, stdout, error, slug, back, recorded }: {
   code: string; ask?: string; choices?: readonly string[]; stdout?: string; error?: LessonError;
-  slug?: string; back?: { href: string; label: string };
+  slug?: string; back?: { href: string; label: string }; recorded?: boolean;
 }) {
+  // With no recording there is nothing to check an answer against, and guessing would be worse than
+  // saying so: the app must never assert output Python did not give it.
+  if (recorded === false) return null;
   const [typed, setTyped] = useState('');
   const [picked, setPicked] = useState<string | null>(null);
   const [shown, setShown] = useState(false);
@@ -120,7 +131,7 @@ export function Predict({ code, ask, choices, stdout, error, slug, back }: {
       )}
       {shown ? (
         <div class={`ib-verdict${right ? ' is-right' : ''}`}>
-          <p class="ib-verdict-t">
+          <p class="ib-verdict-t" role="status">
             {verdict === 'right' ? 'That is exactly it.'
               : verdict === 'close' ? 'Right — and worth noticing that Python writes it with a space after each comma:'
               : 'Not quite. Here is what Python actually printed:'}
@@ -139,7 +150,8 @@ export function Predict({ code, ask, choices, stdout, error, slug, back }: {
             </code></pre>
           )}
         </div>
-      ) : (
+      ) : null}
+      {shown ? null : (
         <button
           type="button"
           class="btn primary ib-go"
@@ -159,14 +171,14 @@ export function Predict({ code, ask, choices, stdout, error, slug, back }: {
  * Dragging works by pointer and by keyboard: grab with Space or Enter, move with the arrow keys, drop
  * with Space again. A drag-only list would be unusable by keyboard and awkward on a phone.
  */
-export function Order({ lines, ask, stdout }: {
-  lines: readonly { text: string; indent: number }[]; ask?: string; stdout?: string;
+export function Order({ lines, ask, stdout, recorded }: {
+  lines: readonly { text: string; indent: number }[]; ask?: string; stdout?: string; recorded?: boolean;
 }) {
   const key = lines.map((l) => l.text).join('|');
   const [items, setItems] = useState<number[]>(() => shuffled(lines.map((_, i) => i), key));
   const [held, setHeld] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
-  const dragFrom = useRef<number | null>(null);
+  const listRef = useRef<HTMLOListElement>(null);
 
   const right = items.every((v, i) => v === i);
   const move = (from: number, to: number) => {
@@ -178,46 +190,69 @@ export function Order({ lines, ask, stdout }: {
     setChecked(false);
   };
 
+  /** Focus an item by position, scoped to THIS list: a global query would find another block's. */
+  const focusAt = (pos: number) => {
+    queueMicrotask(() => {
+      listRef.current?.querySelectorAll<HTMLElement>('.ib-order-item')[pos]?.focus();
+    });
+  };
+
+  // Tap to pick up, tap again to drop. Touch devices never fire HTML5 drag events, so without this the
+  // whole block is inert on a phone.
+  const tap = (pos: number) => {
+    if (held === null) { setHeld(pos); return; }
+    if (held === pos) { setHeld(null); return; }
+    move(held, pos);
+    setHeld(null);
+    focusAt(pos);
+  };
+
   const onKey = (e: KeyboardEvent, pos: number) => {
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
-      setHeld(held === pos ? null : pos);
+      tap(pos);
       return;
     }
     if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
-    e.preventDefault();
     const to = pos + (e.key === 'ArrowDown' ? 1 : -1);
+    if (to < 0 || to >= items.length) return;
+    // Only swallow the key when it is going to do something; otherwise the page should still scroll.
+    e.preventDefault();
     if (held === pos) {
       move(pos, to);
-      setHeld(Math.min(Math.max(to, 0), items.length - 1));
-      queueMicrotask(() => {
-        const el = document.querySelectorAll<HTMLElement>('.ib-order-item');
-        el[Math.min(Math.max(to, 0), items.length - 1)]?.focus();
-      });
+      setHeld(to);
     }
+    focusAt(to);
   };
 
   return (
     <div class="ib ib-order">
       <p class="ib-tag">Put it in order</p>
-      <Markdown text={ask ?? 'These lines are shuffled. Drag them into the order that makes the program work.'} class="lb-md" />
-      <ol class="ib-order-list">
+      <Markdown text={ask ?? 'These lines are shuffled. Drag them into the order that makes the program work, or tap one and then tap where it belongs.'} class="lb-md" />
+      <ol class="ib-order-list" ref={listRef}>
         {items.map((idx, pos) => (
           <li key={idx}>
             <div
               class={`ib-order-item${held === pos ? ' is-held' : ''}${checked ? (idx === pos ? ' is-right' : ' is-wrong') : ''}`}
               tabIndex={0}
               role="button"
-              aria-grabbed={held === pos}
-              aria-label={`Line ${pos + 1} of ${items.length}: ${lines[idx].text}. Press space to pick up, then the arrow keys to move it.`}
+              aria-pressed={held === pos}
+              aria-label={`Line ${pos + 1} of ${items.length}: ${lines[idx].text}. ${held === pos ? 'Picked up. Use the arrow keys to move it, then space to drop it.' : 'Press space to pick it up.'}`}
               draggable
-              onDragStart={() => { dragFrom.current = pos; }}
+              onDragStart={(e) => {
+                // Firefox refuses to start a drag without a payload, so the drop never fires there.
+                e.dataTransfer?.setData('text/plain', String(pos));
+                setHeld(pos);
+              }}
+              onDragEnd={() => setHeld(null)}
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault();
-                if (dragFrom.current !== null) move(dragFrom.current, pos);
-                dragFrom.current = null;
+                const from = Number(e.dataTransfer?.getData('text/plain'));
+                if (Number.isInteger(from)) move(from, pos);
+                setHeld(null);
               }}
+              onClick={() => tap(pos)}
               onKeyDown={(e) => onKey(e, pos)}
             >
               <span class="ib-grip" aria-hidden="true"><Icon name="grip" size={14} /></span>
@@ -228,11 +263,13 @@ export function Order({ lines, ask, stdout }: {
       </ol>
       <div class="ib-row">
         <button type="button" class="btn primary" onClick={() => setChecked(true)}>Check the order</button>
-        {checked ? (
-          <p class={`ib-verdict-t${right ? ' is-right' : ''}`}>
-            {right ? `That runs, and prints ${JSON.stringify(normalise(stdout ?? ''))}.` : 'Not yet. The lines marked in red are not where they belong.'}
-          </p>
-        ) : null}
+        <p class={`ib-verdict-t${checked && right ? ' is-right' : ''}`} role="status">
+          {!checked ? '' : right
+            ? (recorded === false
+              ? 'That is the right order.'
+              : `That runs, and prints ${JSON.stringify(normalise(stdout ?? ''))}.`)
+            : 'Not yet. The lines marked in red are not where they belong.'}
+        </p>
       </div>
     </div>
   );
@@ -259,7 +296,7 @@ export function Match({ pairs, ask }: { pairs: readonly { left: string; right: s
     <div class="ib ib-match">
       <p class="ib-tag">Match them up</p>
       <Markdown text={ask ?? 'Drag each answer onto the thing it belongs to.'} class="lb-md" />
-      <div class="ib-bank" aria-label="Answers to place">
+      <div class="ib-bank" role="group" aria-label="Answers to place">
         {left.map((r) => (
           <button
             key={r}
@@ -267,7 +304,8 @@ export function Match({ pairs, ask }: { pairs: readonly { left: string; right: s
             class={`ib-chip${held === r ? ' is-held' : ''}`}
             aria-pressed={held === r}
             draggable
-            onDragStart={() => setHeld(r)}
+            onDragStart={(e) => { e.dataTransfer?.setData('text/plain', r); setHeld(r); }}
+            onDragEnd={() => setHeld(null)}
             onClick={() => setHeld(held === r ? null : r)}
           >
             <InlineMd text={r} />
@@ -301,11 +339,9 @@ export function Match({ pairs, ask }: { pairs: readonly { left: string; right: s
       </ul>
       <div class="ib-row">
         <button type="button" class="btn primary" disabled={!done} onClick={() => setChecked(true)}>Check</button>
-        {checked ? (
-          <p class={`ib-verdict-t${placed.every((v, i) => v === pairs[i].right) ? ' is-right' : ''}`}>
-            {placed.every((v, i) => v === pairs[i].right) ? 'All correct.' : 'The ones in red are not matched yet.'}
-          </p>
-        ) : null}
+        <p class={`ib-verdict-t${checked && placed.every((v, i) => v === pairs[i].right) ? ' is-right' : ''}`} role="status">
+          {!checked ? '' : placed.every((v, i) => v === pairs[i].right) ? 'All correct.' : 'The ones in red are not matched yet.'}
+        </p>
       </div>
     </div>
   );
@@ -347,7 +383,14 @@ export function Annotate({ code, notes, ask }: { code: string; notes: Record<str
 
 // ---------- walkthrough ----------
 
-export interface WalkStep { line: number; vars: Record<string, string>; out: number }
+export type LessonTest = Test;
+
+export interface WalkStep {
+  line: number;
+  vars: Record<string, string>;
+  items?: Record<string, string[]>;
+  out: number;
+}
 
 /**
  * Step through a recorded run: the current line, the variables as they stand, and the output so far.
@@ -360,11 +403,35 @@ export function Walkthrough({ code, steps, stdout, ask }: {
   code: string; steps: readonly WalkStep[]; stdout: string; ask?: string;
 }) {
   const [at, setAt] = useState(0);
+  const [playing, setPlaying] = useState(false);
   const lines = code.replace(/\n$/, '').split('\n');
-  const step = steps[Math.min(at, steps.length - 1)];
+  const last = steps.length - 1;
+  const step = steps[Math.min(at, last)];
   const prev = at > 0 ? steps[at - 1] : undefined;
   const printed = stdout.slice(0, step?.out ?? 0);
   const names = Object.keys(step?.vars ?? {});
+
+  // Playing walks to the end and stops there; a loop that restarts would lose a reader's place.
+  useEffect(() => {
+    if (!playing) return;
+    if (at >= last) { setPlaying(false); return; }
+    const t = setTimeout(() => setAt((n) => Math.min(n + 1, last)), 900);
+    return () => clearTimeout(t);
+  }, [playing, at, last]);
+
+  /** Which pass of a loop this is: the number of times this same line has already been reached. */
+  const pass = useMemo(() => {
+    if (!step) return 0;
+    let n = 0;
+    for (let i = 0; i <= Math.min(at, last); i++) if (steps[i].line === step.line) n++;
+    return n;
+  }, [steps, at, last, step?.line]);
+  const timesOnThisLine = useMemo(
+    () => steps.filter((s) => s.line === step?.line).length,
+    [steps, step?.line],
+  );
+
+  const move = (n: number) => { setPlaying(false); setAt(Math.min(Math.max(n, 0), last)); };
 
   return (
     <div class="ib ib-walk">
@@ -381,60 +448,229 @@ export function Walkthrough({ code, steps, stdout, ask }: {
         </pre>
 
         <div class="ib-walk-side">
-          <p class="ib-walk-h">Variables</p>
+          <p class="ib-walk-h">
+            Variables
+            {timesOnThisLine > 1 ? <span class="ib-walk-pass num">pass {pass} of {timesOnThisLine}</span> : null}
+          </p>
           {names.length === 0 ? (
             <p class="ib-walk-none">Nothing has been given a name yet.</p>
           ) : (
-            <table class="ib-walk-vars">
-              <tbody>
-                {names.map((n) => {
-                  const changed = prev && prev.vars[n] !== step.vars[n];
-                  return (
-                    <tr key={n} class={changed ? 'is-changed' : ''}>
-                      <th scope="row">{n}</th>
-                      <td>{step.vars[n]}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <ul class="ib-walk-vars">
+              {names.map((n) => {
+                const now = step.vars[n];
+                const before = prev?.vars[n];
+                const changed = prev !== undefined && before !== now;
+                const born = prev !== undefined && before === undefined;
+                const boxes = step.items?.[n];
+                // A value appearing inside a collection is almost always the loop variable, so light
+                // the box it came from: that is the thing a reader is trying to see.
+                const onNow = names
+                  .filter((o) => o !== n && !step.items?.[o])
+                  .map((o) => step.vars[o]);
+                return (
+                  <li key={n} class={changed ? 'is-changed' : ''}>
+                    <span class="ib-walk-name">{n}</span>
+                    {boxes ? (
+                      <span class="ib-walk-boxes">
+                        {boxes.map((v, i) => (
+                          <span key={i} class={`ib-walk-box${onNow.includes(v) ? ' is-on' : ''}`}>{v}</span>
+                        ))}
+                        {boxes.length === 0 ? <span class="ib-walk-empty">empty</span> : null}
+                      </span>
+                    ) : (
+                      <span class="ib-walk-val">
+                        {changed && !born && before !== undefined ? (
+                          <><span class="ib-walk-was">{before}</span><span class="ib-walk-arrow" aria-hidden="true">→</span></>
+                        ) : null}
+                        <span class="ib-walk-now">{now}</span>
+                        {born ? <span class="ib-walk-new">new</span> : null}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           )}
           <p class="ib-walk-h">Printed so far</p>
           {printed === '' ? (
             <p class="ib-walk-none">Nothing yet.</p>
           ) : (
-            <pre class="ib-walk-out"><code>{printed.replace(/\n$/, '')}</code></pre>
+            <pre class="ib-walk-out" role="group" aria-label="Output so far"><code>{printed.replace(/\n$/, '')}</code></pre>
           )}
         </div>
       </div>
 
+      <p class="sr-only" role="status">
+        Step {at + 1} of {steps.length}, line {step?.line ?? 1}.
+        {names.length ? ` ${names.map((n) => `${n} is ${step.vars[n]}`).join(', ')}.` : ''}
+      </p>
+
       <div class="ib-walk-bar">
-        <button type="button" class="btn ghost" disabled={at === 0} onClick={() => setAt(0)} aria-label="Back to the start">
+        <button type="button" class="btn ghost" disabled={at === 0} onClick={() => move(0)} aria-label="Back to the start">
           <Icon name="refresh" size={14} />
         </button>
-        <button type="button" class="btn ghost" disabled={at === 0} onClick={() => setAt(at - 1)}>
+        <button type="button" class="btn ghost" disabled={at === 0} onClick={() => move(at - 1)}>
           <Icon name="chevronLeft" size={14} /> Back
+        </button>
+        <button
+          type="button"
+          class="btn ghost ib-walk-play"
+          onClick={() => (at >= last ? (setAt(0), setPlaying(true)) : setPlaying(!playing))}
+          aria-label={playing ? 'Pause' : at >= last ? 'Play from the start' : 'Play'}
+        >
+          <Icon name={playing ? 'dot' : 'play'} size={14} />
+          {playing ? 'Pause' : at >= last ? 'Replay' : 'Play'}
         </button>
         <input
           type="range"
           class="wi-slider ib-walk-scrub"
           min={0}
-          max={Math.max(0, steps.length - 1)}
+          max={Math.max(0, last)}
           step={1}
           value={at}
           aria-label={`Step ${at + 1} of ${steps.length}, on line ${step?.line ?? 1}`}
-          onInput={(e) => setAt(Number((e.currentTarget as HTMLInputElement).value))}
+          onInput={(e) => move(Number((e.currentTarget as HTMLInputElement).value))}
         />
         <span class="ib-walk-count num">{at + 1} / {steps.length}</span>
-        <button
-          type="button"
-          class="btn primary"
-          disabled={at >= steps.length - 1}
-          onClick={() => setAt(at + 1)}
-        >
+        <button type="button" class="btn primary" disabled={at >= last} onClick={() => move(at + 1)}>
           Next line <Icon name="chevronRight" size={14} />
         </button>
       </div>
+    </div>
+  );
+}
+
+// ---------- task ----------
+
+/**
+ * Write code and have it checked, inside the lesson. Foundations and advanced lessons sit outside the
+ * 13-topic ladder, so this is the only practice they can offer; nothing here is recorded against topic
+ * progress, because it is practice rather than assessment.
+ */
+export function Task({ prompt, run, fnName, starter, solution, tests, hint }: {
+  prompt: string; run: 'function' | 'program'; fnName?: string;
+  starter: string; solution: string; tests: readonly LessonTest[]; hint?: string;
+}) {
+  const [code, setCode] = useState(starter);
+  const [result, setResult] = useState<TestsResult | null>(null);
+  const [failure, setFailure] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [tried, setTried] = useState(false);
+
+  const status = py.status.value;
+  const passed = result ? result.outcomes.every((o) => o.pass) && !result.compileError && !result.missingFunction : false;
+
+  const check = async () => {
+    setBusy(true);
+    setFailure(null);
+    const { result: res, failure: err } = await runTestsLogged(
+      { code, tests: tests as Test[], kind: run, fnName, budgetMsPerTest: 1000 },
+      // No qid and no topic: a lesson task is practice, and must not move topic progress.
+      { qid: null, topicId: null },
+      false,
+    );
+    setResult(res);
+    setFailure(err);
+    setTried(true);
+    setBusy(false);
+  };
+
+  return (
+    <div class="ib ib-task">
+      <p class="ib-tag">Write it yourself</p>
+      <Markdown text={prompt} class="lb-md" />
+
+      <label class="ib-field">
+        <span class="ib-field-l">{run === 'function' && fnName ? `Your ${fnName}()` : 'Your program'}</span>
+        <textarea
+          class="ib-input ib-task-code"
+          rows={Math.max(5, code.split('\n').length + 1)}
+          value={code}
+          spellcheck={false}
+          autocapitalize="off"
+          autocomplete="off"
+          onInput={(e) => setCode((e.currentTarget as HTMLTextAreaElement).value)}
+          onKeyDown={(e) => {
+            // Tab indents rather than leaving the box, which is what a code editor has to do. Escape
+            // first, then Tab, still moves on, so the box is not a keyboard trap.
+            if (e.key !== 'Tab' || e.shiftKey) return;
+            e.preventDefault();
+            const el = e.currentTarget as HTMLTextAreaElement;
+            const { selectionStart: a, selectionEnd: b, value } = el;
+            const next = `${value.slice(0, a)}    ${value.slice(b)}`;
+            setCode(next);
+            queueMicrotask(() => { el.selectionStart = el.selectionEnd = a + 4; });
+          }}
+        />
+      </label>
+
+      <div class="ib-row">
+        <button type="button" class="btn primary" onClick={check} disabled={busy || status.state === 'loading'}>
+          {busy ? 'Checking…' : status.state === 'loading' ? 'Starting Python…' : 'Check my code'}
+        </button>
+        <button type="button" class="btn ghost" onClick={() => { setCode(starter); setResult(null); }} disabled={code === starter}>
+          Reset
+        </button>
+        {hint ? (
+          <button type="button" class="btn ghost" onClick={() => setShowHint(!showHint)} aria-expanded={showHint}>
+            {showHint ? 'Hide the hint' : 'Hint'}
+          </button>
+        ) : null}
+        {tried ? (
+          <button type="button" class="btn ghost" onClick={() => setShowAnswer(!showAnswer)} aria-expanded={showAnswer}>
+            {showAnswer ? 'Hide the answer' : 'Show an answer'}
+          </button>
+        ) : null}
+      </div>
+
+      {showHint && hint ? <div class="ib-why"><Markdown text={hint} class="lb-md" /></div> : null}
+
+      {failure ? <p class="ib-verdict-t">Python could not run that: {failure}</p> : null}
+
+      {result ? (
+        <div class={`ib-task-out${passed ? ' is-right' : ''}`}>
+          {result.compileError ? (
+            <p class="ib-verdict-t">{result.compileError.type}: {result.compileError.message}</p>
+          ) : result.missingFunction ? (
+            <p class="ib-verdict-t">That does not define {result.missingFunction}() yet.</p>
+          ) : (
+            <>
+              <p class={`ib-verdict-t${passed ? ' is-right' : ''}`}>
+                {passed ? 'All tests pass. That is the job done.'
+                  : `${result.outcomes.filter((o) => o.pass).length} of ${result.outcomes.length} tests pass.`}
+              </p>
+              <ul class="ib-task-tests">
+                {result.outcomes.map((o) => {
+                  const t = tests.find((x) => x.id === o.id);
+                  return (
+                    <li key={o.id} class={o.pass ? 'is-pass' : 'is-fail'}>
+                      <span class="ib-task-mark" aria-hidden="true">
+                        <Icon name={o.pass ? 'check' : 'x'} size={11} />
+                      </span>
+                      <span class="ib-task-label">{t?.label ?? o.id}</span>
+                      {!o.pass && !t?.hidden && o.expected !== undefined ? (
+                        <span class="ib-task-detail">expected {o.expected}, got {o.got ?? '(nothing)'}</span>
+                      ) : null}
+                      {!o.pass && o.error ? (
+                        <span class="ib-task-detail">{o.error.type}{o.error.message ? `: ${o.error.message}` : ''}</span>
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+        </div>
+      ) : null}
+
+      {showAnswer ? (
+        <div class="ib-task-answer">
+          <p class="ib-walk-h">One way to do it</p>
+          <CodeBlock code={solution} numbered label="A worked answer" />
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -114,17 +114,6 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
     });
   }, [ready, lesson?.id, at, sections.length]);
 
-  if (missing || (!meta && !lesson)) {
-    return (
-      <div class="ls">
-        <div class="tp-empty">
-          <p><strong>That lesson does not exist.</strong></p>
-          <p><a href={href.lessons()}>Back to the lesson library</a></p>
-        </div>
-      </div>
-    );
-  }
-
   // Left and right move through the lesson, but only when the key would otherwise do nothing: a slider,
   // a textarea and a held drag item all use arrows themselves.
   useEffect(() => {
@@ -139,11 +128,24 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
       const next = clampStep(atRef.current + delta, sections.length);
       if (next === atRef.current) return;
       e.preventDefault();
-      go(next);
+      setIndex(next);
+      saveStep(lessonId, next);
+      document.querySelector('.ls-body')?.scrollIntoView({ block: 'start', behavior: 'auto' });
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [sections.length, lessonId]);
+
+  if (missing || (!meta && !lesson)) {
+    return (
+      <div class="ls">
+        <div class="tp-empty">
+          <p><strong>That lesson does not exist.</strong></p>
+          <p><a href={href.lessons()}>Back to the lesson library</a></p>
+        </div>
+      </div>
+    );
+  }
 
   const go = (next: number) => {
     const clamped = clampStep(next, sections.length);

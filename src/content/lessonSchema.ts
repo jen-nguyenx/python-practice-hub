@@ -5,7 +5,7 @@
 // student is produced by running the code in real Python at verify time, exactly like the read-format
 // answers. If a lesson claims `int(3.7)` is 3, that 3 came from the interpreter.
 import type { MistakeId, TopicId } from './ids.ts';
-import type { Experiment, GeneratedExperiment, Md } from './schema.ts';
+import type { Experiment, GeneratedExperiment, Md, Test } from './schema.ts';
 
 /** Where a lesson sits in the library. */
 export type Track = 'foundations' | 'core' | 'advanced';
@@ -98,7 +98,27 @@ export type LessonBlock =
   /** Pulls in the topic's common mistakes, or just the ones named. */
   | { kind: 'mistakes'; only?: MistakeId[] }
   /** Sends the student to the questions for this lesson's topic. */
-  | { kind: 'practice'; body?: Md };
+  | { kind: 'practice'; body?: Md }
+  /**
+   * Write code and have it checked, inside the lesson. This is the only practice the foundations and
+   * advanced tracks can have: questions belong to the 13 unit topics, and those two tracks sit outside
+   * that ladder. Tests run in the browser like any other code here; nothing is recorded against topic
+   * progress, because this is practice rather than assessment.
+   */
+  | {
+      kind: 'task';
+      prompt: Md;
+      /** function: the tests call `fnName`. program: the tests compare what it prints. */
+      run: 'function' | 'program';
+      fnName?: string;
+      /** What the editor starts with. Must NOT already pass, or there is nothing to do. */
+      starter: string;
+      /** A working answer. The verifier proves it passes every test. */
+      solution: string;
+      /** At least 2, at least one visible. */
+      tests: Test[];
+      hint?: Md;
+    };
 
 export interface LessonSection {
   /** Unique within the lesson, kebab-case. Becomes the step in the rail and the anchor in the URL. */
@@ -159,7 +179,7 @@ export interface GeneratedBlock {
   /** interactive blocks record every combination of their controls. */
   experiment?: GeneratedExperiment;
   /** walkthrough blocks record the state after every line that ran. */
-  steps?: { line: number; vars: Record<string, string>; out: number }[];
+  steps?: { line: number; vars: Record<string, string>; items?: Record<string, string[]>; out: number }[];
 }
 
 /** Block key ("s2-b1": section index, block index) -> what running it really did. */

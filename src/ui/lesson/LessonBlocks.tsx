@@ -6,7 +6,7 @@ import type { Experiment, GeneratedExperiments, Topic } from '../../content/sche
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd, Markdown } from '../components/Markdown.tsx';
-import { Annotate, Match, Order, Predict, Quiz, Walkthrough } from './Interactive.tsx';
+import { Annotate, Match, Order, Predict, Quiz, Task, Walkthrough } from './Interactive.tsx';
 import { openInPlayground } from '../workbench/openInPlayground.ts';
 import { MistakesTab, WorkedExampleTab } from '../shell/topic/ReadTabs.tsx';
 import { ExperimentCard } from '../shell/topic/WhatIf.tsx';
@@ -45,7 +45,7 @@ function Output({ recorded, stdout, error, label }: { recorded: boolean; stdout?
     return <p class="lb-out is-quiet">This prints nothing.</p>;
   }
   return (
-    <div class="lb-out" aria-label={label}>
+    <div class="lb-out" role="group" aria-label={label}>
       <pre><code>
         {lines.map((l, i) => <span key={i} class="lb-out-line">{l || ' '}{'\n'}</span>)}
         {error ? <span class="lb-out-line is-error">{errorText(error)}{'\n'}</span> : null}
@@ -57,7 +57,7 @@ function Output({ recorded, stdout, error, label }: { recorded: boolean; stdout?
 
 function Shell({ lines }: { lines: ShellLine[] }) {
   return (
-    <div class="lb-shell" aria-label="Python shell session">
+    <div class="lb-shell" role="group" aria-label="Python shell session">
       <pre><code>
         {lines.map((l, i) => (
           <span key={i}>
@@ -80,15 +80,20 @@ function Checkpoint({ prompt, answer }: { prompt: string; answer: string }) {
     <div class="lb-check">
       <p class="lb-check-tag">Check yourself</p>
       <Markdown text={prompt} class="lb-md" />
+      <button
+        type="button"
+        class="btn ghost lb-check-btn"
+        onClick={() => setOpen(true)}
+        disabled={open}
+        aria-expanded={open}
+      >
+        {open ? 'Answer shown' : 'Show the answer'}
+      </button>
       {open ? (
-        <div class="lb-check-answer">
+        <div class="lb-check-answer" role="status">
           <Markdown text={answer} class="lb-md" />
         </div>
-      ) : (
-        <button type="button" class="btn ghost lb-check-btn" onClick={() => setOpen(true)}>
-          Show the answer
-        </button>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -167,10 +172,10 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
       return <Quiz prompt={block.prompt} code={block.code} options={block.options} />;
 
     case 'predict':
-      return <Predict code={block.code} ask={block.ask} choices={block.choices} stdout={gen?.stdout} error={gen?.error} slug={ctx.slug} back={ctx.back} />;
+      return <Predict code={block.code} ask={block.ask} choices={block.choices} stdout={gen?.stdout} error={gen?.error} slug={ctx.slug} back={ctx.back} recorded={gen !== undefined} />;
 
     case 'order':
-      return <Order lines={block.lines} ask={block.ask} stdout={gen?.stdout} />;
+      return <Order lines={block.lines} ask={block.ask} stdout={gen?.stdout} recorded={gen !== undefined} />;
 
     case 'match':
       return <Match pairs={block.pairs} ask={block.ask} />;
@@ -250,6 +255,19 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
         : ctx.topic;
       return <div class="lb-embed">{<MistakesTab topic={topic} />}</div>;
     }
+
+    case 'task':
+      return (
+        <Task
+          prompt={block.prompt}
+          run={block.run}
+          fnName={block.fnName}
+          starter={block.starter}
+          solution={block.solution}
+          tests={block.tests}
+          hint={block.hint}
+        />
+      );
 
     case 'practice':
       return (

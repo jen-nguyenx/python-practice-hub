@@ -193,8 +193,11 @@ function checkVisual(sc: Scope, v: Visual, probeIds: Set<string>): void {
       sc.error(`visual: a plot needs 1 to 4 series (has ${series.length})`);
       return;
     }
+    const labels = new Set<string>();
     for (const [i, one] of series.entries()) {
       if (!one || !nonEmpty(one.label)) sc.error(`visual: series ${i + 1} needs a label`);
+      else if (labels.has(String(one.label))) sc.error(`visual: two series are both labelled ${quote(String(one.label))}; the legend could not tell them apart`);
+      else labels.add(String(one.label));
       needs(one?.probe, `series ${i + 1} probe`);
     }
     if (v.marker !== undefined) needs(v.marker, 'marker');

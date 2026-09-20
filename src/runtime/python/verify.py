@@ -151,6 +151,7 @@ def _safe_repr(value):
 
 MAX_WALK_STEPS = 80
 MAX_WALK_NAMES = 8
+MAX_WALK_ITEMS = 10
 
 
 def _walk_value(value):
@@ -196,10 +197,20 @@ class _Walker:
             k for k, v in scope.items() if _interesting(k, v)
         ][:MAX_WALK_NAMES]
         seen = {}
+        items = {}
         for name in names:
-            if name in scope:
-                seen[name] = _walk_value(scope[name])
-        self.steps.append({'line': line, 'vars': seen, 'out': len(self.sb.stdout_value())})
+            if name not in scope:
+                continue
+            value = scope[name]
+            seen[name] = _walk_value(value)
+            # A list or tuple is drawn as boxes rather than as its repr, so a reader can see which item
+            # a loop is on. Recorded here because only Python knows what the elements really are.
+            if isinstance(value, (list, tuple)) and len(value) <= MAX_WALK_ITEMS:
+                items[name] = [_walk_value(v) for v in value]
+        step = {'line': line, 'vars': seen, 'out': len(self.sb.stdout_value())}
+        if items:
+            step['items'] = items
+        self.steps.append(step)
 
     def _local(self, frame, event, arg):
         if event in ('line', 'return'):

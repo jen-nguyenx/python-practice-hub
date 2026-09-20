@@ -57,10 +57,19 @@ if (typeof window !== 'undefined') {
   });
 }
 
-export function navigate(path: string) {
+export function navigate(path: string, replace = false) {
   const target = path.startsWith('#') ? path : '#' + path;
-  if (location.hash === target) route.value = parseHash(target);
-  else location.hash = target;
+  if (location.hash === target) {
+    route.value = parseHash(target);
+    return;
+  }
+  if (replace) {
+    // A redirect that pushes is a back-button trap: Back returns to the redirect, which fires again.
+    location.replace(`${location.pathname}${location.search}${target}`);
+    route.value = parseHash(target);
+    return;
+  }
+  location.hash = target;
 }
 
 export const href = {

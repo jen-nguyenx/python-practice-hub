@@ -1,6 +1,6 @@
 # PyLadder — CLAUDE.md
 
-Python learning and practice app for first-year UWA CITS1401 students: a lesson library in three tracks (foundations, the 13 unit topics, and going further), 13 unlockable topics, 278 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, interactive "what if" experiments, topic tests, a custom timed practice test, a mock final exam (eight slots, 100 marks, two hours), and reports.
+Python learning and practice app for first-year UWA CITS1401 students: a lesson library in three tracks (foundations, the 13 unit topics, and going further), 13 unlockable topics, 278 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, interactive "what if" experiments, a searchable reference of runnable snippets, a review queue, an error decoder, topic tests, a custom timed practice test, a mock final exam (eight slots, 100 marks, two hours), and reports.
 
 ## Commands
 ```bash
@@ -9,7 +9,7 @@ npm run typecheck                    # tsc --noEmit (TypeScript 7)
 npm test                             # vitest: graders, progress, report, store, harness, UI logic
 npm run verify -- --topic <id>       # run one topic's content in real Python; rewrites src/content/generated/<id>.json
 npm run verify                       # all topics + lessons + generated indexes
-npm run verify:lessons               # lessons only (skips all 13 topics; fast while writing one)
+npm run verify:lessons               # lessons and the reference only (skips all 13 topics; fast while writing one)
 npm run verify:check                 # CI: fail if generated files are stale
 npm run build && node scripts/smoke.ts   # production build + Chrome smoke test (system Chrome)
 ```
@@ -30,10 +30,12 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/content/mistakes.ts`, `patterns.ts` | Mistake catalogue (labels, explanations, runtime matchers) and best-practice cards |
 | `src/runtime/python/` | Grading harness (`_pl` package): sandboxed runs, tests, AST checks, tracer |
 | `src/runtime/pyWorker.ts`, `pyClient.ts` | Browser worker + client (queue, watchdog, respawn) |
-| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts` |
+| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (spaced repetition), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `streak.ts`, `traceback.ts` |
 | `src/store/` | IndexedDB event log, snapshots, scratch files, settings (localStorage), export/import |
 | `src/app/` | App shell, hash router, singletons (`services.ts`), `markTopicOpened` |
-| `src/ui/screens/` | Landing, TopicPage, LessonPage, QuestionPage, Playground, Report, TopicTest, ExamPractice, Settings |
+| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Review, DecodeError, Report, TopicTest, ExamPractice, Settings |
+| `src/content/recipes/`, `recipeSchema.ts` | The reference: one file per area, every snippet run by the verifier |
+| `src/content/conceptWords.ts` | Concept tags in a student's words; nothing shows a raw tag |
 | `src/ui/lesson/steps.ts` | Derived per-topic steps, the fallback when a topic has no authored lesson yet |
 | `src/ui/lesson/LessonBlocks.tsx` | Renders one lesson block. Decides layout only; never decides what Python does |
 | `src/ui/formats/read|code/` | The 12 question-format components; `registry.ts` maps format → component |

@@ -6,6 +6,7 @@
 import { useMemo } from 'preact/hooks';
 import { href } from '../../app/router.ts';
 import { conceptLabel } from '../../content/conceptWords.ts';
+import type { TopicId } from '../../content/ids.ts';
 import type { QuestionMeta } from '../../content/questionIndex.ts';
 import { conceptStats, ENOUGH } from '../../engine/concepts.ts';
 import type { ConceptStat } from '../../engine/concepts.ts';
@@ -39,7 +40,12 @@ function Row({ s, practise }: { s: ConceptStat; practise?: string }) {
   );
 }
 
-export function Concepts({ events, index }: { events: readonly AppEvent[]; index: readonly QuestionMeta[] }) {
+export function Concepts({ events, index, unlocked }: {
+  events: readonly AppEvent[];
+  index: readonly QuestionMeta[];
+  /** Topics the student can reach. Practise links stay inside them; the counts do not change. */
+  unlocked?: readonly TopicId[];
+}) {
   const { shaky, solid, tried } = useMemo(() => {
     const stats = conceptStats(events, index);
     const judged = stats.filter((s) => s.accuracy !== null);
@@ -55,13 +61,14 @@ export function Concepts({ events, index }: { events: readonly AppEvent[]; index
   const nextFor = useMemo(() => {
     const solved = new Set<string>();
     for (const e of events) if (e.type === 'attempt' && e.correct && !e.revealed) solved.add(e.qid);
+    const open = unlocked ? new Set<TopicId>(unlocked) : null;
     const out = new Map<string, string>();
     for (const q of index) {
-      if (solved.has(q.qid)) continue;
+      if (solved.has(q.qid) || (open && !open.has(q.topicId))) continue;
       for (const c of q.concepts) if (!out.has(c)) out.set(c, q.qid);
     }
     return out;
-  }, [events, index]);
+  }, [events, index, unlocked]);
 
   if (tried === 0) {
     return (

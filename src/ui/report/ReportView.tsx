@@ -126,8 +126,10 @@ export function Headline({ data, topicId }: { data: ReportData; topicId?: TopicI
   );
 }
 
-export function ReportBody({ data, events, topicId, now, unlockAll }: {
+export function ReportBody({ data, events, topicId, now, unlocked, unlockAll }: {
   data: ReportData; events: readonly AppEvent[]; topicId?: TopicId; now: number;
+  /** Topics the student can actually reach, so nothing here sends them at a locked question. */
+  unlocked?: readonly TopicId[];
   /** "Unlock all topics" was on in Settings during this range: the ladder order did not apply. */
   unlockAll?: boolean;
 }) {
@@ -149,7 +151,11 @@ export function ReportBody({ data, events, topicId, now, unlockAll }: {
       </Section>
 
       <Section id="rp-concepts" title="Skills" note="What the questions you answered were leaning on">
-        <Concepts events={events} index={topicId ? QUESTION_INDEX.filter((q) => q.topicId === topicId) : QUESTION_INDEX} />
+        <Concepts
+          events={events}
+          index={topicId ? QUESTION_INDEX.filter((q) => q.topicId === topicId) : QUESTION_INDEX}
+          unlocked={unlocked}
+        />
         <Calibration data={calibration(events)} />
       </Section>
 

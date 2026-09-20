@@ -75,7 +75,7 @@ function usePrintMode() {
   }, []);
 }
 
-type Built = { ok: true; data: ReportData; events: readonly AppEvent[] } | { ok: false; error: string };
+type Built = { ok: true; data: ReportData; events: readonly AppEvent[]; unlocked: readonly TopicId[] } | { ok: false; error: string };
 
 function ReportScreen({ topicId }: { topicId?: string }) {
   const [ready, setReady] = useState(false);
@@ -109,7 +109,7 @@ function ReportScreen({ topicId }: { topicId?: string }) {
       const index = tid ? QUESTION_INDEX.filter((q) => q.topicId === tid) : QUESTION_INDEX;
       let data = buildReport(evs, index, range, unlocked);
       if (tid) data = narrowReport(data, tid);
-      return { ok: true, data, events: evs };
+      return { ok: true, data, events: evs, unlocked };
     } catch (err) {
       return { ok: false, error: err instanceof Error ? err.message : String(err) };
     }
@@ -183,7 +183,7 @@ function ReportScreen({ topicId }: { topicId?: string }) {
         </section>
       ) : (
         <ReportBody data={built.data} events={built.events} topicId={tid} now={now}
-          unlockAll={unlockAllInRange(events, range, now)} />
+          unlocked={built.unlocked} unlockAll={unlockAllInRange(events, range, now)} />
       )}
     </div>
   );

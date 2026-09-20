@@ -13,8 +13,11 @@
     "verify": "node scripts/verify-content.ts",
     "verify:check": "node scripts/verify-content.ts --check",
     "smoke": "node scripts/smoke.ts",
+    "check:live": "node scripts/check-live.ts",
+    "shots": "node scripts/shots.ts",
     "check": "npm run typecheck && npm run test && npm run verify:check && npm run build",
-    "verify:lessons": "node scripts/verify-content.ts --lessons"
+    "verify:lessons": "node scripts/verify-content.ts --lessons",
+    "gate": "npm run check && npm run smoke"
   },
   "dependencies": {
     "@preact/signals": "2.11.2",

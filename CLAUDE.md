@@ -11,8 +11,14 @@ npm run verify -- --topic <id>       # run one topic's content in real Python; r
 npm run verify                       # all topics + lessons + generated indexes
 npm run verify:lessons               # lessons and the reference only (skips all 13 topics; fast while writing one)
 npm run verify:check                 # CI: fail if generated files are stale
-npm run build && node scripts/smoke.ts   # production build + Chrome smoke test (system Chrome)
+npm run build && npm run smoke       # production build + Chrome smoke test (system Chrome, ~4 min)
+npm run gate                         # typecheck + test + verify:check + build + smoke, in that order
+npm run check:live                   # the same user-facing checks against the deployed site (~40 s, no build)
+npm run shots                        # screenshots of named parts of the app, seeded with practice history
+npm run shots -- --list              # the names; --only skills,calibration for just those
 ```
+Do not write a throwaway Playwright script to look at the app or to check a deploy — add a check to
+`scripts/lib/checks.ts` (shared by smoke and check:live) or a shot to `scripts/shots.ts`, and rerun it.
 Pushing to `main` deploys to GitHub Pages via `.github/workflows/deploy.yml` (typecheck, test, verify:check, build).
 
 ## Stack
@@ -42,6 +48,8 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/ui/workbench/`, `src/ui/editor/` | Question controller pieces, panels, hints, answers; Monaco + textarea editors |
 | `src/ui/report/`, `src/ui/testmode/` | Report sections; test runner and question selection |
 | `scripts/verify-content.ts`, `scripts/verify/` | Content verifier |
+| `scripts/lib/browser.ts`, `lib/checks.ts` | Browser plumbing (Chrome, preview server, seeded history, tour) and the checks smoke and check:live share |
+| `scripts/smoke.ts`, `check-live.ts`, `shots.ts` | The three browser runners: full local walk, deployed-site check, screenshots |
 | `docs/plan/PLAN.md` | Product plan (§0 amendments override the rest) |
 | `docs/build/CONTRACTS.md` | Architecture, event logging, ownership rules |
 | `docs/build/CONTENT.md` | How to write questions (mix table, quality bar, concept order) |

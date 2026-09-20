@@ -6,9 +6,11 @@ import { QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { TOPICS } from '../../content/topics.ts';
 import { Skeleton } from '../components/Skeleton.tsx';
 import { continueInfo, examSummary, hasAnyAttempt, todayNumbers } from '../shell/homeData.ts';
-import { lessonsDone, safeTopicProgress } from '../shell/progressData.ts';
-import { ContinueCard, ExamCard } from '../shell/landing/HomeCards.tsx';
-import type { ContinuePosition } from '../shell/landing/HomeCards.tsx';
+import { lessonsRead, safeTopicProgress } from '../shell/progressData.ts';
+import { reviewQueue } from '../../engine/review.ts';
+import { streak } from '../../engine/streak.ts';
+import { ExamCard } from '../shell/landing/HomeCards.tsx';
+import { planToday, questionTitle, TodayPlan } from '../shell/landing/Today.tsx';
 import { Ladder, LadderSkeleton } from '../shell/landing/Ladder.tsx';
 import { useSemester } from '../shell/StatusBar.tsx';
 import { storeReady } from '../shell/storeReady.ts';
@@ -54,14 +56,23 @@ export function Landing() {
     );
   }
 
-  let position: ContinuePosition | null = null;
-  if (info.question) {
-    const inTopic = QUESTION_INDEX.filter((q) => q.topicId === info.topic.id);
-    const idx = inTopic.findIndex((q) => q.qid === info.question!.qid);
-    if (idx >= 0) position = { number: idx + 1, total: inTopic.length };
-  }
-  const fresh = !hasAnyAttempt(events);
-  const doneLessons = useMemo(() => lessonsDone(events), [events]);
+  const read = useMemo(() => lessonsRead(events), [events]);
+  const days = useMemo(() => streak(events), [events]);
+  const unlocked = useMemo(
+    () => Object.values(progress).filter((p) => p.state !== 'locked').map((p) => p.topicId),
+    [progress],
+  );
+  const queue = useMemo(() => reviewQueue(events, QUESTION_INDEX, { unlocked }), [events, unlocked]);
+  const plan = useMemo(() => {
+    const q = info.question ? questionTitle(info.question.qid) : null;
+    return planToday({
+      read,
+      queue,
+      nextQid: info.question?.qid,
+      nextQTitle: q?.title,
+      nextQTopic: q?.topic,
+    });
+  }, [read, queue, info.question?.qid]);
 
   return (
     <div class="page home">
@@ -71,7 +82,7 @@ export function Landing() {
         <Today events={events} />
       </header>
       <div class="home-hero">
-        <ContinueCard info={info} position={position} fresh={fresh} lessonDone={doneLessons.has(info.topic.id)} />
+        <TodayPlan steps={plan} streak={days} />
         <ExamCard summary={exam} />
       </div>
       <Ladder progress={progress} currentTopic={progress[info.topic.id]?.state === 'locked' ? null : info.topic.id} />

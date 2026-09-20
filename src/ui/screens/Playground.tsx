@@ -278,17 +278,13 @@ export function Playground() {
               onRenameRequestHandled={() => setRenameRequest(null)}
             />
           ) : <div class="pg-files" />}
+          {back ? (
+            <a class="pg-back" href={back.href} onClick={() => clearPlaygroundReturn()}>
+              <Icon name="arrowLeft" size={14} />
+              <span class="pg-back-t">Back to {back.label}</span>
+            </a>
+          ) : null}
           <div class="pg-strip-end">
-            {back ? (
-              <a
-                class="pg-back"
-                href={back.href}
-                onClick={() => clearPlaygroundReturn()}
-              >
-                <Icon name="arrowLeft" size={14} />
-                <span class="pg-back-t">Back to {back.label}</span>
-              </a>
-            ) : null}
             <span class={`pg-runtime ${status.state}`} title="Your code runs on this computer. Nothing is sent anywhere.">{runtimeLabel(status)}</span>
             <CardIconButton
               icon="keyboard"

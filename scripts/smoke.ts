@@ -112,9 +112,30 @@ if (await page.locator('.rp-stats').count() === 0) {
   if (leaked.length) failures.push(`#/report: Skills shows raw tags: ${leaked.slice(0, 3).join(', ')}`);
 }
 
+// The palette is where a question gets typed from any page, so the reference has to be reachable there
+// and has to land on the entry that was chosen, not on the whole shelf.
+await visit(page, '#/');
+await page.keyboard.press('Meta+k');
+await page.waitForTimeout(400);
+await page.locator('.pal-input').type('sort a dict by value', { delay: 10 });
+await page.waitForTimeout(400);
+const palRef = page.locator('[role="option"]', { hasText: 'Sort a dictionary' }).first();
+if (await palRef.count() === 0) {
+  failures.push('command palette: the reference entry for sorting a dictionary was not offered');
+} else {
+  await palRef.click();
+  await page.waitForTimeout(700);
+  if (!page.url().includes('#/reference')) failures.push('command palette: choosing a reference entry did not open the reference');
+  const landed = await page.locator('.rf-card .rf-task').first().innerText().catch(() => '');
+  if (!/sort a dict/i.test(landed)) failures.push(`command palette: the reference opened on "${landed}"`);
+}
+
 // The reference is only useful if searching it finds things, so one real search is run end to end.
 await visit(page, '#/reference');
 const refBox = page.locator('.rf-search-in');
+// Arriving here from the palette leaves that entry's words in the box, and navigating to the hash the
+// page is already on does not reload, so the box is emptied before this search rather than appended to.
+await refBox.fill('');
 await refBox.click();
 await refBox.type('sort a dict by value', { delay: 10 });
 await page.waitForTimeout(400);

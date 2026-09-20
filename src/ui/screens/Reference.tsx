@@ -11,6 +11,7 @@ import { LESSON_FOR_TOPIC } from '../../content/lessons/index.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { Markdown } from '../components/Markdown.tsx';
+import { referenceJump } from '../shell/uiState.ts';
 import { openInPlayground } from '../workbench/openInPlayground.ts';
 import './reference.css';
 
@@ -46,7 +47,10 @@ function Entry({ r }: { r: RecipeEntry }) {
 }
 
 export function Reference() {
-  const [query, setQuery] = useState('');
+  // Arriving from the command palette means the entry has already been chosen; searching for its own task
+  // puts it at the top, and the words stay in the box so it is clear why these results are the ones shown.
+  const [query, setQuery] = useState(() => referenceJump.value ?? '');
+  useEffect(() => { referenceJump.value = null; }, []);
   const [group, setGroup] = useState<RecipeGroup | 'all'>('all');
   const box = useRef<HTMLInputElement>(null);
 

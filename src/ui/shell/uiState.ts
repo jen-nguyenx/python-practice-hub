@@ -14,3 +14,8 @@ export const paletteOpen = signal(false);
 export const mainFill = signal(false);
 /** Optional text a screen shows at the right of the status bar, before the week, e.g. "Ln 4, Col 26". Reset on unmount. */
 export const statusBarExtra = signal<string | null>(null);
+/**
+ * A reference entry chosen from somewhere else (the command palette). The reference page searches for it
+ * on arrival and then clears this, so landing there from a search shows the answer, not the whole shelf.
+ */
+export const referenceJump = signal<string | null>(null);

@@ -11,6 +11,8 @@ import { QUESTION_BY_ID, QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
 import { LESSON_INDEX } from '../../content/lessons/index.ts';
 import { TRACK_LABEL } from '../../content/lessonSchema.ts';
+import { RECIPES } from '../../content/recipes/index.ts';
+import { GROUP_LABEL } from '../../content/recipeSchema.ts';
 import { Icon } from '../components/Icon.tsx';
 import type { IconName } from '../components/Icon.tsx';
 import '../components/controls.css';
@@ -18,9 +20,9 @@ import { matchItem } from './fuzzy.ts';
 import { continueInfo } from './homeData.ts';
 import { safeTopicProgress } from './progressData.ts';
 import { toggleTheme } from './ThemeToggle.tsx';
-import { mainFill, paletteOpen, shortcutSheetOpen } from './uiState.ts';
+import { mainFill, paletteOpen, referenceJump, shortcutSheetOpen } from './uiState.ts';
 
-type Group = 'Pages and actions' | 'Lessons' | 'Topics' | 'Questions';
+type Group = 'Pages and actions' | 'Lessons' | 'Reference' | 'Topics' | 'Questions';
 interface Item {
   id: string; group: Group; label: string; detail: string; icon: IconName; search: string; run: () => void;
   /** The question's topic is locked: shown as "Locked" and ranked below everything that is open. */
@@ -31,7 +33,9 @@ interface Item {
   unavailable?: string;
 }
 
-const GROUPS: Group[] = ['Pages and actions', 'Lessons', 'Topics', 'Questions'];
+const GROUPS: Group[] = ['Pages and actions', 'Lessons', 'Reference', 'Topics', 'Questions'];
+/** The reference is browsed on its own page; the palette offers the few best answers, not all of it. */
+const MAX_REFERENCE = 5;
 const MAX_QUESTIONS = 40;
 
 function go(h: string) { return () => navigate(h); }
@@ -105,12 +109,20 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
     const q = info.question;
     continueItem = { id: 'c-continue', group: 'Pages and actions', label: `Continue: ${q.title}`, detail: info.topic.short, icon: 'arrowRight', search: 'continue resume', run: go(href.question(q.qid)) };
   }
-  return { items: [...actions, ...lessons, ...topics, ...questions], continueItem };
+  // The reference answers "how do I ...?", and that question is as likely to be typed here as on its own
+  // page. Its snippets and notes are searchable too, so remembering the error is enough to find the entry.
+  const reference: Item[] = RECIPES.map((r) => ({
+    id: `r-${r.id}`, group: 'Reference', label: r.task, detail: GROUP_LABEL[r.group], icon: 'search',
+    search: `${(r.also ?? []).join(' ')} ${r.note} ${r.code}`,
+    href: href.reference(),
+    run: () => { referenceJump.value = r.task; navigate(href.reference()); },
+  }));
+  return { items: [...actions, ...lessons, ...reference, ...topics, ...questions], continueItem };
 }
 
 function filterItems(all: Item[], continueItem: Item | null, query: string): Item[] {
   const q = query.trim();
-  if (!q) return [...(continueItem ? [continueItem] : []), ...all.filter((i) => i.group !== 'Questions')];
+  if (!q) return [...(continueItem ? [continueItem] : []), ...all.filter((i) => i.group !== 'Questions' && i.group !== 'Reference')];
   const scored: { item: Item; score: number }[] = [];
   for (const item of all) {
     const s = matchItem(q, item.label, item.search);
@@ -121,7 +133,8 @@ function filterItems(all: Item[], continueItem: Item | null, query: string): Ite
   const out: Item[] = [];
   for (const g of GROUPS) {
     const inGroup = scored.filter((s) => s.item.group === g).map((s) => s.item);
-    out.push(...(g === 'Questions' ? inGroup.slice(0, MAX_QUESTIONS) : inGroup));
+    const cap = g === 'Questions' ? MAX_QUESTIONS : g === 'Reference' ? MAX_REFERENCE : inGroup.length;
+    out.push(...inGroup.slice(0, cap));
   }
   return out;
 }

@@ -219,3 +219,10 @@
   .pg-out-body { padding: var(--sp-3); }
 }
 
+
+/* The way back out of the Playground, for code that arrived from a lesson or a question. */
+.pg-back { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border); border-radius: var(--r-1); color: var(--text-muted); font-size: var(--fs-13); text-decoration: none; white-space: nowrap; }
+.pg-back:hover { border-color: var(--border-strong); color: var(--text); }
+.pg-back:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.pg-back-t { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 780px) { .pg-back-t { display: none; } }

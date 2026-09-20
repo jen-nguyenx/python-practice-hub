@@ -2,17 +2,46 @@
 import { href, navigate } from '../../app/router.ts';
 
 export const PLAYGROUND_OPEN_KEY = 'pyladder:playground-open';
+/**
+ * Where to go back to. Kept separately from the file because the file is consumed the moment the
+ * Playground opens, while the way back has to survive for as long as the reader is there.
+ */
+export const PLAYGROUND_BACK_KEY = 'pyladder:playground-back';
 
 export interface PendingPlaygroundFile { code: string; name?: string; ts: number }
+/** A link back to whatever sent the reader here, so taking code away is not a one-way trip. */
+export interface PlaygroundReturn { href: string; label: string }
 
-export function openInPlayground(code: string, name?: string) {
+export function openInPlayground(code: string, name?: string, back?: PlaygroundReturn) {
   try {
     const pending: PendingPlaygroundFile = { code, name, ts: Date.now() };
     sessionStorage.setItem(PLAYGROUND_OPEN_KEY, JSON.stringify(pending));
+    if (back && back.href && back.label) sessionStorage.setItem(PLAYGROUND_BACK_KEY, JSON.stringify(back));
+    else sessionStorage.removeItem(PLAYGROUND_BACK_KEY);
   } catch {
     /* storage blocked: the Playground opens without the file */
   }
   navigate(href.playground());
+}
+
+/** The way back, if the reader arrived from somewhere. Left in place so it survives a re-render. */
+export function playgroundReturn(): PlaygroundReturn | null {
+  try {
+    const raw = sessionStorage.getItem(PLAYGROUND_BACK_KEY);
+    if (!raw) return null;
+    const v = JSON.parse(raw) as PlaygroundReturn;
+    // Only ever an in-app hash route: this comes from storage, which a page on the same origin can write.
+    if (v && typeof v.href === 'string' && v.href.startsWith('#/') && typeof v.label === 'string') {
+      return { href: v.href, label: v.label.slice(0, 80) };
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+export function clearPlaygroundReturn() {
+  try { sessionStorage.removeItem(PLAYGROUND_BACK_KEY); } catch { /* ignore */ }
 }
 
 /** Read and remove the pending file (called by the Playground on mount). */

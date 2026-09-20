@@ -156,6 +156,7 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
   const track = lesson?.track ?? meta?.track;
   const ctx: BlockContext = {
     slug: lessonId,
+    back: { href: href.lesson(lessonId), label: title },
     topic,
     experiments,
     practiceHref: firstUnsolved ? href.question(firstUnsolved.id) : topic ? href.topic(topic.id) : null,

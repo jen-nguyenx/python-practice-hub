@@ -8,12 +8,13 @@ import { py, store } from '../../app/services.ts';
 import { Button } from '../components/Button.tsx';
 import { Callout } from '../components/Callout.tsx';
 import { CodeEditor } from '../editor/CodeEditor.tsx';
-import { takePendingPlaygroundFile } from '../workbench/openInPlayground.ts';
+import { clearPlaygroundReturn, playgroundReturn, takePendingPlaygroundFile } from '../workbench/openInPlayground.ts';
 import { backupScratch, takeScratchBackup } from '../workbench/unsaved.ts';
 import { markersFrom } from '../workbench/plain.ts';
 import { useProgramRunner } from '../workbench/runner.ts';
 import { kbdRunShort, useRunShortcuts } from '../workbench/shortcuts.ts';
 import { useConfirmDelete } from '../playground/ConfirmDelete.tsx';
+import { Icon } from '../components/Icon.tsx';
 import { CardIconButton, FileTabs } from '../playground/FileTabs.tsx';
 import { OutputPane } from '../playground/OutputPane.tsx';
 import type { OutputTab } from '../playground/OutputPane.tsx';
@@ -75,6 +76,8 @@ export function Playground() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [renameRequest, setRenameRequest] = useState<string | null>(null);
   const [tab, setTab] = useState<OutputTab>('output');
+  // Read once on mount: taking code out of a lesson must not be a one-way trip.
+  const [back] = useState(() => playgroundReturn());
   const [analysis, setAnalysis] = useState<{ syntaxError?: PyError; flags: AstFinding[] } | null>(null);
   const [confirmEl, confirmDelete] = useConfirmDelete();
   const runner = useProgramRunner({ qid: null, topicId: null });
@@ -276,6 +279,16 @@ export function Playground() {
             />
           ) : <div class="pg-files" />}
           <div class="pg-strip-end">
+            {back ? (
+              <a
+                class="pg-back"
+                href={back.href}
+                onClick={() => clearPlaygroundReturn()}
+              >
+                <Icon name="arrowLeft" size={14} />
+                <span class="pg-back-t">Back to {back.label}</span>
+              </a>
+            ) : null}
             <span class={`pg-runtime ${status.state}`} title="Your code runs on this computer. Nothing is sent anywhere.">{runtimeLabel(status)}</span>
             <CardIconButton
               icon="keyboard"

@@ -9,6 +9,7 @@ import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd, Markdown } from '../components/Markdown.tsx';
 import { openInPlayground } from '../workbench/openInPlayground.ts';
+import { judge, normalise } from './predictAnswer.ts';
 
 /** Deterministic shuffle: the same block always presents in the same order, so a reader can come back. */
 function shuffled<T>(items: readonly T[], seed: string): T[] {
@@ -27,9 +28,6 @@ function shuffled<T>(items: readonly T[], seed: string): T[] {
   if (out.length > 1 && out.every((v, i) => v === items[i])) [out[0], out[1]] = [out[1], out[0]];
   return out;
 }
-
-const normalise = (t: string) =>
-  t.replace(/\r\n?/g, '\n').split('\n').map((l) => l.replace(/\s+$/, '')).join('\n').replace(/\n+$/, '');
 
 // ---------- quiz ----------
 
@@ -73,15 +71,17 @@ export function Quiz({ prompt, code, options }: {
 
 // ---------- predict ----------
 
-export function Predict({ code, ask, choices, stdout, error, slug }: {
-  code: string; ask?: string; choices?: readonly string[]; stdout?: string; error?: LessonError; slug?: string;
+export function Predict({ code, ask, choices, stdout, error, slug, back }: {
+  code: string; ask?: string; choices?: readonly string[]; stdout?: string; error?: LessonError;
+  slug?: string; back?: { href: string; label: string };
 }) {
   const [typed, setTyped] = useState('');
   const [picked, setPicked] = useState<string | null>(null);
   const [shown, setShown] = useState(false);
   const real = normalise(stdout ?? '');
   const answer = choices ? (picked ?? '') : typed;
-  const right = normalise(answer) === real;
+  const verdict = judge(answer, real);
+  const right = verdict !== 'wrong';
   const order = useMemo(() => (choices ? shuffled(choices, code) : []), [choices, code]);
 
   return (
@@ -95,7 +95,7 @@ export function Predict({ code, ask, choices, stdout, error, slug }: {
             <li key={c}>
               <button
                 type="button"
-                class={`ib-option${picked === c ? ' is-picked' : ''}${shown && normalise(c) === real ? ' is-right' : ''}${shown && picked === c && !right ? ' is-wrong' : ''}`}
+                class={`ib-option${picked === c ? ' is-picked' : ''}${shown && judge(c, real) !== 'wrong' ? ' is-right' : ''}${shown && picked === c && verdict === 'wrong' ? ' is-wrong' : ''}`}
                 aria-pressed={picked === c}
                 disabled={shown}
                 onClick={() => setPicked(c)}
@@ -121,14 +121,16 @@ export function Predict({ code, ask, choices, stdout, error, slug }: {
       {shown ? (
         <div class={`ib-verdict${right ? ' is-right' : ''}`}>
           <p class="ib-verdict-t">
-            {right ? 'That is exactly it.' : 'Not quite. Here is what Python actually printed:'}
+            {verdict === 'right' ? 'That is exactly it.'
+              : verdict === 'close' ? 'Right — and worth noticing that Python writes it with a space after each comma:'
+              : 'Not quite. Here is what Python actually printed:'}
           </p>
           <p class="lb-tryit">
-            <button type="button" class="btn ghost lb-tryit-btn" onClick={() => openInPlayground(code, `${slug ?? 'predict'}.py`)}>
+            <button type="button" class="btn ghost lb-tryit-btn" onClick={() => openInPlayground(code, `${slug ?? 'predict'}.py`, back)}>
               <Icon name="terminal" size={14} /> Try it yourself
             </button>
           </p>
-          {right ? null : (
+          {verdict === 'right' ? null : (
             <pre class="lb-out"><code>
               {(real === '' ? ['(nothing)'] : real.split('\n')).map((l, i) => (
                 <span key={i} class="lb-out-line">{l || ' '}{'\n'}</span>

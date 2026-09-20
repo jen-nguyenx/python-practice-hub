@@ -17,6 +17,7 @@ import { useWorkbench } from '../../workbench/context.ts';
 import { useConfirm } from '../../workbench/Dialog.tsx';
 import { EditorCard } from '../../workbench/EditorCard.tsx';
 import { ExplainError } from '../../workbench/ExplainError.tsx';
+import { href } from '../../../app/router.ts';
 import { openInPlayground } from '../../workbench/openInPlayground.ts';
 import { markersFrom, warningFlags } from '../../workbench/plain.ts';
 import { ProblemsList } from '../../workbench/ProblemsList.tsx';
@@ -285,7 +286,7 @@ export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTask
       <span class="ed-kbd" title={`${MOD}+Enter runs · ${MOD}+Shift+Enter submits · Esc then Tab leaves the editor`}>
         {MOD} + Enter
       </span>
-      {!testMode ? <IconButton icon="terminal" size="sm" label="Open in Playground" align="end" class="ed-icon" onClick={() => openInPlayground(code, `${q.id}.py`)} /> : null}
+      {!testMode ? <IconButton icon="terminal" size="sm" label="Open in Playground" align="end" class="ed-icon" onClick={() => openInPlayground(code, `${q.id}.py`, { href: href.question(q.id), label: q.title })} /> : null}
     </>
   );
 

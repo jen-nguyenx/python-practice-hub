@@ -366,3 +366,42 @@ export async function checkGlossary(c: Ctx): Promise<void> {
     c.fail(`#/glossary: following the link to "${word}" opened "${opened || 'nothing'}"`);
   }
 }
+
+/**
+ * Glossary words marked in lesson prose.
+ *
+ * Two things can go wrong and both are quiet. The marking can stop happening at all, which nothing else
+ * would notice; or it can start marking inside code, where `return` is a keyword and a definition of it
+ * would be nonsense. Recursion is used because its prose genuinely contains the vocabulary.
+ */
+export async function checkTermMarks(c: Ctx): Promise<void> {
+  await visit(c, '#/lesson/core-recursion');
+  await c.page.waitForTimeout(600);
+  const marks = c.page.locator('.ls-body .tm');
+  const n = await marks.count();
+  if (n === 0) {
+    c.fail('#/lesson/core-recursion: no glossary words are marked in the prose');
+    return;
+  }
+  // Never inside code: a marked keyword would be explained as English.
+  if ((await c.page.locator('.ls-body code .tm, .ls-body pre .tm').count()) > 0) {
+    c.fail('a glossary word was marked inside code');
+  }
+
+  const word = (await marks.first().innerText()).split('\n')[0].trim();
+  await marks.first().hover();
+  await c.page.waitForTimeout(400);
+  const pop = c.page.locator('.tm-pop');
+  if ((await pop.count()) === 0) {
+    c.fail(`hovering "${word}" showed no definition`);
+    return;
+  }
+  const text = await pop.innerText();
+  if (text.trim().length < 20) c.fail(`the definition of "${word}" is empty or near enough`);
+  if (!/glossary/i.test(text)) c.fail(`the definition of "${word}" does not offer the glossary entry`);
+
+  // Escape closes it, which is the only way out for a keyboard.
+  await c.page.keyboard.press('Escape');
+  await c.page.waitForTimeout(250);
+  if ((await c.page.locator('.tm-pop').count()) > 0) c.fail('Escape did not close the definition');
+}

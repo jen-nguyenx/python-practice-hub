@@ -115,7 +115,8 @@ export interface BlockContext {
 export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedBlock | undefined; ctx: BlockContext }) {
   switch (block.kind) {
     case 'prose':
-      return <Markdown text={block.body} class="lb-md lb-prose" />;
+      // Lesson prose is exactly where a student meets the vocabulary, so it is where the words are marked.
+      return <Markdown text={block.body} class="lb-md lb-prose" terms />;
 
     case 'code':
       return (

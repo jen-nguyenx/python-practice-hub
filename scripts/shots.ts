@@ -45,6 +45,19 @@ const SHOTS: Shot[] = [
   { name: 'lessons', hash: '#/lessons' },
   { name: 'glossary', hash: '#/glossary' },
   {
+    // A glossary word marked in lesson prose, with its definition open.
+    name: 'term-hover',
+    hash: '#/lesson/core-recursion',
+    prepare: async (page) => {
+      await page.waitForTimeout(1200);
+      const mark = page.locator('.ls-body .tm').first();
+      if (await mark.count()) {
+        await mark.hover();
+        await page.waitForTimeout(400);
+      }
+    },
+  },
+  {
     name: 'glossary-search',
     hash: '#/glossary',
     prepare: async (page) => {

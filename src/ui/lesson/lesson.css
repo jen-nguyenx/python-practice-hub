@@ -1,5 +1,5 @@
 /* Lesson mode: a guided path through one topic, a step at a time. */
-.ls { container-type: inline-size; container-name: ls; max-width: 1000px; margin: 0 auto; padding: 32px 24px 120px; }
+.ls { container-type: inline-size; container-name: ls; max-width: 1000px; margin: 0 auto; padding: 32px 24px 64px; }
 
 .ls-head { display: grid; gap: 8px; }
 .ls-title { font-family: var(--display); font-size: var(--fs-28); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin: 0; text-wrap: balance; }
@@ -36,11 +36,13 @@
 .ls-body .wi-intro { font-size: var(--fs-16); }
 .ls-body .tp-read-main, .ls-body .tp-we-card { max-width: calc(68ch + 80px); }
 
-.ls-nav { position: sticky; bottom: 0; display: flex; align-items: center; gap: 16px; margin-top: 40px; padding: 14px 0; background: var(--bg); border-top: 1px solid var(--border); }
+/* Sits at the end of the step, not stuck over it: a bar hovering above the reading is a bar in the way,
+   and the step rail above already offers every step at any time. */
+.ls-nav { display: flex; align-items: center; gap: 16px; margin-top: 40px; padding: 18px 0 0; border-top: 1px solid var(--border); }
 .ls-nav-mid { flex: 1 1 auto; min-width: 0; font-size: var(--fs-13); color: var(--text-faint); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 @container ls (max-width: 640px) {
-  .ls { padding: 24px 16px 100px; }
+  .ls { padding: 24px 16px 56px; }
   .ls-title { font-size: var(--fs-24); }
   .ls-step-title { font-size: var(--fs-20); }
   /* Hidden to the eye, not to a screen reader: display:none would leave every step named only by its

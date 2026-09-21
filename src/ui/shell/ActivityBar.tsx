@@ -8,12 +8,13 @@ import { Icon } from '../components/Icon.tsx';
 import type { IconName } from '../components/Icon.tsx';
 import { Tooltip } from '../components/Tooltip.tsx';
 
-export type NavKey = 'topics' | 'lessons' | 'reference' | 'playground' | 'review' | 'tests' | 'plan' | 'report' | 'settings';
+export type NavKey = 'topics' | 'lessons' | 'reference' | 'glossary' | 'playground' | 'review' | 'tests' | 'plan' | 'report' | 'settings';
 
 export const NAV: { key: NavKey; label: string; short: string; icon: IconName; href: string }[] = [
   { key: 'topics', label: 'Topics', short: 'Topics', icon: 'ladder', href: href.landing() },
   { key: 'lessons', label: 'Lessons', short: 'Lessons', icon: 'book', href: href.lessons() },
   { key: 'reference', label: 'Reference', short: 'Reference', icon: 'search', href: href.reference() },
+  { key: 'glossary', label: 'Glossary', short: 'Glossary', icon: 'layers', href: href.glossary() },
   { key: 'plan', label: 'The run-in', short: 'Run-in', icon: 'flag', href: href.plan() },
   { key: 'playground', label: 'Playground', short: 'Playground', icon: 'code', href: href.playground() },
   { key: 'review', label: 'Review', short: 'Review', icon: 'refresh', href: href.review() },
@@ -32,6 +33,7 @@ export function currentFor(key: NavKey, r: Route): 'page' | 'true' | undefined {
       if (r.name === 'lessons') return 'page';
       return r.name === 'lesson-read' || r.name === 'lesson' ? 'true' : undefined;
     case 'reference': return r.name === 'reference' ? 'page' : undefined;
+    case 'glossary': return r.name === 'glossary' ? 'page' : undefined;
     case 'plan': return r.name === 'plan' ? 'page' : undefined;
     case 'playground': return r.name === 'playground' ? 'page' : undefined;
     case 'review': return r.name === 'review' ? 'page' : undefined;

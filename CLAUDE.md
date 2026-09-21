@@ -90,6 +90,13 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 - **Treat imported files as hostile.** Everything from an export file goes through `src/store/validate.ts`:
   allowlisted fields, capped lengths and counts, clamped timestamps and ranges. Drafts are `unknown` by
   contract, so check types before using them in a component.
+- **Glossary words are marked where they are read** (`src/content/glossaryMatch.ts`, `TermMark`): hover,
+  focus or tap gives the definition without leaving the page. Marking is deliberately shy -- only the term
+  itself (never its `also` spellings, which are search aids), never a word whose everyday English sense
+  would mislead (`NEVER_AUTO`: "the whole argument for functions" is not a value being passed), once per
+  word per passage, at most three marks, and never inside code. An author marks an excluded word on
+  purpose by writing `[[argument]]` in the prose. Off by default: pass `terms` to `Markdown`, and not
+  while a test is measuring.
 - **A glossary entry demonstrates rather than asserts.** Where a term is a claim about Python's
   behaviour it carries a `demo`, and the verifier runs it for the output -- the same rule as lessons and
   the reference. The verifier also refuses a definition that uses the word to define itself, and a

@@ -508,7 +508,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
             <div class="qp-eyebrow-row"><span class="eyebrow">{eyebrowText}</span>{pills}</div>
             <h1 class="qp-title" id="qp-title">{q.title}</h1>
             {story}
-            <Markdown class="qp-prompt" text={q.prompt} />
+            <Markdown class="qp-prompt" text={q.prompt} terms={!testMode} />
             {q.format === 'write' && q.rules?.length ? <RulesList rules={q.rules} /> : null}
             {examples.length ? <ShellSession lines={examples} label="Example calls and results" /> : null}
           </div>
@@ -530,7 +530,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
             <div class="qp-eyebrow-row"><span class="eyebrow">{eyebrowText}</span>{pills}</div>
             <h1 class="qp-title" id="qp-title">{q.title}</h1>
             {story}
-            <Markdown class="qp-prompt" text={q.prompt} />
+            <Markdown class="qp-prompt" text={q.prompt} terms={!testMode} />
             <HintCallouts hints={q.hints} tier={hintTier} />
           </div>
           {examples.length ? <ShellSession lines={examples} label="Example calls and results" /> : null}
@@ -547,7 +547,7 @@ export function QuestionView({ data, modeOverride }: { data: LoadedQuestion; mod
           <div class="qp-eyebrow-row"><span class="eyebrow">{eyebrowText}</span>{pills}</div>
           <h1 class="qp-title big" id="qp-title">{q.title}</h1>
           {story}
-          <Markdown class="qp-prompt" text={q.prompt} />
+          <Markdown class="qp-prompt" text={q.prompt} terms={!testMode} />
           <div class="qp-format">{confidenceRow}<Format {...formatProps} /></div>
           {resultCard}
           {testMode ? null : (

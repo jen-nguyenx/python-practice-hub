@@ -113,3 +113,29 @@
 .input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--focus); }
 .input.mono { font-family: var(--mono); }
 .input.sm { height: 36px; font-size: var(--fs-14); }
+
+/* ---------- glossary words marked in prose ---------- */
+/* A dotted underline, not a link colour: it is a word worth a second's explanation, not somewhere to go. */
+.tm-wrap { position: relative; }
+.tm {
+  border: 0; padding: 0; background: none; font: inherit; color: inherit; cursor: help;
+  border-bottom: 1px dotted var(--text-faint);
+}
+.tm:hover, .tm[aria-expanded="true"] { border-bottom-color: var(--accent); border-bottom-style: solid; }
+.tm:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+
+/* Drawn against the viewport: every place these marks appear clips its own overflow. */
+.tm-pop {
+  position: fixed; z-index: 1000; display: grid; gap: 6px; padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--r-2);
+  box-shadow: var(--shadow-pop, 0 6px 24px rgb(0 0 0 / 0.12)); text-align: left;
+}
+.tm-term { font-size: var(--fs-13); font-weight: 600; }
+.tm-short { font-size: var(--fs-14); line-height: 1.55; color: var(--text); }
+.tm-more { font-size: var(--fs-12); color: var(--blue); text-decoration: none; justify-self: start; }
+.tm-more:hover { text-decoration: underline; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .tm-pop { animation: tm-in 90ms ease-out; }
+  @keyframes tm-in { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: none; } }
+}

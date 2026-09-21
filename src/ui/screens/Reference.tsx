@@ -97,6 +97,9 @@ export function Reference() {
         <p class="rf-lede">
           How do I…? Every snippet here was run to get the answer underneath it. Press <kbd>/</kbd> to search.
         </p>
+        <p class="rf-sibling">
+          After a word rather than a job? <a href={href.glossary()}>The glossary</a> explains the vocabulary.
+        </p>
       </header>
 
       <div class="rf-search">

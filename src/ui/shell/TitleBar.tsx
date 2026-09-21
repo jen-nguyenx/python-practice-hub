@@ -41,6 +41,7 @@ export function crumbsFor(r: Route): Crumb[] {
     case 'reference': return [{ label: 'Reference' }];
     case 'plan': return [{ label: 'The run-in' }];
     case 'placement': return [{ label: 'Where to start' }];
+    case 'glossary': return [{ label: 'Glossary' }];
     case 'lesson-read': return [
       { label: 'Lessons', href: href.lessons() },
       { label: LESSON_BY_ID[r.lessonId]?.title ?? 'Lesson not found' },

@@ -9,7 +9,7 @@ npm run typecheck                    # tsc --noEmit (TypeScript 7)
 npm test                             # vitest: graders, progress, report, store, harness, UI logic
 npm run verify -- --topic <id>       # run one topic's content in real Python; rewrites src/content/generated/<id>.json
 npm run verify                       # all topics + lessons + generated indexes
-npm run verify:lessons               # lessons and the reference only (skips all 13 topics; fast while writing one)
+npm run verify:lessons               # lessons, reference and glossary only (skips all 13 topics; fast while writing one)
 npm run verify:check                 # CI: fail if generated files are stale
 npm run build && npm run smoke       # production build + Chrome smoke test (system Chrome, ~4 min)
 npm run gate                         # typecheck + test + verify:check + build + smoke, in that order
@@ -39,9 +39,10 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (which mistakes are due), `reviewSession.ts` (what a session asks), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `examPlan.ts` (the run-in), `placement.ts` (where to join the ladder), `semester.ts` (the CITS1401 calendar), `streak.ts`, `traceback.ts` |
 | `src/store/` | IndexedDB event log, snapshots, scratch files, settings (localStorage), export/import |
 | `src/app/` | App shell, hash router, singletons (`services.ts`), `markTopicOpened` |
-| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Review, ExamPlan, Placement, DecodeError, Report, TopicTest, ExamPractice, Settings |
+| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Glossary, Review, ExamPlan, Placement, DecodeError, Report, TopicTest, ExamPractice, Settings |
 | `src/content/recipes/`, `recipeSchema.ts` | The reference: one file per area, every snippet run by the verifier |
 | `src/content/conceptWords.ts` | Concept tags in a student's words; nothing shows a raw tag |
+| `src/content/glossary.ts`, `glossarySchema.ts` | The glossary: one entry per word the course uses, each demo run by the verifier |
 | `src/ui/lesson/steps.ts` | Derived per-topic steps, the fallback when a topic has no authored lesson yet |
 | `src/ui/lesson/LessonBlocks.tsx` | Renders one lesson block. Decides layout only; never decides what Python does |
 | `src/ui/formats/read|code/` | The 12 question-format components; `registry.ts` maps format → component |
@@ -89,6 +90,10 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 - **Treat imported files as hostile.** Everything from an export file goes through `src/store/validate.ts`:
   allowlisted fields, capped lengths and counts, clamped timestamps and ranges. Drafts are `unknown` by
   contract, so check types before using them in a component.
+- **A glossary entry demonstrates rather than asserts.** Where a term is a claim about Python's
+  behaviour it carries a `demo`, and the verifier runs it for the output -- the same rule as lessons and
+  the reference. The verifier also refuses a definition that uses the word to define itself, and a
+  `[[link]]` or `lessonId` that names something which does not exist.
 - **The run-in (`#/plan`) is the only thing that plans against the calendar.** `semester.ts` knows when
   the exams are; `examPlan.ts` puts that together with how far up the ladder a student is, and says
   whether the pace they are managing matches the pace the time left demands. Every target has something

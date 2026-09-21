@@ -1,0 +1,80 @@
+{
+  "accumulator": {
+    "stdout": "12\n"
+  },
+  "aliasing": {
+    "stdout": "[1, 2, 3]\nTrue\n"
+  },
+  "argument": {
+    "stdout": "Hello, Perth\n"
+  },
+  "base-case": {
+    "stdout": "liftoff\n"
+  },
+  "boolean": {
+    "stdout": "False\nFalse False False\nTrue True\n"
+  },
+  "concatenate": {
+    "stdout": "Swan River\nSwan2\n"
+  },
+  "exception": {
+    "stdout": "caught it\n"
+  },
+  "expression": {
+    "stdout": "4\nababab\nTrue\n"
+  },
+  "float": {
+    "stdout": "0.30000000000000004\n3.5\n2.67\n"
+  },
+  "function": {
+    "stdout": "HEY!\n"
+  },
+  "immutable": {
+    "stdout": "perth\nPERTH\n"
+  },
+  "index": {
+    "stdout": "Mon\nWed\n3\n"
+  },
+  "integer": {
+    "stdout": "3.5\n3\n-4\n"
+  },
+  "iterate": {
+    "stdout": "a\nb\nc\na\nb\n"
+  },
+  "key": {
+    "stdout": "36\nNone\n"
+  },
+  "method": {
+    "stdout": "Perth\n['a', 'b']\n"
+  },
+  "mutable": {
+    "stdout": "[3, 5, 7]\n"
+  },
+  "nested": {
+    "stdout": "1 x\n1 y\n2 x\n2 y\n"
+  },
+  "none": {
+    "stdout": "None\nTrue\n"
+  },
+  "parameter": {
+    "stdout": "12\n"
+  },
+  "print": {
+    "stdout": "42\nthe call was worth: None\n"
+  },
+  "recursion": {
+    "stdout": "6\n"
+  },
+  "return": {
+    "stdout": "42\n11\n"
+  },
+  "scope": {
+    "stdout": "inside sees: 1\noutside sees: False\n"
+  },
+  "slice": {
+    "stdout": "Frem\nFre\ntle\n"
+  },
+  "tuple": {
+    "stdout": "3 4\n2\n"
+  }
+}

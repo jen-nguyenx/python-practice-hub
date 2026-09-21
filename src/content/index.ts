@@ -27,6 +27,8 @@ const generatedLoaders = import.meta.glob<GeneratedTopic>([
   '!./generated/recipe-index.json',
   '!./generated/recipes.json',
   '!./generated/lesson-index.json',
+  '!./generated/glossary-index.json',
+  '!./generated/glossary.json',
 ], { import: 'default' });
 
 const topicCache = new Map<TopicId, Promise<Topic>>();

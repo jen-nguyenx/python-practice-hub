@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { arg, dismissTour, flag, importProgress, LIVE, openBrowser, startPreview, waitForPython, writeSeed } from './lib/browser.ts';
 import type { SeedQuestion } from './lib/browser.ts';
 import {
-  checkCalibration, checkConfidence, checkExamPlan, checkPlacement, checkMainRoutes, checkPaletteReference,
+  checkCalibration, checkConfidence, checkExamPlan, checkGlossary, checkPlacement, checkMainRoutes, checkPaletteReference,
   checkReferenceSearch, checkReportSections, checkReviewSession, visit,
 } from './lib/checks.ts';
 import type { Ctx } from './lib/checks.ts';
@@ -75,6 +75,7 @@ try {
   await checkReviewSession(c);
   await checkExamPlan(c);
   await checkPlacement(c);
+  await checkGlossary(c);
   // Just past the seeded history, in a topic that history has unlocked.
   await checkConfidence(c, (index[41] ?? index[index.length - 1]).qid);
 } catch (e) {

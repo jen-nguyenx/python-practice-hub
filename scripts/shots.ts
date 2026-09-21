@@ -43,6 +43,16 @@ const SHOTS: Shot[] = [
     },
   },
   { name: 'lessons', hash: '#/lessons' },
+  { name: 'glossary', hash: '#/glossary' },
+  {
+    name: 'glossary-search',
+    hash: '#/glossary',
+    prepare: async (page) => {
+      await page.locator('.gl-search-in').fill('');
+      await page.locator('.gl-search-in').type('mutable', { delay: 10 });
+      await page.waitForTimeout(400);
+    },
+  },
   { name: 'plan', hash: '#/plan' },
   { name: 'placement', hash: '#/placement' },
   {

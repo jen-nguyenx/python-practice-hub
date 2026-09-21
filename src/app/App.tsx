@@ -6,6 +6,7 @@ import { TopicLesson } from '../ui/screens/TopicLesson.tsx';
 import { LessonsIndex } from '../ui/screens/LessonsIndex.tsx';
 import { DecodeError } from '../ui/screens/DecodeError.tsx';
 import { ExamPlan } from '../ui/screens/ExamPlan.tsx';
+import { Glossary } from '../ui/screens/Glossary.tsx';
 import { Placement } from '../ui/screens/Placement.tsx';
 import { Reference } from '../ui/screens/Reference.tsx';
 import { Review } from '../ui/screens/Review.tsx';
@@ -35,6 +36,7 @@ export function App() {
     case 'reference': screen = <Reference />; break;
     case 'plan': screen = <ExamPlan />; break;
     case 'placement': screen = <Placement />; break;
+    case 'glossary': screen = <Glossary />; break;
     case 'topic-test': screen = <TopicTest topicId={r.topicId} />; break;
     case 'exam': screen = <ExamPractice />; break;
     case 'settings': screen = <Settings />; break;

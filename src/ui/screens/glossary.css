@@ -1,0 +1,38 @@
+/* Glossary: the vocabulary of the course, defined in plainer words and demonstrated where it can be. */
+.gl { container-type: inline-size; container-name: gl; max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; display: grid; gap: 22px; }
+.gl-top { display: grid; gap: 8px; }
+.gl-h1 { font-family: var(--display); font-size: var(--fs-40); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; margin: 0; }
+.gl-lede { margin: 0; max-width: 64ch; font-size: var(--fs-16); line-height: 1.6; color: var(--text-muted); }
+.gl-lede kbd { padding: 1px 6px; border: 1px solid var(--border-strong); border-radius: 4px; font-family: var(--mono); font-size: var(--fs-12); }
+
+.gl-search { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--r-2); }
+.gl-search:focus-within { border-color: var(--accent); }
+.gl-search > svg { flex: none; color: var(--text-faint); }
+.gl-search-in { flex: 1 1 auto; min-width: 0; border: 0; background: none; font: inherit; font-size: var(--fs-16); color: var(--text); }
+.gl-search-in:focus { outline: none; }
+.gl-count { font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); white-space: nowrap; }
+.gl-none { margin: 0; max-width: 60ch; font-size: var(--fs-15); line-height: 1.6; color: var(--text-muted); }
+
+.gl-list { display: grid; gap: 14px; }
+.gl-card { display: grid; gap: 8px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); scroll-margin-top: 16px; }
+.gl-card.is-open { border-color: var(--accent); box-shadow: var(--shadow-card); }
+.gl-term { margin: 0; font-family: var(--display); font-size: var(--fs-20); font-weight: 600; }
+.gl-short { margin: 0; font-size: var(--fs-16); line-height: 1.6; }
+.gl-note { margin: 0; max-width: 68ch; font-size: var(--fs-14); line-height: 1.6; color: var(--text-muted); }
+.gl-xref { color: var(--blue); text-decoration: none; border-bottom: 1px dotted currentColor; }
+.gl-xref:hover { border-bottom-style: solid; }
+
+.gl-demo { display: grid; gap: 0; margin-top: 4px; }
+.gl-demo .code-block { margin: 0; border-radius: var(--r-1) var(--r-1) 0 0; }
+.gl-out { padding: 10px 14px; background: var(--surface-2); border: 1px solid var(--border); border-top: 0; border-radius: 0 0 var(--r-1) var(--r-1); }
+.gl-out pre { margin: 0; font-family: var(--mono); font-size: var(--fs-13); line-height: 1.5; white-space: pre-wrap; overflow-x: auto; }
+
+.gl-links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 4px 0 0; }
+.gl-link { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-13); color: var(--blue); text-decoration: none; }
+.gl-link:hover { text-decoration: underline; }
+
+@container gl (max-width: 640px) {
+  .gl { padding: 24px 16px 80px; }
+  .gl-h1 { font-size: var(--fs-28); }
+  .gl-card { padding: 16px 18px; }
+}

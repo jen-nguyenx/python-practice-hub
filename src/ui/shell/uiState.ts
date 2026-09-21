@@ -19,3 +19,9 @@ export const statusBarExtra = signal<string | null>(null);
  * on arrival and then clears this, so landing there from a search shows the answer, not the whole shelf.
  */
 export const referenceJump = signal<string | null>(null);
+
+/**
+ * A glossary term chosen from somewhere else (the command palette). The glossary searches for it on
+ * arrival and then clears this, so landing there from a search shows the word, not the whole list.
+ */
+export const glossaryJump = signal<string | null>(null);

@@ -1,0 +1,418 @@
+[
+  {
+    "also": [
+      "arguments",
+      "args",
+      "pass in"
+    ],
+    "confusedWith": "parameter",
+    "demo": "def greet(name):\n    print(\"Hello,\", name)\n\n# \"Perth\" is the argument\ngreet(\"Perth\")\n",
+    "id": "argument",
+    "lessonId": "core-functions",
+    "note": "The value is the argument; the name it arrives under inside the function is the [[parameter]].",
+    "short": "The actual value you hand to a function when you call it.",
+    "term": "argument"
+  },
+  {
+    "also": [
+      "parameters",
+      "formal parameter"
+    ],
+    "confusedWith": "argument",
+    "demo": "def area(width, height):\n    # width and height are the parameters\n    return width * height\n\nprint(area(3, 4))\n",
+    "id": "parameter",
+    "lessonId": "core-functions",
+    "note": "A parameter is a name waiting for a value; an [[argument]] is the value that turns up.",
+    "short": "The name a function gives to a value it is handed, written in its def line.",
+    "term": "parameter"
+  },
+  {
+    "also": [
+      "returns",
+      "returning",
+      "return value"
+    ],
+    "confusedWith": "print",
+    "demo": "def double(n):\n    return n * 2\n\nresult = double(21)\nprint(result)\nprint(double(5) + 1)\n",
+    "id": "return",
+    "lessonId": "core-functions",
+    "note": "Returning is not printing. A function that prints shows you something; a function that returns gives you something you can use.",
+    "short": "Hands a value back to whoever called the function, and stops the function there.",
+    "term": "return"
+  },
+  {
+    "also": [
+      "printing",
+      "prints",
+      "output"
+    ],
+    "confusedWith": "return",
+    "demo": "def shows(n):\n    print(n * 2)\n\nvalue = shows(21)\nprint(\"the call was worth:\", value)\n",
+    "id": "print",
+    "lessonId": "showing-your-work",
+    "note": "A function that prints instead of returning gives the caller nothing: the call is worth None.",
+    "short": "Writes something on the screen for a person to read.",
+    "term": "print"
+  },
+  {
+    "also": [
+      "null",
+      "nothing",
+      "returns nothing"
+    ],
+    "demo": "def nothing():\n    pass\n\nprint(nothing())\nprint(None is None)\n",
+    "id": "none",
+    "lessonId": "core-functions",
+    "note": "A function with no return statement hands back None, which is why printing its result shows None.",
+    "short": "Python's word for \"no value at all\".",
+    "term": "None"
+  },
+  {
+    "also": [
+      "mutate",
+      "mutation",
+      "changeable"
+    ],
+    "confusedWith": "immutable",
+    "demo": "prices = [3, 5]\nprices.append(7)\nprint(prices)\n",
+    "id": "mutable",
+    "lessonId": "mutability-and-copying",
+    "note": "Changing a mutable value changes it for every name pointing at it — see [[aliasing]].",
+    "short": "Able to be changed after it is made. Lists, dictionaries and sets are mutable.",
+    "term": "mutable"
+  },
+  {
+    "also": [
+      "unchangeable",
+      "cannot be changed"
+    ],
+    "confusedWith": "mutable",
+    "demo": "name = \"perth\"\nupper = name.upper()\nprint(name)\nprint(upper)\n",
+    "id": "immutable",
+    "lessonId": "core-strings",
+    "note": "Operations that look like changes build a new value instead and leave the old one alone.",
+    "short": "Cannot be changed once made. Strings, numbers and tuples are immutable.",
+    "term": "immutable"
+  },
+  {
+    "also": [
+      "alias",
+      "same list",
+      "two names"
+    ],
+    "demo": "a = [1, 2]\nb = a\nb.append(3)\nprint(a)\nprint(a is b)\n",
+    "id": "aliasing",
+    "lessonId": "mutability-and-copying",
+    "note": "Assigning a list to a second name does not copy it. Use list(...) or a slice to get a copy.",
+    "short": "Two names pointing at the same value, so a change through one shows through the other.",
+    "term": "aliasing"
+  },
+  {
+    "also": [
+      "indices",
+      "position",
+      "subscript"
+    ],
+    "demo": "days = [\"Mon\", \"Tue\", \"Wed\"]\nprint(days[0])\nprint(days[-1])\nprint(len(days))\n",
+    "id": "index",
+    "lessonId": "core-lists-tuples",
+    "note": "The last item is at index len(x) - 1, which is why len(x) itself is out of range.",
+    "short": "The position of an item in a list or string, counting from 0.",
+    "term": "index"
+  },
+  {
+    "also": [
+      "slicing",
+      "sublist",
+      "substring"
+    ],
+    "demo": "word = \"Fremantle\"\nprint(word[0:4])\nprint(word[:3])\nprint(word[-3:])\n",
+    "id": "slice",
+    "lessonId": "core-strings",
+    "note": "The stop position is not included, so x[0:2] gives two items.",
+    "short": "A piece of a list or string, written x[start:stop].",
+    "term": "slice"
+  },
+  {
+    "also": [
+      "tuples",
+      "pair",
+      "fixed list"
+    ],
+    "demo": "point = (3, 4)\nx, y = point\nprint(x, y)\nprint(len(point))\n",
+    "id": "tuple",
+    "lessonId": "core-lists-tuples",
+    "note": "Like a list but immutable, which makes it safe to use as a dictionary key.",
+    "short": "A fixed sequence of values, written with round brackets: (1, 2).",
+    "term": "tuple"
+  },
+  {
+    "also": [
+      "keys",
+      "lookup"
+    ],
+    "demo": "ages = {\"ada\": 36}\nprint(ages[\"ada\"])\nprint(ages.get(\"bob\"))\n",
+    "id": "key",
+    "lessonId": "core-dictionaries",
+    "note": "Asking for a key that is not there raises KeyError; .get() returns None instead.",
+    "short": "The thing you look something up by in a dictionary.",
+    "term": "key"
+  },
+  {
+    "also": [
+      "iterating",
+      "loop over",
+      "iterable",
+      "traverse"
+    ],
+    "demo": "for letter in \"abc\":\n    print(letter)\n\nfor key in {\"a\": 1, \"b\": 2}:\n    print(key)\n",
+    "id": "iterate",
+    "lessonId": "core-for-loops",
+    "note": "Looping over a dictionary gives you its keys, not its values.",
+    "short": "To go through something one item at a time, which is what a for loop does.",
+    "term": "iterate"
+  },
+  {
+    "also": [
+      "running total",
+      "build up",
+      "total"
+    ],
+    "demo": "total = 0\nfor n in [2, 4, 6]:\n    total = total + n\nprint(total)\n",
+    "id": "accumulator",
+    "lessonId": "core-for-loops",
+    "note": "It has to be created before the loop starts, or the first pass has nothing to add to.",
+    "short": "A variable you set up before a loop and add to inside it.",
+    "term": "accumulator"
+  },
+  {
+    "also": [
+      "expressions",
+      "evaluates"
+    ],
+    "confusedWith": "statement",
+    "demo": "print(2 + 2)\nprint(\"ab\" * 3)\nprint(5 > 3)\n",
+    "id": "expression",
+    "lessonId": "doing-arithmetic",
+    "short": "A piece of code that produces a value: 2 + 2, name.upper(), x > 3.",
+    "term": "expression"
+  },
+  {
+    "also": [
+      "statements",
+      "line of code"
+    ],
+    "confusedWith": "expression",
+    "id": "statement",
+    "lessonId": "what-a-program-is",
+    "note": "An expression produces a value; a statement does something.",
+    "short": "A complete instruction: an assignment, an if, a loop, a return.",
+    "term": "statement"
+  },
+  {
+    "also": [
+      "bool",
+      "true",
+      "false",
+      "truthy",
+      "falsy"
+    ],
+    "demo": "print(3 > 5)\nprint(bool(0), bool(\"\"), bool([]))\nprint(bool(\"no\"), bool([0]))\n",
+    "id": "boolean",
+    "lessonId": "core-decisions",
+    "note": "Python also treats 0, \"\" and [] as false when it needs a yes or no, which is what \"falsy\" means.",
+    "short": "A value that is either True or False.",
+    "term": "boolean"
+  },
+  {
+    "also": [
+      "floats",
+      "decimal",
+      "floating point"
+    ],
+    "demo": "print(0.1 + 0.2)\nprint(7 / 2)\nprint(round(2.675, 2))\n",
+    "id": "float",
+    "lessonId": "values-and-types",
+    "note": "Floats are stored in binary, so some sums come out a hair off: 0.1 + 0.2 is not exactly 0.3.",
+    "short": "A number with a decimal point, like 3.5.",
+    "term": "float"
+  },
+  {
+    "also": [
+      "int",
+      "whole number"
+    ],
+    "demo": "print(7 / 2)\nprint(7 // 2)\nprint(-7 // 2)\n",
+    "id": "integer",
+    "lessonId": "values-and-types",
+    "note": "Dividing with / always gives a float; // keeps it whole and rounds down.",
+    "short": "A whole number, with no decimal point.",
+    "term": "integer"
+  },
+  {
+    "also": [
+      "concatenation",
+      "join strings",
+      "stick together"
+    ],
+    "demo": "first = \"Swan\"\nprint(first + \" River\")\nprint(first + str(2))\n",
+    "id": "concatenate",
+    "lessonId": "core-strings",
+    "note": "Both sides have to be strings: adding a number raises TypeError unless you convert it first.",
+    "short": "To join two strings end to end with +.",
+    "term": "concatenate"
+  },
+  {
+    "also": [
+      "methods",
+      "dot call"
+    ],
+    "confusedWith": "function",
+    "demo": "name = \"  perth  \"\nprint(name.strip().title())\nprint(\"a,b\".split(\",\"))\n",
+    "id": "method",
+    "lessonId": "core-strings",
+    "note": "A method acts on the thing before the dot, which is why it needs no argument for it.",
+    "short": "A function that belongs to a value, called with a dot: name.upper().",
+    "term": "method"
+  },
+  {
+    "also": [
+      "functions",
+      "def"
+    ],
+    "confusedWith": "method",
+    "demo": "def shout(word):\n    return word.upper() + \"!\"\n\nprint(shout(\"hey\"))\n",
+    "id": "function",
+    "lessonId": "core-functions",
+    "short": "A named block of code you can run whenever you want, by calling it.",
+    "term": "function"
+  },
+  {
+    "also": [
+      "local",
+      "global",
+      "visible"
+    ],
+    "demo": "def f():\n    inside = 1\n    print(\"inside sees:\", inside)\n\nf()\nprint(\"outside sees:\", \"inside\" in dir())\n",
+    "id": "scope",
+    "lessonId": "core-scope-and-main",
+    "note": "That is why a variable made in a function vanishes when the function ends.",
+    "short": "Where a name can be seen. A name made inside a function is only visible inside it.",
+    "term": "scope"
+  },
+  {
+    "also": [
+      "stack trace",
+      "error message",
+      "red text"
+    ],
+    "id": "traceback",
+    "lessonId": "reading-an-error",
+    "note": "Read it from the bottom: the last line names the error, and the line above it is usually your code.",
+    "short": "The report Python prints when something goes wrong, listing where it happened.",
+    "term": "traceback"
+  },
+  {
+    "also": [
+      "exceptions",
+      "raise",
+      "error"
+    ],
+    "demo": "try:\n    print(1 / 0)\nexcept ZeroDivisionError:\n    print(\"caught it\")\n",
+    "id": "exception",
+    "lessonId": "core-exceptions",
+    "note": "try/except lets you catch one and decide what to do instead of stopping.",
+    "short": "Python's way of stopping when it cannot carry on, like dividing by zero.",
+    "term": "exception"
+  },
+  {
+    "also": [
+      "syntax error",
+      "grammar"
+    ],
+    "id": "syntax",
+    "lessonId": "reading-an-error",
+    "note": "A SyntaxError means Python could not read the code at all, so nothing ran — not even the lines above it.",
+    "short": "The grammar of the language: where the colons, brackets and indents go.",
+    "term": "syntax"
+  },
+  {
+    "also": [
+      "indent",
+      "whitespace",
+      "spaces"
+    ],
+    "id": "indentation",
+    "lessonId": "what-a-program-is",
+    "note": "Four spaces per level is the convention. Mixing tabs and spaces is a common cause of errors.",
+    "short": "The spaces at the start of a line, which is how Python knows what is inside what.",
+    "term": "indentation"
+  },
+  {
+    "also": [
+      "stopping case",
+      "recursion stop"
+    ],
+    "demo": "def countdown(n):\n    if n == 0:\n        return \"liftoff\"\n    return countdown(n - 1)\n\nprint(countdown(3))\n",
+    "id": "base-case",
+    "lessonId": "core-recursion",
+    "note": "Without one the calls never stop, and Python gives up with RecursionError.",
+    "short": "The case a recursive function answers directly, without calling itself again.",
+    "term": "base case"
+  },
+  {
+    "also": [
+      "recursive",
+      "calls itself"
+    ],
+    "demo": "def total(nums):\n    if not nums:\n        return 0\n    return nums[0] + total(nums[1:])\n\nprint(total([1, 2, 3]))\n",
+    "id": "recursion",
+    "lessonId": "core-recursion",
+    "note": "Every recursive function needs a [[base-case]] or it never stops.",
+    "short": "A function that calls itself on a smaller version of the same problem.",
+    "term": "recursion"
+  },
+  {
+    "also": [
+      "def line",
+      "header"
+    ],
+    "id": "signature",
+    "lessonId": "core-functions",
+    "note": "A project brief that fixes a signature means calling it that exact way, with that many parameters.",
+    "short": "The def line of a function: its name and the parameters it takes.",
+    "term": "signature"
+  },
+  {
+    "also": [
+      "literals",
+      "written out"
+    ],
+    "id": "literal",
+    "lessonId": "values-and-types",
+    "short": "A value written directly in the code: 42, \"hello\", [1, 2].",
+    "term": "literal"
+  },
+  {
+    "also": [
+      "operands",
+      "either side"
+    ],
+    "id": "operand",
+    "lessonId": "doing-arithmetic",
+    "short": "A value an operator works on. In 2 + 3, the operands are 2 and 3.",
+    "term": "operand"
+  },
+  {
+    "also": [
+      "nesting",
+      "inside another"
+    ],
+    "demo": "for a in [1, 2]:\n    for b in [\"x\", \"y\"]:\n        print(a, b)\n",
+    "id": "nested",
+    "lessonId": "core-while-loops",
+    "note": "A nested loop runs its whole inner loop for every single pass of the outer one.",
+    "short": "One thing inside another: a loop inside a loop, or a list inside a list.",
+    "term": "nested"
+  }
+]

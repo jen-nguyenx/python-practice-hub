@@ -37,7 +37,7 @@ export async function visit(c: Ctx, hash: string, shot?: string, shotsDir?: stri
 /** Every top-level route the icon bar and the palette offer. */
 export const MAIN_ROUTES = [
   '#/playground', '#/report', '#/exam', '#/settings', '#/review', '#/error', '#/reference', '#/lessons',
-  '#/plan', '#/placement',
+  '#/plan', '#/placement', '#/glossary',
 ];
 
 export async function checkMainRoutes(c: Ctx): Promise<void> {
@@ -322,4 +322,47 @@ export async function checkPlacement(c: Ctx): Promise<void> {
   }
   const said = await c.page.locator('.pl-done-h').innerText().catch(() => '');
   if (said.trim() === '') c.fail('#/placement: the result does not say where it left you');
+}
+
+/**
+ * The glossary: a word, a plainer sentence, and — where the word is a claim about Python — the claim
+ * running. The cross-references between entries are the part most likely to rot, since they are written
+ * by hand as [[links]] inside prose, so one is followed here.
+ */
+export async function checkGlossary(c: Ctx): Promise<void> {
+  await visit(c, '#/glossary');
+  const box = c.page.locator('.gl-search-in');
+  if ((await box.count()) === 0) {
+    c.fail('#/glossary: no search box');
+    return;
+  }
+  await box.fill('');
+  await box.click();
+  await box.type('mutable', { delay: 10 });
+  await c.page.waitForTimeout(400);
+
+  const top = c.page.locator('.gl-card').first();
+  if ((await top.count()) === 0) {
+    c.fail('#/glossary: searching for "mutable" found nothing');
+    return;
+  }
+  if ((await top.locator('.gl-term').innerText()).trim().toLowerCase() !== 'mutable') {
+    c.fail(`#/glossary: the top result for "mutable" was "${await top.locator('.gl-term').innerText()}"`);
+  }
+  // A definition that makes a claim about Python has to show it, not assert it.
+  if ((await top.locator('.gl-out').count()) === 0) c.fail('#/glossary: the mutable entry shows no output for its example');
+
+  // A [[link]] inside a definition must reach the entry it names.
+  const xref = top.locator('.gl-xref').first();
+  if ((await xref.count()) === 0) {
+    c.fail('#/glossary: the mutable entry has no cross-reference to follow');
+    return;
+  }
+  const word = (await xref.innerText()).trim().toLowerCase();
+  await xref.click();
+  await c.page.waitForTimeout(600);
+  const opened = await c.page.locator('.gl-card.is-open .gl-term').innerText().catch(() => '');
+  if (opened.trim().toLowerCase() !== word) {
+    c.fail(`#/glossary: following the link to "${word}" opened "${opened || 'nothing'}"`);
+  }
 }

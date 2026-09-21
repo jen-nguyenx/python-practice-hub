@@ -18,6 +18,7 @@ import { jsonEqual, readJson, stableStringify, writeIfChanged } from './verify/j
 import { formatIssue, Issues, plural, topicHeader } from './verify/report.ts';
 import { checkTopicExperiments } from './verify/experiments.ts';
 import { checkLessons } from './verify/lessons.ts';
+import { checkGlossary } from './verify/glossary.ts';
 import { checkRecipes } from './verify/recipes.ts';
 import { checkTopicRuntime } from './verify/runtime.ts';
 import type { RuntimeContext } from './verify/runtime.ts';
@@ -141,6 +142,15 @@ const recipes = wholeRun
   ? await checkRecipes(issues, staticOnly ? null : () => ctx.harness())
   : { index: [] as unknown[], generated: {} as Record<string, unknown> };
 
+// ---------- the glossary (checked on a whole run) ----------
+const glossary = wholeRun
+  ? await checkGlossary(
+    issues,
+    staticOnly ? null : () => ctx.harness(),
+    new Set((lessons.index as { id: string }[]).map((l) => l.id)),
+  )
+  : { index: [] as unknown[], generated: {} as Record<string, unknown> };
+
 // ---------- question index (always from all topics) ----------
 const index: QuestionMeta[] = [];
 for (const { info, topic } of loaded) {
@@ -190,10 +200,12 @@ if (!staticOnly) {
   for (const [id, x] of experiments) emitOrRemove(join(GENERATED_DIR, 'experiments', `${id}.json`), x);
   for (const [id, gen] of lessons.generated) emitOrRemove(join(GENERATED_DIR, 'lessons', `${id}.json`), gen);
   if (wholeRun) emit(join(GENERATED_DIR, 'recipes.json'), recipes.generated);
+  if (wholeRun) emit(join(GENERATED_DIR, 'glossary.json'), glossary.generated);
 }
 if (!lessonsOnly) emit(join(GENERATED_DIR, 'question-index.json'), index);
 if (wholeRun) emit(join(GENERATED_DIR, 'lesson-index.json'), lessons.index);
 if (wholeRun) emit(join(GENERATED_DIR, 'recipe-index.json'), recipes.index);
+if (wholeRun) emit(join(GENERATED_DIR, 'glossary-index.json'), glossary.index);
 
 // ---------- report ----------
 const lines: string[] = [];
@@ -211,6 +223,10 @@ if (wholeRun) {
   const refWarns = issues.count('warn', 'reference');
   lines.push(`${refErrors > 0 ? 'FAIL' : 'ok  '} -- reference: ${recipes.index.length} ${recipes.index.length === 1 ? 'entry' : 'entries'}, ${plural(refErrors, 'error')}, ${plural(refWarns, 'warning')}`);
   for (const i of issues.forTopic('reference')) lines.push(formatIssue(i));
+  const glosErrors = issues.count('error', 'glossary');
+  const glosWarns = issues.count('warn', 'glossary');
+  lines.push(`${glosErrors > 0 ? 'FAIL' : 'ok  '} -- glossary: ${plural(glossary.index.length, 'term')}, ${plural(glosErrors, 'error')}, ${plural(glosWarns, 'warning')}`);
+  for (const i of issues.forTopic('glossary')) lines.push(formatIssue(i));
 }
 console.log(lines.join('\n'));
 const errors = targets.reduce((n, t) => n + issues.count('error', t.info.id), 0) + lessonErrors + issues.count('error', 'reference');

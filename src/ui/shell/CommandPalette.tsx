@@ -11,6 +11,7 @@ import { QUESTION_BY_ID, QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
 import { LESSON_INDEX } from '../../content/lessons/index.ts';
 import { TRACK_LABEL } from '../../content/lessonSchema.ts';
+import { TERM_ENTRIES } from '../../content/glossaryIndex.ts';
 import { RECIPES } from '../../content/recipes/index.ts';
 import { GROUP_LABEL } from '../../content/recipeSchema.ts';
 import { Icon } from '../components/Icon.tsx';
@@ -20,9 +21,9 @@ import { matchItem } from './fuzzy.ts';
 import { continueInfo } from './homeData.ts';
 import { safeTopicProgress } from './progressData.ts';
 import { toggleTheme } from './ThemeToggle.tsx';
-import { mainFill, paletteOpen, referenceJump, shortcutSheetOpen } from './uiState.ts';
+import { glossaryJump, mainFill, paletteOpen, referenceJump, shortcutSheetOpen } from './uiState.ts';
 
-type Group = 'Pages and actions' | 'Lessons' | 'Reference' | 'Topics' | 'Questions';
+type Group = 'Pages and actions' | 'Lessons' | 'Reference' | 'Glossary' | 'Topics' | 'Questions';
 interface Item {
   id: string; group: Group; label: string; detail: string; icon: IconName; search: string; run: () => void;
   /** The question's topic is locked: shown as "Locked" and ranked below everything that is open. */
@@ -33,9 +34,11 @@ interface Item {
   unavailable?: string;
 }
 
-const GROUPS: Group[] = ['Pages and actions', 'Lessons', 'Reference', 'Topics', 'Questions'];
+const GROUPS: Group[] = ['Pages and actions', 'Lessons', 'Reference', 'Glossary', 'Topics', 'Questions'];
 /** The reference is browsed on its own page; the palette offers the few best answers, not all of it. */
 const MAX_REFERENCE = 5;
+/** A word and its one-line meaning; the glossary page is where the rest of it lives. */
+const MAX_GLOSSARY = 4;
 const MAX_QUESTIONS = 40;
 
 function go(h: string) { return () => navigate(h); }
@@ -47,6 +50,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
   const actions: Item[] = [
     { id: 'a-home', group: 'Pages and actions', label: 'Topics', detail: 'Home', icon: 'ladder', search: 'home ladder', href: href.landing(), run: go(href.landing()) },
     { id: 'a-lessons', group: 'Pages and actions', label: 'Lessons', detail: 'Explanations from the beginning to beyond the unit', icon: 'book', search: 'learn teach read tutorial guide', href: href.lessons(), run: go(href.lessons()) },
+    { id: 'a-gloss', group: 'Pages and actions', label: 'Glossary', detail: 'What the words mean, in plainer words', icon: 'book', search: 'glossary vocabulary jargon term definition meaning word', href: href.glossary(), run: go(href.glossary()) },
     { id: 'a-ref', group: 'Pages and actions', label: 'Reference', detail: 'How do I…? Snippets that really run', icon: 'search', search: 'how do i syntax cheat sheet snippet lookup recipe', href: href.reference(), run: go(href.reference()) },
     { id: 'a-play', group: 'Pages and actions', label: 'Playground', detail: 'Write and run any Python', icon: 'code', search: 'editor run python', href: href.playground(), run: go(href.playground()) },
     { id: 'a-exam', group: 'Pages and actions', label: 'Exams', detail: 'Mock final paper or a timed practice test', icon: 'clock', search: 'exam final mock practice test timed', href: href.exam(), run: go(href.exam()) },
@@ -119,12 +123,19 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
     href: href.reference(),
     run: () => { referenceJump.value = r.task; navigate(href.reference()); },
   }));
-  return { items: [...actions, ...lessons, ...reference, ...topics, ...questions], continueItem };
+  // A word met in a question is looked up from wherever the student is, which is here.
+  const glossary: Item[] = TERM_ENTRIES.map((t) => ({
+    id: `g-${t.id}`, group: 'Glossary', label: t.term, detail: t.short.replace(/\[\[([a-z0-9-]+)\]\]/g, '$1'),
+    icon: 'book', search: `${(t.also ?? []).join(' ')} ${t.note ?? ''} meaning definition what is`,
+    href: href.glossary(t.id),
+    run: () => { glossaryJump.value = t.term; navigate(href.glossary(t.id)); },
+  }));
+  return { items: [...actions, ...lessons, ...reference, ...glossary, ...topics, ...questions], continueItem };
 }
 
 function filterItems(all: Item[], continueItem: Item | null, query: string): Item[] {
   const q = query.trim();
-  if (!q) return [...(continueItem ? [continueItem] : []), ...all.filter((i) => i.group !== 'Questions' && i.group !== 'Reference')];
+  if (!q) return [...(continueItem ? [continueItem] : []), ...all.filter((i) => i.group !== 'Questions' && i.group !== 'Reference' && i.group !== 'Glossary')];
   const scored: { item: Item; score: number }[] = [];
   for (const item of all) {
     const s = matchItem(q, item.label, item.search);
@@ -135,7 +146,10 @@ function filterItems(all: Item[], continueItem: Item | null, query: string): Ite
   const out: Item[] = [];
   for (const g of GROUPS) {
     const inGroup = scored.filter((s) => s.item.group === g).map((s) => s.item);
-    const cap = g === 'Questions' ? MAX_QUESTIONS : g === 'Reference' ? MAX_REFERENCE : inGroup.length;
+    const cap = g === 'Questions' ? MAX_QUESTIONS
+      : g === 'Reference' ? MAX_REFERENCE
+        : g === 'Glossary' ? MAX_GLOSSARY
+          : inGroup.length;
     out.push(...inGroup.slice(0, cap));
   }
   return out;

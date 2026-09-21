@@ -58,7 +58,9 @@ export function SessionRunner({ picks, items, onDone }: SessionRunnerProps) {
     try {
       store.append({
         type: 'attempt', qid: item.q.id, topicId: pick.topicId, format: item.q.format, diff: item.q.diff,
-        mode: 'practice', checkNo: 1, correct: result.correct, score, credit: score, hintTier: 0,
+        // 'review', not 'practice': these answers count in the report and decide what comes back later,
+        // but they do not count towards unlocking a topic. Progress is made in the topics themselves.
+        mode: 'review', checkNo: 1, correct: result.correct, score, credit: score, hintTier: 0,
         revealed: false, timeMs: Math.max(0, Date.now() - startedAt.current), mistakes,
         response: compact(response),
       });

@@ -93,6 +93,16 @@ describe('planSession', () => {
     expect(planSession(events, [today], { now: NOW })).toEqual([]);
   });
 
+  it('never deals a question that has not been met before', () => {
+    // A review earns no ladder credit, so it must not be where new work is done: a question never
+    // attempted belongs in its topic, where solving it counts.
+    const seen = q({ concepts: ['slicing'] });
+    const unseen = q({ concepts: ['slicing'] });
+    const events = [attempt(seen.qid, { ts: NOW - 20 * DAY, correct: false, score: 0, credit: 0 })];
+    const picks = planSession(events, [seen, unseen], { now: NOW });
+    expect(picks.map((p) => p.qid)).not.toContain(unseen.qid);
+  });
+
   it('stays inside the topics that are open', () => {
     const locked = q({ topicId: 'files-csv' });
     const events = [attempt(locked.qid, { ts: NOW - 40 * DAY, topicId: 'files-csv' })];

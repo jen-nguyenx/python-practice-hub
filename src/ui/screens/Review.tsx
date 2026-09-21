@@ -134,7 +134,7 @@ export function Review() {
         <h1 class="rv-h1">Review</h1>
         <p class="rv-lede">
           A few short questions drawn from what you have got wrong and what you have not touched in a
-          while. No timer, no marks — the point is finding out what stuck.
+          while. No timer, no marks, nothing new — the point is finding out what stuck.
         </p>
       </header>
 
@@ -151,16 +151,18 @@ export function Review() {
             <Icon name="arrowRight" size={16} />
           </Button>
           <p class="rv-start-note">
-            About {Math.max(2, Math.round(picks.length * 1.6))} minutes. Every answer counts towards your
-            progress, exactly as it would on the question's own page.
+            About {Math.max(2, Math.round(picks.length * 1.6))} minutes. These are all questions you have
+            met before. Answers here shape your report and what comes back later, but they do not unlock
+            topics — that is what the topics themselves are for.
           </p>
         </section>
       ) : (
         <div class="tp-empty">
           <p><strong>Nothing to review today.</strong></p>
           <p>
-            Questions turn up here a day or so after you get something wrong, and again when something you
-            solved has been sitting untouched for a while. Answer a few and come back.
+            Questions you have already answered turn up here a day or so after one goes wrong, and again
+            when something you solved has been sitting untouched for a while. Practise in the topics and
+            come back.
           </p>
           <p><a href={href.landing()}>Go to the topics</a></p>
         </div>

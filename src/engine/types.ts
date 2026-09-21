@@ -21,7 +21,12 @@ export type TestKind = 'topic-test' | 'practice-test' | 'mock-exam';
  * and a mock final paper); only 'practice' and 'paper' count toward a topic's unlock minimum.
  * Events written before the app was refocused on the final exam stored 'midsem'; the store maps those to 'exam'.
  */
-export type Mode = 'practice' | 'paper' | 'topic-test' | 'exam';
+/**
+ * How a question was answered. 'review' is a session on the Review page: it measures and it feeds the
+ * report, but it does not move the ladder, the same way a test does not — the topics are where progress
+ * is made, and a review is for finding out what stuck.
+ */
+export type Mode = 'practice' | 'paper' | 'topic-test' | 'exam' | 'review';
 
 // ---------- event log (append-only, stored in IndexedDB) ----------
 

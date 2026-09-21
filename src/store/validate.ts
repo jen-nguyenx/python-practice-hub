@@ -28,7 +28,7 @@ const MISTAKE_SET = new Set<string>(MISTAKE_IDS);
 const FLAG_SET = new Set<string>(AST_FLAGS);
 const FORMAT_SET = new Set<string>(FORMATS);
 const DIFF_SET = new Set<string>(DIFFS);
-const MODES = new Set<string>(['practice', 'paper', 'topic-test', 'exam'] satisfies Mode[]);
+const MODES = new Set<string>(['practice', 'paper', 'topic-test', 'exam', 'review'] satisfies Mode[]);
 const TEST_KINDS = new Set<string>(['topic-test', 'practice-test', 'mock-exam'] satisfies TestKind[]);
 /** Events stored before the app was refocused on the final exam used the old mid-semester names. */
 const LEGACY_MODE: Record<string, Mode> = { midsem: 'exam' };

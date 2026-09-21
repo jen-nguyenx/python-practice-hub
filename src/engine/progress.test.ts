@@ -73,6 +73,16 @@ describe('topicProgressAll: unlock chain', () => {
     expect(questionStats(asTests).get('t01-s1-q1')?.solved).toBe(false);
   });
 
+  it('correct answers given in a review session do not count toward the minimum', () => {
+    // Review is for finding out what stuck. Progress up the ladder is made in the topics themselves,
+    // which is also why a session only ever asks about questions already met there.
+    const asReview = topic1Solved(T0).map((e) => (e.type === 'attempt' ? { ...e, mode: 'review' as const } : e));
+    const p = topicProgressAll([open('variables-expressions', T0 - MIN), ...asReview], index, settings);
+    expect(p['variables-expressions']).toMatchObject({ solved: 0, codeSolved: 0, minimumMet: false });
+    expect(p['if-elif-else'].state).toBe('locked');
+    expect(questionStats(asReview).get('t01-s1-q1')?.solved).toBe(false);
+  });
+
   it('opened + minimum met unlocks the next topic and completes the topic', () => {
     const events = [open('variables-expressions', T0 - MIN), ...topic1Solved(T0)];
     const p = topicProgressAll(events, index, settings);

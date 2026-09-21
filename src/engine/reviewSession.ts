@@ -64,9 +64,6 @@ export function planSession(
   const open = opts.unlocked ? new Set(opts.unlocked) : null;
   const fast = new Set<Format>(SESSION_FORMATS);
 
-  const usable = index.filter((q) => fast.has(q.format) && (!open || open.has(q.topicId)));
-  const byId = new Map(usable.map((q) => [q.qid, q]));
-
   // When each question was last answered at all, and when it was last solved cleanly.
   const lastTouch = new Map<string, number>();
   const solvedAt = new Map<string, number>();
@@ -75,6 +72,15 @@ export function planSession(
     if (e.ts > (lastTouch.get(e.qid) ?? 0)) lastTouch.set(e.qid, e.ts);
     if (e.correct && !e.revealed && e.ts > (solvedAt.get(e.qid) ?? 0)) solvedAt.set(e.qid, e.ts);
   }
+
+  // Only questions already met. Reviewing means going back over something, and a session that dealt a
+  // question for the first time would be new work — which matters here because these answers do not count
+  // towards unlocking a topic. Nothing a student has never seen should be asked where it earns nothing.
+  const usable = index.filter((q) => (
+    fast.has(q.format) && (!open || open.has(q.topicId)) && (lastTouch.get(q.qid) ?? 0) > 0
+  ));
+  const byId = new Map(usable.map((q) => [q.qid, q]));
+
   const answeredToday = (qid: string) => now - (lastTouch.get(qid) ?? 0) < DAY;
 
   const picks: SessionPick[] = [];

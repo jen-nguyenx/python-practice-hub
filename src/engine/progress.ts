@@ -119,7 +119,8 @@ function countsByTopic(events: readonly AppEvent[]): Map<TopicId, TopicCounts> {
         c.attemptedQids.add(e.qid);
         const practice = e.mode === 'practice' || e.mode === 'paper';
         if (practice) c.hasPracticeAttempt = true;
-        // Only practice solves count toward the minimum; test answers are measured by the test result instead.
+        // Only practice solves count toward the minimum. A test is measured by its own result, and a
+        // review session is for finding out what stuck rather than for moving the ladder.
         if (practice && e.correct && !e.revealed && !revealedBefore.has(e.qid)) {
           c.solvedQids.add(e.qid);
           if (CODE_SET.has(e.format)) c.codeSolvedQids.add(e.qid);

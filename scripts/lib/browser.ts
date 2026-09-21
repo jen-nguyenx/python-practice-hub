@@ -105,12 +105,16 @@ export function writeSeed(path: string, index: readonly SeedQuestion[], opts: Se
   const count = opts.count ?? 40;
   const wrongEvery = opts.wrongEvery ?? 3;
   const day = 24 * 60 * 60 * 1000;
-  const start = Date.now() - 6 * day;
+  // Spread over three weeks rather than packed into one afternoon. A real history has old answers in it,
+  // and several things only exist for one: spaced recall has nothing to offer if everything was answered
+  // the same day, and neither does a streak or a "last practised" line.
+  const start = Date.now() - 21 * day;
+  const gap = day / 2;
   const events: unknown[] = [{ eid: 'seed-s', v: 1, ts: start, sessionId: 'seed', type: 'session_start' }];
   index.slice(0, count).forEach((q, i) => {
     const correct = i % wrongEvery !== 0;
     events.push({
-      eid: `seed-a${i}`, v: 1, ts: start + i * 60000, sessionId: 'seed', type: 'attempt',
+      eid: `seed-a${i}`, v: 1, ts: start + i * gap, sessionId: 'seed', type: 'attempt',
       qid: q.qid, topicId: q.topicId, format: q.format, diff: q.diff, mode: 'practice',
       checkNo: 1, correct, score: correct ? 1 : 0, credit: correct ? 1 : 0,
       hintTier: 0, revealed: false, timeMs: 45000, mistakes: [],

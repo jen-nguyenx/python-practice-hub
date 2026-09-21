@@ -39,7 +39,8 @@ export interface Harness {
     budgetMsPerTest?: number, timing?: boolean,
   ): TimedTestsResult;
   analyze(code: string): { syntaxError?: PyError; flags: AstFinding[] };
-  pair(reference: string, buggy: string, fnName: string, argsRepr: string): PairResult;
+  /** budgetMs: the soft time budget each side gets. Defaults to the harness's own per-test budget. */
+  pair(reference: string, buggy: string, fnName: string, argsRepr: string, budgetMs?: number): PairResult;
   trace(code: string, watch: string[], anchorLine: number, stdin?: string[]): TraceResult;
   runCapture(code: string, stdin?: string[]): CaptureResult;
   /** Run the code, then evaluate each expression in the namespace it left behind. */
@@ -86,7 +87,7 @@ export async function createHarness(opts: { hashSeed?: string } = {}): Promise<H
       // undefined, not null: JS null reaches Python as pyodide.ffi.jsnull instead of None.
       call('run_tests', code, j(tests), kind, fnName ?? undefined, j(rules), budgetMsPerTest, timing),
     analyze: (code) => call('analyze', code),
-    pair: (reference, buggy, fnName, argsRepr) => call('pair', reference, buggy, fnName, argsRepr),
+    pair: (reference, buggy, fnName, argsRepr, budgetMs) => call('pair', reference, buggy, fnName, argsRepr, budgetMs),
     trace: (code, watch, anchorLine, stdin = []) => call('trace', code, j(watch), anchorLine, j(stdin)),
     runCapture: (code, stdin = []) => call('run_capture', code, j(stdin)),
     probe: (code, probes) => vcall('probe', code, j(probes)),

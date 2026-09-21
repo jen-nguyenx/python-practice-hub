@@ -662,9 +662,16 @@ describe('pair (break the code)', () => {
   });
 
   it('an endless loop in the buggy version is a timeout, not a hang', () => {
-    const p = h.pair('def f(n):\n    return n\n', 'def f(n):\n    while n:\n        pass\n    return n\n', 'f', '(1,)');
-    expect(p.differs).toBe(true);
-    expect(p.bugResult).toMatch(/^raises TimeoutError/);
+    // The budget is wall-clock, and both sides get it — so on a badly starved machine the *reference*
+    // could blow a one-second budget and the two sides would agree, which is not what this is testing.
+    // What is being tested is that a loop which never ends is stopped, and that holds at any budget, so
+    // this one is generous. The failure message carries both sides: a bare "expected true" here once cost
+    // an afternoon of guessing which of them had gone wrong.
+    const p = h.pair('def f(n):\n    return n\n', 'def f(n):\n    while n:\n        pass\n    return n\n', 'f', '(1,)', 5000);
+    const detail = `ref=${p.refResult} bug=${p.bugResult}`;
+    expect(p.refResult, detail).toBe('1');
+    expect(p.bugResult, detail).toMatch(/^raises TimeoutError/);
+    expect(p.differs, detail).toBe(true);
   }, SLOW);
 
   it('rejects arguments that are not a tuple literal with a plain explanation', () => {

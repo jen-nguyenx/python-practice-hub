@@ -21,6 +21,7 @@ import { ResultsCard, TestRows, TestsStatusChip } from '../../workbench/TestsTab
 import { stableShuffle } from './logic.ts';
 import { BusyLine } from './Workspace.tsx';
 import './code.css';
+import { hidesHelp } from '../../../engine/types.ts';
 
 interface Item { id: string; text: string; indent: number; distractor: boolean; mistake?: MistakeId }
 interface Placed { id: string; indent: number }
@@ -52,7 +53,7 @@ interface DragState { id: string; from: ListId; pointerId: number; startX: numbe
 
 export function Parsons(props: FormatProps<QuestionOf<'parsons'>>) {
   const { q, revealed, locked, mode, checksLeft, topicId } = props;
-  const testMode = mode === 'topic-test' || mode === 'exam';
+  const testMode = hidesHelp(mode);
 
   const items = useMemo<Item[]>(() => [
     ...q.lines.map((l, i) => ({ id: `l${i}`, text: l.text, indent: l.indent, distractor: false })),

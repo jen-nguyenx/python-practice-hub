@@ -83,6 +83,30 @@ describe('topicProgressAll: unlock chain', () => {
     expect(questionStats(asReview).get('t01-s1-q1')?.solved).toBe(false);
   });
 
+  it('a placement check opens the topics it was answered through, without completing them', () => {
+    const placed: AppEvent = {
+      eid: 'p1', v: 1, ts: T0, sessionId: 's1', type: 'placement',
+      throughTopicId: 'for-loops-range', asked: ['t01-s1-q1', 't02-s1-q1', 't03-s1-q1'], correct: 3,
+    };
+    const p = topicProgressAll([placed], index, settings);
+    // Access, not credit: open to work in, and still counted as unstarted.
+    expect(p['if-elif-else'].state).toBe('open');
+    expect(p['for-loops-range'].state).toBe('open');
+    expect(p['for-loops-range'].minimumMet).toBe(false);
+    expect(p['for-loops-range'].solved).toBe(0);
+    // Nothing above what was demonstrated.
+    expect(p['functions-basics'].state).toBe('locked');
+  });
+
+  it('a later, worse placement check never takes back what an earlier one opened', () => {
+    const at = (through: string, ts: number): AppEvent => ({
+      eid: `p${ts}`, v: 1, ts, sessionId: 's1', type: 'placement',
+      throughTopicId: through as never, asked: ['t01-s1-q1'], correct: 1,
+    });
+    const p = topicProgressAll([at('for-loops-range', T0), at('if-elif-else', T0 + MIN)], index, settings);
+    expect(p['for-loops-range'].state).toBe('open');
+  });
+
   it('opened + minimum met unlocks the next topic and completes the topic', () => {
     const events = [open('variables-expressions', T0 - MIN), ...topic1Solved(T0)];
     const p = topicProgressAll(events, index, settings);

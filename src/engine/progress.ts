@@ -167,9 +167,26 @@ function lockSentence(prev: TopicMeta, prevOpened: boolean, prevUnlocked: boolea
   return `Solve ${what} in ${name}${codeClause(n, c)}.`;
 }
 
+function orderOfTopic(id: TopicId): number {
+  return TOPICS.findIndex((t) => t.id === id) + 1;
+}
+
+/**
+ * How far up the ladder a placement check reached. The best any check has produced, so a later, worse
+ * attempt never takes away topics an earlier one opened.
+ */
+export function placedThrough(events: readonly AppEvent[]): number {
+  let best = 0;
+  for (const e of events) {
+    if (e.type !== 'placement' || !e.throughTopicId) continue;
+    best = Math.max(best, orderOfTopic(e.throughTopicId));
+  }
+  return best;
+}
+
 /**
  * Unlock rule: topic 1 is always open. Topic N+1 unlocks when topic N has been opened AND its minimum is met
- * (or its topic test was passed), or settings.unlockAll is on.
+ * (or its topic test was passed), or a placement check was answered through it, or settings.unlockAll is on.
  * completed = minimum met. in-progress = attempted > 0. open = unlocked with no attempts.
  *
  * Topics never lock again once the student has practised in them (a practice or paper attempt), so switching
@@ -177,6 +194,7 @@ function lockSentence(prev: TopicMeta, prevOpened: boolean, prevUnlocked: boolea
  */
 export function topicProgressAll(events: readonly AppEvent[], index: readonly QuestionMeta[], settings: Settings): Record<TopicId, TopicProgress> {
   const stats = questionStats(events);
+  const placedOrder = placedThrough(events);
   const counts = countsByTopic(events);
   const totals = new Map<string, number>();
   for (const q of index) totals.set(q.topicId, (totals.get(q.topicId) ?? 0) + 1);
@@ -195,7 +213,15 @@ export function topicProgressAll(events: readonly AppEvent[], index: readonly Qu
 
     let unlocked: boolean;
     if (!prev) unlocked = true;
-    else unlocked = settings.unlockAll || (prev.opened && prev.countsMet) || prev.testedOut || (c?.hasPracticeAttempt ?? false);
+    else {
+      unlocked = settings.unlockAll
+        || (prev.opened && prev.countsMet)
+        || prev.testedOut
+        || (c?.hasPracticeAttempt ?? false)
+        // A placement check opens the topics it was answered through. Access only: the minimum still
+        // has to be met for the topic to count as done, so the ladder keeps meaning what it meant.
+        || placedOrder >= orderOfTopic(meta.id);
+    }
 
     let scoreSum = 0;
     for (const qid of attemptedQids) scoreSum += stats.get(qid)?.bestCredit ?? 0;

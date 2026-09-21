@@ -28,7 +28,7 @@ const MISTAKE_SET = new Set<string>(MISTAKE_IDS);
 const FLAG_SET = new Set<string>(AST_FLAGS);
 const FORMAT_SET = new Set<string>(FORMATS);
 const DIFF_SET = new Set<string>(DIFFS);
-const MODES = new Set<string>(['practice', 'paper', 'topic-test', 'exam', 'review'] satisfies Mode[]);
+const MODES = new Set<string>(['practice', 'paper', 'topic-test', 'exam', 'review', 'placement'] satisfies Mode[]);
 const TEST_KINDS = new Set<string>(['topic-test', 'practice-test', 'mock-exam'] satisfies TestKind[]);
 /** Events stored before the app was refocused on the final exam used the old mid-semester names. */
 const LEGACY_MODE: Record<string, Mode> = { midsem: 'exam' };
@@ -155,6 +155,15 @@ export function sanitizeEvent(raw: unknown): AppEvent | null {
     }
     case 'override':
       return r.what === 'unlockAll' && isBool(r.value) ? { ...base, type, what: 'unlockAll', value: r.value } : null;
+    case 'placement': {
+      // An imported file could claim any unlock, so the topic must be a real one and the counts sane.
+      const through = r.throughTopicId;
+      if (through !== null && !topic(through)) return null;
+      const asked = Array.isArray(r.asked) ? r.asked.filter(idStr).slice(0, 50) : [];
+      const correct = nonNeg(r.correct);
+      if (correct === null || correct > asked.length) return null;
+      return { ...base, type, throughTopicId: through as TopicId | null, asked, correct: Math.floor(correct) };
+    }
     case 'flag':
       if (!idStr(r.qid) || typeof r.reason !== 'string' || !FLAG_REASONS.has(r.reason) || typeof r.note !== 'string') return null;
       return { ...base, type, qid: r.qid, reason: r.reason as 'wrong-answer' | 'unclear' | 'too-hard' | 'other', note: cap(r.note, TEXT_MAX) };

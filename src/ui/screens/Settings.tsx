@@ -1,7 +1,9 @@
 // Settings (#/settings): an editor-style list. Left: section index (sticky, tracks scroll). Right: one white card per section.
 import { useEffect, useState } from 'preact/hooks';
+import { href } from '../../app/router.ts';
 import { py, store } from '../../app/services.ts';
 import type { Settings as SettingsT } from '../../engine/types.ts';
+import { LinkButton } from '../components/Button.tsx';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { Segmented } from '../components/Segmented.tsx';
@@ -197,6 +199,16 @@ export function Settings() {
           </SettingsSection>
 
           <SettingsSection id="progress" title="Progress">
+            <SettingRow
+              id="set-placement"
+              label="Where should you start?"
+              desc="Answer one question per topic to open the ones you can already do. Better than the switch below: it opens what you have shown, and leaves the report with nothing to explain away."
+            >
+              <LinkButton href={href.placement()} variant="secondary" aria-describedby="set-placement-desc">
+                <Icon name="ladder" size={14} />
+                Take the check
+              </LinkButton>
+            </SettingRow>
             <SettingRow
               id="set-unlock"
               label="Unlock all topics"

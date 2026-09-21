@@ -155,20 +155,27 @@ export async function importProgress(page: Page, base: string, file: string): Pr
  * check that reports luck. Returns what it did, so a caller can say so rather than guess.
  */
 export async function answerCurrent(page: Page, within = '.rs-answer'): Promise<'picked' | 'typed' | 'none'> {
+  let did: 'picked' | 'typed' | 'none' = 'none';
+
   const radio = page.locator(`${within} [role="radio"], ${within} input[type="radio"]`).first();
   if (await radio.count()) {
     await radio.click();
-    return 'picked';
+    did = 'picked';
+  } else {
+    const box = page.locator(`${within} [role="checkbox"], ${within} input[type="checkbox"]`).first();
+    if (await box.count()) {
+      await box.click();
+      did = 'picked';
+    }
   }
-  const box = page.locator(`${within} [role="checkbox"], ${within} input[type="checkbox"]`).first();
-  if (await box.count()) {
-    await box.click();
-    return 'picked';
+
+  // Every text field, not just the first: spot-the-difference wants a choice AND both outputs before it
+  // will accept anything, and a helper that filled one box left the button greyed out.
+  const boxes = page.locator(`${within} textarea, ${within} input[type="text"]`);
+  const n = await boxes.count();
+  for (let i = 0; i < n; i++) {
+    await boxes.nth(i).fill('something').catch(() => {});
+    did = did === 'picked' ? 'picked' : 'typed';
   }
-  const text = page.locator(`${within} textarea, ${within} input[type="text"]`).first();
-  if (await text.count()) {
-    await text.fill('something');
-    return 'typed';
-  }
-  return 'none';
+  return did;
 }

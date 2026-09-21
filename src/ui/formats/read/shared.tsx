@@ -3,6 +3,7 @@
 import type { ComponentChildren, JSX, Ref } from 'preact';
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { Mode } from '../../../engine/types.ts';
+import { hidesHelp } from '../../../engine/types.ts';
 import { store } from '../../../app/services.ts';
 import { Button } from '../../components/Button.tsx';
 import { Icon } from '../../components/Icon.tsx';
@@ -11,7 +12,7 @@ import { useWorkbench } from '../../workbench/context.ts';
 import { isCodeLike } from './logic.ts';
 import './read.css';
 
-export const isTestMode = (mode: Mode): boolean => mode === 'topic-test' || mode === 'exam';
+export const isTestMode = (mode: Mode): boolean => hidesHelp(mode);
 
 /** What a read-format component may show, derived once from the controller's props. */
 export interface Visibility {

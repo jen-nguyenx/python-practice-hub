@@ -71,7 +71,9 @@ and the job that runs `npm ci` cannot publish: only the deploy job holds `pages:
 `import()` cannot carry an integrity hash, and Pyodide fetches its own WebAssembly and standard library
 afterwards. A compromise of that CDN would mean arbitrary code in the worker for every user. Vendoring
 Pyodide into `public/` would close this and make the app work offline, at the cost of roughly 10-25 MB in
-the repository. Worth doing; not done yet.
+the repository. Offline use was considered and deliberately set aside, so this risk is accepted rather
+than merely outstanding: the pin plus its test is the mitigation. Revisit if the CDN dependency ever
+becomes a practical problem rather than a theoretical one.
 
 **Monaco depends on a version of DOMPurify with published advisories.** They are markdown-sanitiser bypasses.
 Monaco only sanitises hover and suggestion markdown, and the only content reaching those paths here is the

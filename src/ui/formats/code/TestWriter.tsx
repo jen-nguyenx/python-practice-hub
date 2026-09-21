@@ -17,6 +17,7 @@ import { MOD, useRunShortcuts } from '../../workbench/shortcuts.ts';
 import { BusyLine } from './Workspace.tsx';
 import { asciiText, displayArgs, signatureOf } from './logic.ts';
 import './code.css';
+import { hidesHelp } from '../../../engine/types.ts';
 
 function draftArgs(d: unknown): string {
   if (typeof d === 'string') return d;
@@ -26,7 +27,7 @@ function draftArgs(d: unknown): string {
 
 export function TestWriter(props: FormatProps<QuestionOf<'testWriter'>>) {
   const { q, revealed, locked, mode, checksLeft } = props;
-  const testMode = mode === 'topic-test' || mode === 'exam';
+  const testMode = hidesHelp(mode);
   const [args, setArgs] = useState(() => draftArgs(props.draft));
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);

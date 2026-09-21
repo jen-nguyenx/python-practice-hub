@@ -44,6 +44,34 @@ const SHOTS: Shot[] = [
   },
   { name: 'lessons', hash: '#/lessons' },
   { name: 'plan', hash: '#/plan' },
+  { name: 'placement', hash: '#/placement' },
+  {
+    name: 'placement-q',
+    hash: '#/placement',
+    prepare: async (page) => {
+      await page.getByRole('button', { name: /^Start/ }).first().click().catch(() => {});
+      await page.waitForTimeout(2500);
+    },
+  },
+  {
+    // The whole climb, to whatever level the answers reach.
+    name: 'placement-done',
+    hash: '#/placement',
+    prepare: async (page) => {
+      await page.getByRole('button', { name: /^Start$/ }).click().catch(() => {});
+      await page.waitForTimeout(2500);
+      for (let i = 0; i < 14; i++) {
+        if (await page.locator('.pl-done').count()) break;
+        await answerCurrent(page, '.pl-answer').catch(() => 'none');
+        await page.getByRole('button', { name: /Check answer|Submit answer/i }).first().click().catch(() => {});
+        await page.waitForTimeout(800);
+        const on = page.getByRole('button', { name: /^Next/ }).first();
+        if (!(await on.count())) break;
+        await on.click();
+        await page.waitForTimeout(800);
+      }
+    },
+  },
   // The shell scrolls an inner container, so a "full page" screenshot still stops at the fold. An element
   // shot does capture the whole element, which is how anything below it gets looked at.
   { name: 'plan-weeks', hash: '#/plan', selector: '.xp-weeks' },

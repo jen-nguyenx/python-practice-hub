@@ -1,0 +1,49 @@
+/* Placement: climb the ladder one question per topic until two in a row go wrong. */
+.pl { container-type: inline-size; container-name: pl; max-width: 780px; margin: 0 auto; padding: 32px 24px 80px; display: grid; gap: 22px; }
+.pl-top { display: grid; gap: 8px; }
+.pl-h1 { font-family: var(--display); font-size: var(--fs-40); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; margin: 0; }
+.pl-lede { margin: 0; max-width: 60ch; font-size: var(--fs-16); line-height: 1.6; color: var(--text-muted); }
+.pl-error { display: flex; align-items: center; gap: 8px; margin: 0; font-size: var(--fs-14); color: var(--bad); }
+
+.pl-intro { display: grid; gap: 18px; padding: 24px 26px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); box-shadow: var(--shadow-card); }
+.pl-points { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.pl-points li { display: flex; align-items: flex-start; gap: 10px; font-size: var(--fs-15); line-height: 1.55; }
+.pl-points svg { flex: none; margin-top: 3px; color: var(--ok); }
+.pl-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* The rungs show how far up the check has climbed, and how it went on each. */
+.pl-bar { display: flex; align-items: center; gap: 14px; }
+.pl-step { font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); white-space: nowrap; }
+.pl-rung { display: flex; gap: 4px; }
+.pl-tick { width: 14px; height: 4px; border-radius: 999px; background: var(--progress-track); }
+.pl-tick.ok { background: var(--ok); }
+.pl-tick.no { background: var(--bad); }
+.pl-tick.now { background: var(--accent); }
+.pl-stop { border: 0; background: none; padding: 0; font: inherit; font-size: var(--fs-13); color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+.pl-stop:hover { color: var(--text); }
+
+.pl-card { display: grid; gap: 10px; padding: 24px 26px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); box-shadow: var(--shadow-card); }
+.pl-topic { margin: 0; font-family: var(--mono); font-size: var(--fs-11); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.pl-title { margin: 0; font-family: var(--display); font-size: var(--fs-22); font-weight: 600; line-height: 1.25; }
+.pl-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 4px; }
+.pl-story, .pl-prompt { font-size: var(--fs-15); line-height: 1.65; }
+.pl-story > :first-child, .pl-prompt > :first-child { margin-top: 0; }
+.pl-answer { margin-top: 6px; }
+
+.pl-after { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 18px 24px; border: 1px solid var(--border); border-left-width: 3px; border-radius: var(--r-2); background: var(--surface-2); }
+.pl-after.ok { border-left-color: var(--ok); }
+.pl-after.no { border-left-color: var(--bad); }
+.pl-verdict { display: flex; align-items: center; gap: 8px; margin: 0; flex: 1 1 260px; font-size: var(--fs-15); font-weight: 600; }
+.pl-after.ok .pl-verdict svg { color: var(--ok); }
+.pl-after.no .pl-verdict svg { color: var(--bad); }
+
+.pl-done { display: grid; justify-items: start; gap: 8px; padding: 30px 28px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); box-shadow: var(--shadow-card); }
+.pl-tag { margin: 0; font-family: var(--mono); font-size: var(--fs-11); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.pl-done-h { margin: 0; font-family: var(--display); font-size: var(--fs-28); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+.pl-done-p { margin: 0 0 8px; max-width: 60ch; font-size: var(--fs-15); line-height: 1.6; color: var(--text-muted); }
+
+@container pl (max-width: 640px) {
+  .pl { padding: 24px 16px 80px; }
+  .pl-h1 { font-size: var(--fs-28); }
+  .pl-card { padding: 20px 18px; }
+}

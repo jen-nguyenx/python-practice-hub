@@ -36,10 +36,10 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/content/mistakes.ts`, `patterns.ts` | Mistake catalogue (labels, explanations, runtime matchers) and best-practice cards |
 | `src/runtime/python/` | Grading harness (`_pl` package): sandboxed runs, tests, AST checks, tracer |
 | `src/runtime/pyWorker.ts`, `pyClient.ts` | Browser worker + client (queue, watchdog, respawn) |
-| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (which mistakes are due), `reviewSession.ts` (what a session asks), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `examPlan.ts` (the run-in), `semester.ts` (the CITS1401 calendar), `streak.ts`, `traceback.ts` |
+| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (which mistakes are due), `reviewSession.ts` (what a session asks), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `examPlan.ts` (the run-in), `placement.ts` (where to join the ladder), `semester.ts` (the CITS1401 calendar), `streak.ts`, `traceback.ts` |
 | `src/store/` | IndexedDB event log, snapshots, scratch files, settings (localStorage), export/import |
 | `src/app/` | App shell, hash router, singletons (`services.ts`), `markTopicOpened` |
-| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Review, ExamPlan, DecodeError, Report, TopicTest, ExamPractice, Settings |
+| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Review, ExamPlan, Placement, DecodeError, Report, TopicTest, ExamPractice, Settings |
 | `src/content/recipes/`, `recipeSchema.ts` | The reference: one file per area, every snippet run by the verifier |
 | `src/content/conceptWords.ts` | Concept tags in a student's words; nothing shows a raw tag |
 | `src/ui/lesson/steps.ts` | Derived per-topic steps, the fallback when a topic has no authored lesson yet |
@@ -56,7 +56,7 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `docs/build/CONTENT.md` | How to write questions (mix table, quality bar, concept order) |
 
 ## Rules that matter
-- **Unlock rule** (`src/engine/progress.ts`): topic 1 always open; topic N+1 unlocks when topic N was opened and its `minimum` is met (questions solved without revealing the answer; hints are fine; `code` of them must be code formats), or its topic test was passed, or Settings "Unlock all topics" is on.
+- **Unlock rule** (`src/engine/progress.ts`): topic 1 always open; topic N+1 unlocks when topic N was opened and its `minimum` is met (questions solved without revealing the answer; hints are fine; `code` of them must be code formats), or its topic test was passed, or a **placement check** was answered through it (`placement` event — access only, the minimum still has to be met), or Settings "Unlock all topics" is on.
 - **Everything is derived from the append-only event log** (`src/engine/types.ts` `AppEvent`). Add a new event type rather than mutating state.
 - **Content changes must pass the verifier** with 0 errors: solutions pass tests in Pyodide, buggy variants and distractors fail tagged tests, read-format answers are generated not typed.
 - **A lesson never states what Python does.** Every output a reader sees in `src/content/lessons/**` is

@@ -31,6 +31,7 @@ import { IconButton } from '../../workbench/Tip.tsx';
 import { draftCode, stdinLines } from './logic.ts';
 import { BusyLine } from './Workspace.tsx';
 import './code.css';
+import { hidesHelp } from '../../../engine/types.ts';
 
 export interface CodeTaskConfig {
   initialCode: string;
@@ -58,7 +59,7 @@ const EMPTY_FLAGS: AstFinding[] = [];
 export function CodeTask({ fp, cfg }: { fp: FormatProps<Question>; cfg: CodeTaskConfig }) {
   const { q, mode, revealed, locked, topicId } = fp;
   const wb = useWorkbench();
-  const testMode = mode === 'topic-test' || mode === 'exam';
+  const testMode = hidesHelp(mode);
   const paper = cfg.paper;
   const oneShot = paper || testMode;
   const ctx = { qid: q.id, topicId };

@@ -21,6 +21,7 @@ import { ResultsCard, TestRows, TestsStatusChip } from '../../workbench/TestsTab
 import { asciiText, clozeGapRight } from './logic.ts';
 import { BusyLine } from './Workspace.tsx';
 import './code.css';
+import { hidesHelp } from '../../../engine/types.ts';
 
 const MARK = /⟦(\d+)⟧/g;
 const PH = (id: string) => `__PLBLANK${id}__`;
@@ -49,7 +50,7 @@ function draftAnswers(draft: unknown): Answers {
 
 export function Cloze(props: FormatProps<QuestionOf<'cloze'>>) {
   const { q, revealed, locked, mode, checksLeft, topicId } = props;
-  const testMode = mode === 'topic-test' || mode === 'exam';
+  const testMode = hidesHelp(mode);
   const [answers, setAnswers] = useState<Answers>(() => draftAnswers(props.draft));
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);

@@ -37,7 +37,7 @@ export async function visit(c: Ctx, hash: string, shot?: string, shotsDir?: stri
 /** Every top-level route the icon bar and the palette offer. */
 export const MAIN_ROUTES = [
   '#/playground', '#/report', '#/exam', '#/settings', '#/review', '#/error', '#/reference', '#/lessons',
-  '#/plan',
+  '#/plan', '#/placement',
 ];
 
 export async function checkMainRoutes(c: Ctx): Promise<void> {
@@ -262,4 +262,64 @@ export async function checkExamPlan(c: Ctx): Promise<void> {
   // "Every topic looked at" must not claim a history that has practised topics never opened one.
   const ready = await c.page.locator('.xp-checks').innerText();
   if (/13 never opened/.test(ready)) c.fail('#/plan: a practised history is reported as having opened no topics');
+}
+
+/**
+ * The placement check, start to finish.
+ *
+ * Answers are given the way a student gives them, which means they are usually wrong — so this walks the
+ * check to wherever that lands and requires it to end somewhere sensible. What the answers unlock is
+ * decided by engine code with its own tests; what is checked here is the journey: a question per topic,
+ * a verdict after each, and a result that says where it left you.
+ */
+export async function checkPlacement(c: Ctx): Promise<void> {
+  await visit(c, '#/placement');
+  const start = c.page.getByRole('button', { name: /^Start$/ });
+  if ((await start.count()) === 0) {
+    c.fail('#/placement: there is no way to start the check');
+    return;
+  }
+  await start.click();
+  await c.page.waitForTimeout(2500);
+
+  if ((await c.page.locator('.pl-tick').count()) === 0) {
+    c.fail('#/placement: starting the check dealt no questions');
+    return;
+  }
+
+  // At most the whole ladder; it stops itself after two wrong in a row.
+  for (let i = 0; i < 14; i++) {
+    if ((await c.page.locator('.pl-done').count()) > 0) break;
+    const format = await c.page.locator('.pl-topic').innerText().catch(() => 'unknown');
+    // Help must stay shut: a check you can look up measures nothing.
+    if ((await c.page.getByRole('button', { name: /hint/i }).count()) > 0) {
+      c.fail(`#/placement: a hint was offered on the ${format} question`);
+      return;
+    }
+    if ((await answerCurrent(c.page, '.pl-answer')) === 'none') {
+      c.fail(`#/placement: the ${format} question offered no way to answer it`);
+      return;
+    }
+    const check = c.page.getByRole('button', { name: /Check answer|Submit answer/i }).first();
+    if ((await check.count()) === 0 || (await check.isDisabled())) {
+      c.fail(`#/placement: the ${format} question would not accept an answer`);
+      return;
+    }
+    await check.click();
+    await c.page.waitForTimeout(900);
+    const on = c.page.getByRole('button', { name: /^Next/ }).first();
+    if ((await on.count()) === 0) {
+      c.fail(`#/placement: no way on from the ${format} question`);
+      return;
+    }
+    await on.click();
+    await c.page.waitForTimeout(900);
+  }
+
+  if ((await c.page.locator('.pl-done').count()) === 0) {
+    c.fail('#/placement: the check never finished');
+    return;
+  }
+  const said = await c.page.locator('.pl-done-h').innerText().catch(() => '');
+  if (said.trim() === '') c.fail('#/placement: the result does not say where it left you');
 }

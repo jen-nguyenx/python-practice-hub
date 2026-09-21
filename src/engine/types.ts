@@ -26,7 +26,15 @@ export type TestKind = 'topic-test' | 'practice-test' | 'mock-exam';
  * report, but it does not move the ladder, the same way a test does not — the topics are where progress
  * is made, and a review is for finding out what stuck.
  */
-export type Mode = 'practice' | 'paper' | 'topic-test' | 'exam' | 'review';
+export type Mode = 'practice' | 'paper' | 'topic-test' | 'exam' | 'review' | 'placement';
+
+/**
+ * Modes where a question is measuring rather than teaching, so hints and answers stay shut: the two
+ * timed tests, and the placement check, which would mean nothing if it could be looked up.
+ */
+export function hidesHelp(mode: Mode): boolean {
+  return mode === 'topic-test' || mode === 'exam' || mode === 'placement';
+}
 
 // ---------- event log (append-only, stored in IndexedDB) ----------
 
@@ -63,6 +71,11 @@ export type AppEvent =
   /** `lessonId` names the lesson read; `topicId` is set only for the 13 lessons that teach a topic. */
   | (EventBase & { type: 'lesson_done'; lessonId: string; topicId?: TopicId })
   | (EventBase & { type: 'override'; what: 'unlockAll'; value: boolean })
+  /**
+   * A placement check: topics up to `throughTopicId` are opened without climbing to them. Access only —
+   * each one still has to be practised to its minimum to count as done.
+   */
+  | (EventBase & { type: 'placement'; throughTopicId: TopicId | null; asked: string[]; correct: number })
   | (EventBase & { type: 'flag'; qid: string; reason: 'wrong-answer' | 'unclear' | 'too-hard' | 'other'; note: string });
 
 export type AppEventType = AppEvent['type'];

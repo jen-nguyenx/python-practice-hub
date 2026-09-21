@@ -26,6 +26,23 @@ else if (!base) base = LIVE;
 const seedDir = arg('--scratch', 'scratch/live');
 const index: SeedQuestion[] = JSON.parse(readFileSync('src/content/generated/question-index.json', 'utf8'));
 
+/**
+ * Which build is actually being served?
+ *
+ * A check run straight after a deploy can reach the previous build while the CDN catches up, and then
+ * reports a failure about code that is not live yet — which is exactly what happened the first time this
+ * ran after a deploy. Comparing the page's main script against the local one turns that confusion into a
+ * line of output. It is a note rather than a failure: this is also run without a fresh local build.
+ */
+function localBuildAsset(): string | null {
+  try {
+    const html = readFileSync('dist/index.html', 'utf8');
+    return /assets\/(index-[A-Za-z0-9_-]+\.js)/.exec(html)?.[1] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 const failures: string[] = [];
 const { browser, page, errors } = await openBrowser();
 const c: Ctx = { page, base, index, fail: (m) => failures.push(m) };
@@ -34,6 +51,13 @@ console.log(`Checking ${base}`);
 
 try {
   await visit(c, '#/');
+  const mine = localBuildAsset();
+  if (mine) {
+    const served = /assets\/(index-[A-Za-z0-9_-]+\.js)/.exec(await page.content())?.[1] ?? 'nothing recognisable';
+    console.log(served === mine
+      ? `Serving your local build (${mine}).`
+      : `NOTE: serving ${served}, your local build is ${mine}. If you just deployed, the CDN may still be catching up.`);
+  }
   if (!(await waitForPython(page))) failures.push('Python never reported itself ready');
   // A first visit opens the welcome tour, whose dialog swallows every click after it.
   await dismissTour(page);

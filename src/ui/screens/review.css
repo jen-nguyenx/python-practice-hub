@@ -1,24 +1,10 @@
-/* Review: the mistakes you have made, ordered by what is worth an attempt now. */
+/* Review: a short session of questions drawn from what has gone wrong, plus what is still waiting. */
 .rv { container-type: inline-size; container-name: rv; max-width: 820px; margin: 0 auto; padding: 32px 24px 80px; display: grid; gap: 28px; }
 .rv-top { display: grid; gap: 8px; }
 .rv-h1 { font-family: var(--display); font-size: var(--fs-40); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; margin: 0; }
 .rv-lede { margin: 0; max-width: 62ch; font-size: var(--fs-16); line-height: 1.6; color: var(--text-muted); }
 
 .rv-list { display: grid; gap: 14px; }
-.rv-card { display: grid; gap: 12px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); box-shadow: var(--shadow-card); }
-.rv-card.is-settled { background: var(--surface-2); box-shadow: none; }
-.rv-head { display: grid; gap: 4px; }
-.rv-title { font-family: var(--display); font-size: var(--fs-18); font-weight: 600; line-height: 1.3; margin: 0; }
-.rv-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; font-family: var(--mono); font-size: var(--fs-11); color: var(--text-faint); }
-.rv-md { font-size: var(--fs-15); line-height: 1.6; }
-.rv-md > :first-child { margin-top: 0; }
-.rv-md > :last-child { margin-bottom: 0; }
-.rv-fix { padding: 12px 16px; background: var(--surface-2); border-left: 2px solid var(--blue); border-radius: 0 var(--r-1) var(--r-1) 0; }
-.rv-card.is-settled .rv-fix { background: var(--surface); }
-.rv-fix-t { margin: 0 0 4px; font-family: var(--mono); font-size: var(--fs-11); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
-.rv-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
-.rv-count { font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); }
-.rv-settled { margin: 0; font-size: var(--fs-14); color: var(--text-muted); }
 
 .rv-resting { display: grid; gap: 8px; padding: 18px 20px; border: 1px dashed var(--border-strong); border-radius: var(--r-2); }
 .rv-resting-h { font-family: var(--display); font-size: var(--fs-16); font-weight: 600; margin: 0; }
@@ -31,3 +17,61 @@
 }
 .rv-tool { margin: 0; font-size: var(--fs-15); color: var(--text-muted); }
 .rv-tool a { color: var(--blue); }
+
+/* ---------- the start card ---------- */
+.rv-start { display: grid; justify-items: start; gap: 6px; padding: 26px 28px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); box-shadow: var(--shadow-card); }
+.rv-start-n { margin: 0; font-family: var(--display); font-size: var(--fs-28); font-weight: 700; letter-spacing: -0.02em; }
+.rv-start-of { margin: 0 0 12px; font-size: var(--fs-15); color: var(--text-muted); }
+.rv-start-note { margin: 10px 0 0; max-width: 58ch; font-size: var(--fs-13); color: var(--text-faint); line-height: 1.6; }
+.rv-error { display: flex; align-items: center; gap: 8px; margin: 0; font-size: var(--fs-14); color: var(--bad); }
+.rv-resting-topic { margin-left: 8px; font-family: var(--mono); font-size: var(--fs-11); color: var(--text-faint); }
+
+/* ---------- a finished session ---------- */
+.rv-done { display: grid; justify-items: start; gap: 8px; padding: 30px 28px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); box-shadow: var(--shadow-card); }
+.rv-done-tag { margin: 0; font-family: var(--mono); font-size: var(--fs-11); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.rv-done-h { margin: 0; font-family: var(--display); font-size: var(--fs-28); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+.rv-done-p { margin: 0; max-width: 60ch; font-size: var(--fs-15); line-height: 1.6; color: var(--text-muted); }
+.rv-done-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+
+/* ---------- the session itself ---------- */
+.rv-in-session { gap: 18px; }
+.rs { display: grid; gap: 18px; }
+.rs-bar { display: flex; align-items: center; gap: 12px; }
+.rs-dots { display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.rs-dot { width: 22px; height: 4px; border-radius: 999px; background: var(--progress-track); }
+.rs-dot.done { background: var(--progress); }
+.rs-dot.now { background: var(--accent); }
+.rs-count { font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); }
+.rs-leave { font-size: var(--fs-13); color: var(--text-muted); }
+
+.rs-card { display: grid; gap: 10px; padding: 24px 26px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); box-shadow: var(--shadow-card); }
+.rs-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0; }
+.rs-fmt { padding: 3px 9px; border-radius: 6px; background: var(--surface-2); font-size: var(--fs-12); color: var(--text-muted); }
+.rs-topic { font-family: var(--mono); font-size: var(--fs-11); color: var(--text-faint); }
+.rs-title { margin: 0; font-family: var(--display); font-size: var(--fs-22); font-weight: 600; line-height: 1.25; }
+.rs-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 4px; }
+.rs-story, .rs-prompt { font-size: var(--fs-15); line-height: 1.65; }
+.rs-story > :first-child, .rs-prompt > :first-child { margin-top: 0; }
+.rs-answer { margin-top: 6px; }
+
+/* The verdict is the thing to read next, so it carries the only colour on the page. */
+.rs-after { display: grid; gap: 12px; padding: 20px 24px; border: 1px solid var(--border); border-left-width: 3px; border-radius: var(--r-2); background: var(--surface-2); }
+.rs-after.ok { border-left-color: var(--ok); }
+.rs-after.no { border-left-color: var(--bad); }
+.rs-verdict { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin: 0; font-size: var(--fs-16); font-weight: 600; }
+.rs-after.ok .rs-verdict svg { color: var(--ok); }
+.rs-after.no .rs-verdict svg { color: var(--bad); }
+.rs-why { font-weight: 400; font-size: var(--fs-14); color: var(--text-muted); }
+.rs-mistake { display: grid; gap: 6px; padding: 14px 16px; background: var(--surface); border-radius: var(--r-1); }
+.rs-mistake-t { margin: 0; font-size: var(--fs-14); font-weight: 600; }
+.rs-md { font-size: var(--fs-14); line-height: 1.6; }
+.rs-md > :first-child { margin-top: 0; }
+.rs-md > :last-child { margin-bottom: 0; }
+.rs-next { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.rs-open { font-size: var(--fs-13); color: var(--blue); }
+
+@container rv (max-width: 640px) {
+  .rs-card { padding: 20px 18px; }
+  .rs-after { padding: 16px 18px; }
+  .rs-title { font-size: var(--fs-20); }
+}

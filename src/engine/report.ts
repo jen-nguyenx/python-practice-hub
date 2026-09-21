@@ -457,9 +457,11 @@ export function buildReport(events: readonly AppEvent[], index: readonly Questio
   for (const t of weakTopics.slice(0, 2)) {
     pushWork(`Practise ${TOPIC_BY_ID[t.topicId].short}: ${joinAnd(weakShort.get(t.topicId) ?? [])}.`, `#/topic/${t.topicId}`);
   }
+  // A repeated mistake goes to Review, not to one question. Review deals several short questions chosen
+  // from exactly this evidence, which is the doing; the report's job is saying what and why.
   const topMistake = mistakes.find((m) => m.recent14d >= 2 && m.exampleQid);
   if (topMistake?.exampleQid) {
-    pushWork(`Work on "${mistakeLabel(topMistake.id)}": it came up ${topMistake.recent14d} times in the last 14 days.`, `#/q/${topMistake.exampleQid}`);
+    pushWork(`Review "${mistakeLabel(topMistake.id)}": it came up ${topMistake.recent14d} times in the last 14 days.`, '#/review');
   }
   for (const row of ladder) {
     const t = topics.find((x) => x.topicId === row.topicId);

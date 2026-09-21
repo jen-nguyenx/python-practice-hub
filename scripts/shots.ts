@@ -10,7 +10,7 @@
 //   npm run shots -- --list
 //   npm run shots -- --base https://jen-nguyenx.github.io/python-practice-hub/
 import { mkdirSync, readFileSync } from 'node:fs';
-import { arg, dismissTour, flag, importProgress, openBrowser, startPreview, writeSeed } from './lib/browser.ts';
+import { answerCurrent, arg, dismissTour, flag, importProgress, openBrowser, startPreview, writeSeed } from './lib/browser.ts';
 import type { SeedQuestion } from './lib/browser.ts';
 
 interface Shot {
@@ -44,6 +44,33 @@ const SHOTS: Shot[] = [
   },
   { name: 'lessons', hash: '#/lessons' },
   { name: 'review', hash: '#/review' },
+  {
+    name: 'review-session',
+    hash: '#/review',
+    prepare: async (page) => {
+      await page.getByRole('button', { name: /^Start the session/ }).click().catch(() => {});
+      await page.waitForTimeout(1500);
+    },
+  },
+  {
+    // The whole loop: start, answer every question, and land on the summary.
+    name: 'review-done',
+    hash: '#/review',
+    prepare: async (page) => {
+      await page.getByRole('button', { name: /^Start the session/ }).click().catch(() => {});
+      await page.waitForTimeout(1800);
+      for (let i = 0; i < 8; i++) {
+        await answerCurrent(page).catch(() => 'none');
+        await page.getByRole('button', { name: /Check answer/i }).first().click().catch(() => {});
+        await page.waitForTimeout(900);
+        const on = page.getByRole('button', { name: /^(Next|Finish)/ }).first();
+        if (!(await on.count())) break;
+        await on.click();
+        await page.waitForTimeout(900);
+        if (await page.locator('.rv-done').count()) break;
+      }
+    },
+  },
   { name: 'confidence', hash: `#/q/${FRESH_QID}`, selector: '.qp-conf' },
   {
     name: 'palette',

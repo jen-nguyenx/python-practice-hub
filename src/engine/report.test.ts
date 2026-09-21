@@ -164,7 +164,8 @@ describe('buildReport (all time)', () => {
     expect(r.headline.strengths).toEqual(['Variables, types and expressions: 100% across 6 questions.']);
     expect(r.headline.workOn).toEqual([
       { text: `Practise Decisions: score 25%, "${label('elif_vs_if')}" keeps coming up and topic test not passed yet.`, href: '#/topic/if-elif-else' },
-      { text: `Work on "${label('elif_vs_if')}": it came up 3 times in the last 14 days.`, href: '#/q/t02-s1-q1' },
+      // Review, not one question: a session drawn from this evidence is the thing to go and do.
+      { text: `Review "${label('elif_vs_if')}": it came up 3 times in the last 14 days.`, href: '#/review' },
       { text: 'Sit a mock final exam to see where you stand under exam conditions.', href: '#/exam' },
     ]);
   });

@@ -36,7 +36,7 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/content/mistakes.ts`, `patterns.ts` | Mistake catalogue (labels, explanations, runtime matchers) and best-practice cards |
 | `src/runtime/python/` | Grading harness (`_pl` package): sandboxed runs, tests, AST checks, tracer |
 | `src/runtime/pyWorker.ts`, `pyClient.ts` | Browser worker + client (queue, watchdog, respawn) |
-| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (spaced repetition), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `streak.ts`, `traceback.ts` |
+| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (which mistakes are due), `reviewSession.ts` (what a session asks), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `streak.ts`, `traceback.ts` |
 | `src/store/` | IndexedDB event log, snapshots, scratch files, settings (localStorage), export/import |
 | `src/app/` | App shell, hash router, singletons (`services.ts`), `markTopicOpened` |
 | `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Review, DecodeError, Report, TopicTest, ExamPractice, Settings |
@@ -47,6 +47,7 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/ui/formats/read|code/` | The 12 question-format components; `registry.ts` maps format → component |
 | `src/ui/workbench/`, `src/ui/editor/` | Question controller pieces, panels, hints, answers; Monaco + textarea editors |
 | `src/ui/report/`, `src/ui/testmode/` | Report sections; test runner and question selection |
+| `src/ui/review/` | The review session runner: the app's own question components, dealt one at a time with instant feedback |
 | `scripts/verify-content.ts`, `scripts/verify/` | Content verifier |
 | `scripts/lib/browser.ts`, `lib/checks.ts` | Browser plumbing (Chrome, preview server, seeded history, tour) and the checks smoke and check:live share |
 | `scripts/smoke.ts`, `check-live.ts`, `shots.ts` | The three browser runners: full local walk, deployed-site check, screenshots |
@@ -88,4 +89,8 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 - **Treat imported files as hostile.** Everything from an export file goes through `src/store/validate.ts`:
   allowlisted fields, capped lengths and counts, clamped timestamps and ranges. Drafts are `unknown` by
   contract, so check types before using them in a component.
+- **The report says what, Review does something about it.** A repeated mistake links to `#/review`, never
+  to one question: Review deals a handful of short questions chosen from that same evidence
+  (`planSession`), and only formats that grade without Python, so a session starts before the runtime has
+  loaded. Nothing answered today is offered again — that tests what is still on the screen.
 - Test mistake tags are logged only when at least one test passes and no root-cause detection (print_vs_return etc.) explains the failures (`addOutcomeMistakes` in `grade.ts`).

@@ -137,3 +137,30 @@ export async function importProgress(page: Page, base: string, file: string): Pr
   await page.getByRole('button', { name: 'Replace my progress' }).click();
   await page.waitForTimeout(1200);
 }
+
+/**
+ * Answer whatever question is on screen, the way its format allows.
+ *
+ * The formats a review session deals are not all the same shape: multiple choice and spot-the-difference
+ * use radios, "select all" uses checkboxes, predict and fill-in-the-blank take typing. A helper that knew
+ * only about radios passed for as long as the first question happened to be multiple choice, which is a
+ * check that reports luck. Returns what it did, so a caller can say so rather than guess.
+ */
+export async function answerCurrent(page: Page, within = '.rs-answer'): Promise<'picked' | 'typed' | 'none'> {
+  const radio = page.locator(`${within} [role="radio"], ${within} input[type="radio"]`).first();
+  if (await radio.count()) {
+    await radio.click();
+    return 'picked';
+  }
+  const box = page.locator(`${within} [role="checkbox"], ${within} input[type="checkbox"]`).first();
+  if (await box.count()) {
+    await box.click();
+    return 'picked';
+  }
+  const text = page.locator(`${within} textarea, ${within} input[type="text"]`).first();
+  if (await text.count()) {
+    await text.fill('something');
+    return 'typed';
+  }
+  return 'none';
+}

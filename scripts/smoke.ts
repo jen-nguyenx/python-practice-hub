@@ -11,7 +11,7 @@ import { arg, dismissTour, importProgress, openBrowser, startPreview, waitForPyt
 import type { SeedQuestion } from './lib/browser.ts';
 import {
   checkCalibration, checkConfidence, checkLessonLibrary, checkMainRoutes, checkPaletteReference,
-  checkReferenceSearch, checkReportSections, visit as visitRoute,
+  checkReferenceSearch, checkReportSections, checkReviewSession, visit as visitRoute,
 } from './lib/checks.ts';
 import type { Ctx } from './lib/checks.ts';
 
@@ -54,6 +54,7 @@ await checkCalibration(c);
 // Just past the seeded history, in a topic that history has unlocked.
 await checkConfidence(c, (index[41] ?? index[index.length - 1]).qid);
 
+await checkReviewSession(c);
 await checkPaletteReference(c);
 await checkReferenceSearch(c);
 

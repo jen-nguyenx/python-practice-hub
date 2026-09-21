@@ -83,7 +83,6 @@ export function planToday(input: TodayInput): TodayStep[] {
   const due = input.queue.find((i) => i.score > 0);
   if (due) {
     const def = MISTAKES[due.mistake];
-    const qid = due.qids[0];
     const topic = due.topicId ? TOPIC_BY_ID[due.topicId] : undefined;
     out.push({
       key: 'review',
@@ -91,7 +90,9 @@ export function planToday(input: TodayInput): TodayStep[] {
       kind: 'Revisit',
       title: def?.label ?? 'A mistake worth another look',
       detail: `${plural(due.count, 'time')}${topic ? ` · ${topic.short}` : ''}`,
-      href: qid ? href.question(qid) : href.review(),
+      // Review, not the one question that catches it: the session is built from exactly this evidence
+      // and asks several short things, which is what "revisit" should cost.
+      href: href.review(),
     });
   }
 

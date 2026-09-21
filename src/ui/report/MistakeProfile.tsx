@@ -69,7 +69,8 @@ export function MistakeProfile({ rows, now, fallbackTopic }: { rows: ReportData[
                   {def?.fix ? <div class="rp-fix"><span class="rp-mini-label">Usual fix</span><Markdown text={def.fix} /></div> : null}
                   {def?.example.bad || def?.example.good ? <BadGood bad={def.example.bad} good={def.example.good} /> : null}
                   <p class="rp-links">
-                    {topic ? <a href={href.topic(topic)}>Practise in {TOPIC_BY_ID[topic]?.short}<span class="sr-only">: {label}</span></a> : null}
+                    <a href={href.review()}>Review this<span class="sr-only">: {label}</span></a>
+                    {topic ? <a href={href.topic(topic)}>Open {TOPIC_BY_ID[topic]?.short}<span class="sr-only">: {label}</span></a> : null}
                     <span class="rp-faint">
                       {plural(m.questions, 'question')}
                       {m.recent14d > 0 && m.recent14d !== m.count ? ` · ${m.recent14d} in the last 14 days` : ''}

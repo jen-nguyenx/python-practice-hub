@@ -5,6 +5,7 @@
 // live here rather than inside one runner so that the smoke test and the live check ask exactly the same
 // questions — a check that only ever ran locally is a check that never covered what students have.
 import type { Page } from 'playwright-core';
+import { answerCurrent } from './browser.ts';
 import type { SeedQuestion } from './browser.ts';
 
 export interface Ctx {
@@ -145,4 +146,83 @@ export async function checkLessonLibrary(c: Ctx, expected: number): Promise<void
   await visit(c, '#/lessons');
   const cards = await c.page.locator('.lx-card').count();
   if (cards !== expected) c.fail(`lessons: the library shows ${cards} cards but the index has ${expected}`);
+}
+
+/**
+ * A review session, start to finish on the first question.
+ *
+ * The session reuses the app's own question components, so the thing that can break is the wiring around
+ * them: dealing a question, recording the answer, showing why it was picked, and moving on. Formats vary,
+ * so the answer is given the way a student would give it — pick an option, or type something — and a
+ * session that offers neither is a failure, not something to pass over quietly.
+ */
+export async function checkReviewSession(c: Ctx): Promise<void> {
+  await visit(c, '#/review');
+  const start = c.page.getByRole('button', { name: /^Start the session/ });
+  if ((await start.count()) === 0) {
+    c.fail('#/review: a seeded history offered no session to start');
+    return;
+  }
+  const planned = await c.page.locator('.rv-start-n').innerText();
+  await start.click();
+  await c.page.waitForTimeout(2000);
+
+  const dots = await c.page.locator('.rs-dot').count();
+  if (dots === 0) {
+    c.fail(`#/review: starting a session of ${planned} dealt nothing`);
+    return;
+  }
+  // Any title will do; an empty one means the question never loaded.
+  if ((await c.page.locator('.rs-title').innerText().catch(() => '')).trim() === '') {
+    c.fail('#/review: the first question in the session has no title');
+    return;
+  }
+
+  // Walk the whole session, not just the first question. The formats vary, and a check that stopped
+  // after one was a check that only ever saw whichever format happened to be dealt first.
+  const total = await c.page.locator('.rs-dot').count();
+  for (let i = 0; i < total; i++) {
+    const format = await c.page.locator('.rs-fmt').innerText().catch(() => 'unknown');
+    if ((await answerCurrent(c.page)) === 'none') {
+      c.fail(`#/review: a "${format}" question offered no way to answer it`);
+      return;
+    }
+    const check = c.page.getByRole('button', { name: /Check answer/i }).first();
+    if ((await check.count()) === 0) {
+      c.fail(`#/review: a "${format}" question has no check button`);
+      return;
+    }
+    if (await check.isDisabled()) {
+      c.fail(`#/review: a "${format}" question would not accept the answer given to it`);
+      return;
+    }
+    await check.click();
+    await c.page.waitForTimeout(1200);
+
+    if ((await c.page.locator('.rs-after').count()) === 0) {
+      c.fail(`#/review: checking a "${format}" answer showed no verdict`);
+      return;
+    }
+    // Every pick carries a reason, and the reason is the whole point of a session over a random question.
+    if ((await c.page.locator('.rs-why').innerText().catch(() => '')).trim() === '') {
+      c.fail('#/review: the verdict does not say why the question was picked');
+      return;
+    }
+    const on = c.page.getByRole('button', { name: /^(Next|Finish)/ }).first();
+    if ((await on.count()) === 0) {
+      c.fail('#/review: there is no way on from the verdict');
+      return;
+    }
+    await on.click();
+    await c.page.waitForTimeout(900);
+  }
+
+  // Answering the last one ends the session, and the end says how it went.
+  if ((await c.page.locator('.rv-done').count()) === 0) {
+    c.fail(`#/review: answering all ${total} questions did not finish the session`);
+    return;
+  }
+  if ((await c.page.locator('.rv-done-h').innerText().catch(() => '')).trim() === '') {
+    c.fail('#/review: the finished session says nothing about how it went');
+  }
 }

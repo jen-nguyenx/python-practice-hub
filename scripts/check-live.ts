@@ -5,19 +5,24 @@
 // minute and needs no build, so it is the thing to run after a deploy finishes.
 //
 // Usage:
-//   node scripts/check-live.ts                    # the deployed site
-//   node scripts/check-live.ts --base http://localhost:4173/
-//   npm run check:live
+//   npm run check:live                  # the deployed site
+//   npm run check:live -- --local       # the local production build, serving it for the run
+//   npm run check:live -- --base http://localhost:5173/
 import { readFileSync } from 'node:fs';
-import { arg, dismissTour, importProgress, LIVE, openBrowser, waitForPython, writeSeed } from './lib/browser.ts';
+import { arg, dismissTour, flag, importProgress, LIVE, openBrowser, startPreview, waitForPython, writeSeed } from './lib/browser.ts';
 import type { SeedQuestion } from './lib/browser.ts';
 import {
   checkCalibration, checkConfidence, checkMainRoutes, checkPaletteReference,
-  checkReferenceSearch, checkReportSections, visit,
+  checkReferenceSearch, checkReportSections, checkReviewSession, visit,
 } from './lib/checks.ts';
 import type { Ctx } from './lib/checks.ts';
 
-const base = arg('--base', LIVE);
+// --local serves the build here rather than asking for a server that is already running: forgetting to
+// start one is how this gets run against nothing and passes for the wrong reason.
+let base = arg('--base', '');
+let server;
+if (flag('--local')) ({ base, server } = await startPreview());
+else if (!base) base = LIVE;
 const seedDir = arg('--scratch', 'scratch/live');
 const index: SeedQuestion[] = JSON.parse(readFileSync('src/content/generated/question-index.json', 'utf8'));
 
@@ -43,6 +48,7 @@ try {
   await importProgress(page, base, seed);
   await checkReportSections(c);
   await checkCalibration(c);
+  await checkReviewSession(c);
   // Just past the seeded history, in a topic that history has unlocked.
   await checkConfidence(c, (index[41] ?? index[index.length - 1]).qid);
 } catch (e) {
@@ -52,6 +58,7 @@ try {
 
 if (errors.length) failures.push(...errors.slice(0, 20).map((e) => `console: ${e}`));
 await browser.close();
+server?.kill();
 
 if (failures.length) {
   console.log(`LIVE CHECK FAILED (${failures.length})`);

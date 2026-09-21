@@ -43,6 +43,11 @@ const SHOTS: Shot[] = [
     },
   },
   { name: 'lessons', hash: '#/lessons' },
+  { name: 'plan', hash: '#/plan' },
+  // The shell scrolls an inner container, so a "full page" screenshot still stops at the fold. An element
+  // shot does capture the whole element, which is how anything below it gets looked at.
+  { name: 'plan-weeks', hash: '#/plan', selector: '.xp-weeks' },
+  { name: 'plan-ready', hash: '#/plan', selector: '.xp-checks' },
   { name: 'review', hash: '#/review' },
   {
     name: 'review-session',

@@ -5,6 +5,7 @@ import { LessonReader } from '../ui/screens/LessonReader.tsx';
 import { TopicLesson } from '../ui/screens/TopicLesson.tsx';
 import { LessonsIndex } from '../ui/screens/LessonsIndex.tsx';
 import { DecodeError } from '../ui/screens/DecodeError.tsx';
+import { ExamPlan } from '../ui/screens/ExamPlan.tsx';
 import { Reference } from '../ui/screens/Reference.tsx';
 import { Review } from '../ui/screens/Review.tsx';
 import { TopicPage } from '../ui/screens/TopicPage.tsx';
@@ -31,6 +32,7 @@ export function App() {
     case 'review': screen = <Review />; break;
     case 'decode': screen = <DecodeError />; break;
     case 'reference': screen = <Reference />; break;
+    case 'plan': screen = <ExamPlan />; break;
     case 'topic-test': screen = <TopicTest topicId={r.topicId} />; break;
     case 'exam': screen = <ExamPractice />; break;
     case 'settings': screen = <Settings />; break;

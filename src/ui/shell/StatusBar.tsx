@@ -2,7 +2,8 @@
 // and "Week N · exams in N days" from the CITS1401 calendar on the right. Mono 12px.
 import { useEffect, useState } from 'preact/hooks';
 import { RuntimePill } from './RuntimePill.tsx';
-import { semesterInfo } from './semester.ts';
+import { href } from '../../app/router.ts';
+import { semesterInfo } from '../../engine/semester.ts';
 import { statusBarExtra } from './uiState.ts';
 
 /** Semester info, refreshed every 10 minutes so a tab left open overnight moves to the next day. */
@@ -23,7 +24,8 @@ export function StatusBar() {
       <RuntimePill compact />
       <span class="spacer" />
       {extra ? <span class="sb-item num">{extra}</span> : null}
-      <span class="sb-item num" title={sem.detail}>{sem.label}</span>
+      {/* The line that mentions the exams is the way to the page about them. */}
+      <a class="sb-item sb-link num" href={href.plan()} title={`${sem.detail} Open the run-in.`}>{sem.label}</a>
     </footer>
   );
 }

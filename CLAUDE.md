@@ -36,10 +36,10 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/content/mistakes.ts`, `patterns.ts` | Mistake catalogue (labels, explanations, runtime matchers) and best-practice cards |
 | `src/runtime/python/` | Grading harness (`_pl` package): sandboxed runs, tests, AST checks, tracer |
 | `src/runtime/pyWorker.ts`, `pyClient.ts` | Browser worker + client (queue, watchdog, respawn) |
-| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (which mistakes are due), `reviewSession.ts` (what a session asks), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `streak.ts`, `traceback.ts` |
+| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (which mistakes are due), `reviewSession.ts` (what a session asks), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `examPlan.ts` (the run-in), `semester.ts` (the CITS1401 calendar), `streak.ts`, `traceback.ts` |
 | `src/store/` | IndexedDB event log, snapshots, scratch files, settings (localStorage), export/import |
 | `src/app/` | App shell, hash router, singletons (`services.ts`), `markTopicOpened` |
-| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Review, DecodeError, Report, TopicTest, ExamPractice, Settings |
+| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Review, ExamPlan, DecodeError, Report, TopicTest, ExamPractice, Settings |
 | `src/content/recipes/`, `recipeSchema.ts` | The reference: one file per area, every snippet run by the verifier |
 | `src/content/conceptWords.ts` | Concept tags in a student's words; nothing shows a raw tag |
 | `src/ui/lesson/steps.ts` | Derived per-topic steps, the fallback when a topic has no authored lesson yet |
@@ -89,6 +89,10 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 - **Treat imported files as hostile.** Everything from an export file goes through `src/store/validate.ts`:
   allowlisted fields, capped lengths and counts, clamped timestamps and ranges. Drafts are `unknown` by
   contract, so check types before using them in a component.
+- **The run-in (`#/plan`) is the only thing that plans against the calendar.** `semester.ts` knows when
+  the exams are; `examPlan.ts` puts that together with how far up the ladder a student is, and says
+  whether the pace they are managing matches the pace the time left demands. Every target has something
+  real behind it -- a week with nothing to put in it is left empty rather than filled.
 - **The report says what, Review does something about it.** A repeated mistake links to `#/review`, never
   to one question: Review deals a handful of short questions chosen from that same evidence
   (`planSession`), and only formats that grade without Python, so a session starts before the runtime has

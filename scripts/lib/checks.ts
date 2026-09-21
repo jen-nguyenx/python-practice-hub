@@ -37,6 +37,7 @@ export async function visit(c: Ctx, hash: string, shot?: string, shotsDir?: stri
 /** Every top-level route the icon bar and the palette offer. */
 export const MAIN_ROUTES = [
   '#/playground', '#/report', '#/exam', '#/settings', '#/review', '#/error', '#/reference', '#/lessons',
+  '#/plan',
 ];
 
 export async function checkMainRoutes(c: Ctx): Promise<void> {
@@ -225,4 +226,40 @@ export async function checkReviewSession(c: Ctx): Promise<void> {
   if ((await c.page.locator('.rv-done-h').innerText().catch(() => '')).trim() === '') {
     c.fail('#/review: the finished session says nothing about how it went');
   }
+}
+
+/**
+ * The run-in: days left, the pace, the weeks between here and the paper.
+ *
+ * The numbers are the point — a plan that says "0 topics left in 0 weeks" to someone who has barely
+ * started is worse than no plan — so this checks the figures agree with a seeded history rather than
+ * only that the page rendered.
+ */
+export async function checkExamPlan(c: Ctx): Promise<void> {
+  await visit(c, '#/plan');
+  if ((await c.page.locator('.xp-verdict').count()) === 0) {
+    c.fail('#/plan: the run-in did not render its verdict');
+    return;
+  }
+  const days = Number((await c.page.locator('.xp-days-n').innerText()).trim());
+  if (!Number.isFinite(days) || days < 0) c.fail(`#/plan: days to exams read as "${days}"`);
+
+  const figures = await c.page.locator('.xp-num-v').allInnerTexts();
+  if (figures.length !== 4) c.fail(`#/plan: expected four figures, found ${figures.length}`);
+  // A seeded history has finished some topics and not others, so neither extreme is right here.
+  const finished = Number(figures[0]?.split('/')[0]);
+  if (!Number.isFinite(finished)) c.fail(`#/plan: "topics finished" read as "${figures[0]}"`);
+
+  const weeks = await c.page.locator('.xp-week').count();
+  if (weeks === 0) c.fail('#/plan: no weeks were laid out between now and the exams');
+  // The last week is the exam week and must not ask for anything new.
+  const last = (await c.page.locator('.xp-week').last().innerText()).toLowerCase();
+  if (!last.includes('exam')) c.fail(`#/plan: the last week is not the exams, it is "${last.slice(0, 40)}"`);
+  if (/^start |\bstart [a-z]/m.test(last)) c.fail('#/plan: the exam week asks the student to start something');
+
+  const checks = await c.page.locator('.xp-check').count();
+  if (checks === 0) c.fail('#/plan: nothing listed under "before the paper"');
+  // "Every topic looked at" must not claim a history that has practised topics never opened one.
+  const ready = await c.page.locator('.xp-checks').innerText();
+  if (/13 never opened/.test(ready)) c.fail('#/plan: a practised history is reported as having opened no topics');
 }

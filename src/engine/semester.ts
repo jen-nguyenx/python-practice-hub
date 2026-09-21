@@ -68,3 +68,55 @@ export function semesterInfo(now: Date = new Date()): SemesterInfo {
   }
   return { phase: 'after', week: null, daysToExams: 0, label: 'Semester finished', detail: DETAIL };
 }
+
+/** One week of the run-in to the exams, Monday-based like the teaching calendar. */
+export interface SemesterWeek {
+  /** Local midnight on the Monday. */
+  start: number;
+  phase: SemesterPhase;
+  /** Teaching week number while teaching, otherwise null. */
+  week: number | null;
+  /** "Week 9", "Study break", "Exams". */
+  label: string;
+  /** True for the week the student is in now. */
+  current: boolean;
+}
+
+function mondayOf(d: Date): Date {
+  const day = startOfDay(d);
+  // getDay(): 0 is Sunday, so Sunday belongs to the week that began six days earlier.
+  const shift = (day.getDay() + 6) % 7;
+  return new Date(day.getFullYear(), day.getMonth(), day.getDate() - shift);
+}
+
+/**
+ * Every week from the one containing `now` up to and including the week the exams start.
+ *
+ * This is what a plan is laid out across. It stops at the first exam week because planning past the exam
+ * is planning for nothing, and it returns an empty list once the exams have begun — at which point there
+ * is nothing left to schedule and saying so is better than inventing a week.
+ */
+export function remainingWeeks(now: Date = new Date()): SemesterWeek[] {
+  const today = startOfDay(now);
+  if (today >= EXAMS) return [];
+  const out: SemesterWeek[] = [];
+  const thisMonday = mondayOf(today);
+  const examMonday = mondayOf(EXAMS);
+  for (let m = thisMonday; m <= examMonday; m = new Date(m.getFullYear(), m.getMonth(), m.getDate() + 7)) {
+    // Midweek gives the week's character without landing on a boundary date.
+    const info = semesterInfo(new Date(m.getFullYear(), m.getMonth(), m.getDate() + 2));
+    out.push({
+      start: m.getTime(),
+      phase: m >= mondayOf(EXAMS) ? 'exams' : info.phase,
+      week: info.week,
+      label: m >= mondayOf(EXAMS) ? 'Exams' : info.week !== null ? `Week ${info.week}` : 'Study break',
+      current: m.getTime() === thisMonday.getTime(),
+    });
+  }
+  return out;
+}
+
+/** Whole weeks of learning time left before the pre-exam study break begins. */
+export function studyWeeksLeft(now: Date = new Date()): number {
+  return Math.max(0, Math.ceil(daysBetween(startOfDay(now), SWOTVAC) / 7));
+}

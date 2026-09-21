@@ -111,6 +111,10 @@ export function writeSeed(path: string, index: readonly SeedQuestion[], opts: Se
   const start = Date.now() - 21 * day;
   const gap = day / 2;
   const events: unknown[] = [{ eid: 'seed-s', v: 1, ts: start, sessionId: 'seed', type: 'session_start' }];
+  // A real history records opening a topic before answering anything in it.
+  for (const topicId of [...new Set(index.slice(0, count).map((q) => q.topicId))]) {
+    events.push({ eid: `seed-o-${topicId}`, v: 1, ts: start, sessionId: 'seed', type: 'topic_open', topicId });
+  }
   index.slice(0, count).forEach((q, i) => {
     const correct = i % wrongEvery !== 0;
     events.push({

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AppEvent, Mode } from '../../engine/types.ts';
-import { semesterInfo } from './semester.ts';
+import { semesterInfo } from '../../engine/semester.ts';
 import { fuzzyScore, matchItem } from './fuzzy.ts';
 import { todayNumbers } from './homeData.ts';
 import { describeRuntime } from './RuntimePill.tsx';

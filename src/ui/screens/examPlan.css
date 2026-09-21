@@ -1,0 +1,67 @@
+/* The run-in: days left, the pace, the weeks, and what must happen before the paper. */
+.xp { container-type: inline-size; container-name: xp; max-width: 880px; margin: 0 auto; padding: 32px 24px 80px; display: grid; gap: 28px; }
+.xp-top { display: grid; gap: 8px; }
+.xp-h1 { font-family: var(--display); font-size: var(--fs-40); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; margin: 0; }
+.xp-lede { margin: 0; max-width: 62ch; font-size: var(--fs-16); line-height: 1.6; color: var(--text-muted); }
+
+/* The verdict. One accent stripe carries the tone; the words say it too, so colour is never the only signal. */
+.xp-verdict {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 24px;
+  padding: 24px 26px; background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong); border-radius: var(--r-2); box-shadow: var(--shadow-card);
+}
+.xp-verdict.tone-ok { border-left-color: var(--ok); }
+.xp-verdict.tone-warn { border-left-color: var(--hint); }
+.xp-verdict.tone-bad { border-left-color: var(--bad); }
+.xp-days { display: grid; gap: 2px; margin: 0; min-width: 96px; }
+.xp-days-n { font-family: var(--mono); font-size: var(--fs-40); font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.xp-days-w { font-size: var(--fs-13); color: var(--text-muted); }
+.xp-verdict-text { display: grid; gap: 4px; min-width: 0; flex: 1 1 320px; }
+.xp-v { margin: 0; font-family: var(--display); font-size: var(--fs-22); font-weight: 600; }
+.xp-say { margin: 0; max-width: 62ch; font-size: var(--fs-15); line-height: 1.6; color: var(--text-muted); }
+
+/* The four figures the verdict is made of, so it can be checked rather than believed. */
+.xp-nums { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-2); overflow: hidden; }
+.xp-num { display: grid; gap: 2px; padding: 18px 20px; background: var(--surface); min-width: 0; }
+.xp-num-v { font-family: var(--mono); font-size: var(--fs-28); font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.xp-num-of { font-size: var(--fs-16); color: var(--text-faint); }
+.xp-num-l { font-size: var(--fs-13); color: var(--text-muted); line-height: 1.4; }
+
+.xp-sec { display: grid; gap: 12px; }
+.xp-sec-h { margin: 0; font-family: var(--display); font-size: var(--fs-20); font-weight: 600; }
+
+.xp-weeks { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.xp-week { display: grid; gap: 8px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); }
+.xp-week.is-now { border-color: var(--accent); box-shadow: var(--shadow-card); }
+.xp-week.is-exams { background: var(--surface-2); }
+.xp-week-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+.xp-week-label { font-size: var(--fs-15); font-weight: 600; }
+.xp-week-date { font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); }
+.xp-now { padding: 2px 8px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-size: var(--fs-11); }
+.xp-week-free { margin: 0; font-size: var(--fs-14); color: var(--text-faint); }
+.xp-targets { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.xp-target { display: flex; align-items: flex-start; gap: 10px; font-size: var(--fs-15); line-height: 1.5; }
+.xp-target > svg { flex: none; margin-top: 3px; color: var(--text-faint); }
+.xp-target a { text-decoration: none; }
+.xp-target a:hover { text-decoration: underline; }
+
+.xp-checks { display: grid; margin: 0; padding: 0; list-style: none; border: 1px solid var(--border); border-radius: var(--r-2); overflow: hidden; }
+.xp-check { display: flex; align-items: center; gap: 12px; padding: 13px 20px; background: var(--surface); font-size: var(--fs-15); }
+.xp-check + .xp-check { border-top: 1px solid var(--border); }
+.xp-check > svg { flex: none; color: var(--text-faint); }
+.xp-check.is-done > svg { color: var(--ok); }
+.xp-check.is-done .xp-check-text { color: var(--text-muted); }
+.xp-check-text { flex: 1 1 auto; min-width: 0; }
+.xp-check-detail { font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); white-space: nowrap; }
+
+.xp-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+@container xp (max-width: 720px) {
+  .xp-nums { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container xp (max-width: 640px) {
+  .xp { padding: 24px 16px 80px; }
+  .xp-h1 { font-size: var(--fs-28); }
+  .xp-verdict { gap: 14px; }
+  .xp-days-n { font-size: var(--fs-28); }
+}

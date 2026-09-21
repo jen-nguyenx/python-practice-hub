@@ -37,7 +37,7 @@ export async function visit(c: Ctx, hash: string, shot?: string, shotsDir?: stri
 /** Every top-level route the icon bar and the palette offer. */
 export const MAIN_ROUTES = [
   '#/playground', '#/report', '#/exam', '#/settings', '#/review', '#/error', '#/reference', '#/lessons',
-  '#/plan', '#/placement', '#/glossary',
+  '#/plan', '#/placement', '#/glossary', '#/revision',
 ];
 
 export async function checkMainRoutes(c: Ctx): Promise<void> {
@@ -404,4 +404,49 @@ export async function checkTermMarks(c: Ctx): Promise<void> {
   await c.page.keyboard.press('Escape');
   await c.page.waitForTimeout(250);
   if ((await c.page.locator('.tm-pop').count()) > 0) c.fail('Escape did not close the definition');
+}
+
+/** The revision pack: every cheat sheet on one page, built to be printed. */
+export async function checkRevisionPack(c: Ctx): Promise<void> {
+  await visit(c, '#/revision');
+  await c.page.waitForTimeout(1500);
+  const sheets = await c.page.locator('.rvp-sheet').count();
+  // Thirteen topics, so a pack with one or two means the topic chunks did not load.
+  if (sheets < 10) c.fail(`#/revision: only ${sheets} cheat sheets made it into the pack`);
+  if ((await c.page.locator('.rvp-patterns li').count()) === 0) c.fail('#/revision: the pattern cards are missing');
+}
+
+/** A project build: stages derived from a scenario, in the order the work happens. */
+export async function checkProjectBuild(c: Ctx): Promise<void> {
+  await visit(c, '#/build/t12-s1');
+  await c.page.waitForTimeout(1500);
+  const steps = await c.page.locator('.pb-step').count();
+  if (steps === 0) {
+    c.fail('#/build/t12-s1: the build has no stages');
+    return;
+  }
+  // The brief first and the check last: the order is the whole point of the page.
+  const labels = (await c.page.locator('.pb-step-l').allInnerTexts()).map((t) => t.trim());
+  if (labels[0] !== 'The brief') c.fail(`#/build: the first stage is "${labels[0]}"`);
+  if (labels[labels.length - 1] !== 'Check it') c.fail(`#/build: the last stage is "${labels[labels.length - 1]}"`);
+  // Somewhere in the middle there has to be something to actually write.
+  if (!labels.some((l) => /^Piece|^Assemble/.test(l))) c.fail('#/build: no code to write in any stage');
+}
+
+/** The left bar opens to show the names, which is the point of it for a beginner. */
+export async function checkNavExpands(c: Ctx): Promise<void> {
+  await visit(c, '#/');
+  const toggle = c.page.locator('.actbar-toggle');
+  if ((await toggle.count()) === 0) {
+    c.fail('the menu has no way to collapse or expand');
+    return;
+  }
+  const named = await c.page.locator('.actbar.is-wide .actbar-label').count();
+  if (named === 0) c.fail('the menu opens without showing any names');
+  await toggle.click();
+  await c.page.waitForTimeout(400);
+  if ((await c.page.locator('.actbar.is-wide').count()) > 0) c.fail('collapsing the menu did nothing');
+  await toggle.click();
+  await c.page.waitForTimeout(400);
+  if ((await c.page.locator('.actbar.is-wide').count()) === 0) c.fail('the menu would not open again');
 }

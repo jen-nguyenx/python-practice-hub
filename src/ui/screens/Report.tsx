@@ -13,6 +13,7 @@ import { href } from '../../app/router.ts';
 import { Button, IconButton, LinkButton } from '../components/Button.tsx';
 import { Callout } from '../components/Callout.tsx';
 import { Icon } from '../components/Icon.tsx';
+import { PairSwitch } from '../components/PairSwitch.tsx';
 import { Segmented } from '../components/Segmented.tsx';
 import { ReportBody } from '../report/ReportView.tsx';
 import { formatDate } from '../report/format.ts';
@@ -141,6 +142,17 @@ function ReportScreen({ topicId }: { topicId?: string }) {
 
   return (
     <div class="page rp">
+      {/* Only on the whole-app report: a single topic's report is a drill-down, not one of the pair. */}
+      {topicId ? null : (
+        <PairSwitch
+          label="Progress"
+          value="report"
+          options={[
+            { value: 'plan', label: 'The run-in', href: href.plan() },
+            { value: 'report', label: 'The detail', href: href.report() },
+          ]}
+        />
+      )}
       <header class="rp-head">
         <div class="rp-title">
           {meta ? (

@@ -40,7 +40,3 @@
   .rf-h1 { font-size: var(--fs-28); }
   .rf-list { grid-template-columns: minmax(0, 1fr); }
 }
-
-/* Sibling pointer: the reference answers "how do I", the glossary answers "what does this word mean". */
-.rf-sibling { margin: 0; font-size: var(--fs-14); color: var(--text-muted); }
-.rf-sibling a { color: var(--blue); }

@@ -8,6 +8,8 @@ import { DecodeError } from '../ui/screens/DecodeError.tsx';
 import { ExamPlan } from '../ui/screens/ExamPlan.tsx';
 import { Glossary } from '../ui/screens/Glossary.tsx';
 import { Placement } from '../ui/screens/Placement.tsx';
+import { ProjectBuild } from '../ui/screens/ProjectBuild.tsx';
+import { Revision } from '../ui/screens/Revision.tsx';
 import { Reference } from '../ui/screens/Reference.tsx';
 import { Review } from '../ui/screens/Review.tsx';
 import { TopicPage } from '../ui/screens/TopicPage.tsx';
@@ -37,6 +39,8 @@ export function App() {
     case 'plan': screen = <ExamPlan />; break;
     case 'placement': screen = <Placement />; break;
     case 'glossary': screen = <Glossary />; break;
+    case 'revision': screen = <Revision />; break;
+    case 'build': screen = <ProjectBuild key={r.scenarioId} scenarioId={r.scenarioId} />; break;
     case 'topic-test': screen = <TopicTest topicId={r.topicId} />; break;
     case 'exam': screen = <ExamPractice />; break;
     case 'settings': screen = <Settings />; break;

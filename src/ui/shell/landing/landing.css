@@ -45,6 +45,15 @@
 .tile:focus-visible { outline-offset: 2px; }
 .tile.is-current { border-color: var(--accent-line); }
 .tile.is-locked { background: transparent; box-shadow: none; }
+/* Finished should look finished. It used to read fainter than a topic barely started, which is exactly
+   backwards: the work is done and the tile should say so. Ink, not green — the accent this app uses. */
+.tile.is-done { background: var(--ok-soft); border-color: var(--ok-line); }
+.tile.is-done .tile-icon {
+  display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px;
+  border-radius: 999px; background: var(--ok); color: var(--surface);
+}
+.tile.is-done .tile-fill { background: var(--ok); }
+.tile.is-done .tile-min { color: var(--text); font-weight: 600; }
 .tile-top { display: flex; align-items: center; justify-content: space-between; font-family: var(--mono); font-size: var(--fs-12); color: var(--text-muted); }
 .tile-icon { display: inline-flex; align-items: center; color: var(--text); }
 .tile.is-locked .tile-icon { color: var(--lock); }
@@ -99,3 +108,18 @@
 .td-item:hover .td-go { color: var(--text); }
 
 @media (prefers-reduced-motion: reduce) { .td-item { transition: none; } }
+
+/* ---------- what you have finished ---------- */
+.bdg { display: grid; gap: 10px; }
+.bdg-head { display: flex; align-items: baseline; gap: 12px; }
+.bdg-h { margin: 0; font-family: var(--mono); font-size: var(--fs-12); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-weight: 400; }
+.bdg-count { font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); }
+.bdg-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.bdg-item { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: var(--fs-13); }
+.bdg-item.is-earned { background: var(--ok-soft); border-color: var(--ok-line); }
+.bdg-item.is-next { border-style: dashed; color: var(--text-muted); }
+.bdg-mark { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 999px; background: var(--ok); color: var(--surface); }
+.bdg-mark-open { background: none; border: 1px dashed var(--border-strong); }
+.bdg-name { font-weight: 600; }
+.bdg-item.is-next .bdg-name { font-weight: 400; }
+.bdg-prog { font-family: var(--mono); font-size: var(--fs-11); color: var(--text-faint); }

@@ -1,0 +1,40 @@
+/* The revision pack: built to be printed, so the screen version is the draft and the paper is the point. */
+.rv-pack { max-width: 860px; margin: 0 auto; padding: 32px 24px 80px; display: grid; gap: 28px; }
+.rvp-top { display: grid; gap: 10px; }
+.rvp-h1 { font-family: var(--display); font-size: var(--fs-40); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; margin: 0; }
+.rvp-lede { margin: 0; max-width: 62ch; font-size: var(--fs-16); line-height: 1.6; color: var(--text-muted); }
+.rvp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 4px; }
+.rvp-link { font-size: var(--fs-14); color: var(--blue); }
+.rvp-error { display: flex; align-items: center; gap: 8px; margin: 0; font-size: var(--fs-15); color: var(--bad); }
+.rvp-loading { display: grid; gap: 14px; }
+
+.rvp-sec { display: grid; gap: 10px; }
+.rvp-h2 { margin: 0; font-family: var(--display); font-size: var(--fs-22); font-weight: 600; }
+.rvp-num { font-family: var(--mono); font-size: var(--fs-16); color: var(--text-faint); }
+.rvp-note { margin: 0; font-size: var(--fs-14); color: var(--text-muted); }
+.rvp-md { font-size: var(--fs-15); line-height: 1.6; }
+
+.rvp-weak-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border: 1px solid var(--border); border-radius: var(--r-2); }
+.rvp-weak-list li { display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+.rvp-weak-list li + li { border-top: 1px solid var(--border); }
+.rvp-weak-name { flex: 1 1 auto; font-size: var(--fs-15); }
+.rvp-weak-num { font-family: var(--mono); font-size: var(--fs-12); color: var(--text-faint); }
+
+.rvp-patterns { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.rvp-pat-title { display: block; font-size: var(--fs-15); font-weight: 600; }
+.rvp-pat-why { font-size: var(--fs-14); color: var(--text-muted); }
+
+.rvp-print-only { display: none; }
+
+@media print {
+  /* Paper is the point: no chrome, no colour beyond the ink, and a topic never split across two sheets
+     where it can be helped. */
+  .rvp-no-print { display: none !important; }
+  .rvp-print-only { display: block; }
+  .rv-pack { max-width: none; padding: 0; gap: 18px; }
+  .rvp-print-head { margin: 0 0 8px; font-family: var(--mono); font-size: 10pt; }
+  .rvp-sheet { break-inside: avoid-page; page-break-inside: avoid; }
+  .rvp-h2 { font-size: 14pt; }
+  .rvp-md, .rvp-weak-name { font-size: 10pt; }
+  .rvp-md pre, .rvp-md code { font-size: 9pt; }
+}

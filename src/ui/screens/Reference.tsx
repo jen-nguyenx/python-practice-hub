@@ -10,6 +10,7 @@ import type { RecipeEntry, RecipeGroup } from '../../content/recipeSchema.ts';
 import { LESSON_FOR_TOPIC } from '../../content/lessons/index.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
+import { PairSwitch } from '../components/PairSwitch.tsx';
 import { Markdown } from '../components/Markdown.tsx';
 import { referenceJump } from '../shell/uiState.ts';
 import { openInPlayground } from '../workbench/openInPlayground.ts';
@@ -97,10 +98,16 @@ export function Reference() {
         <p class="rf-lede">
           How do I…? Every snippet here was run to get the answer underneath it. Press <kbd>/</kbd> to search.
         </p>
-        <p class="rf-sibling">
-          After a word rather than a job? <a href={href.glossary()}>The glossary</a> explains the vocabulary.
-        </p>
       </header>
+
+      <PairSwitch
+        label="Look up"
+        value="reference"
+        options={[
+          { value: 'reference', label: 'How do I…?', href: href.reference() },
+          { value: 'glossary', label: 'What does it mean?', href: href.glossary() },
+        ]}
+      />
 
       <div class="rf-search">
         <Icon name="search" size={15} />

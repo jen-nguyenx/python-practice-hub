@@ -1,0 +1,48 @@
+/* Project build: the stages of one project, in the order you would do them. */
+.pb { container-type: inline-size; container-name: pb; max-width: 820px; margin: 0 auto; padding: 32px 24px 64px; display: grid; gap: 20px; }
+.pb-top { display: grid; gap: 6px; }
+.pb-eyebrow { margin: 0; font-family: var(--mono); font-size: var(--fs-11); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.pb-h1 { margin: 0; font-family: var(--display); font-size: var(--fs-28); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+.pb-count { font-family: var(--mono); font-size: var(--fs-13); color: var(--text-muted); margin: 0; }
+
+.pb-rail { border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.pb-rail::-webkit-scrollbar { display: none; }
+.pb-rail ol { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.pb-step {
+  display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 0; border-bottom: 2px solid transparent;
+  background: none; font: inherit; font-size: var(--fs-14); color: var(--text-muted); cursor: pointer; white-space: nowrap;
+}
+.pb-step:hover { color: var(--text); }
+.pb-step.is-current { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
+.pb-step-n {
+  display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px;
+  border-radius: 999px; background: var(--surface-2); font-family: var(--mono); font-size: var(--fs-11);
+}
+.pb-step.is-done .pb-step-n { background: var(--ok); color: var(--on-accent); }
+
+.pb-card { display: grid; gap: 12px; padding: 24px 26px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-2); box-shadow: var(--shadow-card); }
+.pb-h2 { margin: 0; font-family: var(--display); font-size: var(--fs-20); font-weight: 600; }
+.pb-blurb { margin: 0; max-width: 64ch; font-size: var(--fs-15); line-height: 1.6; color: var(--text-muted); }
+.pb-md { font-size: var(--fs-15); line-height: 1.6; }
+.pb-note { margin: 0; max-width: 64ch; font-size: var(--fs-14); line-height: 1.6; color: var(--text-muted); }
+
+.pb-rules { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.pb-rules li { display: flex; align-items: flex-start; gap: 10px; font-size: var(--fs-14); line-height: 1.5; }
+.pb-rules li > svg { flex: none; margin-top: 2px; color: var(--text-faint); }
+.pb-rules li.is-ok > svg { color: var(--ok); }
+
+.pb-plan { display: grid; gap: 10px; margin: 0; padding: 0 0 0 4px; list-style: none; counter-reset: pbplan; }
+.pb-plan li { display: flex; align-items: baseline; gap: 12px; font-size: var(--fs-15); }
+.pb-plan-k { min-width: 46px; font-family: var(--mono); font-size: var(--fs-11); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); }
+
+.pb-task { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 16px 18px; border: 1px solid var(--border); border-left: 3px solid var(--border-strong); border-radius: var(--r-2); background: var(--surface-2); }
+.pb-task.is-done { border-left-color: var(--ok); }
+.pb-task-state { display: flex; align-items: center; gap: 8px; margin: 0; flex: 1 1 200px; font-size: var(--fs-14); font-weight: 600; }
+.pb-task.is-done .pb-task-state svg { color: var(--ok); }
+
+.pb-nav { display: flex; align-items: center; gap: 16px; padding-top: 18px; border-top: 1px solid var(--border); }
+
+@container pb (max-width: 640px) {
+  .pb { padding: 24px 16px 64px; }
+  .pb-card { padding: 20px 18px; }
+}

@@ -8,6 +8,7 @@ import type { QuestionStats } from '../../engine/progress.ts';
 import { href } from '../../app/router.ts';
 import { Icon } from '../components/Icon.tsx';
 import { FlagButton } from './FlagDialog.tsx';
+import { questionReturn } from './questionReturn.ts';
 import { IconLink } from './Tip.tsx';
 import './questionPage.css';
 
@@ -34,6 +35,7 @@ export function dotState(s: QuestionStats | undefined): DotState {
 const DOT_TEXT: Record<DotState, string> = { solved: 'solved', attempted: 'attempted', new: 'not started' };
 
 export function QuestionBar({ qid, topicId, topicShort, questions, index, stats, format, onLeave }: QuestionBarProps) {
+  const back = questionReturn();
   const prev = index > 0 ? questions[index - 1] : undefined;
   const next = index >= 0 && index < questions.length - 1 ? questions[index + 1] : undefined;
   // On narrow screens the dots scroll inside their own box (the counter stays pinned), so bring the current one
@@ -47,9 +49,10 @@ export function QuestionBar({ qid, topicId, topicShort, questions, index, stats,
   }, [qid]);
   return (
     <div class="qrow">
-      <a class="qrow-back" href={href.topic(topicId)} onClick={() => onLeave?.()}>
+      {/* A question opened from a guided path leads back to that path, not to a topic nobody was browsing. */}
+      <a class="qrow-back" href={back ? back.href : href.topic(topicId)} onClick={() => onLeave?.()}>
         <Icon name="chevronLeft" size={16} />
-        <span class="qrow-back-text">{topicShort}</span>
+        <span class="qrow-back-text">{back ? back.label : topicShort}</span>
       </a>
       <nav class="qrow-center" aria-label="Questions in this topic">
         <ol class="qrow-dots" ref={dotsRef}>

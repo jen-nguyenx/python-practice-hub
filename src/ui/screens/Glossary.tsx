@@ -10,6 +10,7 @@ import { matchesTerm, scoreTerm } from '../../content/glossarySchema.ts';
 import type { TermEntry } from '../../content/glossarySchema.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
+import { PairSwitch } from '../components/PairSwitch.tsx';
 import { InlineMd } from '../components/Markdown.tsx';
 import { glossaryJump } from '../shell/uiState.ts';
 import './glossary.css';
@@ -131,6 +132,15 @@ export function Glossary() {
           the code underneath it was run to get the answer. Press <kbd>/</kbd> to search.
         </p>
       </header>
+
+      <PairSwitch
+        label="Look up"
+        value="glossary"
+        options={[
+          { value: 'reference', label: 'How do I…?', href: href.reference() },
+          { value: 'glossary', label: 'What does it mean?', href: href.glossary() },
+        ]}
+      />
 
       <div class="gl-search">
         <Icon name="search" size={15} />

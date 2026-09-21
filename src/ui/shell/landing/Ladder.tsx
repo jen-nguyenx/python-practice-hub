@@ -47,7 +47,7 @@ function Tile({ t, p, current }: { t: TopicMeta; p: TopicProgress; current: bool
       <span class="tile-bar" aria-hidden="true"><span class="tile-fill" style={{ width: `${locked ? 0 : pct}%` }} /></span>
       <span class="tile-foot" aria-hidden="true">
         <span class="tile-count">{p.solved}/{p.total}</span>
-        <span class="tile-min">{locked ? 'Locked' : p.minimumMet ? 'done' : minimumText(p)}</span>
+        <span class="tile-min">{locked ? 'Locked' : p.minimumMet ? 'Done' : minimumText(p)}</span>
       </span>
     </a>
   );

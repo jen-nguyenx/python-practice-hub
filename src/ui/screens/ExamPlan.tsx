@@ -11,6 +11,7 @@ import { examPlan } from '../../engine/examPlan.ts';
 import type { PlanTarget, PlanWeek, ReadyItem, Verdict } from '../../engine/examPlan.ts';
 import { testHistory } from '../testmode/summary.ts';
 import { Icon } from '../components/Icon.tsx';
+import { PairSwitch } from '../components/PairSwitch.tsx';
 import type { IconName } from '../components/Icon.tsx';
 import { LinkButton } from '../components/Button.tsx';
 import { Skeleton } from '../components/Skeleton.tsx';
@@ -100,6 +101,14 @@ export function ExamPlan() {
 
   return (
     <div class="xp">
+      <PairSwitch
+        label="Progress"
+        value="plan"
+        options={[
+          { value: 'plan', label: 'The run-in', href: href.plan() },
+          { value: 'report', label: 'The detail', href: href.report() },
+        ]}
+      />
       <header class="xp-top">
         <h1 class="xp-h1">The run-in</h1>
         <p class="xp-lede">
@@ -152,6 +161,7 @@ export function ExamPlan() {
       <div class="xp-actions">
         <LinkButton href={href.landing()} variant="primary">Go to the topics</LinkButton>
         <LinkButton href={href.exam()} variant="secondary">Sit a mock paper</LinkButton>
+        <LinkButton href={href.revision()} variant="secondary">Print a revision pack</LinkButton>
         <LinkButton href={href.report()} variant="ghost">See the full report</LinkButton>
       </div>
     </div>

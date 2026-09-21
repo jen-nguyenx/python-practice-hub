@@ -36,10 +36,10 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/content/mistakes.ts`, `patterns.ts` | Mistake catalogue (labels, explanations, runtime matchers) and best-practice cards |
 | `src/runtime/python/` | Grading harness (`_pl` package): sandboxed runs, tests, AST checks, tracer |
 | `src/runtime/pyWorker.ts`, `pyClient.ts` | Browser worker + client (queue, watchdog, respawn) |
-| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (which mistakes are due), `reviewSession.ts` (what a session asks), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `examPlan.ts` (the run-in), `placement.ts` (where to join the ladder), `semester.ts` (the CITS1401 calendar), `streak.ts`, `traceback.ts` |
+| `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (which mistakes are due), `reviewSession.ts` (what a session asks), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `examPlan.ts` (the run-in), `placement.ts` (where to join the ladder), `projectBuild.ts` (a project in stages), `achievements.ts` (what is finished), `semester.ts` (the CITS1401 calendar), `streak.ts`, `traceback.ts` |
 | `src/store/` | IndexedDB event log, snapshots, scratch files, settings (localStorage), export/import |
 | `src/app/` | App shell, hash router, singletons (`services.ts`), `markTopicOpened` |
-| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Glossary, Review, ExamPlan, Placement, DecodeError, Report, TopicTest, ExamPractice, Settings |
+| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Glossary, Revision, ProjectBuild, Review, ExamPlan, Placement, DecodeError, Report, TopicTest, ExamPractice, Settings |
 | `src/content/recipes/`, `recipeSchema.ts` | The reference: one file per area, every snippet run by the verifier |
 | `src/content/conceptWords.ts` | Concept tags in a student's words; nothing shows a raw tag |
 | `src/content/glossary.ts`, `glossarySchema.ts` | The glossary: one entry per word the course uses, each demo run by the verifier |
@@ -90,6 +90,17 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 - **Treat imported files as hostile.** Everything from an export file goes through `src/store/validate.ts`:
   allowlisted fields, capped lengths and counts, clamped timestamps and ranges. Drafts are `unknown` by
   contract, so check types before using them in a component.
+- **The icon bar is eight destinations, and two of them are pairs.** Reference/Glossary is "look
+  something up"; the run-in/report is "how am I doing". Each keeps its own route and a `PairSwitch` at the
+  top moves between them -- resist adding an eleventh tab, which is how the glossary went unfound the day
+  it shipped. The bar opens to show names (`settings.navExpanded`, on by default): nobody learns ten icons.
+- **A project build (`#/build/:scenarioId`) is an order over a scenario, not new content**, the same way
+  lesson mode is: helpers first, then `main()`, derived from the scenario's own `write` questions
+  (`projectBuild.ts`). The coding itself is handed to the question page, which already has the editor,
+  the tests and the hints; `questionReturn.ts` is what brings the student back.
+- **Finishing has to look like finishing.** A completed topic is ink-filled with a solid check, never a
+  faded tile, and `achievements.ts` derives badges from the event log -- every rule counts something that
+  only goes up, so a bad week never takes one away. Ink, never green: see docs/build/DESIGN.md.
 - **Glossary words are marked where they are read** (`src/content/glossaryMatch.ts`, `TermMark`): hover,
   focus or tap gives the definition without leaving the page. Marking is deliberately shy -- only the term
   itself (never its `also` spellings, which are search aids), never a word whose everyday English sense

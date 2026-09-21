@@ -11,6 +11,7 @@ import { reviewQueue } from '../../engine/review.ts';
 import { streak } from '../../engine/streak.ts';
 import { ExamCard } from '../shell/landing/HomeCards.tsx';
 import { planToday, questionTitle, TodayPlan } from '../shell/landing/Today.tsx';
+import { Badges } from '../shell/landing/Badges.tsx';
 import { Ladder, LadderSkeleton } from '../shell/landing/Ladder.tsx';
 import { useSemester } from '../shell/StatusBar.tsx';
 import { storeReady } from '../shell/storeReady.ts';
@@ -85,6 +86,7 @@ export function Landing() {
         <TodayPlan steps={plan} streak={days} />
         <ExamCard summary={exam} />
       </div>
+      <Badges events={events} progress={progress} />
       <Ladder progress={progress} currentTopic={progress[info.topic.id]?.state === 'locked' ? null : info.topic.id} />
     </div>
   );

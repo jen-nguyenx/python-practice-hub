@@ -101,13 +101,16 @@ export interface Settings {
   singleKeyShortcuts: boolean;
   /** Ask "how sure are you?" before the first check on a question, and report how well it matched. */
   askConfidence: boolean;
+  /** Show the names beside the icons in the left bar. On by default: an icon nobody recognises is a maze. */
+  navExpanded: boolean;
   seenTour: boolean;
   lastExportTs: number | null;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system', accent: 'blue-gold', layout: 'full', editorFontSize: 14, unlockAll: false,
-  reducedMotion: 'system', singleKeyShortcuts: true, askConfidence: true, seenTour: false, lastExportTs: null,
+  reducedMotion: 'system', singleKeyShortcuts: true, askConfidence: true, navExpanded: true,
+  seenTour: false, lastExportTs: null,
 };
 
 // ---------- format components ----------

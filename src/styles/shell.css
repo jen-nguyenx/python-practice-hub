@@ -19,7 +19,8 @@ html, body { height: 100%; overflow: hidden; }
 /* ---------- frame grid ---------- */
 .app {
   display: grid; flex-direction: initial;
-  grid-template-columns: var(--activity-w) minmax(0, 1fr);
+  /* The bar decides its own width, because it can be opened to show the names. */
+  grid-template-columns: auto minmax(0, 1fr);
   grid-template-rows: var(--titlebar-h) auto minmax(0, 1fr) var(--statusbar-h);
   grid-template-areas: "title title" "banner banner" "act main" "status status";
 }
@@ -68,8 +69,20 @@ html, body { height: 100%; overflow: hidden; }
 /* ---------- icon bar (52px, left) ---------- */
 .actbar {
   display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 8px 0;
+  width: var(--activity-w);
   background: var(--panel); border-right: 1px solid var(--border); min-height: 0; overflow: hidden auto;
+  transition: width var(--dur) ease-out;
 }
+/* Open: the names sit beside the icons. Nobody learns ten icons, and this app is for beginners. */
+.actbar.is-wide { width: 176px; }
+.actbar.is-wide .actbar-item { justify-content: flex-start; gap: 12px; padding: 0 12px; }
+.actbar.is-wide .actbar-label { display: block; font-size: var(--fs-14); white-space: nowrap; }
+.actbar-toggle {
+  display: flex; align-items: center; justify-content: center; height: 32px; margin: 0 4px 4px;
+  border: 0; border-radius: var(--r-2); background: none; color: var(--text-faint); cursor: pointer;
+}
+.actbar-toggle:hover { color: var(--text); background: var(--surface-2); }
+.actbar.is-wide .actbar-toggle { justify-content: flex-end; padding-right: 8px; }
 .actbar-spacer { flex: 1; }
 .actbar-item {
   position: relative; display: flex; align-items: center; justify-content: center; height: 44px; margin: 0 4px;
@@ -218,7 +231,10 @@ html, body { height: 100%; overflow: hidden; }
   .tb-logo { width: 48px; }
   .tb-logo .logo-mark { width: 28px; height: 28px; }
   .tb-tools { gap: 4px; }
-  .actbar { flex-direction: row; gap: 0; padding: 0 0 env(safe-area-inset-bottom); border-right: 0; border-top: 1px solid var(--border); overflow: hidden; }
+  /* On a phone the bar is a row along the bottom, where opening it makes no sense. */
+  .actbar, .actbar.is-wide { flex-direction: row; gap: 0; width: auto; padding: 0 0 env(safe-area-inset-bottom); border-right: 0; border-top: 1px solid var(--border); overflow: hidden; }
+  .actbar-toggle { display: none; }
+  .actbar.is-wide .actbar-item { flex-direction: column; justify-content: center; gap: 2px; padding: 0; }
   .actbar-spacer { display: none; }
   .actbar-item { flex: 1; flex-direction: column; gap: 2px; height: 56px; margin: 0; border-radius: 0; }
   .actbar-item.is-current::before { left: 25%; right: 25%; top: 0; bottom: auto; width: auto; height: 2px; border-radius: 0 0 2px 2px; }

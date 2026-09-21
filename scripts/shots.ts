@@ -44,6 +44,8 @@ const SHOTS: Shot[] = [
   },
   { name: 'lessons', hash: '#/lessons' },
   { name: 'glossary', hash: '#/glossary' },
+  { name: 'revision', hash: '#/revision' },
+  { name: 'build', hash: '#/build/t12-s1' },
   {
     // A glossary word marked in lesson prose, with its definition open.
     name: 'term-hover',

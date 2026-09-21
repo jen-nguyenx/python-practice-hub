@@ -4,22 +4,21 @@
 import { Fragment } from 'preact';
 import { href } from '../../app/router.ts';
 import type { Route } from '../../app/router.ts';
+import { store } from '../../app/services.ts';
 import { Icon } from '../components/Icon.tsx';
 import type { IconName } from '../components/Icon.tsx';
 import { Tooltip } from '../components/Tooltip.tsx';
 
-export type NavKey = 'topics' | 'lessons' | 'reference' | 'glossary' | 'playground' | 'review' | 'tests' | 'plan' | 'report' | 'settings';
+export type NavKey = 'topics' | 'lessons' | 'reference' | 'playground' | 'review' | 'tests' | 'report' | 'settings';
 
 export const NAV: { key: NavKey; label: string; short: string; icon: IconName; href: string }[] = [
   { key: 'topics', label: 'Topics', short: 'Topics', icon: 'ladder', href: href.landing() },
   { key: 'lessons', label: 'Lessons', short: 'Lessons', icon: 'book', href: href.lessons() },
-  { key: 'reference', label: 'Reference', short: 'Reference', icon: 'search', href: href.reference() },
-  { key: 'glossary', label: 'Glossary', short: 'Glossary', icon: 'layers', href: href.glossary() },
-  { key: 'plan', label: 'The run-in', short: 'Run-in', icon: 'flag', href: href.plan() },
+  { key: 'reference', label: 'Look up', short: 'Look up', icon: 'search', href: href.reference() },
   { key: 'playground', label: 'Playground', short: 'Playground', icon: 'code', href: href.playground() },
   { key: 'review', label: 'Review', short: 'Review', icon: 'refresh', href: href.review() },
   { key: 'tests', label: 'Exams', short: 'Exams', icon: 'clock', href: href.exam() },
-  { key: 'report', label: 'Report', short: 'Report', icon: 'chart', href: href.report() },
+  { key: 'report', label: 'Progress', short: 'Progress', icon: 'chart', href: href.report() },
   { key: 'settings', label: 'Settings', short: 'Settings', icon: 'sliders', href: href.settings() },
 ];
 
@@ -32,15 +31,15 @@ export function currentFor(key: NavKey, r: Route): 'page' | 'true' | undefined {
     case 'lessons':
       if (r.name === 'lessons') return 'page';
       return r.name === 'lesson-read' || r.name === 'lesson' ? 'true' : undefined;
-    case 'reference': return r.name === 'reference' ? 'page' : undefined;
-    case 'glossary': return r.name === 'glossary' ? 'page' : undefined;
-    case 'plan': return r.name === 'plan' ? 'page' : undefined;
+    // One door for each pair: the switch at the top of the page moves between the two.
+    case 'reference': return r.name === 'reference' || r.name === 'glossary' ? 'page' : undefined;
     case 'playground': return r.name === 'playground' ? 'page' : undefined;
     case 'review': return r.name === 'review' ? 'page' : undefined;
     case 'tests':
       if (r.name === 'exam') return 'page';
       return r.name === 'topic-test' ? 'true' : undefined;
     case 'report':
+      if (r.name === 'plan') return 'page';
       if (r.name !== 'report') return undefined;
       return r.topicId ? 'true' : 'page';
     case 'settings': return r.name === 'settings' ? 'page' : undefined;
@@ -48,14 +47,26 @@ export function currentFor(key: NavKey, r: Route): 'page' | 'true' | undefined {
 }
 
 export function ActivityBar({ route }: { route: Route }) {
+  const wide = store.settings.value.navExpanded !== false;
   return (
-    <nav class="actbar" aria-label="Main">
+    <nav class={`actbar${wide ? ' is-wide' : ''}`} aria-label="Main">
+      <button
+        type="button"
+        class="actbar-toggle"
+        aria-expanded={wide}
+        aria-label={wide ? 'Collapse the menu to icons' : 'Expand the menu to show names'}
+        title={wide ? 'Collapse the menu' : 'Expand the menu'}
+        onClick={() => store.updateSettings({ navExpanded: !wide })}
+      >
+        <Icon name={wide ? 'chevronLeft' : 'menu'} size={16} />
+      </button>
       {NAV.map((n) => {
         const cur = currentFor(n.key, route);
         return (
           <Fragment key={n.key}>
             {n.key === 'settings' ? <span class="actbar-spacer" aria-hidden="true" /> : null}
-            <Tooltip content={n.label} side="right" decorative>
+            {/* The name is beside the icon when the bar is open, so the tooltip would only repeat it. */}
+            <Tooltip content={n.label} side="right" decorative disabled={wide}>
               <a href={n.href} class={`actbar-item${cur ? ' is-current' : ''}`} aria-label={n.label} aria-current={cur}>
                 <Icon name={n.icon} size={20} />
                 <span class="actbar-label" aria-hidden="true">{n.short}</span>

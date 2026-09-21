@@ -139,3 +139,6 @@
   .tm-pop { animation: tm-in 90ms ease-out; }
   @keyframes tm-in { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: none; } }
 }
+
+/* The switch between two views of one idea, at the top of each side. */
+.pair-switch { justify-self: start; margin-bottom: 4px; }

@@ -47,6 +47,19 @@ const SHOTS: Shot[] = [
   { name: 'revision', hash: '#/revision' },
   { name: 'build', hash: '#/build/t12-s1' },
   {
+    // The Markets track, switched on: the exemplar lesson's payoff experiment with its sliders.
+    name: 'markets',
+    hash: '#/settings',
+    prepare: async (page) => {
+      await page.locator('[role="switch"][aria-labelledby="set-markets-label"]').first().click().catch(() => {});
+      await page.waitForTimeout(300);
+      await page.goto(page.url().replace(/#.*$/, '#/lesson/optionality-at-expiry'), { waitUntil: 'load' });
+      await page.waitForTimeout(1200);
+      await page.getByRole('button', { name: 'Next', exact: true }).click().catch(() => {});
+      await page.waitForTimeout(800);
+    },
+  },
+  {
     // A glossary word marked in lesson prose, with its definition open.
     name: 'term-hover',
     hash: '#/lesson/core-recursion',

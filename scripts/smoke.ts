@@ -11,7 +11,7 @@ import { arg, dismissTour, importProgress, openBrowser, startPreview, waitForPyt
 import type { SeedQuestion } from './lib/browser.ts';
 import {
   checkCalibration, checkConfidence, checkExamPlan, checkGlossary, checkPlacement, checkLessonLibrary, checkMainRoutes, checkPaletteReference,
-  checkNavExpands, checkProjectBuild, checkReferenceSearch, checkReportSections, checkRevisionPack, checkTermMarks, checkReviewSession, visit as visitRoute,
+  checkMarketsSwitch, checkNavExpands, checkProjectBuild, checkReferenceSearch, checkReportSections, checkRevisionPack, checkTermMarks, checkReviewSession, visit as visitRoute,
 } from './lib/checks.ts';
 import type { Ctx } from './lib/checks.ts';
 
@@ -62,6 +62,7 @@ await checkTermMarks(c);
 await checkRevisionPack(c);
 await checkProjectBuild(c);
 await checkNavExpands(c);
+await checkMarketsSwitch(c);
 await checkPaletteReference(c);
 await checkReferenceSearch(c);
 
@@ -95,10 +96,14 @@ console.log(`Resolved the lesson route for ${TOPICS.length} topics.`);
 
 // The lesson library: every lesson must open, walk to its last section, and render something in each one.
 // An empty section means generated output is missing for a block that needs it.
-const LESSONS: { id: string; title: string; sections: number }[] =
+const ALL_LESSONS: { id: string; title: string; sections: number; track: string }[] =
   JSON.parse(readFileSync('src/content/generated/lesson-index.json', 'utf8'));
+// Markets is off unless its switch is on, so the library is right to show fewer cards than the index
+// has. Every lesson is still walked below: hidden from the library is not hidden from its own route.
+const LESSONS = ALL_LESSONS;
+const LISTED = ALL_LESSONS.filter((l) => l.track !== 'markets');
 await visit(page, '#/lessons', 'lessons');
-await checkLessonLibrary(c, LESSONS.length);
+await checkLessonLibrary(c, LISTED.length);
 for (const l of LESSONS) {
   await visit(page, `#/lesson/${l.id}`);
   const steps = await page.locator('.ls-step-l').count();

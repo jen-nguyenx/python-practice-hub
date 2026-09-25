@@ -450,3 +450,38 @@ export async function checkNavExpands(c: Ctx): Promise<void> {
   await c.page.waitForTimeout(400);
   if ((await c.page.locator('.actbar.is-wide').count()) === 0) c.fail('the menu would not open again');
 }
+
+/**
+ * The Markets track is hidden until its switch is on.
+ *
+ * Both halves matter: a first-year must never see a lesson on futures in the library by default, and
+ * the person who does want it must be able to turn it on and find it. Checked through Settings rather
+ * than by poking storage, because the switch is what a person would use.
+ */
+export async function checkMarketsSwitch(c: Ctx): Promise<void> {
+  await visit(c, '#/lessons');
+  await c.page.waitForTimeout(600);
+  const before = await c.page.locator('.lx-track-title', { hasText: /^Markets$/ }).count();
+  if (before > 0) c.fail('#/lessons: the Markets track is showing with its switch off');
+
+  await visit(c, '#/settings');
+  const sw = c.page.locator('[role="switch"][aria-labelledby="set-markets-label"]').first();
+  if ((await sw.count()) === 0) {
+    c.fail('#/settings: there is no Markets switch');
+    return;
+  }
+  await sw.click();
+  await c.page.waitForTimeout(300);
+
+  await visit(c, '#/lessons');
+  await c.page.waitForTimeout(600);
+  const after = await c.page.locator('.lx-track-title', { hasText: /^Markets$/ }).count();
+  if (after === 0) c.fail('#/lessons: turning the Markets switch on did not show the track');
+  const cards = await c.page.locator('.lx-track:has(.lx-track-title:text-is("Markets")) .lx-card').count();
+  if (cards < 1) c.fail('#/lessons: the Markets track has no lessons in it');
+
+  // Put it back the way a student would find it.
+  await visit(c, '#/settings');
+  await sw.click().catch(() => {});
+  await c.page.waitForTimeout(300);
+}

@@ -5,6 +5,7 @@
 // library index and the lesson's generated output.
 import { TOPICS } from '../topics.ts';
 import type { GeneratedLesson, Lesson, Track } from '../lessonSchema.ts';
+import { TRACKS } from '../lessonSchema.ts';
 import LESSON_INDEX_JSON from '../generated/lesson-index.json';
 
 /** What the library page needs about a lesson without loading the lesson itself. */
@@ -26,6 +27,19 @@ export interface LessonMeta {
 }
 
 export const LESSON_INDEX = LESSON_INDEX_JSON as LessonMeta[];
+
+/**
+ * Tracks that are on show. Markets is beyond the unit and off by default: a first-year five weeks from
+ * an exam should never be offered a lesson on futures. Everything that lists lessons asks this, so the
+ * rule lives in one place.
+ */
+export function visibleTracks(settings: { showMarkets?: boolean }): Track[] {
+  return TRACKS.filter((t) => t !== 'markets' || settings.showMarkets === true);
+}
+
+export function isLessonVisible(l: LessonMeta, settings: { showMarkets?: boolean }): boolean {
+  return l.track !== 'markets' || settings.showMarkets === true;
+}
 
 // Null-prototype: a lesson id arrives from the URL, and a plain object would answer "#/lesson/toString"
 // with a function rather than undefined.

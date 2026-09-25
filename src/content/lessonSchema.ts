@@ -8,20 +8,22 @@ import type { MistakeId, TopicId } from './ids.ts';
 import type { Experiment, GeneratedExperiment, Md, Test } from './schema.ts';
 
 /** Where a lesson sits in the library. */
-export type Track = 'foundations' | 'core' | 'advanced';
+export type Track = 'foundations' | 'core' | 'advanced' | 'markets';
 
-export const TRACKS: readonly Track[] = ['foundations', 'core', 'advanced'];
+export const TRACKS: readonly Track[] = ['foundations', 'core', 'advanced', 'markets'];
 
 export const TRACK_LABEL: Record<Track, string> = {
   foundations: 'Foundations',
   core: 'Core',
   advanced: 'Going further',
+  markets: 'Markets',
 };
 
 export const TRACK_BLURB: Record<Track, string> = {
   foundations: 'For a complete beginner. What a program is, what a value is, and how to read what Python tells you. No experience assumed.',
   core: 'The thirteen topics the unit is built on, each one explained end to end and paired with its questions.',
   advanced: 'Beyond the unit: the tools and ideas that separate code that works from code a professional would write.',
+  markets: 'Python applied to prices, futures and options. Every curve is drawn from numbers Python worked out; every slider was run ahead of time. Beyond the unit, and off by default.',
 };
 
 /** One side of a side-by-side comparison. */

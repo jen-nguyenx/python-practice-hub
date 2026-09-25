@@ -185,6 +185,7 @@ export function sanitizeSettings(raw: unknown): Partial<Settings> {
   if (isBool(raw.singleKeyShortcuts)) out.singleKeyShortcuts = raw.singleKeyShortcuts;
   if (isBool(raw.askConfidence)) out.askConfidence = raw.askConfidence;
   if (isBool(raw.navExpanded)) out.navExpanded = raw.navExpanded;
+  if (isBool(raw.showMarkets)) out.showMarkets = raw.showMarkets;
   if (isBool(raw.seenTour)) out.seenTour = raw.seenTour;
   if (raw.lastExportTs === null || (isNum(raw.lastExportTs) && raw.lastExportTs > 0)) out.lastExportTs = raw.lastExportTs;
   return out;

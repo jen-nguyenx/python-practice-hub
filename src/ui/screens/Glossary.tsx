@@ -5,6 +5,7 @@
 // the claim running rather than asserting it.
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { href } from '../../app/router.ts';
+import { store } from '../../app/services.ts';
 import { TERM_BY_ID, TERM_ENTRIES } from '../../content/glossaryIndex.ts';
 import { matchesTerm, scoreTerm } from '../../content/glossarySchema.ts';
 import type { TermEntry } from '../../content/glossarySchema.ts';
@@ -114,14 +115,17 @@ export function Glossary() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Markets terms follow the Markets switch, like the lessons they belong to.
+  const showMarkets = store.settings.value.showMarkets === true;
+  const shown = useMemo(() => TERM_ENTRIES.filter((t) => !t.markets || showMarkets), [showMarkets]);
   const hits = useMemo(() => {
-    const found = TERM_ENTRIES.filter((t) => matchesTerm(t, query));
+    const found = shown.filter((t) => matchesTerm(t, query));
     if (!query.trim()) return found.slice().sort((a, b) => a.term.localeCompare(b.term));
     return found
       .map((t) => ({ t, s: scoreTerm(t, query) }))
       .sort((a, b) => b.s - a.s || a.t.term.localeCompare(b.t.term))
       .map((x) => x.t);
-  }, [query]);
+  }, [query, shown]);
 
   return (
     <div class="gl">
@@ -153,7 +157,7 @@ export function Glossary() {
           value={query}
           onInput={(e) => setQuery((e.currentTarget as HTMLInputElement).value)}
         />
-        <span class="gl-count num">{hits.length} of {TERM_ENTRIES.length}</span>
+        <span class="gl-count num">{hits.length} of {shown.length}</span>
       </div>
 
       {hits.length === 0 ? (

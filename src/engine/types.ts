@@ -103,13 +103,15 @@ export interface Settings {
   askConfidence: boolean;
   /** Show the names beside the icons in the left bar. On by default: an icon nobody recognises is a maze. */
   navExpanded: boolean;
+  /** Show the Markets track: Python applied to finance. Off by default; it is not part of CITS1401. */
+  showMarkets: boolean;
   seenTour: boolean;
   lastExportTs: number | null;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system', accent: 'blue-gold', layout: 'full', editorFontSize: 14, unlockAll: false,
-  reducedMotion: 'system', singleKeyShortcuts: true, askConfidence: true, navExpanded: true,
+  reducedMotion: 'system', singleKeyShortcuts: true, askConfidence: true, navExpanded: true, showMarkets: false,
   seenTour: false, lastExportTs: null,
 };
 

@@ -32,6 +32,8 @@ export interface Term {
    * term like "syntax" has nothing to run. Kept to a handful of lines.
    */
   demo?: string;
+  /** Belongs to the Markets track: listed only when that track is switched on, and never auto-marked. */
+  markets?: boolean;
 }
 
 /** What running each demo produced. Written by the verifier, never by hand. */

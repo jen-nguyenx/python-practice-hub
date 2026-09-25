@@ -414,5 +414,266 @@
     "note": "A nested loop runs its whole inner loop for every single pass of the outer one.",
     "short": "One thing inside another: a loop inside a loop, or a list inside a list.",
     "term": "nested"
+  },
+  {
+    "also": [
+      "spot price",
+      "market price",
+      "cash price"
+    ],
+    "id": "spot",
+    "lessonId": "a-price-series",
+    "markets": true,
+    "note": "Everything else in markets is priced relative to it: a future is spot plus carry, an option is worth something only relative to it.",
+    "short": "The price something trades at right now, for delivery now.",
+    "term": "spot"
+  },
+  {
+    "also": [
+      "returns",
+      "simple return",
+      "percentage change"
+    ],
+    "demo": "import math\nold, new = 100, 110\nprint(round((new - old) / old, 4))\nprint(round(math.log(new / old), 4))\nup = math.log(110 / 100)\ndown = math.log(100 / 110)\nprint(round(up + down, 10))\n",
+    "id": "log-return",
+    "lessonId": "a-price-series",
+    "markets": true,
+    "note": "Log returns add up across days where percentage returns do not: up 10% then down 10% is not back where you started, but two log returns of +x and −x are.",
+    "short": "The change in a price measured as the natural log of new over old, instead of as a percentage.",
+    "term": "log return"
+  },
+  {
+    "also": [
+      "rolling average",
+      "smoothing",
+      "window"
+    ],
+    "demo": "prices = [10, 12, 11, 13, 15, 14]\nn = 3\nfor i in range(n - 1, len(prices)):\n    window = prices[i - n + 1:i + 1]\n    print(i, round(sum(window) / n, 2))\n",
+    "id": "moving-average",
+    "lessonId": "smoothing-and-volatility",
+    "markets": true,
+    "note": "A longer window smooths more and lags more. The choice of N is a choice about how much you want to be told about what just happened.",
+    "short": "The average of the last N prices, recomputed each day as the window slides forward.",
+    "term": "moving average"
+  },
+  {
+    "also": [
+      "vol",
+      "standard deviation of returns",
+      "how much it moves"
+    ],
+    "id": "volatility",
+    "lessonId": "smoothing-and-volatility",
+    "markets": true,
+    "note": "High volatility is not \"going down\"; it is going anywhere fast. It is the one number that makes an option worth more the higher it is.",
+    "short": "How much a price tends to move, measured as the standard deviation of its returns.",
+    "term": "volatility"
+  },
+  {
+    "also": [
+      "peak to trough",
+      "how far it fell"
+    ],
+    "demo": "prices = [100, 120, 90, 110, 80]\npeak = prices[0]\nfor p in prices:\n    peak = max(peak, p)\n    print(p, \"drawdown\", round((peak - p) / peak, 2))\n",
+    "id": "drawdown",
+    "lessonId": "a-price-series",
+    "markets": true,
+    "note": "A 50% drawdown needs a 100% rise to recover, which is why the size of the fall matters more than it looks.",
+    "short": "How far a price has fallen from its highest point so far.",
+    "term": "drawdown"
+  },
+  {
+    "also": [
+      "futures curve",
+      "term structure",
+      "curve"
+    ],
+    "id": "forward-curve",
+    "lessonId": "the-forward-curve",
+    "markets": true,
+    "note": "Its shape says what the market thinks holding the thing costs: upward is [[contango]], downward is [[backwardation]].",
+    "short": "The prices agreed today for delivery at each future date, drawn as a line across those dates.",
+    "term": "forward curve"
+  },
+  {
+    "also": [
+      "upward sloping curve",
+      "later is dearer"
+    ],
+    "confusedWith": "backwardation",
+    "id": "contango",
+    "lessonId": "the-forward-curve",
+    "markets": true,
+    "note": "The normal shape for anything that costs money to store, because the seller must be paid for storing it until you want it.",
+    "short": "A forward curve that rises with time: delivery later costs more than delivery now.",
+    "term": "contango"
+  },
+  {
+    "also": [
+      "downward sloping curve",
+      "later is cheaper",
+      "inverted curve"
+    ],
+    "confusedWith": "contango",
+    "id": "backwardation",
+    "lessonId": "the-forward-curve",
+    "markets": true,
+    "note": "The market's way of saying it wants the thing now, not later — a sign of scarcity today.",
+    "short": "A forward curve that falls with time: delivery now costs more than delivery later.",
+    "term": "backwardation"
+  },
+  {
+    "also": [
+      "cost of carry",
+      "storage cost",
+      "financing cost"
+    ],
+    "demo": "spot = 100\nrate = 0.05\nstorage = 0.02\nfor years in [0.5, 1, 2]:\n    fair = spot * (1 + rate + storage) ** years\n    print(years, round(fair, 2))\n",
+    "id": "carry",
+    "lessonId": "the-forward-curve",
+    "markets": true,
+    "note": "Carry is the whole difference between spot and a fair futures price. Positive carry gives contango, negative carry gives backwardation.",
+    "short": "What it costs to hold something from now until a future date: interest on the money tied up, plus storage, minus anything it pays you meanwhile.",
+    "term": "carry"
+  },
+  {
+    "also": [
+      "spot minus futures",
+      "the gap"
+    ],
+    "id": "basis",
+    "lessonId": "futures-in-practice",
+    "markets": true,
+    "note": "It shrinks to zero as delivery approaches, because on delivery day a future and the thing itself are the same thing.",
+    "short": "The gap between the spot price and a futures price for the same thing.",
+    "term": "basis"
+  },
+  {
+    "also": [
+      "initial margin",
+      "collateral",
+      "deposit"
+    ],
+    "id": "margin",
+    "lessonId": "futures-in-practice",
+    "markets": true,
+    "note": "It is not the price of the future — you never pay that until delivery — which is what makes a future so heavily levered.",
+    "short": "The deposit you must keep with the exchange while you hold a future, so that a loss can be taken from it.",
+    "term": "margin"
+  },
+  {
+    "also": [
+      "daily settlement",
+      "marked",
+      "variation margin"
+    ],
+    "demo": "account = 1000\nprices = [100, 103, 101, 106]\ncontracts = 10\nfor i in range(1, len(prices)):\n    account += (prices[i] - prices[i - 1]) * contracts\n    print(\"day\", i, \"account\", account)\n",
+    "id": "mark-to-market",
+    "lessonId": "futures-in-practice",
+    "markets": true,
+    "note": "A future never builds up an unpaid gain or loss the way a bet would. Each day is closed out and the next starts from today's price.",
+    "short": "Settling a future's gain or loss every single day, moving cash into or out of the margin account.",
+    "term": "mark to market"
+  },
+  {
+    "also": [
+      "strike price",
+      "exercise price"
+    ],
+    "id": "strike",
+    "lessonId": "optionality-at-expiry",
+    "markets": true,
+    "note": "Nothing about the market changes it. It is written into the contract on day one and is where the payoff bends.",
+    "short": "The fixed price an option lets you buy or sell at.",
+    "term": "strike"
+  },
+  {
+    "also": [
+      "option price",
+      "what you paid"
+    ],
+    "id": "premium",
+    "lessonId": "optionality-at-expiry",
+    "markets": true,
+    "note": "For the buyer it is the most that can be lost. For the seller it is the most that can be made.",
+    "short": "What an option costs to buy — the fee for the right it gives you.",
+    "term": "premium"
+  },
+  {
+    "also": [
+      "call option",
+      "right to buy"
+    ],
+    "confusedWith": "put",
+    "demo": "strike = 100\nfor spot in [80, 100, 120]:\n    print(spot, max(spot - strike, 0))\n",
+    "id": "call",
+    "lessonId": "optionality-at-expiry",
+    "markets": true,
+    "note": "Worth something at expiry only when the market is above the strike: max(spot − strike, 0).",
+    "short": "An option that gives you the right to buy at the strike.",
+    "term": "call"
+  },
+  {
+    "also": [
+      "put option",
+      "right to sell"
+    ],
+    "confusedWith": "call",
+    "demo": "strike = 100\nfor spot in [80, 100, 120]:\n    print(spot, max(strike - spot, 0))\n",
+    "id": "put",
+    "lessonId": "optionality-at-expiry",
+    "markets": true,
+    "note": "Worth something at expiry only when the market is below the strike: max(strike − spot, 0). Insurance on something you own.",
+    "short": "An option that gives you the right to sell at the strike.",
+    "term": "put"
+  },
+  {
+    "also": [
+      "breakeven",
+      "where you stop losing"
+    ],
+    "id": "break-even",
+    "lessonId": "optionality-at-expiry",
+    "markets": true,
+    "note": "For a bought call it is the strike plus the premium; for a bought put, the strike minus the premium.",
+    "short": "The spot price at which an option position has made back exactly what it cost.",
+    "term": "break-even"
+  },
+  {
+    "also": [
+      "in the money",
+      "out of the money",
+      "at the money"
+    ],
+    "id": "moneyness",
+    "lessonId": "an-option-before-expiry",
+    "markets": true,
+    "note": "An out-of-the-money option is not worthless before expiry — it is worth whatever chance it has of ending up in.",
+    "short": "Where the spot is relative to the strike: in the money if the option would pay now, out if it would not, at if they are equal.",
+    "term": "moneyness"
+  },
+  {
+    "also": [
+      "theta",
+      "losing value over time"
+    ],
+    "id": "time-decay",
+    "lessonId": "an-option-before-expiry",
+    "markets": true,
+    "note": "It speeds up near the end: the last week costs more of the value than the first month did.",
+    "short": "The way an option loses value as expiry approaches with nothing else changing.",
+    "term": "time decay"
+  },
+  {
+    "also": [
+      "implied vol",
+      "what the price implies"
+    ],
+    "id": "implied-volatility",
+    "lessonId": "an-option-before-expiry",
+    "markets": true,
+    "note": "It is the market's opinion of how much the price will move, read backwards from what people are paying.",
+    "short": "The volatility you would have to assume for a pricing model to give the option its market price.",
+    "term": "implied volatility"
   }
 ]

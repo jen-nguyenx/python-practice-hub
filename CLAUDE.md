@@ -28,7 +28,7 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | Path | What |
 |---|---|
 | `src/content/ids.ts`, `schema.ts`, `topics.ts` | Contracts: id catalogues, question schema, topic order + unlock minimums |
-| `src/content/lessonSchema.ts`, `lessons/` | Lesson contract and content: `src/content/lessons/<track>/<id>.ts`, one file per lesson |
+| `src/content/lessonSchema.ts`, `lessons/` | Lesson contract and content: `src/content/lessons/<track>/<id>.ts`, one file per lesson. Tracks: foundations, core, advanced, markets |
 | `src/content/topics/NN-id/` | Topic content (cheat sheet, worked example, common mistakes, scenarios) |
 | `src/content/generated/` | Verifier output (expected outputs, trace rows, real exceptions, question index, experiment runs). Never hand-edit |
 | `src/content/experiments.ts` | "What if" helpers: combinations, template filling, output diffing. UI in `src/ui/shell/topic/WhatIf.tsx` |
@@ -108,6 +108,13 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
   word per passage, at most three marks, and never inside code. An author marks an excluded word on
   purpose by writing `[[argument]]` in the prose. Off by default: pass `terms` to `Markdown`, and not
   while a test is measuring.
+- **The Markets track is off by default and outside the unit.** `src/content/lessons/markets/` is
+  Python applied to prices, futures and options -- the author's own study, not CITS1401. It shows only
+  when `settings.showMarkets` is on: `visibleTracks()`/`isLessonVisible()` in `lessons/index.ts` are the
+  one rule, and the library, the palette and the glossary all ask it. Today and the run-in never offer
+  it whichever way the switch is set. Its glossary terms carry `markets: true` and are never auto-marked
+  ("carry", "spot", "basis" are ordinary words in a Python lesson) -- an author writes `[[strike]]`.
+  Every curve is still a `plot` of pairs Python produced; `import math` is allowed in lessons.
 - **A glossary entry demonstrates rather than asserts.** Where a term is a claim about Python's
   behaviour it carries a `demo`, and the verifier runs it for the output -- the same rule as lessons and
   the reference. The verifier also refuses a definition that uses the word to define itself, and a

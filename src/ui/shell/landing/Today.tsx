@@ -32,7 +32,7 @@ const TRACK_ORDER = new Map(
 
 /** Reading order across the tracks, matching the library. */
 function orderedLessons(): LessonMeta[] {
-  return LESSON_INDEX.slice().sort((a, b) => {
+  return LESSON_INDEX.filter((l) => l.track !== 'markets').slice().sort((a, b) => {
     const ta = TRACK_ORDER.get(a.id) ?? 9;
     const tb = TRACK_ORDER.get(b.id) ?? 9;
     if (ta !== tb) return ta - tb;

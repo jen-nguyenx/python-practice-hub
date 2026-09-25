@@ -223,6 +223,13 @@ export function Settings() {
             >
               <Switch checked={s.askConfidence} onChange={(v) => set({ askConfidence: v })} labelledBy="set-confidence-label" describedBy="set-confidence-desc" />
             </SettingRow>
+            <SettingRow
+              id="set-markets"
+              label="Markets lessons"
+              desc="A track on prices, futures and options, using the same Python and the same sliders. Not part of CITS1401, so it stays out of Today and the run-in either way."
+            >
+              <Switch checked={s.showMarkets} onChange={(v) => set({ showMarkets: v })} labelledBy="set-markets-label" describedBy="set-markets-desc" />
+            </SettingRow>
             <SettingRow id="set-tour" label="Welcome tour" desc="The short introduction from your first visit.">
               <button type="button" class="btn sm" onClick={() => { tourOpen.value = true; }} aria-describedby="set-tour-desc">Show the tour again</button>
             </SettingRow>

@@ -9,7 +9,7 @@ import { store } from '../../app/services.ts';
 import { FORMAT_LABEL } from '../../content/ids.ts';
 import { QUESTION_BY_ID, QUESTION_INDEX } from '../../content/loadIndex.ts';
 import { TOPICS, TOPIC_BY_ID } from '../../content/topics.ts';
-import { LESSON_INDEX } from '../../content/lessons/index.ts';
+import { isLessonVisible, LESSON_INDEX } from '../../content/lessons/index.ts';
 import { TRACK_LABEL } from '../../content/lessonSchema.ts';
 import { TERM_ENTRIES } from '../../content/glossaryIndex.ts';
 import { RECIPES } from '../../content/recipes/index.ts';
@@ -85,7 +85,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
   });
   // Lessons are searchable by their outcomes too, so "sort by two keys" finds the lesson that teaches it
   // even though those words are not in its title.
-  const lessons: Item[] = LESSON_INDEX.map((l) => ({
+  const lessons: Item[] = LESSON_INDEX.filter((l) => isLessonVisible(l, settings)).map((l) => ({
     id: `l-${l.id}`,
     group: 'Lessons',
     label: l.title,
@@ -125,7 +125,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
     run: () => { referenceJump.value = r.task; navigate(href.reference()); },
   }));
   // A word met in a question is looked up from wherever the student is, which is here.
-  const glossary: Item[] = TERM_ENTRIES.map((t) => ({
+  const glossary: Item[] = TERM_ENTRIES.filter((t) => !t.markets || settings.showMarkets === true).map((t) => ({
     id: `g-${t.id}`, group: 'Glossary', label: t.term, detail: t.short.replace(/\[\[([a-z0-9-]+)\]\]/g, '$1'),
     icon: 'book', search: `${(t.also ?? []).join(' ')} ${t.note ?? ''} meaning definition what is`,
     href: href.glossary(t.id),

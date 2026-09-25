@@ -41,6 +41,9 @@ interface Matchable { id: string; word: string }
  * not a tuple. Plurals are handled by the pattern, so nothing useful is lost.
  */
 const MATCHABLE: Matchable[] = TERMS
+  // Markets terms are marked only by an author writing [[strike]]: "carry", "spot" and "basis" are all
+  // ordinary words in a Python lesson, and the track they belong to may not even be switched on.
+  .filter((t) => !t.markets)
   .filter((t) => !NEVER_AUTO.has(t.term.toLowerCase()))
   .map((t) => ({ id: t.id, word: t.term }))
   .sort((a, b) => b.word.length - a.word.length);

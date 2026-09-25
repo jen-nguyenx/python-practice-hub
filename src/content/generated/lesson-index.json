@@ -923,5 +923,138 @@
     "summary": "A list of instructions, carried out in order, exactly as written",
     "title": "What a program is",
     "track": "foundations"
+  },
+  {
+    "id": "a-price-series",
+    "minutes": 10,
+    "order": 1,
+    "outcomes": [
+      "Read a price series as a list, one close a day, and pick out the [[spot]] price",
+      "Turn prices into simple returns so two things on different scales can be compared",
+      "Work out a [[log-return]] and say why log returns add up across days when simple returns do not",
+      "Track a running peak and measure the [[drawdown]] from it"
+    ],
+    "sectionTitles": [
+      "A list of prices",
+      "Returns, not prices",
+      "The fall from the peak"
+    ],
+    "sections": 3,
+    "summary": "What a list of prices is, why returns beat prices for comparing things, and how far a price has fallen from its peak",
+    "title": "A price series",
+    "track": "markets"
+  },
+  {
+    "id": "an-option-before-expiry",
+    "minutes": 12,
+    "order": 6,
+    "outcomes": [
+      "Say whether a call is in, at or out of the money from the [[spot]] and the [[strike]]",
+      "Explain why an out-of-the-money option is still worth something before expiry",
+      "Name the three things that set an option's value before expiry and say which way each one pushes",
+      "Price a European call with the math module and watch [[time-decay]] happen in the numbers"
+    ],
+    "prereqs": [
+      "optionality-at-expiry",
+      "smoothing-and-volatility"
+    ],
+    "sectionTitles": [
+      "Still worth something",
+      "Three dials",
+      "A week of nothing"
+    ],
+    "sections": 3,
+    "summary": "Why an option is worth something before its last day, the three dials that set its value, and what a quiet week costs",
+    "title": "An option before expiry",
+    "track": "markets"
+  },
+  {
+    "id": "futures-in-practice",
+    "minutes": 10,
+    "order": 4,
+    "outcomes": [
+      "Say why selling a future costs [[margin]], not the price of what you agreed to sell",
+      "Work out what [[mark-to-market]] moves into or out of a margin account each day",
+      "Find the day a margin call lands on a price path, and say what it does and does not mean",
+      "Explain why the [[basis]] shrinks to zero at delivery, and what rolling a contract is"
+    ],
+    "prereqs": [
+      "the-forward-curve"
+    ],
+    "sectionTitles": [
+      "An agreement, not a purchase",
+      "Marked every day",
+      "Delivery and the roll"
+    ],
+    "sections": 3,
+    "summary": "What a future asks of you day by day: a deposit, cash settled every evening, a call when it runs low, and a gap that closes at delivery",
+    "title": "Futures in practice",
+    "track": "markets"
+  },
+  {
+    "id": "optionality-at-expiry",
+    "minutes": 10,
+    "order": 5,
+    "outcomes": [
+      "Work out what a call or a put pays at expiry from the spot price and the [[strike]]",
+      "Say why a bought option can never lose more than its [[premium]]",
+      "Read a payoff diagram and find the break-even on it",
+      "Tell insurance from leverage by which option you would buy"
+    ],
+    "sectionTitles": [
+      "A right, not a duty",
+      "The hockey stick",
+      "Insurance or leverage"
+    ],
+    "sections": 3,
+    "summary": "What a call and a put are worth on the day they expire, and why the shape is a hockey stick",
+    "title": "Optionality at expiry",
+    "track": "markets"
+  },
+  {
+    "id": "smoothing-and-volatility",
+    "minutes": 10,
+    "order": 2,
+    "outcomes": [
+      "Compute a [[moving-average]] with a sliding window, and say what a longer window does to it",
+      "Work out [[volatility]] by hand as the standard deviation of returns, with a loop and `math.sqrt`",
+      "Compute a rolling volatility over a window of recent returns",
+      "Decide whether today's move is unusual by comparing it with recent volatility"
+    ],
+    "prereqs": [
+      "a-price-series"
+    ],
+    "sectionTitles": [
+      "A sliding window",
+      "How much it moves",
+      "Is today unusual?"
+    ],
+    "sections": 3,
+    "summary": "Smooth a price series with a sliding window, measure how much it moves, and ask whether today's move is out of the ordinary",
+    "title": "Smoothing and volatility",
+    "track": "markets"
+  },
+  {
+    "id": "the-forward-curve",
+    "minutes": 10,
+    "order": 3,
+    "outcomes": [
+      "Work out a fair futures price from the [[spot]] price and the [[carry]], compounded to the delivery date",
+      "Draw the [[forward-curve]] across delivery dates and say whether it is in [[contango]] or [[backwardation]]",
+      "Read the sign of the carry off the shape of the curve",
+      "Say what a falling curve tells you about how badly the market wants the thing now"
+    ],
+    "prereqs": [
+      "a-price-series"
+    ],
+    "sectionTitles": [
+      "Spot plus carry",
+      "Reading the curve",
+      "Does it want the thing now?"
+    ],
+    "sections": 3,
+    "summary": "A futures price is spot plus the cost of carry; drawn across delivery dates it becomes a curve whose slope says whether the market wants the thing now",
+    "title": "The forward curve",
+    "track": "markets"
   }
 ]

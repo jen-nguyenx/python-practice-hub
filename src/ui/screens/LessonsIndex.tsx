@@ -1,4 +1,4 @@
-// Lesson library (#/lessons): every lesson, grouped into the three tracks.
+// Lesson library (#/lessons): every lesson, grouped into its track. Markets is shown only when switched on.
 //
 // Foundations assumes nothing at all, Core follows the unit, and Going further goes past it. A topic's
 // lesson also shows how far the reader has got with that topic's questions, so the library doubles as a
@@ -8,7 +8,8 @@ import { href } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
 import { lessonsInTrack } from '../../content/lessons/index.ts';
 import type { LessonMeta } from '../../content/lessons/index.ts';
-import { TRACK_BLURB, TRACK_LABEL, TRACKS } from '../../content/lessonSchema.ts';
+import { TRACK_BLURB, TRACK_LABEL } from '../../content/lessonSchema.ts';
+import { visibleTracks } from '../../content/lessons/index.ts';
 import { ProgressBar } from '../components/ProgressBar.tsx';
 import type { Track } from '../../content/lessonSchema.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
@@ -94,14 +95,14 @@ function TrackSection({ track, read, progress, query }: {
  * the decision they are least equipped to make.
  */
 function nextUnread(read: Set<string>): LessonMeta | null {
-  for (const t of TRACKS) {
+  for (const t of visibleTracks(store.settings.value)) {
     for (const l of lessonsInTrack(t)) if (!read.has(l.id)) return l;
   }
   return null;
 }
 
 function UpNext({ read }: { read: Set<string> }) {
-  const all = TRACKS.flatMap((t) => lessonsInTrack(t));
+  const all = visibleTracks(store.settings.value).flatMap((t) => lessonsInTrack(t));
   const total = all.length;
   const next = nextUnread(read);
   // Count only lessons that still exist: a renamed or removed one would push this past the total.
@@ -138,6 +139,7 @@ function UpNext({ read }: { read: Set<string> }) {
 
 export function LessonsIndex() {
   const ready = storeReady.value;
+  const tracks = visibleTracks(store.settings.value);
   const events = store.events.value;
   const settings = store.settings.value;
 
@@ -166,8 +168,8 @@ export function LessonsIndex() {
           onInput={(e) => setQuery((e.currentTarget as HTMLInputElement).value)}
         />
       </div>
-      {TRACKS.map((t) => <TrackSection key={t} track={t} read={read} progress={progress} query={query} />)}
-      {query && TRACKS.every((t) => lessonsInTrack(t).every((l) => !matches(l, query)))
+      {tracks.map((t) => <TrackSection key={t} track={t} read={read} progress={progress} query={query} />)}
+      {query && tracks.every((t) => lessonsInTrack(t).every((l) => !matches(l, query)))
         ? <p class="lx-none">Nothing matches “{query}”. Try a word that would appear in what you want to learn, like “slice” or “rounding”.</p>
         : null}
     </div>

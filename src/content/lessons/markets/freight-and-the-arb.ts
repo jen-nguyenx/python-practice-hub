@@ -10,7 +10,7 @@ const lesson: Lesson = {
   title: 'Freight and the arb',
   summary: 'Buy where it is cheap, sell where it is dear, and pay the ship in between',
   track: 'markets',
-  order: 4,
+  order: 9,
   minutes: 11,
   prereqs: ['the-storage-trade'],
   outcomes: [

@@ -678,5 +678,280 @@
     "note": "It is why a perfectly hedged trader can still run out of money: the hedge is settled daily, the cargo is settled once.",
     "short": "Settling a futures position's gain or loss every day, in cash, rather than at the end.",
     "term": "mark to market"
+  },
+  {
+    "also": [
+      "mmbtu",
+      "million btu",
+      "btu",
+      "dollars per mmbtu",
+      "energy unit"
+    ],
+    "demo": "cargo = 3_400_000  # MMBtu in one standard LNG cargo\nprint(f\"at $12.50/MMBtu: ${cargo * 12.50 / 1e6:.1f}m\")\nprint(f\"$1/MMBtu higher: ${cargo * 13.50 / 1e6:.1f}m\")\n",
+    "id": "mmbtu",
+    "lessonId": "how-lng-is-priced",
+    "markets": true,
+    "note": "A standard cargo is very roughly 3.4 million of them, so a $1 move in the price is about $3.4 million on that one ship. That is why the market argues over cents.",
+    "short": "The unit gas and LNG are priced in: one million British thermal units, which is an amount of energy rather than an amount of volume.",
+    "term": "MMBtu"
+  },
+  {
+    "also": [
+      "oil-linked",
+      "oil indexation",
+      "brent slope",
+      "percentage of brent"
+    ],
+    "demo": "brent = 80.00  # $/barrel\nslope = 0.14   # the contract pays 14% of Brent\nprint(f\"{brent * slope:.2f} $/MMBtu\")\n",
+    "id": "slope",
+    "lessonId": "how-lng-is-priced",
+    "markets": true,
+    "note": "Long-term Asian LNG contracts still price this way, so the whole contract is one multiplication and the negotiation is entirely about that one number. At a 14% slope, a $10 move in Brent moves the gas price $1.40.",
+    "short": "The percentage of a crude price that an oil-linked LNG contract pays: 14% of $80 Brent is $11.20 per [[mmbtu]].",
+    "term": "slope"
+  },
+  {
+    "also": [
+      "jkm",
+      "japan korea marker",
+      "asian lng price",
+      "lng spot"
+    ],
+    "id": "jkm",
+    "lessonId": "how-lng-is-priced",
+    "markets": true,
+    "note": "What a cargo sold spot is measured against, rather than on a [[slope]]. It is an assessed price, built by a reporting agency out of deals and bids, not an exchange settlement.",
+    "short": "The spot price marker for LNG delivered into North East Asia — Japan, Korea, China and Taiwan.",
+    "term": "JKM"
+  },
+  {
+    "also": [
+      "ttf",
+      "dutch ttf",
+      "title transfer facility",
+      "european gas"
+    ],
+    "id": "ttf",
+    "lessonId": "how-lng-is-priced",
+    "markets": true,
+    "note": "It decides where a flexible cargo goes: when Europe pays more than [[jkm]] net of [[freight]], ships turn west. The euro-per-MWh quote has to be converted before it can be compared with a dollar-per-[[mmbtu]] price.",
+    "short": "The Dutch trading hub whose gas price is Europe's benchmark, quoted in euros per megawatt hour.",
+    "term": "TTF"
+  },
+  {
+    "also": [
+      "henry hub",
+      "hh",
+      "us gas price",
+      "nymex gas"
+    ],
+    "id": "henry-hub",
+    "lessonId": "how-lng-is-priced",
+    "markets": true,
+    "note": "US LNG is typically sold at 115% of it plus a fixed liquefaction fee, so American supply competes on a completely different formula from an oil-linked [[slope]]. That is the argument between the two pricing worlds.",
+    "short": "The American natural gas benchmark, set at a pipeline junction in Louisiana and quoted in dollars per [[mmbtu]].",
+    "term": "Henry Hub"
+  },
+  {
+    "also": [
+      "futures",
+      "future",
+      "exchange traded",
+      "lots"
+    ],
+    "id": "futures-contract",
+    "lessonId": "futures-and-swaps",
+    "markets": true,
+    "note": "Standard is the point: everyone trades the identical lot, so it is liquid and the exchange stands between you and the other side. The cost is that it is settled daily ([[mark-to-market]]) and it is not your cargo ([[basis-risk]]).",
+    "short": "A standardised agreement, traded on an exchange and settled in cash every day, to buy or sell a fixed quantity at an agreed price on a set date.",
+    "term": "futures contract"
+  },
+  {
+    "also": [
+      "swaps",
+      "cfd",
+      "cash settled",
+      "average price swap"
+    ],
+    "id": "swap",
+    "lessonId": "futures-and-swaps",
+    "markets": true,
+    "note": "A producer's revenue is an average over a month, not a price on one afternoon. A monthly-average swap settles against that same average, so it matches the physical where a single-date future leaves a gap.",
+    "short": "A cash settlement of a floating average price against a fixed one, agreed bilaterally or through a clearer, with no cargo changing hands.",
+    "term": "swap"
+  },
+  {
+    "also": [
+      "strips",
+      "calendar strip",
+      "cal-26",
+      "twelve months"
+    ],
+    "id": "strip",
+    "lessonId": "futures-and-swaps",
+    "markets": true,
+    "note": "Selling \"Cal-26\" is selling twelve months at once, and the price quoted is their average. Hedging a year with the front month instead leaves eleven months uncovered and a rolling cost every time it expires.",
+    "short": "The run of consecutive monthly contracts you sell in one go to hedge a whole year.",
+    "term": "strip"
+  },
+  {
+    "also": [
+      "maturity",
+      "how far out",
+      "front month",
+      "back end"
+    ],
+    "id": "tenor",
+    "lessonId": "futures-and-swaps",
+    "markets": true,
+    "note": "Liquidity thins fast with it. The front few months trade constantly, while a hedge three years out may have to be done bilaterally and at a visibly worse price.",
+    "short": "How far into the future a contract runs, from the front month out to years ahead.",
+    "term": "tenor"
+  },
+  {
+    "also": [
+      "hedged percentage",
+      "how much is hedged",
+      "coverage"
+    ],
+    "id": "hedge-ratio",
+    "lessonId": "futures-and-swaps",
+    "markets": true,
+    "note": "Almost nobody sets it at 100%: a full hedge means a rally earns you nothing, and volumes that fail to turn up leave you short paper you have to buy back. Boards argue about this number more than about the price view behind it.",
+    "short": "The share of your production you have already sold forward.",
+    "term": "hedge ratio"
+  },
+  {
+    "also": [
+      "puts",
+      "put option",
+      "floor",
+      "downside protection"
+    ],
+    "confusedWith": "call",
+    "id": "put",
+    "lessonId": "options-and-collars",
+    "markets": true,
+    "note": "You pay a [[premium]] for it up front, and that is the most you can lose. Unlike a future it protects the downside while leaving the rally intact, which is exactly what the premium buys.",
+    "short": "The right, but not the obligation, to sell at a fixed price — a producer's floor under the market.",
+    "term": "put"
+  },
+  {
+    "also": [
+      "calls",
+      "call option",
+      "ceiling",
+      "upside"
+    ],
+    "confusedWith": "put",
+    "id": "call",
+    "lessonId": "options-and-collars",
+    "markets": true,
+    "note": "A producer is usually on the other side of one: selling it brings in premium now and caps what you receive if prices run. That cap is what pays for a [[zero-cost-collar]].",
+    "short": "The right, but not the obligation, to buy at a fixed price — a consumer's ceiling over the market.",
+    "term": "call"
+  },
+  {
+    "also": [
+      "strike price",
+      "exercise price"
+    ],
+    "id": "strike",
+    "lessonId": "options-and-collars",
+    "markets": true,
+    "note": "It is chosen, not given. A floor set further below the market costs less [[premium]], because it is less likely ever to pay out.",
+    "short": "The fixed price written into an option: the level at which the holder may buy or sell.",
+    "term": "strike"
+  },
+  {
+    "also": [
+      "option premium",
+      "option cost",
+      "paid up front"
+    ],
+    "id": "premium",
+    "lessonId": "options-and-collars",
+    "markets": true,
+    "note": "It is a sunk cost, not a deposit: it is gone whether or not the option is ever used. For the buyer it is also the entire loss they can make, which is why an option is easier to take to a board than a future.",
+    "short": "What an option costs, paid up front to whoever wrote it.",
+    "term": "premium"
+  },
+  {
+    "also": [
+      "collars",
+      "floor and ceiling",
+      "fence"
+    ],
+    "demo": "floor, ceiling = 70.0, 95.0  # bought put at 70, sold call at 95\nfor market in (60.0, 80.0, 110.0):\n    print(f\"market ${market:.0f} -> realised ${min(max(market, floor), ceiling):.0f}\")\n",
+    "id": "collar",
+    "lessonId": "options-and-collars",
+    "markets": true,
+    "note": "Between the two strikes you keep the market price; outside them you keep neither the fall nor the rally. It is the commonest producer hedge because it needs far less cash than buying protection outright.",
+    "short": "A bought [[put]] plus a sold [[call]]: a floor you pay for by giving away the upside above a ceiling.",
+    "term": "collar"
+  },
+  {
+    "also": [
+      "costless collar",
+      "zero premium collar"
+    ],
+    "id": "zero-cost-collar",
+    "lessonId": "options-and-collars",
+    "markets": true,
+    "note": "\"Zero cost\" means no premium, not no cost. The cost is the upside you sold to pay for the floor, and it only becomes visible in the year the market rallies past the ceiling.",
+    "short": "A [[collar]] whose two premiums exactly cancel, so nothing is paid up front.",
+    "term": "zero-cost collar"
+  },
+  {
+    "also": [
+      "vol",
+      "implied vol",
+      "iv"
+    ],
+    "id": "implied-volatility",
+    "lessonId": "options-and-collars",
+    "markets": true,
+    "note": "It is backed out of option prices rather than measured from history, so it is a forecast someone is willing to trade on. When it rises, every floor gets dearer at the same [[strike]].",
+    "short": "How much movement the options market is pricing in, quoted as an annualised percentage.",
+    "term": "implied volatility"
+  },
+  {
+    "also": [
+      "hedge delta",
+      "delta hedging"
+    ],
+    "id": "delta",
+    "lessonId": "options-and-collars",
+    "markets": true,
+    "note": "A floor at 0.3 covers about 30% of a barrel today, not all of it, so options and futures of the same headline volume are not the same [[hedge-ratio]]. It also moves as the market moves, which is why delta hedges are re-set.",
+    "short": "Roughly how much of the underlying position an option behaves like, as a number between zero and one.",
+    "term": "delta"
+  },
+  {
+    "also": [
+      "ohlc",
+      "open high low close",
+      "candlestick",
+      "bar chart"
+    ],
+    "id": "ohlc",
+    "lessonId": "the-screens-traders-read",
+    "markets": true,
+    "note": "The close is what positions are settled and margined against; the high and low are where it traded on the way there. A chart of closes alone hides the morning that went 4% against you and came back.",
+    "short": "Open, high, low, close: the four numbers that make up one bar on a price chart.",
+    "term": "OHLC"
+  },
+  {
+    "also": [
+      "seasonal",
+      "winter hump",
+      "summer trough"
+    ],
+    "id": "seasonality",
+    "lessonId": "the-screens-traders-read",
+    "markets": true,
+    "note": "It is not an edge, because it is already in the forward price. What moves money is the weather coming out different from the shape the whole market had priced in.",
+    "short": "The repeating yearly shape in a gas or power curve: the winter hump everyone can see a year ahead.",
+    "term": "seasonality"
   }
 ]

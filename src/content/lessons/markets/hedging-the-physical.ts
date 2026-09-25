@@ -10,9 +10,9 @@ const lesson: Lesson = {
   title: 'Hedging, and what it does not cover',
   summary: 'Sell the futures, keep the barrels — and find out what risk you actually kept',
   track: 'markets',
-  order: 6,
+  order: 5,
   minutes: 12,
-  prereqs: ['the-storage-trade'],
+  prereqs: ['futures-and-swaps'],
   outcomes: [
     'Describe the two legs of a physical hedge and what is left over when they cancel',
     'Name the three mismatches that make a hedge imperfect: grade, place and date',

@@ -927,7 +927,7 @@
   {
     "id": "blending-to-spec",
     "minutes": 11,
-    "order": 5,
+    "order": 10,
     "outcomes": [
       "Read a [[spec]] as a price step rather than a target",
       "Work out the blend that lands just inside a sulphur limit",
@@ -950,7 +950,7 @@
   {
     "id": "freight-and-the-arb",
     "minutes": 11,
-    "order": 4,
+    "order": 9,
     "outcomes": [
       "Work out whether the gap between two ports pays for the ship that closes it",
       "Say what a trader means by \"the arb is shut\", and what reopens it",
@@ -971,9 +971,32 @@
     "track": "markets"
   },
   {
+    "id": "futures-and-swaps",
+    "minutes": 12,
+    "order": 3,
+    "outcomes": [
+      "Say what a future is: standardised, cleared, [[mark-to-market]] daily, and rarely delivered",
+      "Explain why a month of cargoes is hedged with a monthly-average swap and not a single future",
+      "Use \"tenor\" and \"the strip\" correctly, and say why selling into [[contango]] beats selling into [[backwardation]]",
+      "Name the three things a hedge does not fix: volume, [[basis-risk]] and cash"
+    ],
+    "prereqs": [
+      "the-screens-traders-read"
+    ],
+    "sectionTitles": [
+      "A future: one size, one date, one clearing house",
+      "A swap: the same exposure, against an average",
+      "Tenor, the strip, and what is left over"
+    ],
+    "sections": 3,
+    "summary": "Why a producer selling cargoes across a month hedges with a swap, and what selling forward still leaves on the table",
+    "title": "Futures, swaps and who uses which",
+    "track": "markets"
+  },
+  {
     "id": "hedging-the-physical",
     "minutes": 12,
-    "order": 6,
+    "order": 5,
     "outcomes": [
       "Describe the two legs of a physical hedge and what is left over when they cancel",
       "Name the three mismatches that make a hedge imperfect: grade, place and date",
@@ -981,7 +1004,7 @@
       "Say what hedging actually converts, rather than what it removes"
     ],
     "prereqs": [
-      "the-storage-trade"
+      "futures-and-swaps"
     ],
     "sectionTitles": [
       "Two legs, one trade",
@@ -994,9 +1017,52 @@
     "track": "markets"
   },
   {
+    "id": "how-lng-is-priced",
+    "minutes": 12,
+    "order": 1,
+    "outcomes": [
+      "Read an oil-linked LNG formula and turn \"a 14 slope\" into a price in $/MMBtu",
+      "Turn a $/MMBtu price into the value of a whole [[cargo]], and a cent into dollars",
+      "Name JKM, TTF and Henry Hub, and say what each one moves with",
+      "Say why the choice between an oil-linked and a hub-linked price is the biggest commercial question in an LNG portfolio"
+    ],
+    "sectionTitles": [
+      "A cargo priced off crude",
+      "Priced off gas instead",
+      "The question the portfolio is really asking"
+    ],
+    "sections": 3,
+    "summary": "What a \"13.5% slope\" means, how JKM and the gas hubs price the same ship differently, and why one cargo can be worth a hundred million more one way than the other",
+    "title": "How an LNG cargo is priced",
+    "track": "markets"
+  },
+  {
+    "id": "options-and-collars",
+    "minutes": 12,
+    "order": 4,
+    "outcomes": [
+      "Say what a bought put does for a producer above and below the strike, and what the premium bought",
+      "Explain why a producer sells a call to fund the put, and what a zero-cost collar costs",
+      "Draw the collar payoff from memory: flat, sloped, flat — and say how it differs from a swap",
+      "Use \"implied vol\" and \"delta\" in a sentence without reaching for a formula"
+    ],
+    "prereqs": [
+      "futures-and-swaps"
+    ],
+    "sectionTitles": [
+      "A floor you own, and a ceiling somebody else wants",
+      "Nobody wants to pay for the put",
+      "The shape, and the two words in the room"
+    ],
+    "sections": 3,
+    "summary": "Why a producer buys puts, why it sells calls to pay for them, and what a zero-cost collar really gives you",
+    "title": "Options, and the collar a producer actually buys",
+    "track": "markets"
+  },
+  {
     "id": "the-physical-chain",
     "minutes": 10,
-    "order": 2,
+    "order": 7,
     "outcomes": [
       "Name every hand a barrel passes through, and say which one is carrying the price risk",
       "Say where a physical trader is paid from: time, place or form",
@@ -1018,9 +1084,29 @@
     "track": "markets"
   },
   {
+    "id": "the-screens-traders-read",
+    "minutes": 12,
+    "order": 2,
+    "outcomes": [
+      "Read an OHLC bar and say what the two ticks mean",
+      "Tell a price chart from a [[forward-curve]] and say why they are never the same picture",
+      "Point at a curve and name its shape as [[contango]] or [[backwardation]]",
+      "Say what a spread chart is for, and why a desk watches it more than outright price"
+    ],
+    "sectionTitles": [
+      "The price chart, and the bar with two ticks",
+      "The curve is a different picture entirely",
+      "What a desk actually watches"
+    ],
+    "sections": 3,
+    "summary": "The five charts on a commodity desk, what each is called, and what someone means when they point at one",
+    "title": "The screens traders read",
+    "track": "markets"
+  },
+  {
     "id": "the-storage-trade",
     "minutes": 11,
-    "order": 3,
+    "order": 8,
     "outcomes": [
       "Work out whether a [[contango]] pays for the cost of carrying a barrel",
       "Say what a tank is worth without owning a single barrel",
@@ -1040,7 +1126,7 @@
   {
     "id": "what-a-barrel-is",
     "minutes": 10,
-    "order": 1,
+    "order": 6,
     "outcomes": [
       "Say which benchmark a cargo prices off, and why the answer depends on where it lands",
       "Read a crude from its two headline numbers: gravity and sulphur",

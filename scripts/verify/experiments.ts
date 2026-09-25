@@ -187,6 +187,11 @@ function checkVisual(sc: Scope, v: Visual, probeIds: Set<string>): void {
     }
     return;
   }
+  if (v.kind === 'candles') {
+    needs(v.bars, 'bars');
+    if (v.labels !== undefined) needs(v.labels, 'labels');
+    return;
+  }
   if (v.kind === 'plot') {
     const series = arr(v.series) as Loose[];
     if (series.length === 0 || series.length > 4) {
@@ -307,6 +312,7 @@ function visualProbes(v: Visual): string[] {
   if (v.kind === 'sequence') return [v.items, ...(v.picked ? [v.picked] : [])];
   if (v.kind === 'numberline') return [v.picked, ...(v.at ? [v.at] : [])];
   if (v.kind === 'bars') return [v.values, ...(v.labels ? [v.labels] : [])];
+  if (v.kind === 'candles') return [v.bars, ...(v.labels ? [v.labels] : [])];
   return [...v.series.map((one) => one.probe), ...(v.marker ? [v.marker] : [])];
 }
 
@@ -377,6 +383,30 @@ function checkOneVisual(
     wantList(v.picked, 'the marked numbers');
     if (v.at && typeof values[v.at] !== 'number') {
       fail(`probe ${quote(v.at)} must evaluate to one number for the "you are here" ring${at}`);
+    }
+  } else if (v.kind === 'candles') {
+    wantList(v.bars, 'the price bars');
+    const rows = values[v.bars];
+    if (Array.isArray(rows)) {
+      for (const [i, row] of rows.entries()) {
+        if (!Array.isArray(row) || row.length !== 4 || !row.every((n) => typeof n === 'number' && Number.isFinite(n))) {
+          fail(`probe ${quote(v.bars)} bar ${i + 1} must be four numbers, [open, high, low, close]${at}`);
+          break;
+        }
+        const [o, h, l, c] = row as number[];
+        // A bar whose high is not the highest is not a bar; drawing it would invent a shape the data denies.
+        if (h < Math.max(o, c) || l > Math.min(o, c)) {
+          fail(`probe ${quote(v.bars)} bar ${i + 1} has a high of ${h} and a low of ${l}, which do not contain its open ${o} and close ${c}${at}`);
+          break;
+        }
+      }
+    }
+    if (v.labels) {
+      wantList(v.labels, 'the period labels');
+      const labels = values[v.labels];
+      if (Array.isArray(rows) && Array.isArray(labels) && rows.length !== labels.length) {
+        fail(`probe ${quote(v.labels)} gives ${labels.length} labels for ${rows.length} bars${at}; they must match or the labels name the wrong periods`);
+      }
     }
   } else if (v.kind === 'bars') {
     wantList(v.values, 'the bars');

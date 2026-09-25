@@ -10,7 +10,7 @@ const lesson: Lesson = {
   title: 'The storage trade',
   summary: 'Buy now, store, sell forward — the trade a tank exists to make, and the day it stops working',
   track: 'markets',
-  order: 3,
+  order: 8,
   minutes: 11,
   outcomes: [
     'Work out whether a [[contango]] pays for the cost of carrying a barrel',

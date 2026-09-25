@@ -341,6 +341,9 @@ a.tp-q:focus-visible { outline: 2px solid var(--focus); outline-offset: -3px; bo
 .wi-plot .wi-grid { stroke: var(--border); stroke-width: 1; }
 /* Zero is the line that says whether you are ahead: darker than the grid, and never confused with it. */
 .wi-plot .wi-zero { stroke: var(--text-faint); stroke-width: 1.25; }
+/* One bar per period: the range, with a tick left for the open and right for the close. */
+.wi-candles .wi-candle line { stroke: var(--text); stroke-width: 1.5; stroke-linecap: butt; }
+.wi-candles .wi-candle.is-down line { stroke: var(--bad); }
 .wi-plot .wi-tick-t { fill: var(--text-muted); font-family: var(--mono); font-size: 9px; }
 .wi-plot .wi-axis-t { fill: var(--text-muted); font-family: var(--mono); font-size: 9px; }
 .wi-plot .wi-curve { stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; transition: d var(--dur) ease-out; }

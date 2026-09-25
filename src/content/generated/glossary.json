@@ -14,6 +14,9 @@
   "boolean": {
     "stdout": "False\nFalse False False\nTrue True\n"
   },
+  "collar": {
+    "stdout": "market $60 -> realised $70\nmarket $80 -> realised $80\nmarket $110 -> realised $95\n"
+  },
   "concatenate": {
     "stdout": "Swan River\nSwan2\n"
   },
@@ -47,6 +50,9 @@
   "method": {
     "stdout": "Perth\n['a', 'b']\n"
   },
+  "mmbtu": {
+    "stdout": "at $12.50/MMBtu: $42.5m\n$1/MMBtu higher: $45.9m\n"
+  },
   "mutable": {
     "stdout": "[3, 5, 7]\n"
   },
@@ -73,6 +79,9 @@
   },
   "slice": {
     "stdout": "Frem\nFre\ntle\n"
+  },
+  "slope": {
+    "stdout": "11.20 $/MMBtu\n"
   },
   "tuple": {
     "stdout": "3 4\n2\n"

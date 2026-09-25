@@ -10,7 +10,7 @@ const lesson: Lesson = {
   title: 'Blending to spec',
   summary: 'Two parcels nobody wants at that price, one tank, and a line you have to land just inside',
   track: 'markets',
-  order: 5,
+  order: 10,
   minutes: 11,
   prereqs: ['what-a-barrel-is'],
   outcomes: [

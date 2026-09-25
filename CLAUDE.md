@@ -108,8 +108,14 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
   word per passage, at most three marks, and never inside code. An author marks an excluded word on
   purpose by writing `[[argument]]` in the prose. Off by default: pass `terms` to `Markdown`, and not
   while a test is measuring.
+- **`candles` is the trading-desk chart**: one bar per period from low to high, a tick left for the open
+  and right for the close (an OHLC bar). Its probe returns `[open, high, low, close]` per period and the
+  verifier rejects a bar whose high and low do not contain its own open and close -- drawing one would
+  invent a shape the data denies.
 - **The Markets track is off by default and outside the unit.** `src/content/lessons/markets/` is
-  Python applied to prices, futures and options -- the author's own study, not CITS1401. It shows only
+  physical commodity trading and the derivatives a producer uses -- the author's own study, not CITS1401.
+  Lessons lead with a trade, never with code: an `interactive` card sets `hideProgram: true` so the model
+  computes the numbers without the reader ever seeing Python. It shows only
   when `settings.showMarkets` is on: `visibleTracks()`/`isLessonVisible()` in `lessons/index.ts` are the
   one rule, and the library, the palette and the glossary all ask it. Today and the run-in never offer
   it whichever way the switch is set. Its glossary terms carry `markets: true` and are never auto-marked

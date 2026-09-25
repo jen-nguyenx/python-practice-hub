@@ -10,7 +10,7 @@ const lesson: Lesson = {
   title: 'From well to pump',
   summary: 'Who touches a barrel between the ground and the tank of a car, and which of them is paid for the risk',
   track: 'markets',
-  order: 2,
+  order: 7,
   minutes: 10,
   prereqs: ['what-a-barrel-is'],
   outcomes: [

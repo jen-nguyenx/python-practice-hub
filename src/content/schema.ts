@@ -272,6 +272,12 @@ export type Visual =
    * One or more curves, for anything where the shape is the lesson: how a cost grows with n, how a series
    * closes on its limit. Each series names a probe returning a list of [x, y] pairs.
    */
+  /**
+   * The chart a trading screen actually shows: one bar per period, running from the low to the high,
+   * with a tick left for the open and right for the close. A filled body means the close was below the
+   * open. `bars` names a probe returning [open, high, low, close] for each period, oldest first.
+   */
+  | { kind: 'candles'; bars: string; labels?: string; xLabel?: string; yLabel?: string; caption?: Md }
   | {
       kind: 'plot'; series: { probe: string; label: string }[]; xLabel?: string; yLabel?: string; caption?: Md;
       /**

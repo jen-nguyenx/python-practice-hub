@@ -76,6 +76,21 @@ export function intsOrNull(v: unknown): number[] | null {
   return v as number[];
 }
 
+/** [open, high, low, close] per period. Rejects a bar whose high is not the highest, or low the lowest. */
+export function candlesOrNull(v: unknown): [number, number, number, number][] | null {
+  if (!Array.isArray(v)) return null;
+  const out: [number, number, number, number][] = [];
+  for (const bar of v) {
+    if (!Array.isArray(bar) || bar.length !== 4) return null;
+    const [o, h, l, c] = bar;
+    for (const n of [o, h, l, c]) if (typeof n !== 'number' || !Number.isFinite(n)) return null;
+    // A bar that does not contain its own open and close is not a bar; drawing it would invent a shape.
+    if (h < Math.max(o, c) || l > Math.min(o, c)) return null;
+    out.push([o, h, l, c]);
+  }
+  return out;
+}
+
 export function pointsOrNull(v: unknown): [number, number][] | null {
   if (!Array.isArray(v)) return null;
   const out: [number, number][] = [];

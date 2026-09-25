@@ -11,7 +11,7 @@ const lesson: Lesson = {
   title: 'What a barrel actually is',
   summary: 'Two cargoes, the same 600,000 barrels, millions apart — grades, gravity, sulphur, and why nobody quotes a flat price',
   track: 'markets',
-  order: 1,
+  order: 6,
   minutes: 10,
   outcomes: [
     'Say which benchmark a cargo prices off, and why the answer depends on where it lands',

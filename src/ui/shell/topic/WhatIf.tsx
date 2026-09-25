@@ -15,7 +15,7 @@ import type { Experiment, GeneratedExperiment, GeneratedRun, Knob, Visual } from
 import { Markdown } from '../../components/Markdown.tsx';
 import { Segmented } from '../../components/Segmented.tsx';
 import { niceTicks } from './ticks.ts';
-import { intsOrNull, labelsOrNull, numbersOrNull, pieceLines, pieces, pointsOrNull } from './whatIfLogic.ts';
+import { candlesOrNull, intsOrNull, labelsOrNull, numbersOrNull, pieceLines, pieces, pointsOrNull } from './whatIfLogic.ts';
 
 /** The program, with the fragment each control put there marked so a change is visible in place. */
 function KnobbedCode({ code, spans, label }: { code: string; spans: ReturnType<typeof fillTemplate>['spans']; label: string }) {
@@ -253,6 +253,73 @@ function Plot({ series, xLabel, yLabel, marker }: {
   );
 }
 
+/**
+ * The bar chart a trading screen shows: one bar per period from low to high, a tick left for the open
+ * and a tick right for the close. Filled means it closed below where it opened.
+ *
+ * Drawn as bars rather than as a line because a line hides the two things a trader reads first — how far
+ * it travelled inside the period, and whether it finished above or below where it started.
+ */
+function Candles({ bars, labels, xLabel, yLabel }: {
+  bars: [number, number, number, number][]; labels?: string[]; xLabel?: string; yLabel?: string;
+}) {
+  if (bars.length === 0) return <p class="wi-note">There is nothing to draw yet.</p>;
+  const highs = bars.map((b) => b[1]);
+  const lows = bars.map((b) => b[2]);
+  const yMin = Math.min(...lows);
+  const yMax = Math.max(...highs);
+  const spanY = yMax - yMin || 1;
+
+  const W = 360;
+  const H = 216;
+  const padL = 46;
+  const padR = 12;
+  const padT = 24;
+  const padB = 32;
+  const slot = (W - padL - padR) / bars.length;
+  // A gap between bars so neighbours read as separate periods, and a tick long enough to see.
+  const half = Math.max(2, Math.min(7, slot * 0.3));
+  const cx = (i: number) => padL + slot * (i + 0.5);
+  const py = (v: number) => H - padB - ((v - yMin) / spanY) * (H - padT - padB);
+  const tidy = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.?0+$/, ''));
+  const ticks = niceTicks(yMin, yMax, 4, bars.every((b) => b.every(Number.isInteger)));
+
+  return (
+    <div class="wi-vis">
+      <svg class="wi-plot wi-candles" viewBox={`0 0 ${W} ${H}`} role="img" preserveAspectRatio="xMidYMid meet"
+        aria-label={`${bars.length} periods, from ${tidy(bars[0][0])} open to ${tidy(bars[bars.length - 1][3])} close, low ${tidy(yMin)}, high ${tidy(yMax)}`}>
+        {ticks.map((t) => (
+          <g key={`y${t}`}>
+            <line class="wi-grid" x1={padL} y1={py(t)} x2={W - padR} y2={py(t)} />
+            <text class="wi-tick-t" x={padL - 6} y={py(t) + 3.5} text-anchor="end">{tidy(t)}</text>
+          </g>
+        ))}
+        <line class="wi-axis" x1={padL} y1={padT} x2={padL} y2={H - padB} />
+        <line class="wi-axis" x1={padL} y1={H - padB} x2={W - padR} y2={H - padB} />
+        {yLabel ? <text class="wi-axis-t" x={0} y={11} text-anchor="start">{yLabel}</text> : null}
+        {xLabel ? <text class="wi-axis-t" x={W - padR} y={H - 4} text-anchor="end">{xLabel}</text> : null}
+        {bars.map((b, i) => {
+          const [o, h, l, c] = b;
+          const down = c < o;
+          return (
+            <g key={i} class={`wi-candle${down ? ' is-down' : ''}`}>
+              <line class="wi-candle-range" x1={cx(i)} y1={py(h)} x2={cx(i)} y2={py(l)} />
+              <line class="wi-candle-open" x1={cx(i) - half} y1={py(o)} x2={cx(i)} y2={py(o)} />
+              <line class="wi-candle-close" x1={cx(i)} y1={py(c)} x2={cx(i) + half} y2={py(c)} />
+            </g>
+          );
+        })}
+        {labels ? labels.map((t, i) => (
+          // Only every other label where the bars are tight, so they never overprint each other.
+          (labels.length <= 8 || i % 2 === 0)
+            ? <text key={`l${i}`} class="wi-tick-t" x={cx(i)} y={H - padB + 14} text-anchor="middle">{t}</text>
+            : null
+        )) : null}
+      </svg>
+    </div>
+  );
+}
+
 function Drawing({ visual, values }: { visual: Visual; values: Record<string, unknown> }) {
   switch (visual.kind) {
     case 'sequence': {
@@ -282,6 +349,12 @@ function Drawing({ visual, values }: { visual: Visual; values: Record<string, un
       // Labels that do not line up one-to-one would name the wrong bars, so they are dropped entirely.
       const safe = labels && labels.length === nums.length ? labels : [];
       return <Bars values={nums} labels={safe} top={visual.max} />;
+    }
+    case 'candles': {
+      const bars = candlesOrNull(values[visual.bars]);
+      if (!bars) return null;
+      const labels = visual.labels ? labelsOrNull(values[visual.labels]) : undefined;
+      return <Candles bars={bars} labels={labels ?? undefined} xLabel={visual.xLabel} yLabel={visual.yLabel} />;
     }
     case 'plot': {
       const series: { label: string; points: [number, number][] }[] = [];

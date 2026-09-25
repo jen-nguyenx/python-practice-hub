@@ -14,6 +14,7 @@ import type { Picks } from '../../../content/experiments.ts';
 import type { Experiment, GeneratedExperiment, GeneratedRun, Knob, Visual } from '../../../content/schema.ts';
 import { Markdown } from '../../components/Markdown.tsx';
 import { Segmented } from '../../components/Segmented.tsx';
+import { niceTicks } from './ticks.ts';
 import { intsOrNull, labelsOrNull, numbersOrNull, pieceLines, pieces, pointsOrNull } from './whatIfLogic.ts';
 
 /** The program, with the fragment each control put there marked so a change is visible in place. */
@@ -162,8 +163,14 @@ function Bars({ values, labels, top }: { values: number[]; labels: string[]; top
 const SERIES_CLASS = ['is-a', 'is-b', 'is-c', 'is-d'];
 
 /**
- * One or more curves on a single shared scale. The viewBox leaves room for the axis labels, so nothing
- * is drawn outside its own bounds, and every tick names a value the data actually reaches.
+ * One or more curves on a single shared scale.
+ *
+ * Three things a chart has to get right and this one used to get wrong. The axis was drawn at the bottom
+ * of the data, so on a payoff running from -5 the flat part sat exactly on what looked like a zero line
+ * and the break-even read in the wrong place: zero is now its own line, drawn darker, wherever it falls.
+ * There were two labels per axis, which is enough to see a curve rise and not enough to say what to;
+ * there are round ticks now, with faint gridlines to carry the eye across. And the numbers on them are
+ * chosen the way a person would choose them rather than taken from wherever the data happens to stop.
  */
 function Plot({ series, xLabel, yLabel, marker }: {
   series: { label: string; points: [number, number][] }[]; xLabel?: string; yLabel?: string; marker?: [number, number][];
@@ -175,17 +182,17 @@ function Plot({ series, xLabel, yLabel, marker }: {
   const xMin = Math.min(...xs);
   const xMax = Math.max(...xs);
   const yMin = Math.min(0, ...ys);
-  const yMax = Math.max(...ys);
+  const yMax = Math.max(0, ...ys);
   const spanX = xMax - xMin || 1;
   const spanY = yMax - yMin || 1;
 
   // Room inside the viewBox for every label: the axis names sit in the margins, not over the ticks.
-  const W = 320;
-  const H = 186;
-  const padL = 44;
-  const padR = 10;
-  const padT = 22;
-  const padB = 30;
+  const W = 360;
+  const H = 216;
+  const padL = 46;
+  const padR = 12;
+  const padT = 24;
+  const padB = 32;
   const px = (x: number) => padL + ((x - xMin) / spanX) * (W - padL - padR);
   const py = (y: number) => H - padB - ((y - yMin) / spanY) * (H - padT - padB);
   const tidy = (n: number) => {
@@ -194,17 +201,34 @@ function Plot({ series, xLabel, yLabel, marker }: {
     return n.toFixed(2).replace(/\.?0+$/, '');
   };
 
+  // Whole ticks only where every value really is whole: an item count, a day, a month. Decided from the
+  // points, not from the ends — a curve from 0 to 1 has whole ends and nothing whole in between.
+  const yTicks = niceTicks(yMin, yMax, 4, ys.every(Number.isInteger));
+  const xTicks = niceTicks(xMin, xMax, 4, xs.every(Number.isInteger));
+  const zeroY = yMin < 0 && yMax > 0 ? py(0) : null;
+
   return (
     <div class="wi-vis">
       <svg class="wi-plot" viewBox={`0 0 ${W} ${H}`} role="img" preserveAspectRatio="xMidYMid meet"
         aria-label={series.map((s) => `${s.label}: from ${tidy(s.points[0]?.[1] ?? 0)} to ${tidy(s.points[s.points.length - 1]?.[1] ?? 0)}`).join('; ')}>
+        {yTicks.map((t) => (
+          <g key={`y${t}`}>
+            <line class="wi-grid" x1={padL} y1={py(t)} x2={W - padR} y2={py(t)} />
+            <text class="wi-tick-t" x={padL - 6} y={py(t) + 3.5} text-anchor="end">{tidy(t)}</text>
+          </g>
+        ))}
+        {xTicks.map((t) => (
+          <g key={`x${t}`}>
+            <line class="wi-grid" x1={px(t)} y1={padT} x2={px(t)} y2={H - padB} />
+            <text class="wi-tick-t" x={px(t)} y={H - padB + 14} text-anchor="middle">{tidy(t)}</text>
+          </g>
+        ))}
+        {/* Zero is not the bottom of the chart. On anything that can go negative it is the line that
+            says whether you are ahead, so it is drawn darker than the grid and above it. */}
+        {zeroY !== null ? <line class="wi-zero" x1={padL} y1={zeroY} x2={W - padR} y2={zeroY} /> : null}
         <line class="wi-axis" x1={padL} y1={padT} x2={padL} y2={H - padB} />
         <line class="wi-axis" x1={padL} y1={H - padB} x2={W - padR} y2={H - padB} />
-        <text class="wi-tick-t" x={padL - 6} y={py(yMax) + 4} text-anchor="end">{tidy(yMax)}</text>
-        <text class="wi-tick-t" x={padL - 6} y={py(yMin) + 4} text-anchor="end">{tidy(yMin)}</text>
-        <text class="wi-tick-t" x={padL} y={H - padB + 14} text-anchor="start">{tidy(xMin)}</text>
-        <text class="wi-tick-t" x={W - padR} y={H - padB + 14} text-anchor="end">{tidy(xMax)}</text>
-        {yLabel ? <text class="wi-axis-t" x={0} y={10} text-anchor="start">{yLabel}</text> : null}
+        {yLabel ? <text class="wi-axis-t" x={0} y={11} text-anchor="start">{yLabel}</text> : null}
         {xLabel ? <text class="wi-axis-t" x={W - padR} y={H - 4} text-anchor="end">{xLabel}</text> : null}
         {series.map((s, i) => (
           <polyline

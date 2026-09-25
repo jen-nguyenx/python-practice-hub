@@ -60,6 +60,20 @@ const SHOTS: Shot[] = [
     },
   },
   {
+    // A Python lesson's chart: the plot is shared, so a change for the Markets curves must hold here too.
+    name: 'plot-python',
+    hash: '#/lesson/efficiency-and-big-o',
+    selector: '.wi-vis',
+    prepare: async (page) => {
+      await page.waitForTimeout(1200);
+      for (let i = 0; i < 6; i++) {
+        if (await page.locator('.wi-plot').count()) break;
+        await page.getByRole('button', { name: 'Next', exact: true }).click().catch(() => {});
+        await page.waitForTimeout(500);
+      }
+    },
+  },
+  {
     // A glossary word marked in lesson prose, with its definition open.
     name: 'term-hover',
     hash: '#/lesson/core-recursion',

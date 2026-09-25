@@ -1,0 +1,4445 @@
+{
+  "s2-b1": {
+    "experiment": {
+      "runs": {
+        "0-0": {
+          "stdout": "Crude bought          $  40.00\nPetrol, 45% of it     $  40.00\nDiesel, 35% of it     $  42.00\nHeavy fuel, 20% of it $  32.00\nThe slate is worth    $  39.10\nRefining margin       $  -0.90\nOn a 2m barrel cargo  $  -1,800,000\n",
+          "values": {
+            "bars": [
+              18,
+              14.7,
+              6.4,
+              39.1,
+              40
+            ]
+          }
+        },
+        "0-1": {
+          "stdout": "Crude bought          $  40.00\nPetrol, 45% of it     $  42.00\nDiesel, 35% of it     $  44.00\nHeavy fuel, 20% of it $  32.00\nThe slate is worth    $  40.70\nRefining margin       $   0.70\nOn a 2m barrel cargo  $   1,400,000\n",
+          "values": {
+            "bars": [
+              18.9,
+              15.4,
+              6.4,
+              40.7,
+              40
+            ]
+          }
+        },
+        "0-2": {
+          "stdout": "Crude bought          $  40.00\nPetrol, 45% of it     $  44.00\nDiesel, 35% of it     $  46.00\nHeavy fuel, 20% of it $  32.00\nThe slate is worth    $  42.30\nRefining margin       $   2.30\nOn a 2m barrel cargo  $   4,600,000\n",
+          "values": {
+            "bars": [
+              19.8,
+              16.1,
+              6.4,
+              42.3,
+              40
+            ]
+          }
+        },
+        "0-3": {
+          "stdout": "Crude bought          $  40.00\nPetrol, 45% of it     $  46.00\nDiesel, 35% of it     $  48.00\nHeavy fuel, 20% of it $  32.00\nThe slate is worth    $  43.90\nRefining margin       $   3.90\nOn a 2m barrel cargo  $   7,800,000\n",
+          "values": {
+            "bars": [
+              20.7,
+              16.8,
+              6.4,
+              43.9,
+              40
+            ]
+          }
+        },
+        "0-4": {
+          "stdout": "Crude bought          $  40.00\nPetrol, 45% of it     $  48.00\nDiesel, 35% of it     $  50.00\nHeavy fuel, 20% of it $  32.00\nThe slate is worth    $  45.50\nRefining margin       $   5.50\nOn a 2m barrel cargo  $  11,000,000\n",
+          "values": {
+            "bars": [
+              21.6,
+              17.5,
+              6.4,
+              45.5,
+              40
+            ]
+          }
+        },
+        "0-5": {
+          "stdout": "Crude bought          $  40.00\nPetrol, 45% of it     $  50.00\nDiesel, 35% of it     $  52.00\nHeavy fuel, 20% of it $  32.00\nThe slate is worth    $  47.10\nRefining margin       $   7.10\nOn a 2m barrel cargo  $  14,200,000\n",
+          "values": {
+            "bars": [
+              22.5,
+              18.2,
+              6.4,
+              47.1,
+              40
+            ]
+          }
+        },
+        "0-6": {
+          "stdout": "Crude bought          $  40.00\nPetrol, 45% of it     $  52.00\nDiesel, 35% of it     $  54.00\nHeavy fuel, 20% of it $  32.00\nThe slate is worth    $  48.70\nRefining margin       $   8.70\nOn a 2m barrel cargo  $  17,400,000\n",
+          "values": {
+            "bars": [
+              23.4,
+              18.9,
+              6.4,
+              48.7,
+              40
+            ]
+          }
+        },
+        "0-7": {
+          "stdout": "Crude bought          $  40.00\nPetrol, 45% of it     $  54.00\nDiesel, 35% of it     $  56.00\nHeavy fuel, 20% of it $  32.00\nThe slate is worth    $  50.30\nRefining margin       $  10.30\nOn a 2m barrel cargo  $  20,600,000\n",
+          "values": {
+            "bars": [
+              24.3,
+              19.6,
+              6.4,
+              50.3,
+              40
+            ]
+          }
+        },
+        "0-8": {
+          "stdout": "Crude bought          $  40.00\nPetrol, 45% of it     $  56.00\nDiesel, 35% of it     $  58.00\nHeavy fuel, 20% of it $  32.00\nThe slate is worth    $  51.90\nRefining margin       $  11.90\nOn a 2m barrel cargo  $  23,800,000\n",
+          "values": {
+            "bars": [
+              25.2,
+              20.3,
+              6.4,
+              51.9,
+              40
+            ]
+          }
+        },
+        "1-0": {
+          "stdout": "Crude bought          $  42.00\nPetrol, 45% of it     $  42.00\nDiesel, 35% of it     $  44.00\nHeavy fuel, 20% of it $  33.60\nThe slate is worth    $  41.02\nRefining margin       $  -0.98\nOn a 2m barrel cargo  $  -1,960,000\n",
+          "values": {
+            "bars": [
+              18.9,
+              15.4,
+              6.72,
+              41.02,
+              42
+            ]
+          }
+        },
+        "1-1": {
+          "stdout": "Crude bought          $  42.00\nPetrol, 45% of it     $  44.00\nDiesel, 35% of it     $  46.00\nHeavy fuel, 20% of it $  33.60\nThe slate is worth    $  42.62\nRefining margin       $   0.62\nOn a 2m barrel cargo  $   1,240,000\n",
+          "values": {
+            "bars": [
+              19.8,
+              16.1,
+              6.72,
+              42.62,
+              42
+            ]
+          }
+        },
+        "1-2": {
+          "stdout": "Crude bought          $  42.00\nPetrol, 45% of it     $  46.00\nDiesel, 35% of it     $  48.00\nHeavy fuel, 20% of it $  33.60\nThe slate is worth    $  44.22\nRefining margin       $   2.22\nOn a 2m barrel cargo  $   4,440,000\n",
+          "values": {
+            "bars": [
+              20.7,
+              16.8,
+              6.72,
+              44.22,
+              42
+            ]
+          }
+        },
+        "1-3": {
+          "stdout": "Crude bought          $  42.00\nPetrol, 45% of it     $  48.00\nDiesel, 35% of it     $  50.00\nHeavy fuel, 20% of it $  33.60\nThe slate is worth    $  45.82\nRefining margin       $   3.82\nOn a 2m barrel cargo  $   7,640,000\n",
+          "values": {
+            "bars": [
+              21.6,
+              17.5,
+              6.72,
+              45.82,
+              42
+            ]
+          }
+        },
+        "1-4": {
+          "stdout": "Crude bought          $  42.00\nPetrol, 45% of it     $  50.00\nDiesel, 35% of it     $  52.00\nHeavy fuel, 20% of it $  33.60\nThe slate is worth    $  47.42\nRefining margin       $   5.42\nOn a 2m barrel cargo  $  10,840,000\n",
+          "values": {
+            "bars": [
+              22.5,
+              18.2,
+              6.72,
+              47.42,
+              42
+            ]
+          }
+        },
+        "1-5": {
+          "stdout": "Crude bought          $  42.00\nPetrol, 45% of it     $  52.00\nDiesel, 35% of it     $  54.00\nHeavy fuel, 20% of it $  33.60\nThe slate is worth    $  49.02\nRefining margin       $   7.02\nOn a 2m barrel cargo  $  14,040,000\n",
+          "values": {
+            "bars": [
+              23.4,
+              18.9,
+              6.72,
+              49.02,
+              42
+            ]
+          }
+        },
+        "1-6": {
+          "stdout": "Crude bought          $  42.00\nPetrol, 45% of it     $  54.00\nDiesel, 35% of it     $  56.00\nHeavy fuel, 20% of it $  33.60\nThe slate is worth    $  50.62\nRefining margin       $   8.62\nOn a 2m barrel cargo  $  17,240,000\n",
+          "values": {
+            "bars": [
+              24.3,
+              19.6,
+              6.72,
+              50.62,
+              42
+            ]
+          }
+        },
+        "1-7": {
+          "stdout": "Crude bought          $  42.00\nPetrol, 45% of it     $  56.00\nDiesel, 35% of it     $  58.00\nHeavy fuel, 20% of it $  33.60\nThe slate is worth    $  52.22\nRefining margin       $  10.22\nOn a 2m barrel cargo  $  20,440,000\n",
+          "values": {
+            "bars": [
+              25.2,
+              20.3,
+              6.72,
+              52.22,
+              42
+            ]
+          }
+        },
+        "1-8": {
+          "stdout": "Crude bought          $  42.00\nPetrol, 45% of it     $  58.00\nDiesel, 35% of it     $  60.00\nHeavy fuel, 20% of it $  33.60\nThe slate is worth    $  53.82\nRefining margin       $  11.82\nOn a 2m barrel cargo  $  23,640,000\n",
+          "values": {
+            "bars": [
+              26.1,
+              21,
+              6.72,
+              53.82,
+              42
+            ]
+          }
+        },
+        "10-0": {
+          "stdout": "Crude bought          $  60.00\nPetrol, 45% of it     $  60.00\nDiesel, 35% of it     $  62.00\nHeavy fuel, 20% of it $  48.00\nThe slate is worth    $  58.30\nRefining margin       $  -1.70\nOn a 2m barrel cargo  $  -3,400,000\n",
+          "values": {
+            "bars": [
+              27,
+              21.7,
+              9.6,
+              58.3,
+              60
+            ]
+          }
+        },
+        "10-1": {
+          "stdout": "Crude bought          $  60.00\nPetrol, 45% of it     $  62.00\nDiesel, 35% of it     $  64.00\nHeavy fuel, 20% of it $  48.00\nThe slate is worth    $  59.90\nRefining margin       $  -0.10\nOn a 2m barrel cargo  $    -200,000\n",
+          "values": {
+            "bars": [
+              27.9,
+              22.4,
+              9.6,
+              59.9,
+              60
+            ]
+          }
+        },
+        "10-2": {
+          "stdout": "Crude bought          $  60.00\nPetrol, 45% of it     $  64.00\nDiesel, 35% of it     $  66.00\nHeavy fuel, 20% of it $  48.00\nThe slate is worth    $  61.50\nRefining margin       $   1.50\nOn a 2m barrel cargo  $   3,000,000\n",
+          "values": {
+            "bars": [
+              28.8,
+              23.1,
+              9.6,
+              61.5,
+              60
+            ]
+          }
+        },
+        "10-3": {
+          "stdout": "Crude bought          $  60.00\nPetrol, 45% of it     $  66.00\nDiesel, 35% of it     $  68.00\nHeavy fuel, 20% of it $  48.00\nThe slate is worth    $  63.10\nRefining margin       $   3.10\nOn a 2m barrel cargo  $   6,200,000\n",
+          "values": {
+            "bars": [
+              29.7,
+              23.8,
+              9.6,
+              63.1,
+              60
+            ]
+          }
+        },
+        "10-4": {
+          "stdout": "Crude bought          $  60.00\nPetrol, 45% of it     $  68.00\nDiesel, 35% of it     $  70.00\nHeavy fuel, 20% of it $  48.00\nThe slate is worth    $  64.70\nRefining margin       $   4.70\nOn a 2m barrel cargo  $   9,400,000\n",
+          "values": {
+            "bars": [
+              30.6,
+              24.5,
+              9.6,
+              64.7,
+              60
+            ]
+          }
+        },
+        "10-5": {
+          "stdout": "Crude bought          $  60.00\nPetrol, 45% of it     $  70.00\nDiesel, 35% of it     $  72.00\nHeavy fuel, 20% of it $  48.00\nThe slate is worth    $  66.30\nRefining margin       $   6.30\nOn a 2m barrel cargo  $  12,600,000\n",
+          "values": {
+            "bars": [
+              31.5,
+              25.2,
+              9.6,
+              66.3,
+              60
+            ]
+          }
+        },
+        "10-6": {
+          "stdout": "Crude bought          $  60.00\nPetrol, 45% of it     $  72.00\nDiesel, 35% of it     $  74.00\nHeavy fuel, 20% of it $  48.00\nThe slate is worth    $  67.90\nRefining margin       $   7.90\nOn a 2m barrel cargo  $  15,800,000\n",
+          "values": {
+            "bars": [
+              32.4,
+              25.9,
+              9.6,
+              67.9,
+              60
+            ]
+          }
+        },
+        "10-7": {
+          "stdout": "Crude bought          $  60.00\nPetrol, 45% of it     $  74.00\nDiesel, 35% of it     $  76.00\nHeavy fuel, 20% of it $  48.00\nThe slate is worth    $  69.50\nRefining margin       $   9.50\nOn a 2m barrel cargo  $  19,000,000\n",
+          "values": {
+            "bars": [
+              33.3,
+              26.6,
+              9.6,
+              69.5,
+              60
+            ]
+          }
+        },
+        "10-8": {
+          "stdout": "Crude bought          $  60.00\nPetrol, 45% of it     $  76.00\nDiesel, 35% of it     $  78.00\nHeavy fuel, 20% of it $  48.00\nThe slate is worth    $  71.10\nRefining margin       $  11.10\nOn a 2m barrel cargo  $  22,200,000\n",
+          "values": {
+            "bars": [
+              34.2,
+              27.3,
+              9.6,
+              71.1,
+              60
+            ]
+          }
+        },
+        "11-0": {
+          "stdout": "Crude bought          $  62.00\nPetrol, 45% of it     $  62.00\nDiesel, 35% of it     $  64.00\nHeavy fuel, 20% of it $  49.60\nThe slate is worth    $  60.22\nRefining margin       $  -1.78\nOn a 2m barrel cargo  $  -3,560,000\n",
+          "values": {
+            "bars": [
+              27.9,
+              22.4,
+              9.92,
+              60.22,
+              62
+            ]
+          }
+        },
+        "11-1": {
+          "stdout": "Crude bought          $  62.00\nPetrol, 45% of it     $  64.00\nDiesel, 35% of it     $  66.00\nHeavy fuel, 20% of it $  49.60\nThe slate is worth    $  61.82\nRefining margin       $  -0.18\nOn a 2m barrel cargo  $    -360,000\n",
+          "values": {
+            "bars": [
+              28.8,
+              23.1,
+              9.92,
+              61.82,
+              62
+            ]
+          }
+        },
+        "11-2": {
+          "stdout": "Crude bought          $  62.00\nPetrol, 45% of it     $  66.00\nDiesel, 35% of it     $  68.00\nHeavy fuel, 20% of it $  49.60\nThe slate is worth    $  63.42\nRefining margin       $   1.42\nOn a 2m barrel cargo  $   2,840,000\n",
+          "values": {
+            "bars": [
+              29.7,
+              23.8,
+              9.92,
+              63.42,
+              62
+            ]
+          }
+        },
+        "11-3": {
+          "stdout": "Crude bought          $  62.00\nPetrol, 45% of it     $  68.00\nDiesel, 35% of it     $  70.00\nHeavy fuel, 20% of it $  49.60\nThe slate is worth    $  65.02\nRefining margin       $   3.02\nOn a 2m barrel cargo  $   6,040,000\n",
+          "values": {
+            "bars": [
+              30.6,
+              24.5,
+              9.92,
+              65.02,
+              62
+            ]
+          }
+        },
+        "11-4": {
+          "stdout": "Crude bought          $  62.00\nPetrol, 45% of it     $  70.00\nDiesel, 35% of it     $  72.00\nHeavy fuel, 20% of it $  49.60\nThe slate is worth    $  66.62\nRefining margin       $   4.62\nOn a 2m barrel cargo  $   9,240,000\n",
+          "values": {
+            "bars": [
+              31.5,
+              25.2,
+              9.92,
+              66.62,
+              62
+            ]
+          }
+        },
+        "11-5": {
+          "stdout": "Crude bought          $  62.00\nPetrol, 45% of it     $  72.00\nDiesel, 35% of it     $  74.00\nHeavy fuel, 20% of it $  49.60\nThe slate is worth    $  68.22\nRefining margin       $   6.22\nOn a 2m barrel cargo  $  12,440,000\n",
+          "values": {
+            "bars": [
+              32.4,
+              25.9,
+              9.92,
+              68.22,
+              62
+            ]
+          }
+        },
+        "11-6": {
+          "stdout": "Crude bought          $  62.00\nPetrol, 45% of it     $  74.00\nDiesel, 35% of it     $  76.00\nHeavy fuel, 20% of it $  49.60\nThe slate is worth    $  69.82\nRefining margin       $   7.82\nOn a 2m barrel cargo  $  15,640,000\n",
+          "values": {
+            "bars": [
+              33.3,
+              26.6,
+              9.92,
+              69.82,
+              62
+            ]
+          }
+        },
+        "11-7": {
+          "stdout": "Crude bought          $  62.00\nPetrol, 45% of it     $  76.00\nDiesel, 35% of it     $  78.00\nHeavy fuel, 20% of it $  49.60\nThe slate is worth    $  71.42\nRefining margin       $   9.42\nOn a 2m barrel cargo  $  18,840,000\n",
+          "values": {
+            "bars": [
+              34.2,
+              27.3,
+              9.92,
+              71.42,
+              62
+            ]
+          }
+        },
+        "11-8": {
+          "stdout": "Crude bought          $  62.00\nPetrol, 45% of it     $  78.00\nDiesel, 35% of it     $  80.00\nHeavy fuel, 20% of it $  49.60\nThe slate is worth    $  73.02\nRefining margin       $  11.02\nOn a 2m barrel cargo  $  22,040,000\n",
+          "values": {
+            "bars": [
+              35.1,
+              28,
+              9.92,
+              73.02,
+              62
+            ]
+          }
+        },
+        "12-0": {
+          "stdout": "Crude bought          $  64.00\nPetrol, 45% of it     $  64.00\nDiesel, 35% of it     $  66.00\nHeavy fuel, 20% of it $  51.20\nThe slate is worth    $  62.14\nRefining margin       $  -1.86\nOn a 2m barrel cargo  $  -3,720,000\n",
+          "values": {
+            "bars": [
+              28.8,
+              23.1,
+              10.24,
+              62.14,
+              64
+            ]
+          }
+        },
+        "12-1": {
+          "stdout": "Crude bought          $  64.00\nPetrol, 45% of it     $  66.00\nDiesel, 35% of it     $  68.00\nHeavy fuel, 20% of it $  51.20\nThe slate is worth    $  63.74\nRefining margin       $  -0.26\nOn a 2m barrel cargo  $    -520,000\n",
+          "values": {
+            "bars": [
+              29.7,
+              23.8,
+              10.24,
+              63.74,
+              64
+            ]
+          }
+        },
+        "12-2": {
+          "stdout": "Crude bought          $  64.00\nPetrol, 45% of it     $  68.00\nDiesel, 35% of it     $  70.00\nHeavy fuel, 20% of it $  51.20\nThe slate is worth    $  65.34\nRefining margin       $   1.34\nOn a 2m barrel cargo  $   2,680,000\n",
+          "values": {
+            "bars": [
+              30.6,
+              24.5,
+              10.24,
+              65.34,
+              64
+            ]
+          }
+        },
+        "12-3": {
+          "stdout": "Crude bought          $  64.00\nPetrol, 45% of it     $  70.00\nDiesel, 35% of it     $  72.00\nHeavy fuel, 20% of it $  51.20\nThe slate is worth    $  66.94\nRefining margin       $   2.94\nOn a 2m barrel cargo  $   5,880,000\n",
+          "values": {
+            "bars": [
+              31.5,
+              25.2,
+              10.24,
+              66.94,
+              64
+            ]
+          }
+        },
+        "12-4": {
+          "stdout": "Crude bought          $  64.00\nPetrol, 45% of it     $  72.00\nDiesel, 35% of it     $  74.00\nHeavy fuel, 20% of it $  51.20\nThe slate is worth    $  68.54\nRefining margin       $   4.54\nOn a 2m barrel cargo  $   9,080,000\n",
+          "values": {
+            "bars": [
+              32.4,
+              25.9,
+              10.24,
+              68.54,
+              64
+            ]
+          }
+        },
+        "12-5": {
+          "stdout": "Crude bought          $  64.00\nPetrol, 45% of it     $  74.00\nDiesel, 35% of it     $  76.00\nHeavy fuel, 20% of it $  51.20\nThe slate is worth    $  70.14\nRefining margin       $   6.14\nOn a 2m barrel cargo  $  12,280,000\n",
+          "values": {
+            "bars": [
+              33.3,
+              26.6,
+              10.24,
+              70.14,
+              64
+            ]
+          }
+        },
+        "12-6": {
+          "stdout": "Crude bought          $  64.00\nPetrol, 45% of it     $  76.00\nDiesel, 35% of it     $  78.00\nHeavy fuel, 20% of it $  51.20\nThe slate is worth    $  71.74\nRefining margin       $   7.74\nOn a 2m barrel cargo  $  15,480,000\n",
+          "values": {
+            "bars": [
+              34.2,
+              27.3,
+              10.24,
+              71.74,
+              64
+            ]
+          }
+        },
+        "12-7": {
+          "stdout": "Crude bought          $  64.00\nPetrol, 45% of it     $  78.00\nDiesel, 35% of it     $  80.00\nHeavy fuel, 20% of it $  51.20\nThe slate is worth    $  73.34\nRefining margin       $   9.34\nOn a 2m barrel cargo  $  18,680,000\n",
+          "values": {
+            "bars": [
+              35.1,
+              28,
+              10.24,
+              73.34,
+              64
+            ]
+          }
+        },
+        "12-8": {
+          "stdout": "Crude bought          $  64.00\nPetrol, 45% of it     $  80.00\nDiesel, 35% of it     $  82.00\nHeavy fuel, 20% of it $  51.20\nThe slate is worth    $  74.94\nRefining margin       $  10.94\nOn a 2m barrel cargo  $  21,880,000\n",
+          "values": {
+            "bars": [
+              36,
+              28.7,
+              10.24,
+              74.94,
+              64
+            ]
+          }
+        },
+        "13-0": {
+          "stdout": "Crude bought          $  66.00\nPetrol, 45% of it     $  66.00\nDiesel, 35% of it     $  68.00\nHeavy fuel, 20% of it $  52.80\nThe slate is worth    $  64.06\nRefining margin       $  -1.94\nOn a 2m barrel cargo  $  -3,880,000\n",
+          "values": {
+            "bars": [
+              29.7,
+              23.8,
+              10.56,
+              64.06,
+              66
+            ]
+          }
+        },
+        "13-1": {
+          "stdout": "Crude bought          $  66.00\nPetrol, 45% of it     $  68.00\nDiesel, 35% of it     $  70.00\nHeavy fuel, 20% of it $  52.80\nThe slate is worth    $  65.66\nRefining margin       $  -0.34\nOn a 2m barrel cargo  $    -680,000\n",
+          "values": {
+            "bars": [
+              30.6,
+              24.5,
+              10.56,
+              65.66,
+              66
+            ]
+          }
+        },
+        "13-2": {
+          "stdout": "Crude bought          $  66.00\nPetrol, 45% of it     $  70.00\nDiesel, 35% of it     $  72.00\nHeavy fuel, 20% of it $  52.80\nThe slate is worth    $  67.26\nRefining margin       $   1.26\nOn a 2m barrel cargo  $   2,520,000\n",
+          "values": {
+            "bars": [
+              31.5,
+              25.2,
+              10.56,
+              67.26,
+              66
+            ]
+          }
+        },
+        "13-3": {
+          "stdout": "Crude bought          $  66.00\nPetrol, 45% of it     $  72.00\nDiesel, 35% of it     $  74.00\nHeavy fuel, 20% of it $  52.80\nThe slate is worth    $  68.86\nRefining margin       $   2.86\nOn a 2m barrel cargo  $   5,720,000\n",
+          "values": {
+            "bars": [
+              32.4,
+              25.9,
+              10.56,
+              68.86,
+              66
+            ]
+          }
+        },
+        "13-4": {
+          "stdout": "Crude bought          $  66.00\nPetrol, 45% of it     $  74.00\nDiesel, 35% of it     $  76.00\nHeavy fuel, 20% of it $  52.80\nThe slate is worth    $  70.46\nRefining margin       $   4.46\nOn a 2m barrel cargo  $   8,920,000\n",
+          "values": {
+            "bars": [
+              33.3,
+              26.6,
+              10.56,
+              70.46,
+              66
+            ]
+          }
+        },
+        "13-5": {
+          "stdout": "Crude bought          $  66.00\nPetrol, 45% of it     $  76.00\nDiesel, 35% of it     $  78.00\nHeavy fuel, 20% of it $  52.80\nThe slate is worth    $  72.06\nRefining margin       $   6.06\nOn a 2m barrel cargo  $  12,120,000\n",
+          "values": {
+            "bars": [
+              34.2,
+              27.3,
+              10.56,
+              72.06,
+              66
+            ]
+          }
+        },
+        "13-6": {
+          "stdout": "Crude bought          $  66.00\nPetrol, 45% of it     $  78.00\nDiesel, 35% of it     $  80.00\nHeavy fuel, 20% of it $  52.80\nThe slate is worth    $  73.66\nRefining margin       $   7.66\nOn a 2m barrel cargo  $  15,320,000\n",
+          "values": {
+            "bars": [
+              35.1,
+              28,
+              10.56,
+              73.66,
+              66
+            ]
+          }
+        },
+        "13-7": {
+          "stdout": "Crude bought          $  66.00\nPetrol, 45% of it     $  80.00\nDiesel, 35% of it     $  82.00\nHeavy fuel, 20% of it $  52.80\nThe slate is worth    $  75.26\nRefining margin       $   9.26\nOn a 2m barrel cargo  $  18,520,000\n",
+          "values": {
+            "bars": [
+              36,
+              28.7,
+              10.56,
+              75.26,
+              66
+            ]
+          }
+        },
+        "13-8": {
+          "stdout": "Crude bought          $  66.00\nPetrol, 45% of it     $  82.00\nDiesel, 35% of it     $  84.00\nHeavy fuel, 20% of it $  52.80\nThe slate is worth    $  76.86\nRefining margin       $  10.86\nOn a 2m barrel cargo  $  21,720,000\n",
+          "values": {
+            "bars": [
+              36.9,
+              29.4,
+              10.56,
+              76.86,
+              66
+            ]
+          }
+        },
+        "14-0": {
+          "stdout": "Crude bought          $  68.00\nPetrol, 45% of it     $  68.00\nDiesel, 35% of it     $  70.00\nHeavy fuel, 20% of it $  54.40\nThe slate is worth    $  65.98\nRefining margin       $  -2.02\nOn a 2m barrel cargo  $  -4,040,000\n",
+          "values": {
+            "bars": [
+              30.6,
+              24.5,
+              10.88,
+              65.98,
+              68
+            ]
+          }
+        },
+        "14-1": {
+          "stdout": "Crude bought          $  68.00\nPetrol, 45% of it     $  70.00\nDiesel, 35% of it     $  72.00\nHeavy fuel, 20% of it $  54.40\nThe slate is worth    $  67.58\nRefining margin       $  -0.42\nOn a 2m barrel cargo  $    -840,000\n",
+          "values": {
+            "bars": [
+              31.5,
+              25.2,
+              10.88,
+              67.58,
+              68
+            ]
+          }
+        },
+        "14-2": {
+          "stdout": "Crude bought          $  68.00\nPetrol, 45% of it     $  72.00\nDiesel, 35% of it     $  74.00\nHeavy fuel, 20% of it $  54.40\nThe slate is worth    $  69.18\nRefining margin       $   1.18\nOn a 2m barrel cargo  $   2,360,000\n",
+          "values": {
+            "bars": [
+              32.4,
+              25.9,
+              10.88,
+              69.18,
+              68
+            ]
+          }
+        },
+        "14-3": {
+          "stdout": "Crude bought          $  68.00\nPetrol, 45% of it     $  74.00\nDiesel, 35% of it     $  76.00\nHeavy fuel, 20% of it $  54.40\nThe slate is worth    $  70.78\nRefining margin       $   2.78\nOn a 2m barrel cargo  $   5,560,000\n",
+          "values": {
+            "bars": [
+              33.3,
+              26.6,
+              10.88,
+              70.78,
+              68
+            ]
+          }
+        },
+        "14-4": {
+          "stdout": "Crude bought          $  68.00\nPetrol, 45% of it     $  76.00\nDiesel, 35% of it     $  78.00\nHeavy fuel, 20% of it $  54.40\nThe slate is worth    $  72.38\nRefining margin       $   4.38\nOn a 2m barrel cargo  $   8,760,000\n",
+          "values": {
+            "bars": [
+              34.2,
+              27.3,
+              10.88,
+              72.38,
+              68
+            ]
+          }
+        },
+        "14-5": {
+          "stdout": "Crude bought          $  68.00\nPetrol, 45% of it     $  78.00\nDiesel, 35% of it     $  80.00\nHeavy fuel, 20% of it $  54.40\nThe slate is worth    $  73.98\nRefining margin       $   5.98\nOn a 2m barrel cargo  $  11,960,000\n",
+          "values": {
+            "bars": [
+              35.1,
+              28,
+              10.88,
+              73.98,
+              68
+            ]
+          }
+        },
+        "14-6": {
+          "stdout": "Crude bought          $  68.00\nPetrol, 45% of it     $  80.00\nDiesel, 35% of it     $  82.00\nHeavy fuel, 20% of it $  54.40\nThe slate is worth    $  75.58\nRefining margin       $   7.58\nOn a 2m barrel cargo  $  15,160,000\n",
+          "values": {
+            "bars": [
+              36,
+              28.7,
+              10.88,
+              75.58,
+              68
+            ]
+          }
+        },
+        "14-7": {
+          "stdout": "Crude bought          $  68.00\nPetrol, 45% of it     $  82.00\nDiesel, 35% of it     $  84.00\nHeavy fuel, 20% of it $  54.40\nThe slate is worth    $  77.18\nRefining margin       $   9.18\nOn a 2m barrel cargo  $  18,360,000\n",
+          "values": {
+            "bars": [
+              36.9,
+              29.4,
+              10.88,
+              77.18,
+              68
+            ]
+          }
+        },
+        "14-8": {
+          "stdout": "Crude bought          $  68.00\nPetrol, 45% of it     $  84.00\nDiesel, 35% of it     $  86.00\nHeavy fuel, 20% of it $  54.40\nThe slate is worth    $  78.78\nRefining margin       $  10.78\nOn a 2m barrel cargo  $  21,560,000\n",
+          "values": {
+            "bars": [
+              37.8,
+              30.1,
+              10.88,
+              78.78,
+              68
+            ]
+          }
+        },
+        "15-0": {
+          "stdout": "Crude bought          $  70.00\nPetrol, 45% of it     $  70.00\nDiesel, 35% of it     $  72.00\nHeavy fuel, 20% of it $  56.00\nThe slate is worth    $  67.90\nRefining margin       $  -2.10\nOn a 2m barrel cargo  $  -4,200,000\n",
+          "values": {
+            "bars": [
+              31.5,
+              25.2,
+              11.2,
+              67.9,
+              70
+            ]
+          }
+        },
+        "15-1": {
+          "stdout": "Crude bought          $  70.00\nPetrol, 45% of it     $  72.00\nDiesel, 35% of it     $  74.00\nHeavy fuel, 20% of it $  56.00\nThe slate is worth    $  69.50\nRefining margin       $  -0.50\nOn a 2m barrel cargo  $  -1,000,000\n",
+          "values": {
+            "bars": [
+              32.4,
+              25.9,
+              11.2,
+              69.5,
+              70
+            ]
+          }
+        },
+        "15-2": {
+          "stdout": "Crude bought          $  70.00\nPetrol, 45% of it     $  74.00\nDiesel, 35% of it     $  76.00\nHeavy fuel, 20% of it $  56.00\nThe slate is worth    $  71.10\nRefining margin       $   1.10\nOn a 2m barrel cargo  $   2,200,000\n",
+          "values": {
+            "bars": [
+              33.3,
+              26.6,
+              11.2,
+              71.1,
+              70
+            ]
+          }
+        },
+        "15-3": {
+          "stdout": "Crude bought          $  70.00\nPetrol, 45% of it     $  76.00\nDiesel, 35% of it     $  78.00\nHeavy fuel, 20% of it $  56.00\nThe slate is worth    $  72.70\nRefining margin       $   2.70\nOn a 2m barrel cargo  $   5,400,000\n",
+          "values": {
+            "bars": [
+              34.2,
+              27.3,
+              11.2,
+              72.7,
+              70
+            ]
+          }
+        },
+        "15-4": {
+          "stdout": "Crude bought          $  70.00\nPetrol, 45% of it     $  78.00\nDiesel, 35% of it     $  80.00\nHeavy fuel, 20% of it $  56.00\nThe slate is worth    $  74.30\nRefining margin       $   4.30\nOn a 2m barrel cargo  $   8,600,000\n",
+          "values": {
+            "bars": [
+              35.1,
+              28,
+              11.2,
+              74.3,
+              70
+            ]
+          }
+        },
+        "15-5": {
+          "stdout": "Crude bought          $  70.00\nPetrol, 45% of it     $  80.00\nDiesel, 35% of it     $  82.00\nHeavy fuel, 20% of it $  56.00\nThe slate is worth    $  75.90\nRefining margin       $   5.90\nOn a 2m barrel cargo  $  11,800,000\n",
+          "values": {
+            "bars": [
+              36,
+              28.7,
+              11.2,
+              75.9,
+              70
+            ]
+          }
+        },
+        "15-6": {
+          "stdout": "Crude bought          $  70.00\nPetrol, 45% of it     $  82.00\nDiesel, 35% of it     $  84.00\nHeavy fuel, 20% of it $  56.00\nThe slate is worth    $  77.50\nRefining margin       $   7.50\nOn a 2m barrel cargo  $  15,000,000\n",
+          "values": {
+            "bars": [
+              36.9,
+              29.4,
+              11.2,
+              77.5,
+              70
+            ]
+          }
+        },
+        "15-7": {
+          "stdout": "Crude bought          $  70.00\nPetrol, 45% of it     $  84.00\nDiesel, 35% of it     $  86.00\nHeavy fuel, 20% of it $  56.00\nThe slate is worth    $  79.10\nRefining margin       $   9.10\nOn a 2m barrel cargo  $  18,200,000\n",
+          "values": {
+            "bars": [
+              37.8,
+              30.1,
+              11.2,
+              79.1,
+              70
+            ]
+          }
+        },
+        "15-8": {
+          "stdout": "Crude bought          $  70.00\nPetrol, 45% of it     $  86.00\nDiesel, 35% of it     $  88.00\nHeavy fuel, 20% of it $  56.00\nThe slate is worth    $  80.70\nRefining margin       $  10.70\nOn a 2m barrel cargo  $  21,400,000\n",
+          "values": {
+            "bars": [
+              38.7,
+              30.8,
+              11.2,
+              80.7,
+              70
+            ]
+          }
+        },
+        "16-0": {
+          "stdout": "Crude bought          $  72.00\nPetrol, 45% of it     $  72.00\nDiesel, 35% of it     $  74.00\nHeavy fuel, 20% of it $  57.60\nThe slate is worth    $  69.82\nRefining margin       $  -2.18\nOn a 2m barrel cargo  $  -4,360,000\n",
+          "values": {
+            "bars": [
+              32.4,
+              25.9,
+              11.52,
+              69.82,
+              72
+            ]
+          }
+        },
+        "16-1": {
+          "stdout": "Crude bought          $  72.00\nPetrol, 45% of it     $  74.00\nDiesel, 35% of it     $  76.00\nHeavy fuel, 20% of it $  57.60\nThe slate is worth    $  71.42\nRefining margin       $  -0.58\nOn a 2m barrel cargo  $  -1,160,000\n",
+          "values": {
+            "bars": [
+              33.3,
+              26.6,
+              11.52,
+              71.42,
+              72
+            ]
+          }
+        },
+        "16-2": {
+          "stdout": "Crude bought          $  72.00\nPetrol, 45% of it     $  76.00\nDiesel, 35% of it     $  78.00\nHeavy fuel, 20% of it $  57.60\nThe slate is worth    $  73.02\nRefining margin       $   1.02\nOn a 2m barrel cargo  $   2,040,000\n",
+          "values": {
+            "bars": [
+              34.2,
+              27.3,
+              11.52,
+              73.02,
+              72
+            ]
+          }
+        },
+        "16-3": {
+          "stdout": "Crude bought          $  72.00\nPetrol, 45% of it     $  78.00\nDiesel, 35% of it     $  80.00\nHeavy fuel, 20% of it $  57.60\nThe slate is worth    $  74.62\nRefining margin       $   2.62\nOn a 2m barrel cargo  $   5,240,000\n",
+          "values": {
+            "bars": [
+              35.1,
+              28,
+              11.52,
+              74.62,
+              72
+            ]
+          }
+        },
+        "16-4": {
+          "stdout": "Crude bought          $  72.00\nPetrol, 45% of it     $  80.00\nDiesel, 35% of it     $  82.00\nHeavy fuel, 20% of it $  57.60\nThe slate is worth    $  76.22\nRefining margin       $   4.22\nOn a 2m barrel cargo  $   8,440,000\n",
+          "values": {
+            "bars": [
+              36,
+              28.7,
+              11.52,
+              76.22,
+              72
+            ]
+          }
+        },
+        "16-5": {
+          "stdout": "Crude bought          $  72.00\nPetrol, 45% of it     $  82.00\nDiesel, 35% of it     $  84.00\nHeavy fuel, 20% of it $  57.60\nThe slate is worth    $  77.82\nRefining margin       $   5.82\nOn a 2m barrel cargo  $  11,640,000\n",
+          "values": {
+            "bars": [
+              36.9,
+              29.4,
+              11.52,
+              77.82,
+              72
+            ]
+          }
+        },
+        "16-6": {
+          "stdout": "Crude bought          $  72.00\nPetrol, 45% of it     $  84.00\nDiesel, 35% of it     $  86.00\nHeavy fuel, 20% of it $  57.60\nThe slate is worth    $  79.42\nRefining margin       $   7.42\nOn a 2m barrel cargo  $  14,840,000\n",
+          "values": {
+            "bars": [
+              37.8,
+              30.1,
+              11.52,
+              79.42,
+              72
+            ]
+          }
+        },
+        "16-7": {
+          "stdout": "Crude bought          $  72.00\nPetrol, 45% of it     $  86.00\nDiesel, 35% of it     $  88.00\nHeavy fuel, 20% of it $  57.60\nThe slate is worth    $  81.02\nRefining margin       $   9.02\nOn a 2m barrel cargo  $  18,040,000\n",
+          "values": {
+            "bars": [
+              38.7,
+              30.8,
+              11.52,
+              81.02,
+              72
+            ]
+          }
+        },
+        "16-8": {
+          "stdout": "Crude bought          $  72.00\nPetrol, 45% of it     $  88.00\nDiesel, 35% of it     $  90.00\nHeavy fuel, 20% of it $  57.60\nThe slate is worth    $  82.62\nRefining margin       $  10.62\nOn a 2m barrel cargo  $  21,240,000\n",
+          "values": {
+            "bars": [
+              39.6,
+              31.5,
+              11.52,
+              82.62,
+              72
+            ]
+          }
+        },
+        "17-0": {
+          "stdout": "Crude bought          $  74.00\nPetrol, 45% of it     $  74.00\nDiesel, 35% of it     $  76.00\nHeavy fuel, 20% of it $  59.20\nThe slate is worth    $  71.74\nRefining margin       $  -2.26\nOn a 2m barrel cargo  $  -4,520,000\n",
+          "values": {
+            "bars": [
+              33.3,
+              26.6,
+              11.84,
+              71.74,
+              74
+            ]
+          }
+        },
+        "17-1": {
+          "stdout": "Crude bought          $  74.00\nPetrol, 45% of it     $  76.00\nDiesel, 35% of it     $  78.00\nHeavy fuel, 20% of it $  59.20\nThe slate is worth    $  73.34\nRefining margin       $  -0.66\nOn a 2m barrel cargo  $  -1,320,000\n",
+          "values": {
+            "bars": [
+              34.2,
+              27.3,
+              11.84,
+              73.34,
+              74
+            ]
+          }
+        },
+        "17-2": {
+          "stdout": "Crude bought          $  74.00\nPetrol, 45% of it     $  78.00\nDiesel, 35% of it     $  80.00\nHeavy fuel, 20% of it $  59.20\nThe slate is worth    $  74.94\nRefining margin       $   0.94\nOn a 2m barrel cargo  $   1,880,000\n",
+          "values": {
+            "bars": [
+              35.1,
+              28,
+              11.84,
+              74.94,
+              74
+            ]
+          }
+        },
+        "17-3": {
+          "stdout": "Crude bought          $  74.00\nPetrol, 45% of it     $  80.00\nDiesel, 35% of it     $  82.00\nHeavy fuel, 20% of it $  59.20\nThe slate is worth    $  76.54\nRefining margin       $   2.54\nOn a 2m barrel cargo  $   5,080,000\n",
+          "values": {
+            "bars": [
+              36,
+              28.7,
+              11.84,
+              76.54,
+              74
+            ]
+          }
+        },
+        "17-4": {
+          "stdout": "Crude bought          $  74.00\nPetrol, 45% of it     $  82.00\nDiesel, 35% of it     $  84.00\nHeavy fuel, 20% of it $  59.20\nThe slate is worth    $  78.14\nRefining margin       $   4.14\nOn a 2m barrel cargo  $   8,280,000\n",
+          "values": {
+            "bars": [
+              36.9,
+              29.4,
+              11.84,
+              78.14,
+              74
+            ]
+          }
+        },
+        "17-5": {
+          "stdout": "Crude bought          $  74.00\nPetrol, 45% of it     $  84.00\nDiesel, 35% of it     $  86.00\nHeavy fuel, 20% of it $  59.20\nThe slate is worth    $  79.74\nRefining margin       $   5.74\nOn a 2m barrel cargo  $  11,480,000\n",
+          "values": {
+            "bars": [
+              37.8,
+              30.1,
+              11.84,
+              79.74,
+              74
+            ]
+          }
+        },
+        "17-6": {
+          "stdout": "Crude bought          $  74.00\nPetrol, 45% of it     $  86.00\nDiesel, 35% of it     $  88.00\nHeavy fuel, 20% of it $  59.20\nThe slate is worth    $  81.34\nRefining margin       $   7.34\nOn a 2m barrel cargo  $  14,680,000\n",
+          "values": {
+            "bars": [
+              38.7,
+              30.8,
+              11.84,
+              81.34,
+              74
+            ]
+          }
+        },
+        "17-7": {
+          "stdout": "Crude bought          $  74.00\nPetrol, 45% of it     $  88.00\nDiesel, 35% of it     $  90.00\nHeavy fuel, 20% of it $  59.20\nThe slate is worth    $  82.94\nRefining margin       $   8.94\nOn a 2m barrel cargo  $  17,880,000\n",
+          "values": {
+            "bars": [
+              39.6,
+              31.5,
+              11.84,
+              82.94,
+              74
+            ]
+          }
+        },
+        "17-8": {
+          "stdout": "Crude bought          $  74.00\nPetrol, 45% of it     $  90.00\nDiesel, 35% of it     $  92.00\nHeavy fuel, 20% of it $  59.20\nThe slate is worth    $  84.54\nRefining margin       $  10.54\nOn a 2m barrel cargo  $  21,080,000\n",
+          "values": {
+            "bars": [
+              40.5,
+              32.2,
+              11.84,
+              84.54,
+              74
+            ]
+          }
+        },
+        "18-0": {
+          "stdout": "Crude bought          $  76.00\nPetrol, 45% of it     $  76.00\nDiesel, 35% of it     $  78.00\nHeavy fuel, 20% of it $  60.80\nThe slate is worth    $  73.66\nRefining margin       $  -2.34\nOn a 2m barrel cargo  $  -4,680,000\n",
+          "values": {
+            "bars": [
+              34.2,
+              27.3,
+              12.16,
+              73.66,
+              76
+            ]
+          }
+        },
+        "18-1": {
+          "stdout": "Crude bought          $  76.00\nPetrol, 45% of it     $  78.00\nDiesel, 35% of it     $  80.00\nHeavy fuel, 20% of it $  60.80\nThe slate is worth    $  75.26\nRefining margin       $  -0.74\nOn a 2m barrel cargo  $  -1,480,000\n",
+          "values": {
+            "bars": [
+              35.1,
+              28,
+              12.16,
+              75.26,
+              76
+            ]
+          }
+        },
+        "18-2": {
+          "stdout": "Crude bought          $  76.00\nPetrol, 45% of it     $  80.00\nDiesel, 35% of it     $  82.00\nHeavy fuel, 20% of it $  60.80\nThe slate is worth    $  76.86\nRefining margin       $   0.86\nOn a 2m barrel cargo  $   1,720,000\n",
+          "values": {
+            "bars": [
+              36,
+              28.7,
+              12.16,
+              76.86,
+              76
+            ]
+          }
+        },
+        "18-3": {
+          "stdout": "Crude bought          $  76.00\nPetrol, 45% of it     $  82.00\nDiesel, 35% of it     $  84.00\nHeavy fuel, 20% of it $  60.80\nThe slate is worth    $  78.46\nRefining margin       $   2.46\nOn a 2m barrel cargo  $   4,920,000\n",
+          "values": {
+            "bars": [
+              36.9,
+              29.4,
+              12.16,
+              78.46,
+              76
+            ]
+          }
+        },
+        "18-4": {
+          "stdout": "Crude bought          $  76.00\nPetrol, 45% of it     $  84.00\nDiesel, 35% of it     $  86.00\nHeavy fuel, 20% of it $  60.80\nThe slate is worth    $  80.06\nRefining margin       $   4.06\nOn a 2m barrel cargo  $   8,120,000\n",
+          "values": {
+            "bars": [
+              37.8,
+              30.1,
+              12.16,
+              80.06,
+              76
+            ]
+          }
+        },
+        "18-5": {
+          "stdout": "Crude bought          $  76.00\nPetrol, 45% of it     $  86.00\nDiesel, 35% of it     $  88.00\nHeavy fuel, 20% of it $  60.80\nThe slate is worth    $  81.66\nRefining margin       $   5.66\nOn a 2m barrel cargo  $  11,320,000\n",
+          "values": {
+            "bars": [
+              38.7,
+              30.8,
+              12.16,
+              81.66,
+              76
+            ]
+          }
+        },
+        "18-6": {
+          "stdout": "Crude bought          $  76.00\nPetrol, 45% of it     $  88.00\nDiesel, 35% of it     $  90.00\nHeavy fuel, 20% of it $  60.80\nThe slate is worth    $  83.26\nRefining margin       $   7.26\nOn a 2m barrel cargo  $  14,520,000\n",
+          "values": {
+            "bars": [
+              39.6,
+              31.5,
+              12.16,
+              83.26,
+              76
+            ]
+          }
+        },
+        "18-7": {
+          "stdout": "Crude bought          $  76.00\nPetrol, 45% of it     $  90.00\nDiesel, 35% of it     $  92.00\nHeavy fuel, 20% of it $  60.80\nThe slate is worth    $  84.86\nRefining margin       $   8.86\nOn a 2m barrel cargo  $  17,720,000\n",
+          "values": {
+            "bars": [
+              40.5,
+              32.2,
+              12.16,
+              84.86,
+              76
+            ]
+          }
+        },
+        "18-8": {
+          "stdout": "Crude bought          $  76.00\nPetrol, 45% of it     $  92.00\nDiesel, 35% of it     $  94.00\nHeavy fuel, 20% of it $  60.80\nThe slate is worth    $  86.46\nRefining margin       $  10.46\nOn a 2m barrel cargo  $  20,920,000\n",
+          "values": {
+            "bars": [
+              41.4,
+              32.9,
+              12.16,
+              86.46,
+              76
+            ]
+          }
+        },
+        "19-0": {
+          "stdout": "Crude bought          $  78.00\nPetrol, 45% of it     $  78.00\nDiesel, 35% of it     $  80.00\nHeavy fuel, 20% of it $  62.40\nThe slate is worth    $  75.58\nRefining margin       $  -2.42\nOn a 2m barrel cargo  $  -4,840,000\n",
+          "values": {
+            "bars": [
+              35.1,
+              28,
+              12.48,
+              75.58,
+              78
+            ]
+          }
+        },
+        "19-1": {
+          "stdout": "Crude bought          $  78.00\nPetrol, 45% of it     $  80.00\nDiesel, 35% of it     $  82.00\nHeavy fuel, 20% of it $  62.40\nThe slate is worth    $  77.18\nRefining margin       $  -0.82\nOn a 2m barrel cargo  $  -1,640,000\n",
+          "values": {
+            "bars": [
+              36,
+              28.7,
+              12.48,
+              77.18,
+              78
+            ]
+          }
+        },
+        "19-2": {
+          "stdout": "Crude bought          $  78.00\nPetrol, 45% of it     $  82.00\nDiesel, 35% of it     $  84.00\nHeavy fuel, 20% of it $  62.40\nThe slate is worth    $  78.78\nRefining margin       $   0.78\nOn a 2m barrel cargo  $   1,560,000\n",
+          "values": {
+            "bars": [
+              36.9,
+              29.4,
+              12.48,
+              78.78,
+              78
+            ]
+          }
+        },
+        "19-3": {
+          "stdout": "Crude bought          $  78.00\nPetrol, 45% of it     $  84.00\nDiesel, 35% of it     $  86.00\nHeavy fuel, 20% of it $  62.40\nThe slate is worth    $  80.38\nRefining margin       $   2.38\nOn a 2m barrel cargo  $   4,760,000\n",
+          "values": {
+            "bars": [
+              37.8,
+              30.1,
+              12.48,
+              80.38,
+              78
+            ]
+          }
+        },
+        "19-4": {
+          "stdout": "Crude bought          $  78.00\nPetrol, 45% of it     $  86.00\nDiesel, 35% of it     $  88.00\nHeavy fuel, 20% of it $  62.40\nThe slate is worth    $  81.98\nRefining margin       $   3.98\nOn a 2m barrel cargo  $   7,960,000\n",
+          "values": {
+            "bars": [
+              38.7,
+              30.8,
+              12.48,
+              81.98,
+              78
+            ]
+          }
+        },
+        "19-5": {
+          "stdout": "Crude bought          $  78.00\nPetrol, 45% of it     $  88.00\nDiesel, 35% of it     $  90.00\nHeavy fuel, 20% of it $  62.40\nThe slate is worth    $  83.58\nRefining margin       $   5.58\nOn a 2m barrel cargo  $  11,160,000\n",
+          "values": {
+            "bars": [
+              39.6,
+              31.5,
+              12.48,
+              83.58,
+              78
+            ]
+          }
+        },
+        "19-6": {
+          "stdout": "Crude bought          $  78.00\nPetrol, 45% of it     $  90.00\nDiesel, 35% of it     $  92.00\nHeavy fuel, 20% of it $  62.40\nThe slate is worth    $  85.18\nRefining margin       $   7.18\nOn a 2m barrel cargo  $  14,360,000\n",
+          "values": {
+            "bars": [
+              40.5,
+              32.2,
+              12.48,
+              85.18,
+              78
+            ]
+          }
+        },
+        "19-7": {
+          "stdout": "Crude bought          $  78.00\nPetrol, 45% of it     $  92.00\nDiesel, 35% of it     $  94.00\nHeavy fuel, 20% of it $  62.40\nThe slate is worth    $  86.78\nRefining margin       $   8.78\nOn a 2m barrel cargo  $  17,560,000\n",
+          "values": {
+            "bars": [
+              41.4,
+              32.9,
+              12.48,
+              86.78,
+              78
+            ]
+          }
+        },
+        "19-8": {
+          "stdout": "Crude bought          $  78.00\nPetrol, 45% of it     $  94.00\nDiesel, 35% of it     $  96.00\nHeavy fuel, 20% of it $  62.40\nThe slate is worth    $  88.38\nRefining margin       $  10.38\nOn a 2m barrel cargo  $  20,760,000\n",
+          "values": {
+            "bars": [
+              42.3,
+              33.6,
+              12.48,
+              88.38,
+              78
+            ]
+          }
+        },
+        "2-0": {
+          "stdout": "Crude bought          $  44.00\nPetrol, 45% of it     $  44.00\nDiesel, 35% of it     $  46.00\nHeavy fuel, 20% of it $  35.20\nThe slate is worth    $  42.94\nRefining margin       $  -1.06\nOn a 2m barrel cargo  $  -2,120,000\n",
+          "values": {
+            "bars": [
+              19.8,
+              16.1,
+              7.04,
+              42.94,
+              44
+            ]
+          }
+        },
+        "2-1": {
+          "stdout": "Crude bought          $  44.00\nPetrol, 45% of it     $  46.00\nDiesel, 35% of it     $  48.00\nHeavy fuel, 20% of it $  35.20\nThe slate is worth    $  44.54\nRefining margin       $   0.54\nOn a 2m barrel cargo  $   1,080,000\n",
+          "values": {
+            "bars": [
+              20.7,
+              16.8,
+              7.04,
+              44.54,
+              44
+            ]
+          }
+        },
+        "2-2": {
+          "stdout": "Crude bought          $  44.00\nPetrol, 45% of it     $  48.00\nDiesel, 35% of it     $  50.00\nHeavy fuel, 20% of it $  35.20\nThe slate is worth    $  46.14\nRefining margin       $   2.14\nOn a 2m barrel cargo  $   4,280,000\n",
+          "values": {
+            "bars": [
+              21.6,
+              17.5,
+              7.04,
+              46.14,
+              44
+            ]
+          }
+        },
+        "2-3": {
+          "stdout": "Crude bought          $  44.00\nPetrol, 45% of it     $  50.00\nDiesel, 35% of it     $  52.00\nHeavy fuel, 20% of it $  35.20\nThe slate is worth    $  47.74\nRefining margin       $   3.74\nOn a 2m barrel cargo  $   7,480,000\n",
+          "values": {
+            "bars": [
+              22.5,
+              18.2,
+              7.04,
+              47.74,
+              44
+            ]
+          }
+        },
+        "2-4": {
+          "stdout": "Crude bought          $  44.00\nPetrol, 45% of it     $  52.00\nDiesel, 35% of it     $  54.00\nHeavy fuel, 20% of it $  35.20\nThe slate is worth    $  49.34\nRefining margin       $   5.34\nOn a 2m barrel cargo  $  10,680,000\n",
+          "values": {
+            "bars": [
+              23.4,
+              18.9,
+              7.04,
+              49.34,
+              44
+            ]
+          }
+        },
+        "2-5": {
+          "stdout": "Crude bought          $  44.00\nPetrol, 45% of it     $  54.00\nDiesel, 35% of it     $  56.00\nHeavy fuel, 20% of it $  35.20\nThe slate is worth    $  50.94\nRefining margin       $   6.94\nOn a 2m barrel cargo  $  13,880,000\n",
+          "values": {
+            "bars": [
+              24.3,
+              19.6,
+              7.04,
+              50.94,
+              44
+            ]
+          }
+        },
+        "2-6": {
+          "stdout": "Crude bought          $  44.00\nPetrol, 45% of it     $  56.00\nDiesel, 35% of it     $  58.00\nHeavy fuel, 20% of it $  35.20\nThe slate is worth    $  52.54\nRefining margin       $   8.54\nOn a 2m barrel cargo  $  17,080,000\n",
+          "values": {
+            "bars": [
+              25.2,
+              20.3,
+              7.04,
+              52.54,
+              44
+            ]
+          }
+        },
+        "2-7": {
+          "stdout": "Crude bought          $  44.00\nPetrol, 45% of it     $  58.00\nDiesel, 35% of it     $  60.00\nHeavy fuel, 20% of it $  35.20\nThe slate is worth    $  54.14\nRefining margin       $  10.14\nOn a 2m barrel cargo  $  20,280,000\n",
+          "values": {
+            "bars": [
+              26.1,
+              21,
+              7.04,
+              54.14,
+              44
+            ]
+          }
+        },
+        "2-8": {
+          "stdout": "Crude bought          $  44.00\nPetrol, 45% of it     $  60.00\nDiesel, 35% of it     $  62.00\nHeavy fuel, 20% of it $  35.20\nThe slate is worth    $  55.74\nRefining margin       $  11.74\nOn a 2m barrel cargo  $  23,480,000\n",
+          "values": {
+            "bars": [
+              27,
+              21.7,
+              7.04,
+              55.74,
+              44
+            ]
+          }
+        },
+        "20-0": {
+          "stdout": "Crude bought          $  80.00\nPetrol, 45% of it     $  80.00\nDiesel, 35% of it     $  82.00\nHeavy fuel, 20% of it $  64.00\nThe slate is worth    $  77.50\nRefining margin       $  -2.50\nOn a 2m barrel cargo  $  -5,000,000\n",
+          "values": {
+            "bars": [
+              36,
+              28.7,
+              12.8,
+              77.5,
+              80
+            ]
+          }
+        },
+        "20-1": {
+          "stdout": "Crude bought          $  80.00\nPetrol, 45% of it     $  82.00\nDiesel, 35% of it     $  84.00\nHeavy fuel, 20% of it $  64.00\nThe slate is worth    $  79.10\nRefining margin       $  -0.90\nOn a 2m barrel cargo  $  -1,800,000\n",
+          "values": {
+            "bars": [
+              36.9,
+              29.4,
+              12.8,
+              79.1,
+              80
+            ]
+          }
+        },
+        "20-2": {
+          "stdout": "Crude bought          $  80.00\nPetrol, 45% of it     $  84.00\nDiesel, 35% of it     $  86.00\nHeavy fuel, 20% of it $  64.00\nThe slate is worth    $  80.70\nRefining margin       $   0.70\nOn a 2m barrel cargo  $   1,400,000\n",
+          "values": {
+            "bars": [
+              37.8,
+              30.1,
+              12.8,
+              80.7,
+              80
+            ]
+          }
+        },
+        "20-3": {
+          "stdout": "Crude bought          $  80.00\nPetrol, 45% of it     $  86.00\nDiesel, 35% of it     $  88.00\nHeavy fuel, 20% of it $  64.00\nThe slate is worth    $  82.30\nRefining margin       $   2.30\nOn a 2m barrel cargo  $   4,600,000\n",
+          "values": {
+            "bars": [
+              38.7,
+              30.8,
+              12.8,
+              82.3,
+              80
+            ]
+          }
+        },
+        "20-4": {
+          "stdout": "Crude bought          $  80.00\nPetrol, 45% of it     $  88.00\nDiesel, 35% of it     $  90.00\nHeavy fuel, 20% of it $  64.00\nThe slate is worth    $  83.90\nRefining margin       $   3.90\nOn a 2m barrel cargo  $   7,800,000\n",
+          "values": {
+            "bars": [
+              39.6,
+              31.5,
+              12.8,
+              83.9,
+              80
+            ]
+          }
+        },
+        "20-5": {
+          "stdout": "Crude bought          $  80.00\nPetrol, 45% of it     $  90.00\nDiesel, 35% of it     $  92.00\nHeavy fuel, 20% of it $  64.00\nThe slate is worth    $  85.50\nRefining margin       $   5.50\nOn a 2m barrel cargo  $  11,000,000\n",
+          "values": {
+            "bars": [
+              40.5,
+              32.2,
+              12.8,
+              85.5,
+              80
+            ]
+          }
+        },
+        "20-6": {
+          "stdout": "Crude bought          $  80.00\nPetrol, 45% of it     $  92.00\nDiesel, 35% of it     $  94.00\nHeavy fuel, 20% of it $  64.00\nThe slate is worth    $  87.10\nRefining margin       $   7.10\nOn a 2m barrel cargo  $  14,200,000\n",
+          "values": {
+            "bars": [
+              41.4,
+              32.9,
+              12.8,
+              87.1,
+              80
+            ]
+          }
+        },
+        "20-7": {
+          "stdout": "Crude bought          $  80.00\nPetrol, 45% of it     $  94.00\nDiesel, 35% of it     $  96.00\nHeavy fuel, 20% of it $  64.00\nThe slate is worth    $  88.70\nRefining margin       $   8.70\nOn a 2m barrel cargo  $  17,400,000\n",
+          "values": {
+            "bars": [
+              42.3,
+              33.6,
+              12.8,
+              88.7,
+              80
+            ]
+          }
+        },
+        "20-8": {
+          "stdout": "Crude bought          $  80.00\nPetrol, 45% of it     $  96.00\nDiesel, 35% of it     $  98.00\nHeavy fuel, 20% of it $  64.00\nThe slate is worth    $  90.30\nRefining margin       $  10.30\nOn a 2m barrel cargo  $  20,600,000\n",
+          "values": {
+            "bars": [
+              43.2,
+              34.3,
+              12.8,
+              90.3,
+              80
+            ]
+          }
+        },
+        "21-0": {
+          "stdout": "Crude bought          $  82.00\nPetrol, 45% of it     $  82.00\nDiesel, 35% of it     $  84.00\nHeavy fuel, 20% of it $  65.60\nThe slate is worth    $  79.42\nRefining margin       $  -2.58\nOn a 2m barrel cargo  $  -5,160,000\n",
+          "values": {
+            "bars": [
+              36.9,
+              29.4,
+              13.12,
+              79.42,
+              82
+            ]
+          }
+        },
+        "21-1": {
+          "stdout": "Crude bought          $  82.00\nPetrol, 45% of it     $  84.00\nDiesel, 35% of it     $  86.00\nHeavy fuel, 20% of it $  65.60\nThe slate is worth    $  81.02\nRefining margin       $  -0.98\nOn a 2m barrel cargo  $  -1,960,000\n",
+          "values": {
+            "bars": [
+              37.8,
+              30.1,
+              13.12,
+              81.02,
+              82
+            ]
+          }
+        },
+        "21-2": {
+          "stdout": "Crude bought          $  82.00\nPetrol, 45% of it     $  86.00\nDiesel, 35% of it     $  88.00\nHeavy fuel, 20% of it $  65.60\nThe slate is worth    $  82.62\nRefining margin       $   0.62\nOn a 2m barrel cargo  $   1,240,000\n",
+          "values": {
+            "bars": [
+              38.7,
+              30.8,
+              13.12,
+              82.62,
+              82
+            ]
+          }
+        },
+        "21-3": {
+          "stdout": "Crude bought          $  82.00\nPetrol, 45% of it     $  88.00\nDiesel, 35% of it     $  90.00\nHeavy fuel, 20% of it $  65.60\nThe slate is worth    $  84.22\nRefining margin       $   2.22\nOn a 2m barrel cargo  $   4,440,000\n",
+          "values": {
+            "bars": [
+              39.6,
+              31.5,
+              13.12,
+              84.22,
+              82
+            ]
+          }
+        },
+        "21-4": {
+          "stdout": "Crude bought          $  82.00\nPetrol, 45% of it     $  90.00\nDiesel, 35% of it     $  92.00\nHeavy fuel, 20% of it $  65.60\nThe slate is worth    $  85.82\nRefining margin       $   3.82\nOn a 2m barrel cargo  $   7,640,000\n",
+          "values": {
+            "bars": [
+              40.5,
+              32.2,
+              13.12,
+              85.82,
+              82
+            ]
+          }
+        },
+        "21-5": {
+          "stdout": "Crude bought          $  82.00\nPetrol, 45% of it     $  92.00\nDiesel, 35% of it     $  94.00\nHeavy fuel, 20% of it $  65.60\nThe slate is worth    $  87.42\nRefining margin       $   5.42\nOn a 2m barrel cargo  $  10,840,000\n",
+          "values": {
+            "bars": [
+              41.4,
+              32.9,
+              13.12,
+              87.42,
+              82
+            ]
+          }
+        },
+        "21-6": {
+          "stdout": "Crude bought          $  82.00\nPetrol, 45% of it     $  94.00\nDiesel, 35% of it     $  96.00\nHeavy fuel, 20% of it $  65.60\nThe slate is worth    $  89.02\nRefining margin       $   7.02\nOn a 2m barrel cargo  $  14,040,000\n",
+          "values": {
+            "bars": [
+              42.3,
+              33.6,
+              13.12,
+              89.02,
+              82
+            ]
+          }
+        },
+        "21-7": {
+          "stdout": "Crude bought          $  82.00\nPetrol, 45% of it     $  96.00\nDiesel, 35% of it     $  98.00\nHeavy fuel, 20% of it $  65.60\nThe slate is worth    $  90.62\nRefining margin       $   8.62\nOn a 2m barrel cargo  $  17,240,000\n",
+          "values": {
+            "bars": [
+              43.2,
+              34.3,
+              13.12,
+              90.62,
+              82
+            ]
+          }
+        },
+        "21-8": {
+          "stdout": "Crude bought          $  82.00\nPetrol, 45% of it     $  98.00\nDiesel, 35% of it     $ 100.00\nHeavy fuel, 20% of it $  65.60\nThe slate is worth    $  92.22\nRefining margin       $  10.22\nOn a 2m barrel cargo  $  20,440,000\n",
+          "values": {
+            "bars": [
+              44.1,
+              35,
+              13.12,
+              92.22,
+              82
+            ]
+          }
+        },
+        "22-0": {
+          "stdout": "Crude bought          $  84.00\nPetrol, 45% of it     $  84.00\nDiesel, 35% of it     $  86.00\nHeavy fuel, 20% of it $  67.20\nThe slate is worth    $  81.34\nRefining margin       $  -2.66\nOn a 2m barrel cargo  $  -5,320,000\n",
+          "values": {
+            "bars": [
+              37.8,
+              30.1,
+              13.44,
+              81.34,
+              84
+            ]
+          }
+        },
+        "22-1": {
+          "stdout": "Crude bought          $  84.00\nPetrol, 45% of it     $  86.00\nDiesel, 35% of it     $  88.00\nHeavy fuel, 20% of it $  67.20\nThe slate is worth    $  82.94\nRefining margin       $  -1.06\nOn a 2m barrel cargo  $  -2,120,000\n",
+          "values": {
+            "bars": [
+              38.7,
+              30.8,
+              13.44,
+              82.94,
+              84
+            ]
+          }
+        },
+        "22-2": {
+          "stdout": "Crude bought          $  84.00\nPetrol, 45% of it     $  88.00\nDiesel, 35% of it     $  90.00\nHeavy fuel, 20% of it $  67.20\nThe slate is worth    $  84.54\nRefining margin       $   0.54\nOn a 2m barrel cargo  $   1,080,000\n",
+          "values": {
+            "bars": [
+              39.6,
+              31.5,
+              13.44,
+              84.54,
+              84
+            ]
+          }
+        },
+        "22-3": {
+          "stdout": "Crude bought          $  84.00\nPetrol, 45% of it     $  90.00\nDiesel, 35% of it     $  92.00\nHeavy fuel, 20% of it $  67.20\nThe slate is worth    $  86.14\nRefining margin       $   2.14\nOn a 2m barrel cargo  $   4,280,000\n",
+          "values": {
+            "bars": [
+              40.5,
+              32.2,
+              13.44,
+              86.14,
+              84
+            ]
+          }
+        },
+        "22-4": {
+          "stdout": "Crude bought          $  84.00\nPetrol, 45% of it     $  92.00\nDiesel, 35% of it     $  94.00\nHeavy fuel, 20% of it $  67.20\nThe slate is worth    $  87.74\nRefining margin       $   3.74\nOn a 2m barrel cargo  $   7,480,000\n",
+          "values": {
+            "bars": [
+              41.4,
+              32.9,
+              13.44,
+              87.74,
+              84
+            ]
+          }
+        },
+        "22-5": {
+          "stdout": "Crude bought          $  84.00\nPetrol, 45% of it     $  94.00\nDiesel, 35% of it     $  96.00\nHeavy fuel, 20% of it $  67.20\nThe slate is worth    $  89.34\nRefining margin       $   5.34\nOn a 2m barrel cargo  $  10,680,000\n",
+          "values": {
+            "bars": [
+              42.3,
+              33.6,
+              13.44,
+              89.34,
+              84
+            ]
+          }
+        },
+        "22-6": {
+          "stdout": "Crude bought          $  84.00\nPetrol, 45% of it     $  96.00\nDiesel, 35% of it     $  98.00\nHeavy fuel, 20% of it $  67.20\nThe slate is worth    $  90.94\nRefining margin       $   6.94\nOn a 2m barrel cargo  $  13,880,000\n",
+          "values": {
+            "bars": [
+              43.2,
+              34.3,
+              13.44,
+              90.94,
+              84
+            ]
+          }
+        },
+        "22-7": {
+          "stdout": "Crude bought          $  84.00\nPetrol, 45% of it     $  98.00\nDiesel, 35% of it     $ 100.00\nHeavy fuel, 20% of it $  67.20\nThe slate is worth    $  92.54\nRefining margin       $   8.54\nOn a 2m barrel cargo  $  17,080,000\n",
+          "values": {
+            "bars": [
+              44.1,
+              35,
+              13.44,
+              92.54,
+              84
+            ]
+          }
+        },
+        "22-8": {
+          "stdout": "Crude bought          $  84.00\nPetrol, 45% of it     $ 100.00\nDiesel, 35% of it     $ 102.00\nHeavy fuel, 20% of it $  67.20\nThe slate is worth    $  94.14\nRefining margin       $  10.14\nOn a 2m barrel cargo  $  20,280,000\n",
+          "values": {
+            "bars": [
+              45,
+              35.7,
+              13.44,
+              94.14,
+              84
+            ]
+          }
+        },
+        "23-0": {
+          "stdout": "Crude bought          $  86.00\nPetrol, 45% of it     $  86.00\nDiesel, 35% of it     $  88.00\nHeavy fuel, 20% of it $  68.80\nThe slate is worth    $  83.26\nRefining margin       $  -2.74\nOn a 2m barrel cargo  $  -5,480,000\n",
+          "values": {
+            "bars": [
+              38.7,
+              30.8,
+              13.76,
+              83.26,
+              86
+            ]
+          }
+        },
+        "23-1": {
+          "stdout": "Crude bought          $  86.00\nPetrol, 45% of it     $  88.00\nDiesel, 35% of it     $  90.00\nHeavy fuel, 20% of it $  68.80\nThe slate is worth    $  84.86\nRefining margin       $  -1.14\nOn a 2m barrel cargo  $  -2,280,000\n",
+          "values": {
+            "bars": [
+              39.6,
+              31.5,
+              13.76,
+              84.86,
+              86
+            ]
+          }
+        },
+        "23-2": {
+          "stdout": "Crude bought          $  86.00\nPetrol, 45% of it     $  90.00\nDiesel, 35% of it     $  92.00\nHeavy fuel, 20% of it $  68.80\nThe slate is worth    $  86.46\nRefining margin       $   0.46\nOn a 2m barrel cargo  $     920,000\n",
+          "values": {
+            "bars": [
+              40.5,
+              32.2,
+              13.76,
+              86.46,
+              86
+            ]
+          }
+        },
+        "23-3": {
+          "stdout": "Crude bought          $  86.00\nPetrol, 45% of it     $  92.00\nDiesel, 35% of it     $  94.00\nHeavy fuel, 20% of it $  68.80\nThe slate is worth    $  88.06\nRefining margin       $   2.06\nOn a 2m barrel cargo  $   4,120,000\n",
+          "values": {
+            "bars": [
+              41.4,
+              32.9,
+              13.76,
+              88.06,
+              86
+            ]
+          }
+        },
+        "23-4": {
+          "stdout": "Crude bought          $  86.00\nPetrol, 45% of it     $  94.00\nDiesel, 35% of it     $  96.00\nHeavy fuel, 20% of it $  68.80\nThe slate is worth    $  89.66\nRefining margin       $   3.66\nOn a 2m barrel cargo  $   7,320,000\n",
+          "values": {
+            "bars": [
+              42.3,
+              33.6,
+              13.76,
+              89.66,
+              86
+            ]
+          }
+        },
+        "23-5": {
+          "stdout": "Crude bought          $  86.00\nPetrol, 45% of it     $  96.00\nDiesel, 35% of it     $  98.00\nHeavy fuel, 20% of it $  68.80\nThe slate is worth    $  91.26\nRefining margin       $   5.26\nOn a 2m barrel cargo  $  10,520,000\n",
+          "values": {
+            "bars": [
+              43.2,
+              34.3,
+              13.76,
+              91.26,
+              86
+            ]
+          }
+        },
+        "23-6": {
+          "stdout": "Crude bought          $  86.00\nPetrol, 45% of it     $  98.00\nDiesel, 35% of it     $ 100.00\nHeavy fuel, 20% of it $  68.80\nThe slate is worth    $  92.86\nRefining margin       $   6.86\nOn a 2m barrel cargo  $  13,720,000\n",
+          "values": {
+            "bars": [
+              44.1,
+              35,
+              13.76,
+              92.86,
+              86
+            ]
+          }
+        },
+        "23-7": {
+          "stdout": "Crude bought          $  86.00\nPetrol, 45% of it     $ 100.00\nDiesel, 35% of it     $ 102.00\nHeavy fuel, 20% of it $  68.80\nThe slate is worth    $  94.46\nRefining margin       $   8.46\nOn a 2m barrel cargo  $  16,920,000\n",
+          "values": {
+            "bars": [
+              45,
+              35.7,
+              13.76,
+              94.46,
+              86
+            ]
+          }
+        },
+        "23-8": {
+          "stdout": "Crude bought          $  86.00\nPetrol, 45% of it     $ 102.00\nDiesel, 35% of it     $ 104.00\nHeavy fuel, 20% of it $  68.80\nThe slate is worth    $  96.06\nRefining margin       $  10.06\nOn a 2m barrel cargo  $  20,120,000\n",
+          "values": {
+            "bars": [
+              45.9,
+              36.4,
+              13.76,
+              96.06,
+              86
+            ]
+          }
+        },
+        "24-0": {
+          "stdout": "Crude bought          $  88.00\nPetrol, 45% of it     $  88.00\nDiesel, 35% of it     $  90.00\nHeavy fuel, 20% of it $  70.40\nThe slate is worth    $  85.18\nRefining margin       $  -2.82\nOn a 2m barrel cargo  $  -5,640,000\n",
+          "values": {
+            "bars": [
+              39.6,
+              31.5,
+              14.08,
+              85.18,
+              88
+            ]
+          }
+        },
+        "24-1": {
+          "stdout": "Crude bought          $  88.00\nPetrol, 45% of it     $  90.00\nDiesel, 35% of it     $  92.00\nHeavy fuel, 20% of it $  70.40\nThe slate is worth    $  86.78\nRefining margin       $  -1.22\nOn a 2m barrel cargo  $  -2,440,000\n",
+          "values": {
+            "bars": [
+              40.5,
+              32.2,
+              14.08,
+              86.78,
+              88
+            ]
+          }
+        },
+        "24-2": {
+          "stdout": "Crude bought          $  88.00\nPetrol, 45% of it     $  92.00\nDiesel, 35% of it     $  94.00\nHeavy fuel, 20% of it $  70.40\nThe slate is worth    $  88.38\nRefining margin       $   0.38\nOn a 2m barrel cargo  $     760,000\n",
+          "values": {
+            "bars": [
+              41.4,
+              32.9,
+              14.08,
+              88.38,
+              88
+            ]
+          }
+        },
+        "24-3": {
+          "stdout": "Crude bought          $  88.00\nPetrol, 45% of it     $  94.00\nDiesel, 35% of it     $  96.00\nHeavy fuel, 20% of it $  70.40\nThe slate is worth    $  89.98\nRefining margin       $   1.98\nOn a 2m barrel cargo  $   3,960,000\n",
+          "values": {
+            "bars": [
+              42.3,
+              33.6,
+              14.08,
+              89.98,
+              88
+            ]
+          }
+        },
+        "24-4": {
+          "stdout": "Crude bought          $  88.00\nPetrol, 45% of it     $  96.00\nDiesel, 35% of it     $  98.00\nHeavy fuel, 20% of it $  70.40\nThe slate is worth    $  91.58\nRefining margin       $   3.58\nOn a 2m barrel cargo  $   7,160,000\n",
+          "values": {
+            "bars": [
+              43.2,
+              34.3,
+              14.08,
+              91.58,
+              88
+            ]
+          }
+        },
+        "24-5": {
+          "stdout": "Crude bought          $  88.00\nPetrol, 45% of it     $  98.00\nDiesel, 35% of it     $ 100.00\nHeavy fuel, 20% of it $  70.40\nThe slate is worth    $  93.18\nRefining margin       $   5.18\nOn a 2m barrel cargo  $  10,360,000\n",
+          "values": {
+            "bars": [
+              44.1,
+              35,
+              14.08,
+              93.18,
+              88
+            ]
+          }
+        },
+        "24-6": {
+          "stdout": "Crude bought          $  88.00\nPetrol, 45% of it     $ 100.00\nDiesel, 35% of it     $ 102.00\nHeavy fuel, 20% of it $  70.40\nThe slate is worth    $  94.78\nRefining margin       $   6.78\nOn a 2m barrel cargo  $  13,560,000\n",
+          "values": {
+            "bars": [
+              45,
+              35.7,
+              14.08,
+              94.78,
+              88
+            ]
+          }
+        },
+        "24-7": {
+          "stdout": "Crude bought          $  88.00\nPetrol, 45% of it     $ 102.00\nDiesel, 35% of it     $ 104.00\nHeavy fuel, 20% of it $  70.40\nThe slate is worth    $  96.38\nRefining margin       $   8.38\nOn a 2m barrel cargo  $  16,760,000\n",
+          "values": {
+            "bars": [
+              45.9,
+              36.4,
+              14.08,
+              96.38,
+              88
+            ]
+          }
+        },
+        "24-8": {
+          "stdout": "Crude bought          $  88.00\nPetrol, 45% of it     $ 104.00\nDiesel, 35% of it     $ 106.00\nHeavy fuel, 20% of it $  70.40\nThe slate is worth    $  97.98\nRefining margin       $   9.98\nOn a 2m barrel cargo  $  19,960,000\n",
+          "values": {
+            "bars": [
+              46.8,
+              37.1,
+              14.08,
+              97.98,
+              88
+            ]
+          }
+        },
+        "25-0": {
+          "stdout": "Crude bought          $  90.00\nPetrol, 45% of it     $  90.00\nDiesel, 35% of it     $  92.00\nHeavy fuel, 20% of it $  72.00\nThe slate is worth    $  87.10\nRefining margin       $  -2.90\nOn a 2m barrel cargo  $  -5,800,000\n",
+          "values": {
+            "bars": [
+              40.5,
+              32.2,
+              14.4,
+              87.1,
+              90
+            ]
+          }
+        },
+        "25-1": {
+          "stdout": "Crude bought          $  90.00\nPetrol, 45% of it     $  92.00\nDiesel, 35% of it     $  94.00\nHeavy fuel, 20% of it $  72.00\nThe slate is worth    $  88.70\nRefining margin       $  -1.30\nOn a 2m barrel cargo  $  -2,600,000\n",
+          "values": {
+            "bars": [
+              41.4,
+              32.9,
+              14.4,
+              88.7,
+              90
+            ]
+          }
+        },
+        "25-2": {
+          "stdout": "Crude bought          $  90.00\nPetrol, 45% of it     $  94.00\nDiesel, 35% of it     $  96.00\nHeavy fuel, 20% of it $  72.00\nThe slate is worth    $  90.30\nRefining margin       $   0.30\nOn a 2m barrel cargo  $     600,000\n",
+          "values": {
+            "bars": [
+              42.3,
+              33.6,
+              14.4,
+              90.3,
+              90
+            ]
+          }
+        },
+        "25-3": {
+          "stdout": "Crude bought          $  90.00\nPetrol, 45% of it     $  96.00\nDiesel, 35% of it     $  98.00\nHeavy fuel, 20% of it $  72.00\nThe slate is worth    $  91.90\nRefining margin       $   1.90\nOn a 2m barrel cargo  $   3,800,000\n",
+          "values": {
+            "bars": [
+              43.2,
+              34.3,
+              14.4,
+              91.9,
+              90
+            ]
+          }
+        },
+        "25-4": {
+          "stdout": "Crude bought          $  90.00\nPetrol, 45% of it     $  98.00\nDiesel, 35% of it     $ 100.00\nHeavy fuel, 20% of it $  72.00\nThe slate is worth    $  93.50\nRefining margin       $   3.50\nOn a 2m barrel cargo  $   7,000,000\n",
+          "values": {
+            "bars": [
+              44.1,
+              35,
+              14.4,
+              93.5,
+              90
+            ]
+          }
+        },
+        "25-5": {
+          "stdout": "Crude bought          $  90.00\nPetrol, 45% of it     $ 100.00\nDiesel, 35% of it     $ 102.00\nHeavy fuel, 20% of it $  72.00\nThe slate is worth    $  95.10\nRefining margin       $   5.10\nOn a 2m barrel cargo  $  10,200,000\n",
+          "values": {
+            "bars": [
+              45,
+              35.7,
+              14.4,
+              95.1,
+              90
+            ]
+          }
+        },
+        "25-6": {
+          "stdout": "Crude bought          $  90.00\nPetrol, 45% of it     $ 102.00\nDiesel, 35% of it     $ 104.00\nHeavy fuel, 20% of it $  72.00\nThe slate is worth    $  96.70\nRefining margin       $   6.70\nOn a 2m barrel cargo  $  13,400,000\n",
+          "values": {
+            "bars": [
+              45.9,
+              36.4,
+              14.4,
+              96.7,
+              90
+            ]
+          }
+        },
+        "25-7": {
+          "stdout": "Crude bought          $  90.00\nPetrol, 45% of it     $ 104.00\nDiesel, 35% of it     $ 106.00\nHeavy fuel, 20% of it $  72.00\nThe slate is worth    $  98.30\nRefining margin       $   8.30\nOn a 2m barrel cargo  $  16,600,000\n",
+          "values": {
+            "bars": [
+              46.8,
+              37.1,
+              14.4,
+              98.3,
+              90
+            ]
+          }
+        },
+        "25-8": {
+          "stdout": "Crude bought          $  90.00\nPetrol, 45% of it     $ 106.00\nDiesel, 35% of it     $ 108.00\nHeavy fuel, 20% of it $  72.00\nThe slate is worth    $  99.90\nRefining margin       $   9.90\nOn a 2m barrel cargo  $  19,800,000\n",
+          "values": {
+            "bars": [
+              47.7,
+              37.8,
+              14.4,
+              99.9,
+              90
+            ]
+          }
+        },
+        "26-0": {
+          "stdout": "Crude bought          $  92.00\nPetrol, 45% of it     $  92.00\nDiesel, 35% of it     $  94.00\nHeavy fuel, 20% of it $  73.60\nThe slate is worth    $  89.02\nRefining margin       $  -2.98\nOn a 2m barrel cargo  $  -5,960,000\n",
+          "values": {
+            "bars": [
+              41.4,
+              32.9,
+              14.72,
+              89.02,
+              92
+            ]
+          }
+        },
+        "26-1": {
+          "stdout": "Crude bought          $  92.00\nPetrol, 45% of it     $  94.00\nDiesel, 35% of it     $  96.00\nHeavy fuel, 20% of it $  73.60\nThe slate is worth    $  90.62\nRefining margin       $  -1.38\nOn a 2m barrel cargo  $  -2,760,000\n",
+          "values": {
+            "bars": [
+              42.3,
+              33.6,
+              14.72,
+              90.62,
+              92
+            ]
+          }
+        },
+        "26-2": {
+          "stdout": "Crude bought          $  92.00\nPetrol, 45% of it     $  96.00\nDiesel, 35% of it     $  98.00\nHeavy fuel, 20% of it $  73.60\nThe slate is worth    $  92.22\nRefining margin       $   0.22\nOn a 2m barrel cargo  $     440,000\n",
+          "values": {
+            "bars": [
+              43.2,
+              34.3,
+              14.72,
+              92.22,
+              92
+            ]
+          }
+        },
+        "26-3": {
+          "stdout": "Crude bought          $  92.00\nPetrol, 45% of it     $  98.00\nDiesel, 35% of it     $ 100.00\nHeavy fuel, 20% of it $  73.60\nThe slate is worth    $  93.82\nRefining margin       $   1.82\nOn a 2m barrel cargo  $   3,640,000\n",
+          "values": {
+            "bars": [
+              44.1,
+              35,
+              14.72,
+              93.82,
+              92
+            ]
+          }
+        },
+        "26-4": {
+          "stdout": "Crude bought          $  92.00\nPetrol, 45% of it     $ 100.00\nDiesel, 35% of it     $ 102.00\nHeavy fuel, 20% of it $  73.60\nThe slate is worth    $  95.42\nRefining margin       $   3.42\nOn a 2m barrel cargo  $   6,840,000\n",
+          "values": {
+            "bars": [
+              45,
+              35.7,
+              14.72,
+              95.42,
+              92
+            ]
+          }
+        },
+        "26-5": {
+          "stdout": "Crude bought          $  92.00\nPetrol, 45% of it     $ 102.00\nDiesel, 35% of it     $ 104.00\nHeavy fuel, 20% of it $  73.60\nThe slate is worth    $  97.02\nRefining margin       $   5.02\nOn a 2m barrel cargo  $  10,040,000\n",
+          "values": {
+            "bars": [
+              45.9,
+              36.4,
+              14.72,
+              97.02,
+              92
+            ]
+          }
+        },
+        "26-6": {
+          "stdout": "Crude bought          $  92.00\nPetrol, 45% of it     $ 104.00\nDiesel, 35% of it     $ 106.00\nHeavy fuel, 20% of it $  73.60\nThe slate is worth    $  98.62\nRefining margin       $   6.62\nOn a 2m barrel cargo  $  13,240,000\n",
+          "values": {
+            "bars": [
+              46.8,
+              37.1,
+              14.72,
+              98.62,
+              92
+            ]
+          }
+        },
+        "26-7": {
+          "stdout": "Crude bought          $  92.00\nPetrol, 45% of it     $ 106.00\nDiesel, 35% of it     $ 108.00\nHeavy fuel, 20% of it $  73.60\nThe slate is worth    $ 100.22\nRefining margin       $   8.22\nOn a 2m barrel cargo  $  16,440,000\n",
+          "values": {
+            "bars": [
+              47.7,
+              37.8,
+              14.72,
+              100.22,
+              92
+            ]
+          }
+        },
+        "26-8": {
+          "stdout": "Crude bought          $  92.00\nPetrol, 45% of it     $ 108.00\nDiesel, 35% of it     $ 110.00\nHeavy fuel, 20% of it $  73.60\nThe slate is worth    $ 101.82\nRefining margin       $   9.82\nOn a 2m barrel cargo  $  19,640,000\n",
+          "values": {
+            "bars": [
+              48.6,
+              38.5,
+              14.72,
+              101.82,
+              92
+            ]
+          }
+        },
+        "27-0": {
+          "stdout": "Crude bought          $  94.00\nPetrol, 45% of it     $  94.00\nDiesel, 35% of it     $  96.00\nHeavy fuel, 20% of it $  75.20\nThe slate is worth    $  90.94\nRefining margin       $  -3.06\nOn a 2m barrel cargo  $  -6,120,000\n",
+          "values": {
+            "bars": [
+              42.3,
+              33.6,
+              15.04,
+              90.94,
+              94
+            ]
+          }
+        },
+        "27-1": {
+          "stdout": "Crude bought          $  94.00\nPetrol, 45% of it     $  96.00\nDiesel, 35% of it     $  98.00\nHeavy fuel, 20% of it $  75.20\nThe slate is worth    $  92.54\nRefining margin       $  -1.46\nOn a 2m barrel cargo  $  -2,920,000\n",
+          "values": {
+            "bars": [
+              43.2,
+              34.3,
+              15.04,
+              92.54,
+              94
+            ]
+          }
+        },
+        "27-2": {
+          "stdout": "Crude bought          $  94.00\nPetrol, 45% of it     $  98.00\nDiesel, 35% of it     $ 100.00\nHeavy fuel, 20% of it $  75.20\nThe slate is worth    $  94.14\nRefining margin       $   0.14\nOn a 2m barrel cargo  $     280,000\n",
+          "values": {
+            "bars": [
+              44.1,
+              35,
+              15.04,
+              94.14,
+              94
+            ]
+          }
+        },
+        "27-3": {
+          "stdout": "Crude bought          $  94.00\nPetrol, 45% of it     $ 100.00\nDiesel, 35% of it     $ 102.00\nHeavy fuel, 20% of it $  75.20\nThe slate is worth    $  95.74\nRefining margin       $   1.74\nOn a 2m barrel cargo  $   3,480,000\n",
+          "values": {
+            "bars": [
+              45,
+              35.7,
+              15.04,
+              95.74,
+              94
+            ]
+          }
+        },
+        "27-4": {
+          "stdout": "Crude bought          $  94.00\nPetrol, 45% of it     $ 102.00\nDiesel, 35% of it     $ 104.00\nHeavy fuel, 20% of it $  75.20\nThe slate is worth    $  97.34\nRefining margin       $   3.34\nOn a 2m barrel cargo  $   6,680,000\n",
+          "values": {
+            "bars": [
+              45.9,
+              36.4,
+              15.04,
+              97.34,
+              94
+            ]
+          }
+        },
+        "27-5": {
+          "stdout": "Crude bought          $  94.00\nPetrol, 45% of it     $ 104.00\nDiesel, 35% of it     $ 106.00\nHeavy fuel, 20% of it $  75.20\nThe slate is worth    $  98.94\nRefining margin       $   4.94\nOn a 2m barrel cargo  $   9,880,000\n",
+          "values": {
+            "bars": [
+              46.8,
+              37.1,
+              15.04,
+              98.94,
+              94
+            ]
+          }
+        },
+        "27-6": {
+          "stdout": "Crude bought          $  94.00\nPetrol, 45% of it     $ 106.00\nDiesel, 35% of it     $ 108.00\nHeavy fuel, 20% of it $  75.20\nThe slate is worth    $ 100.54\nRefining margin       $   6.54\nOn a 2m barrel cargo  $  13,080,000\n",
+          "values": {
+            "bars": [
+              47.7,
+              37.8,
+              15.04,
+              100.54,
+              94
+            ]
+          }
+        },
+        "27-7": {
+          "stdout": "Crude bought          $  94.00\nPetrol, 45% of it     $ 108.00\nDiesel, 35% of it     $ 110.00\nHeavy fuel, 20% of it $  75.20\nThe slate is worth    $ 102.14\nRefining margin       $   8.14\nOn a 2m barrel cargo  $  16,280,000\n",
+          "values": {
+            "bars": [
+              48.6,
+              38.5,
+              15.04,
+              102.14,
+              94
+            ]
+          }
+        },
+        "27-8": {
+          "stdout": "Crude bought          $  94.00\nPetrol, 45% of it     $ 110.00\nDiesel, 35% of it     $ 112.00\nHeavy fuel, 20% of it $  75.20\nThe slate is worth    $ 103.74\nRefining margin       $   9.74\nOn a 2m barrel cargo  $  19,480,000\n",
+          "values": {
+            "bars": [
+              49.5,
+              39.2,
+              15.04,
+              103.74,
+              94
+            ]
+          }
+        },
+        "28-0": {
+          "stdout": "Crude bought          $  96.00\nPetrol, 45% of it     $  96.00\nDiesel, 35% of it     $  98.00\nHeavy fuel, 20% of it $  76.80\nThe slate is worth    $  92.86\nRefining margin       $  -3.14\nOn a 2m barrel cargo  $  -6,280,000\n",
+          "values": {
+            "bars": [
+              43.2,
+              34.3,
+              15.36,
+              92.86,
+              96
+            ]
+          }
+        },
+        "28-1": {
+          "stdout": "Crude bought          $  96.00\nPetrol, 45% of it     $  98.00\nDiesel, 35% of it     $ 100.00\nHeavy fuel, 20% of it $  76.80\nThe slate is worth    $  94.46\nRefining margin       $  -1.54\nOn a 2m barrel cargo  $  -3,080,000\n",
+          "values": {
+            "bars": [
+              44.1,
+              35,
+              15.36,
+              94.46,
+              96
+            ]
+          }
+        },
+        "28-2": {
+          "stdout": "Crude bought          $  96.00\nPetrol, 45% of it     $ 100.00\nDiesel, 35% of it     $ 102.00\nHeavy fuel, 20% of it $  76.80\nThe slate is worth    $  96.06\nRefining margin       $   0.06\nOn a 2m barrel cargo  $     120,000\n",
+          "values": {
+            "bars": [
+              45,
+              35.7,
+              15.36,
+              96.06,
+              96
+            ]
+          }
+        },
+        "28-3": {
+          "stdout": "Crude bought          $  96.00\nPetrol, 45% of it     $ 102.00\nDiesel, 35% of it     $ 104.00\nHeavy fuel, 20% of it $  76.80\nThe slate is worth    $  97.66\nRefining margin       $   1.66\nOn a 2m barrel cargo  $   3,320,000\n",
+          "values": {
+            "bars": [
+              45.9,
+              36.4,
+              15.36,
+              97.66,
+              96
+            ]
+          }
+        },
+        "28-4": {
+          "stdout": "Crude bought          $  96.00\nPetrol, 45% of it     $ 104.00\nDiesel, 35% of it     $ 106.00\nHeavy fuel, 20% of it $  76.80\nThe slate is worth    $  99.26\nRefining margin       $   3.26\nOn a 2m barrel cargo  $   6,520,000\n",
+          "values": {
+            "bars": [
+              46.8,
+              37.1,
+              15.36,
+              99.26,
+              96
+            ]
+          }
+        },
+        "28-5": {
+          "stdout": "Crude bought          $  96.00\nPetrol, 45% of it     $ 106.00\nDiesel, 35% of it     $ 108.00\nHeavy fuel, 20% of it $  76.80\nThe slate is worth    $ 100.86\nRefining margin       $   4.86\nOn a 2m barrel cargo  $   9,720,000\n",
+          "values": {
+            "bars": [
+              47.7,
+              37.8,
+              15.36,
+              100.86,
+              96
+            ]
+          }
+        },
+        "28-6": {
+          "stdout": "Crude bought          $  96.00\nPetrol, 45% of it     $ 108.00\nDiesel, 35% of it     $ 110.00\nHeavy fuel, 20% of it $  76.80\nThe slate is worth    $ 102.46\nRefining margin       $   6.46\nOn a 2m barrel cargo  $  12,920,000\n",
+          "values": {
+            "bars": [
+              48.6,
+              38.5,
+              15.36,
+              102.46,
+              96
+            ]
+          }
+        },
+        "28-7": {
+          "stdout": "Crude bought          $  96.00\nPetrol, 45% of it     $ 110.00\nDiesel, 35% of it     $ 112.00\nHeavy fuel, 20% of it $  76.80\nThe slate is worth    $ 104.06\nRefining margin       $   8.06\nOn a 2m barrel cargo  $  16,120,000\n",
+          "values": {
+            "bars": [
+              49.5,
+              39.2,
+              15.36,
+              104.06,
+              96
+            ]
+          }
+        },
+        "28-8": {
+          "stdout": "Crude bought          $  96.00\nPetrol, 45% of it     $ 112.00\nDiesel, 35% of it     $ 114.00\nHeavy fuel, 20% of it $  76.80\nThe slate is worth    $ 105.66\nRefining margin       $   9.66\nOn a 2m barrel cargo  $  19,320,000\n",
+          "values": {
+            "bars": [
+              50.4,
+              39.9,
+              15.36,
+              105.66,
+              96
+            ]
+          }
+        },
+        "29-0": {
+          "stdout": "Crude bought          $  98.00\nPetrol, 45% of it     $  98.00\nDiesel, 35% of it     $ 100.00\nHeavy fuel, 20% of it $  78.40\nThe slate is worth    $  94.78\nRefining margin       $  -3.22\nOn a 2m barrel cargo  $  -6,440,000\n",
+          "values": {
+            "bars": [
+              44.1,
+              35,
+              15.68,
+              94.78,
+              98
+            ]
+          }
+        },
+        "29-1": {
+          "stdout": "Crude bought          $  98.00\nPetrol, 45% of it     $ 100.00\nDiesel, 35% of it     $ 102.00\nHeavy fuel, 20% of it $  78.40\nThe slate is worth    $  96.38\nRefining margin       $  -1.62\nOn a 2m barrel cargo  $  -3,240,000\n",
+          "values": {
+            "bars": [
+              45,
+              35.7,
+              15.68,
+              96.38,
+              98
+            ]
+          }
+        },
+        "29-2": {
+          "stdout": "Crude bought          $  98.00\nPetrol, 45% of it     $ 102.00\nDiesel, 35% of it     $ 104.00\nHeavy fuel, 20% of it $  78.40\nThe slate is worth    $  97.98\nRefining margin       $  -0.02\nOn a 2m barrel cargo  $     -40,000\n",
+          "values": {
+            "bars": [
+              45.9,
+              36.4,
+              15.68,
+              97.98,
+              98
+            ]
+          }
+        },
+        "29-3": {
+          "stdout": "Crude bought          $  98.00\nPetrol, 45% of it     $ 104.00\nDiesel, 35% of it     $ 106.00\nHeavy fuel, 20% of it $  78.40\nThe slate is worth    $  99.58\nRefining margin       $   1.58\nOn a 2m barrel cargo  $   3,160,000\n",
+          "values": {
+            "bars": [
+              46.8,
+              37.1,
+              15.68,
+              99.58,
+              98
+            ]
+          }
+        },
+        "29-4": {
+          "stdout": "Crude bought          $  98.00\nPetrol, 45% of it     $ 106.00\nDiesel, 35% of it     $ 108.00\nHeavy fuel, 20% of it $  78.40\nThe slate is worth    $ 101.18\nRefining margin       $   3.18\nOn a 2m barrel cargo  $   6,360,000\n",
+          "values": {
+            "bars": [
+              47.7,
+              37.8,
+              15.68,
+              101.18,
+              98
+            ]
+          }
+        },
+        "29-5": {
+          "stdout": "Crude bought          $  98.00\nPetrol, 45% of it     $ 108.00\nDiesel, 35% of it     $ 110.00\nHeavy fuel, 20% of it $  78.40\nThe slate is worth    $ 102.78\nRefining margin       $   4.78\nOn a 2m barrel cargo  $   9,560,000\n",
+          "values": {
+            "bars": [
+              48.6,
+              38.5,
+              15.68,
+              102.78,
+              98
+            ]
+          }
+        },
+        "29-6": {
+          "stdout": "Crude bought          $  98.00\nPetrol, 45% of it     $ 110.00\nDiesel, 35% of it     $ 112.00\nHeavy fuel, 20% of it $  78.40\nThe slate is worth    $ 104.38\nRefining margin       $   6.38\nOn a 2m barrel cargo  $  12,760,000\n",
+          "values": {
+            "bars": [
+              49.5,
+              39.2,
+              15.68,
+              104.38,
+              98
+            ]
+          }
+        },
+        "29-7": {
+          "stdout": "Crude bought          $  98.00\nPetrol, 45% of it     $ 112.00\nDiesel, 35% of it     $ 114.00\nHeavy fuel, 20% of it $  78.40\nThe slate is worth    $ 105.98\nRefining margin       $   7.98\nOn a 2m barrel cargo  $  15,960,000\n",
+          "values": {
+            "bars": [
+              50.4,
+              39.9,
+              15.68,
+              105.98,
+              98
+            ]
+          }
+        },
+        "29-8": {
+          "stdout": "Crude bought          $  98.00\nPetrol, 45% of it     $ 114.00\nDiesel, 35% of it     $ 116.00\nHeavy fuel, 20% of it $  78.40\nThe slate is worth    $ 107.58\nRefining margin       $   9.58\nOn a 2m barrel cargo  $  19,160,000\n",
+          "values": {
+            "bars": [
+              51.3,
+              40.6,
+              15.68,
+              107.58,
+              98
+            ]
+          }
+        },
+        "3-0": {
+          "stdout": "Crude bought          $  46.00\nPetrol, 45% of it     $  46.00\nDiesel, 35% of it     $  48.00\nHeavy fuel, 20% of it $  36.80\nThe slate is worth    $  44.86\nRefining margin       $  -1.14\nOn a 2m barrel cargo  $  -2,280,000\n",
+          "values": {
+            "bars": [
+              20.7,
+              16.8,
+              7.36,
+              44.86,
+              46
+            ]
+          }
+        },
+        "3-1": {
+          "stdout": "Crude bought          $  46.00\nPetrol, 45% of it     $  48.00\nDiesel, 35% of it     $  50.00\nHeavy fuel, 20% of it $  36.80\nThe slate is worth    $  46.46\nRefining margin       $   0.46\nOn a 2m barrel cargo  $     920,000\n",
+          "values": {
+            "bars": [
+              21.6,
+              17.5,
+              7.36,
+              46.46,
+              46
+            ]
+          }
+        },
+        "3-2": {
+          "stdout": "Crude bought          $  46.00\nPetrol, 45% of it     $  50.00\nDiesel, 35% of it     $  52.00\nHeavy fuel, 20% of it $  36.80\nThe slate is worth    $  48.06\nRefining margin       $   2.06\nOn a 2m barrel cargo  $   4,120,000\n",
+          "values": {
+            "bars": [
+              22.5,
+              18.2,
+              7.36,
+              48.06,
+              46
+            ]
+          }
+        },
+        "3-3": {
+          "stdout": "Crude bought          $  46.00\nPetrol, 45% of it     $  52.00\nDiesel, 35% of it     $  54.00\nHeavy fuel, 20% of it $  36.80\nThe slate is worth    $  49.66\nRefining margin       $   3.66\nOn a 2m barrel cargo  $   7,320,000\n",
+          "values": {
+            "bars": [
+              23.4,
+              18.9,
+              7.36,
+              49.66,
+              46
+            ]
+          }
+        },
+        "3-4": {
+          "stdout": "Crude bought          $  46.00\nPetrol, 45% of it     $  54.00\nDiesel, 35% of it     $  56.00\nHeavy fuel, 20% of it $  36.80\nThe slate is worth    $  51.26\nRefining margin       $   5.26\nOn a 2m barrel cargo  $  10,520,000\n",
+          "values": {
+            "bars": [
+              24.3,
+              19.6,
+              7.36,
+              51.26,
+              46
+            ]
+          }
+        },
+        "3-5": {
+          "stdout": "Crude bought          $  46.00\nPetrol, 45% of it     $  56.00\nDiesel, 35% of it     $  58.00\nHeavy fuel, 20% of it $  36.80\nThe slate is worth    $  52.86\nRefining margin       $   6.86\nOn a 2m barrel cargo  $  13,720,000\n",
+          "values": {
+            "bars": [
+              25.2,
+              20.3,
+              7.36,
+              52.86,
+              46
+            ]
+          }
+        },
+        "3-6": {
+          "stdout": "Crude bought          $  46.00\nPetrol, 45% of it     $  58.00\nDiesel, 35% of it     $  60.00\nHeavy fuel, 20% of it $  36.80\nThe slate is worth    $  54.46\nRefining margin       $   8.46\nOn a 2m barrel cargo  $  16,920,000\n",
+          "values": {
+            "bars": [
+              26.1,
+              21,
+              7.36,
+              54.46,
+              46
+            ]
+          }
+        },
+        "3-7": {
+          "stdout": "Crude bought          $  46.00\nPetrol, 45% of it     $  60.00\nDiesel, 35% of it     $  62.00\nHeavy fuel, 20% of it $  36.80\nThe slate is worth    $  56.06\nRefining margin       $  10.06\nOn a 2m barrel cargo  $  20,120,000\n",
+          "values": {
+            "bars": [
+              27,
+              21.7,
+              7.36,
+              56.06,
+              46
+            ]
+          }
+        },
+        "3-8": {
+          "stdout": "Crude bought          $  46.00\nPetrol, 45% of it     $  62.00\nDiesel, 35% of it     $  64.00\nHeavy fuel, 20% of it $  36.80\nThe slate is worth    $  57.66\nRefining margin       $  11.66\nOn a 2m barrel cargo  $  23,320,000\n",
+          "values": {
+            "bars": [
+              27.9,
+              22.4,
+              7.36,
+              57.66,
+              46
+            ]
+          }
+        },
+        "30-0": {
+          "stdout": "Crude bought          $ 100.00\nPetrol, 45% of it     $ 100.00\nDiesel, 35% of it     $ 102.00\nHeavy fuel, 20% of it $  80.00\nThe slate is worth    $  96.70\nRefining margin       $  -3.30\nOn a 2m barrel cargo  $  -6,600,000\n",
+          "values": {
+            "bars": [
+              45,
+              35.7,
+              16,
+              96.7,
+              100
+            ]
+          }
+        },
+        "30-1": {
+          "stdout": "Crude bought          $ 100.00\nPetrol, 45% of it     $ 102.00\nDiesel, 35% of it     $ 104.00\nHeavy fuel, 20% of it $  80.00\nThe slate is worth    $  98.30\nRefining margin       $  -1.70\nOn a 2m barrel cargo  $  -3,400,000\n",
+          "values": {
+            "bars": [
+              45.9,
+              36.4,
+              16,
+              98.3,
+              100
+            ]
+          }
+        },
+        "30-2": {
+          "stdout": "Crude bought          $ 100.00\nPetrol, 45% of it     $ 104.00\nDiesel, 35% of it     $ 106.00\nHeavy fuel, 20% of it $  80.00\nThe slate is worth    $  99.90\nRefining margin       $  -0.10\nOn a 2m barrel cargo  $    -200,000\n",
+          "values": {
+            "bars": [
+              46.8,
+              37.1,
+              16,
+              99.9,
+              100
+            ]
+          }
+        },
+        "30-3": {
+          "stdout": "Crude bought          $ 100.00\nPetrol, 45% of it     $ 106.00\nDiesel, 35% of it     $ 108.00\nHeavy fuel, 20% of it $  80.00\nThe slate is worth    $ 101.50\nRefining margin       $   1.50\nOn a 2m barrel cargo  $   3,000,000\n",
+          "values": {
+            "bars": [
+              47.7,
+              37.8,
+              16,
+              101.5,
+              100
+            ]
+          }
+        },
+        "30-4": {
+          "stdout": "Crude bought          $ 100.00\nPetrol, 45% of it     $ 108.00\nDiesel, 35% of it     $ 110.00\nHeavy fuel, 20% of it $  80.00\nThe slate is worth    $ 103.10\nRefining margin       $   3.10\nOn a 2m barrel cargo  $   6,200,000\n",
+          "values": {
+            "bars": [
+              48.6,
+              38.5,
+              16,
+              103.1,
+              100
+            ]
+          }
+        },
+        "30-5": {
+          "stdout": "Crude bought          $ 100.00\nPetrol, 45% of it     $ 110.00\nDiesel, 35% of it     $ 112.00\nHeavy fuel, 20% of it $  80.00\nThe slate is worth    $ 104.70\nRefining margin       $   4.70\nOn a 2m barrel cargo  $   9,400,000\n",
+          "values": {
+            "bars": [
+              49.5,
+              39.2,
+              16,
+              104.7,
+              100
+            ]
+          }
+        },
+        "30-6": {
+          "stdout": "Crude bought          $ 100.00\nPetrol, 45% of it     $ 112.00\nDiesel, 35% of it     $ 114.00\nHeavy fuel, 20% of it $  80.00\nThe slate is worth    $ 106.30\nRefining margin       $   6.30\nOn a 2m barrel cargo  $  12,600,000\n",
+          "values": {
+            "bars": [
+              50.4,
+              39.9,
+              16,
+              106.3,
+              100
+            ]
+          }
+        },
+        "30-7": {
+          "stdout": "Crude bought          $ 100.00\nPetrol, 45% of it     $ 114.00\nDiesel, 35% of it     $ 116.00\nHeavy fuel, 20% of it $  80.00\nThe slate is worth    $ 107.90\nRefining margin       $   7.90\nOn a 2m barrel cargo  $  15,800,000\n",
+          "values": {
+            "bars": [
+              51.3,
+              40.6,
+              16,
+              107.9,
+              100
+            ]
+          }
+        },
+        "30-8": {
+          "stdout": "Crude bought          $ 100.00\nPetrol, 45% of it     $ 116.00\nDiesel, 35% of it     $ 118.00\nHeavy fuel, 20% of it $  80.00\nThe slate is worth    $ 109.50\nRefining margin       $   9.50\nOn a 2m barrel cargo  $  19,000,000\n",
+          "values": {
+            "bars": [
+              52.2,
+              41.3,
+              16,
+              109.5,
+              100
+            ]
+          }
+        },
+        "31-0": {
+          "stdout": "Crude bought          $ 102.00\nPetrol, 45% of it     $ 102.00\nDiesel, 35% of it     $ 104.00\nHeavy fuel, 20% of it $  81.60\nThe slate is worth    $  98.62\nRefining margin       $  -3.38\nOn a 2m barrel cargo  $  -6,760,000\n",
+          "values": {
+            "bars": [
+              45.9,
+              36.4,
+              16.32,
+              98.62,
+              102
+            ]
+          }
+        },
+        "31-1": {
+          "stdout": "Crude bought          $ 102.00\nPetrol, 45% of it     $ 104.00\nDiesel, 35% of it     $ 106.00\nHeavy fuel, 20% of it $  81.60\nThe slate is worth    $ 100.22\nRefining margin       $  -1.78\nOn a 2m barrel cargo  $  -3,560,000\n",
+          "values": {
+            "bars": [
+              46.8,
+              37.1,
+              16.32,
+              100.22,
+              102
+            ]
+          }
+        },
+        "31-2": {
+          "stdout": "Crude bought          $ 102.00\nPetrol, 45% of it     $ 106.00\nDiesel, 35% of it     $ 108.00\nHeavy fuel, 20% of it $  81.60\nThe slate is worth    $ 101.82\nRefining margin       $  -0.18\nOn a 2m barrel cargo  $    -360,000\n",
+          "values": {
+            "bars": [
+              47.7,
+              37.8,
+              16.32,
+              101.82,
+              102
+            ]
+          }
+        },
+        "31-3": {
+          "stdout": "Crude bought          $ 102.00\nPetrol, 45% of it     $ 108.00\nDiesel, 35% of it     $ 110.00\nHeavy fuel, 20% of it $  81.60\nThe slate is worth    $ 103.42\nRefining margin       $   1.42\nOn a 2m barrel cargo  $   2,840,000\n",
+          "values": {
+            "bars": [
+              48.6,
+              38.5,
+              16.32,
+              103.42,
+              102
+            ]
+          }
+        },
+        "31-4": {
+          "stdout": "Crude bought          $ 102.00\nPetrol, 45% of it     $ 110.00\nDiesel, 35% of it     $ 112.00\nHeavy fuel, 20% of it $  81.60\nThe slate is worth    $ 105.02\nRefining margin       $   3.02\nOn a 2m barrel cargo  $   6,040,000\n",
+          "values": {
+            "bars": [
+              49.5,
+              39.2,
+              16.32,
+              105.02,
+              102
+            ]
+          }
+        },
+        "31-5": {
+          "stdout": "Crude bought          $ 102.00\nPetrol, 45% of it     $ 112.00\nDiesel, 35% of it     $ 114.00\nHeavy fuel, 20% of it $  81.60\nThe slate is worth    $ 106.62\nRefining margin       $   4.62\nOn a 2m barrel cargo  $   9,240,000\n",
+          "values": {
+            "bars": [
+              50.4,
+              39.9,
+              16.32,
+              106.62,
+              102
+            ]
+          }
+        },
+        "31-6": {
+          "stdout": "Crude bought          $ 102.00\nPetrol, 45% of it     $ 114.00\nDiesel, 35% of it     $ 116.00\nHeavy fuel, 20% of it $  81.60\nThe slate is worth    $ 108.22\nRefining margin       $   6.22\nOn a 2m barrel cargo  $  12,440,000\n",
+          "values": {
+            "bars": [
+              51.3,
+              40.6,
+              16.32,
+              108.22,
+              102
+            ]
+          }
+        },
+        "31-7": {
+          "stdout": "Crude bought          $ 102.00\nPetrol, 45% of it     $ 116.00\nDiesel, 35% of it     $ 118.00\nHeavy fuel, 20% of it $  81.60\nThe slate is worth    $ 109.82\nRefining margin       $   7.82\nOn a 2m barrel cargo  $  15,640,000\n",
+          "values": {
+            "bars": [
+              52.2,
+              41.3,
+              16.32,
+              109.82,
+              102
+            ]
+          }
+        },
+        "31-8": {
+          "stdout": "Crude bought          $ 102.00\nPetrol, 45% of it     $ 118.00\nDiesel, 35% of it     $ 120.00\nHeavy fuel, 20% of it $  81.60\nThe slate is worth    $ 111.42\nRefining margin       $   9.42\nOn a 2m barrel cargo  $  18,840,000\n",
+          "values": {
+            "bars": [
+              53.1,
+              42,
+              16.32,
+              111.42,
+              102
+            ]
+          }
+        },
+        "32-0": {
+          "stdout": "Crude bought          $ 104.00\nPetrol, 45% of it     $ 104.00\nDiesel, 35% of it     $ 106.00\nHeavy fuel, 20% of it $  83.20\nThe slate is worth    $ 100.54\nRefining margin       $  -3.46\nOn a 2m barrel cargo  $  -6,920,000\n",
+          "values": {
+            "bars": [
+              46.8,
+              37.1,
+              16.64,
+              100.54,
+              104
+            ]
+          }
+        },
+        "32-1": {
+          "stdout": "Crude bought          $ 104.00\nPetrol, 45% of it     $ 106.00\nDiesel, 35% of it     $ 108.00\nHeavy fuel, 20% of it $  83.20\nThe slate is worth    $ 102.14\nRefining margin       $  -1.86\nOn a 2m barrel cargo  $  -3,720,000\n",
+          "values": {
+            "bars": [
+              47.7,
+              37.8,
+              16.64,
+              102.14,
+              104
+            ]
+          }
+        },
+        "32-2": {
+          "stdout": "Crude bought          $ 104.00\nPetrol, 45% of it     $ 108.00\nDiesel, 35% of it     $ 110.00\nHeavy fuel, 20% of it $  83.20\nThe slate is worth    $ 103.74\nRefining margin       $  -0.26\nOn a 2m barrel cargo  $    -520,000\n",
+          "values": {
+            "bars": [
+              48.6,
+              38.5,
+              16.64,
+              103.74,
+              104
+            ]
+          }
+        },
+        "32-3": {
+          "stdout": "Crude bought          $ 104.00\nPetrol, 45% of it     $ 110.00\nDiesel, 35% of it     $ 112.00\nHeavy fuel, 20% of it $  83.20\nThe slate is worth    $ 105.34\nRefining margin       $   1.34\nOn a 2m barrel cargo  $   2,680,000\n",
+          "values": {
+            "bars": [
+              49.5,
+              39.2,
+              16.64,
+              105.34,
+              104
+            ]
+          }
+        },
+        "32-4": {
+          "stdout": "Crude bought          $ 104.00\nPetrol, 45% of it     $ 112.00\nDiesel, 35% of it     $ 114.00\nHeavy fuel, 20% of it $  83.20\nThe slate is worth    $ 106.94\nRefining margin       $   2.94\nOn a 2m barrel cargo  $   5,880,000\n",
+          "values": {
+            "bars": [
+              50.4,
+              39.9,
+              16.64,
+              106.94,
+              104
+            ]
+          }
+        },
+        "32-5": {
+          "stdout": "Crude bought          $ 104.00\nPetrol, 45% of it     $ 114.00\nDiesel, 35% of it     $ 116.00\nHeavy fuel, 20% of it $  83.20\nThe slate is worth    $ 108.54\nRefining margin       $   4.54\nOn a 2m barrel cargo  $   9,080,000\n",
+          "values": {
+            "bars": [
+              51.3,
+              40.6,
+              16.64,
+              108.54,
+              104
+            ]
+          }
+        },
+        "32-6": {
+          "stdout": "Crude bought          $ 104.00\nPetrol, 45% of it     $ 116.00\nDiesel, 35% of it     $ 118.00\nHeavy fuel, 20% of it $  83.20\nThe slate is worth    $ 110.14\nRefining margin       $   6.14\nOn a 2m barrel cargo  $  12,280,000\n",
+          "values": {
+            "bars": [
+              52.2,
+              41.3,
+              16.64,
+              110.14,
+              104
+            ]
+          }
+        },
+        "32-7": {
+          "stdout": "Crude bought          $ 104.00\nPetrol, 45% of it     $ 118.00\nDiesel, 35% of it     $ 120.00\nHeavy fuel, 20% of it $  83.20\nThe slate is worth    $ 111.74\nRefining margin       $   7.74\nOn a 2m barrel cargo  $  15,480,000\n",
+          "values": {
+            "bars": [
+              53.1,
+              42,
+              16.64,
+              111.74,
+              104
+            ]
+          }
+        },
+        "32-8": {
+          "stdout": "Crude bought          $ 104.00\nPetrol, 45% of it     $ 120.00\nDiesel, 35% of it     $ 122.00\nHeavy fuel, 20% of it $  83.20\nThe slate is worth    $ 113.34\nRefining margin       $   9.34\nOn a 2m barrel cargo  $  18,680,000\n",
+          "values": {
+            "bars": [
+              54,
+              42.7,
+              16.64,
+              113.34,
+              104
+            ]
+          }
+        },
+        "33-0": {
+          "stdout": "Crude bought          $ 106.00\nPetrol, 45% of it     $ 106.00\nDiesel, 35% of it     $ 108.00\nHeavy fuel, 20% of it $  84.80\nThe slate is worth    $ 102.46\nRefining margin       $  -3.54\nOn a 2m barrel cargo  $  -7,080,000\n",
+          "values": {
+            "bars": [
+              47.7,
+              37.8,
+              16.96,
+              102.46,
+              106
+            ]
+          }
+        },
+        "33-1": {
+          "stdout": "Crude bought          $ 106.00\nPetrol, 45% of it     $ 108.00\nDiesel, 35% of it     $ 110.00\nHeavy fuel, 20% of it $  84.80\nThe slate is worth    $ 104.06\nRefining margin       $  -1.94\nOn a 2m barrel cargo  $  -3,880,000\n",
+          "values": {
+            "bars": [
+              48.6,
+              38.5,
+              16.96,
+              104.06,
+              106
+            ]
+          }
+        },
+        "33-2": {
+          "stdout": "Crude bought          $ 106.00\nPetrol, 45% of it     $ 110.00\nDiesel, 35% of it     $ 112.00\nHeavy fuel, 20% of it $  84.80\nThe slate is worth    $ 105.66\nRefining margin       $  -0.34\nOn a 2m barrel cargo  $    -680,000\n",
+          "values": {
+            "bars": [
+              49.5,
+              39.2,
+              16.96,
+              105.66,
+              106
+            ]
+          }
+        },
+        "33-3": {
+          "stdout": "Crude bought          $ 106.00\nPetrol, 45% of it     $ 112.00\nDiesel, 35% of it     $ 114.00\nHeavy fuel, 20% of it $  84.80\nThe slate is worth    $ 107.26\nRefining margin       $   1.26\nOn a 2m barrel cargo  $   2,520,000\n",
+          "values": {
+            "bars": [
+              50.4,
+              39.9,
+              16.96,
+              107.26,
+              106
+            ]
+          }
+        },
+        "33-4": {
+          "stdout": "Crude bought          $ 106.00\nPetrol, 45% of it     $ 114.00\nDiesel, 35% of it     $ 116.00\nHeavy fuel, 20% of it $  84.80\nThe slate is worth    $ 108.86\nRefining margin       $   2.86\nOn a 2m barrel cargo  $   5,720,000\n",
+          "values": {
+            "bars": [
+              51.3,
+              40.6,
+              16.96,
+              108.86,
+              106
+            ]
+          }
+        },
+        "33-5": {
+          "stdout": "Crude bought          $ 106.00\nPetrol, 45% of it     $ 116.00\nDiesel, 35% of it     $ 118.00\nHeavy fuel, 20% of it $  84.80\nThe slate is worth    $ 110.46\nRefining margin       $   4.46\nOn a 2m barrel cargo  $   8,920,000\n",
+          "values": {
+            "bars": [
+              52.2,
+              41.3,
+              16.96,
+              110.46,
+              106
+            ]
+          }
+        },
+        "33-6": {
+          "stdout": "Crude bought          $ 106.00\nPetrol, 45% of it     $ 118.00\nDiesel, 35% of it     $ 120.00\nHeavy fuel, 20% of it $  84.80\nThe slate is worth    $ 112.06\nRefining margin       $   6.06\nOn a 2m barrel cargo  $  12,120,000\n",
+          "values": {
+            "bars": [
+              53.1,
+              42,
+              16.96,
+              112.06,
+              106
+            ]
+          }
+        },
+        "33-7": {
+          "stdout": "Crude bought          $ 106.00\nPetrol, 45% of it     $ 120.00\nDiesel, 35% of it     $ 122.00\nHeavy fuel, 20% of it $  84.80\nThe slate is worth    $ 113.66\nRefining margin       $   7.66\nOn a 2m barrel cargo  $  15,320,000\n",
+          "values": {
+            "bars": [
+              54,
+              42.7,
+              16.96,
+              113.66,
+              106
+            ]
+          }
+        },
+        "33-8": {
+          "stdout": "Crude bought          $ 106.00\nPetrol, 45% of it     $ 122.00\nDiesel, 35% of it     $ 124.00\nHeavy fuel, 20% of it $  84.80\nThe slate is worth    $ 115.26\nRefining margin       $   9.26\nOn a 2m barrel cargo  $  18,520,000\n",
+          "values": {
+            "bars": [
+              54.9,
+              43.4,
+              16.96,
+              115.26,
+              106
+            ]
+          }
+        },
+        "34-0": {
+          "stdout": "Crude bought          $ 108.00\nPetrol, 45% of it     $ 108.00\nDiesel, 35% of it     $ 110.00\nHeavy fuel, 20% of it $  86.40\nThe slate is worth    $ 104.38\nRefining margin       $  -3.62\nOn a 2m barrel cargo  $  -7,240,000\n",
+          "values": {
+            "bars": [
+              48.6,
+              38.5,
+              17.28,
+              104.38,
+              108
+            ]
+          }
+        },
+        "34-1": {
+          "stdout": "Crude bought          $ 108.00\nPetrol, 45% of it     $ 110.00\nDiesel, 35% of it     $ 112.00\nHeavy fuel, 20% of it $  86.40\nThe slate is worth    $ 105.98\nRefining margin       $  -2.02\nOn a 2m barrel cargo  $  -4,040,000\n",
+          "values": {
+            "bars": [
+              49.5,
+              39.2,
+              17.28,
+              105.98,
+              108
+            ]
+          }
+        },
+        "34-2": {
+          "stdout": "Crude bought          $ 108.00\nPetrol, 45% of it     $ 112.00\nDiesel, 35% of it     $ 114.00\nHeavy fuel, 20% of it $  86.40\nThe slate is worth    $ 107.58\nRefining margin       $  -0.42\nOn a 2m barrel cargo  $    -840,000\n",
+          "values": {
+            "bars": [
+              50.4,
+              39.9,
+              17.28,
+              107.58,
+              108
+            ]
+          }
+        },
+        "34-3": {
+          "stdout": "Crude bought          $ 108.00\nPetrol, 45% of it     $ 114.00\nDiesel, 35% of it     $ 116.00\nHeavy fuel, 20% of it $  86.40\nThe slate is worth    $ 109.18\nRefining margin       $   1.18\nOn a 2m barrel cargo  $   2,360,000\n",
+          "values": {
+            "bars": [
+              51.3,
+              40.6,
+              17.28,
+              109.18,
+              108
+            ]
+          }
+        },
+        "34-4": {
+          "stdout": "Crude bought          $ 108.00\nPetrol, 45% of it     $ 116.00\nDiesel, 35% of it     $ 118.00\nHeavy fuel, 20% of it $  86.40\nThe slate is worth    $ 110.78\nRefining margin       $   2.78\nOn a 2m barrel cargo  $   5,560,000\n",
+          "values": {
+            "bars": [
+              52.2,
+              41.3,
+              17.28,
+              110.78,
+              108
+            ]
+          }
+        },
+        "34-5": {
+          "stdout": "Crude bought          $ 108.00\nPetrol, 45% of it     $ 118.00\nDiesel, 35% of it     $ 120.00\nHeavy fuel, 20% of it $  86.40\nThe slate is worth    $ 112.38\nRefining margin       $   4.38\nOn a 2m barrel cargo  $   8,760,000\n",
+          "values": {
+            "bars": [
+              53.1,
+              42,
+              17.28,
+              112.38,
+              108
+            ]
+          }
+        },
+        "34-6": {
+          "stdout": "Crude bought          $ 108.00\nPetrol, 45% of it     $ 120.00\nDiesel, 35% of it     $ 122.00\nHeavy fuel, 20% of it $  86.40\nThe slate is worth    $ 113.98\nRefining margin       $   5.98\nOn a 2m barrel cargo  $  11,960,000\n",
+          "values": {
+            "bars": [
+              54,
+              42.7,
+              17.28,
+              113.98,
+              108
+            ]
+          }
+        },
+        "34-7": {
+          "stdout": "Crude bought          $ 108.00\nPetrol, 45% of it     $ 122.00\nDiesel, 35% of it     $ 124.00\nHeavy fuel, 20% of it $  86.40\nThe slate is worth    $ 115.58\nRefining margin       $   7.58\nOn a 2m barrel cargo  $  15,160,000\n",
+          "values": {
+            "bars": [
+              54.9,
+              43.4,
+              17.28,
+              115.58,
+              108
+            ]
+          }
+        },
+        "34-8": {
+          "stdout": "Crude bought          $ 108.00\nPetrol, 45% of it     $ 124.00\nDiesel, 35% of it     $ 126.00\nHeavy fuel, 20% of it $  86.40\nThe slate is worth    $ 117.18\nRefining margin       $   9.18\nOn a 2m barrel cargo  $  18,360,000\n",
+          "values": {
+            "bars": [
+              55.8,
+              44.1,
+              17.28,
+              117.18,
+              108
+            ]
+          }
+        },
+        "35-0": {
+          "stdout": "Crude bought          $ 110.00\nPetrol, 45% of it     $ 110.00\nDiesel, 35% of it     $ 112.00\nHeavy fuel, 20% of it $  88.00\nThe slate is worth    $ 106.30\nRefining margin       $  -3.70\nOn a 2m barrel cargo  $  -7,400,000\n",
+          "values": {
+            "bars": [
+              49.5,
+              39.2,
+              17.6,
+              106.3,
+              110
+            ]
+          }
+        },
+        "35-1": {
+          "stdout": "Crude bought          $ 110.00\nPetrol, 45% of it     $ 112.00\nDiesel, 35% of it     $ 114.00\nHeavy fuel, 20% of it $  88.00\nThe slate is worth    $ 107.90\nRefining margin       $  -2.10\nOn a 2m barrel cargo  $  -4,200,000\n",
+          "values": {
+            "bars": [
+              50.4,
+              39.9,
+              17.6,
+              107.9,
+              110
+            ]
+          }
+        },
+        "35-2": {
+          "stdout": "Crude bought          $ 110.00\nPetrol, 45% of it     $ 114.00\nDiesel, 35% of it     $ 116.00\nHeavy fuel, 20% of it $  88.00\nThe slate is worth    $ 109.50\nRefining margin       $  -0.50\nOn a 2m barrel cargo  $  -1,000,000\n",
+          "values": {
+            "bars": [
+              51.3,
+              40.6,
+              17.6,
+              109.5,
+              110
+            ]
+          }
+        },
+        "35-3": {
+          "stdout": "Crude bought          $ 110.00\nPetrol, 45% of it     $ 116.00\nDiesel, 35% of it     $ 118.00\nHeavy fuel, 20% of it $  88.00\nThe slate is worth    $ 111.10\nRefining margin       $   1.10\nOn a 2m barrel cargo  $   2,200,000\n",
+          "values": {
+            "bars": [
+              52.2,
+              41.3,
+              17.6,
+              111.1,
+              110
+            ]
+          }
+        },
+        "35-4": {
+          "stdout": "Crude bought          $ 110.00\nPetrol, 45% of it     $ 118.00\nDiesel, 35% of it     $ 120.00\nHeavy fuel, 20% of it $  88.00\nThe slate is worth    $ 112.70\nRefining margin       $   2.70\nOn a 2m barrel cargo  $   5,400,000\n",
+          "values": {
+            "bars": [
+              53.1,
+              42,
+              17.6,
+              112.7,
+              110
+            ]
+          }
+        },
+        "35-5": {
+          "stdout": "Crude bought          $ 110.00\nPetrol, 45% of it     $ 120.00\nDiesel, 35% of it     $ 122.00\nHeavy fuel, 20% of it $  88.00\nThe slate is worth    $ 114.30\nRefining margin       $   4.30\nOn a 2m barrel cargo  $   8,600,000\n",
+          "values": {
+            "bars": [
+              54,
+              42.7,
+              17.6,
+              114.3,
+              110
+            ]
+          }
+        },
+        "35-6": {
+          "stdout": "Crude bought          $ 110.00\nPetrol, 45% of it     $ 122.00\nDiesel, 35% of it     $ 124.00\nHeavy fuel, 20% of it $  88.00\nThe slate is worth    $ 115.90\nRefining margin       $   5.90\nOn a 2m barrel cargo  $  11,800,000\n",
+          "values": {
+            "bars": [
+              54.9,
+              43.4,
+              17.6,
+              115.9,
+              110
+            ]
+          }
+        },
+        "35-7": {
+          "stdout": "Crude bought          $ 110.00\nPetrol, 45% of it     $ 124.00\nDiesel, 35% of it     $ 126.00\nHeavy fuel, 20% of it $  88.00\nThe slate is worth    $ 117.50\nRefining margin       $   7.50\nOn a 2m barrel cargo  $  15,000,000\n",
+          "values": {
+            "bars": [
+              55.8,
+              44.1,
+              17.6,
+              117.5,
+              110
+            ]
+          }
+        },
+        "35-8": {
+          "stdout": "Crude bought          $ 110.00\nPetrol, 45% of it     $ 126.00\nDiesel, 35% of it     $ 128.00\nHeavy fuel, 20% of it $  88.00\nThe slate is worth    $ 119.10\nRefining margin       $   9.10\nOn a 2m barrel cargo  $  18,200,000\n",
+          "values": {
+            "bars": [
+              56.7,
+              44.8,
+              17.6,
+              119.1,
+              110
+            ]
+          }
+        },
+        "36-0": {
+          "stdout": "Crude bought          $ 112.00\nPetrol, 45% of it     $ 112.00\nDiesel, 35% of it     $ 114.00\nHeavy fuel, 20% of it $  89.60\nThe slate is worth    $ 108.22\nRefining margin       $  -3.78\nOn a 2m barrel cargo  $  -7,560,000\n",
+          "values": {
+            "bars": [
+              50.4,
+              39.9,
+              17.92,
+              108.22,
+              112
+            ]
+          }
+        },
+        "36-1": {
+          "stdout": "Crude bought          $ 112.00\nPetrol, 45% of it     $ 114.00\nDiesel, 35% of it     $ 116.00\nHeavy fuel, 20% of it $  89.60\nThe slate is worth    $ 109.82\nRefining margin       $  -2.18\nOn a 2m barrel cargo  $  -4,360,000\n",
+          "values": {
+            "bars": [
+              51.3,
+              40.6,
+              17.92,
+              109.82,
+              112
+            ]
+          }
+        },
+        "36-2": {
+          "stdout": "Crude bought          $ 112.00\nPetrol, 45% of it     $ 116.00\nDiesel, 35% of it     $ 118.00\nHeavy fuel, 20% of it $  89.60\nThe slate is worth    $ 111.42\nRefining margin       $  -0.58\nOn a 2m barrel cargo  $  -1,160,000\n",
+          "values": {
+            "bars": [
+              52.2,
+              41.3,
+              17.92,
+              111.42,
+              112
+            ]
+          }
+        },
+        "36-3": {
+          "stdout": "Crude bought          $ 112.00\nPetrol, 45% of it     $ 118.00\nDiesel, 35% of it     $ 120.00\nHeavy fuel, 20% of it $  89.60\nThe slate is worth    $ 113.02\nRefining margin       $   1.02\nOn a 2m barrel cargo  $   2,040,000\n",
+          "values": {
+            "bars": [
+              53.1,
+              42,
+              17.92,
+              113.02,
+              112
+            ]
+          }
+        },
+        "36-4": {
+          "stdout": "Crude bought          $ 112.00\nPetrol, 45% of it     $ 120.00\nDiesel, 35% of it     $ 122.00\nHeavy fuel, 20% of it $  89.60\nThe slate is worth    $ 114.62\nRefining margin       $   2.62\nOn a 2m barrel cargo  $   5,240,000\n",
+          "values": {
+            "bars": [
+              54,
+              42.7,
+              17.92,
+              114.62,
+              112
+            ]
+          }
+        },
+        "36-5": {
+          "stdout": "Crude bought          $ 112.00\nPetrol, 45% of it     $ 122.00\nDiesel, 35% of it     $ 124.00\nHeavy fuel, 20% of it $  89.60\nThe slate is worth    $ 116.22\nRefining margin       $   4.22\nOn a 2m barrel cargo  $   8,440,000\n",
+          "values": {
+            "bars": [
+              54.9,
+              43.4,
+              17.92,
+              116.22,
+              112
+            ]
+          }
+        },
+        "36-6": {
+          "stdout": "Crude bought          $ 112.00\nPetrol, 45% of it     $ 124.00\nDiesel, 35% of it     $ 126.00\nHeavy fuel, 20% of it $  89.60\nThe slate is worth    $ 117.82\nRefining margin       $   5.82\nOn a 2m barrel cargo  $  11,640,000\n",
+          "values": {
+            "bars": [
+              55.8,
+              44.1,
+              17.92,
+              117.82,
+              112
+            ]
+          }
+        },
+        "36-7": {
+          "stdout": "Crude bought          $ 112.00\nPetrol, 45% of it     $ 126.00\nDiesel, 35% of it     $ 128.00\nHeavy fuel, 20% of it $  89.60\nThe slate is worth    $ 119.42\nRefining margin       $   7.42\nOn a 2m barrel cargo  $  14,840,000\n",
+          "values": {
+            "bars": [
+              56.7,
+              44.8,
+              17.92,
+              119.42,
+              112
+            ]
+          }
+        },
+        "36-8": {
+          "stdout": "Crude bought          $ 112.00\nPetrol, 45% of it     $ 128.00\nDiesel, 35% of it     $ 130.00\nHeavy fuel, 20% of it $  89.60\nThe slate is worth    $ 121.02\nRefining margin       $   9.02\nOn a 2m barrel cargo  $  18,040,000\n",
+          "values": {
+            "bars": [
+              57.6,
+              45.5,
+              17.92,
+              121.02,
+              112
+            ]
+          }
+        },
+        "37-0": {
+          "stdout": "Crude bought          $ 114.00\nPetrol, 45% of it     $ 114.00\nDiesel, 35% of it     $ 116.00\nHeavy fuel, 20% of it $  91.20\nThe slate is worth    $ 110.14\nRefining margin       $  -3.86\nOn a 2m barrel cargo  $  -7,720,000\n",
+          "values": {
+            "bars": [
+              51.3,
+              40.6,
+              18.24,
+              110.14,
+              114
+            ]
+          }
+        },
+        "37-1": {
+          "stdout": "Crude bought          $ 114.00\nPetrol, 45% of it     $ 116.00\nDiesel, 35% of it     $ 118.00\nHeavy fuel, 20% of it $  91.20\nThe slate is worth    $ 111.74\nRefining margin       $  -2.26\nOn a 2m barrel cargo  $  -4,520,000\n",
+          "values": {
+            "bars": [
+              52.2,
+              41.3,
+              18.24,
+              111.74,
+              114
+            ]
+          }
+        },
+        "37-2": {
+          "stdout": "Crude bought          $ 114.00\nPetrol, 45% of it     $ 118.00\nDiesel, 35% of it     $ 120.00\nHeavy fuel, 20% of it $  91.20\nThe slate is worth    $ 113.34\nRefining margin       $  -0.66\nOn a 2m barrel cargo  $  -1,320,000\n",
+          "values": {
+            "bars": [
+              53.1,
+              42,
+              18.24,
+              113.34,
+              114
+            ]
+          }
+        },
+        "37-3": {
+          "stdout": "Crude bought          $ 114.00\nPetrol, 45% of it     $ 120.00\nDiesel, 35% of it     $ 122.00\nHeavy fuel, 20% of it $  91.20\nThe slate is worth    $ 114.94\nRefining margin       $   0.94\nOn a 2m barrel cargo  $   1,880,000\n",
+          "values": {
+            "bars": [
+              54,
+              42.7,
+              18.24,
+              114.94,
+              114
+            ]
+          }
+        },
+        "37-4": {
+          "stdout": "Crude bought          $ 114.00\nPetrol, 45% of it     $ 122.00\nDiesel, 35% of it     $ 124.00\nHeavy fuel, 20% of it $  91.20\nThe slate is worth    $ 116.54\nRefining margin       $   2.54\nOn a 2m barrel cargo  $   5,080,000\n",
+          "values": {
+            "bars": [
+              54.9,
+              43.4,
+              18.24,
+              116.54,
+              114
+            ]
+          }
+        },
+        "37-5": {
+          "stdout": "Crude bought          $ 114.00\nPetrol, 45% of it     $ 124.00\nDiesel, 35% of it     $ 126.00\nHeavy fuel, 20% of it $  91.20\nThe slate is worth    $ 118.14\nRefining margin       $   4.14\nOn a 2m barrel cargo  $   8,280,000\n",
+          "values": {
+            "bars": [
+              55.8,
+              44.1,
+              18.24,
+              118.14,
+              114
+            ]
+          }
+        },
+        "37-6": {
+          "stdout": "Crude bought          $ 114.00\nPetrol, 45% of it     $ 126.00\nDiesel, 35% of it     $ 128.00\nHeavy fuel, 20% of it $  91.20\nThe slate is worth    $ 119.74\nRefining margin       $   5.74\nOn a 2m barrel cargo  $  11,480,000\n",
+          "values": {
+            "bars": [
+              56.7,
+              44.8,
+              18.24,
+              119.74,
+              114
+            ]
+          }
+        },
+        "37-7": {
+          "stdout": "Crude bought          $ 114.00\nPetrol, 45% of it     $ 128.00\nDiesel, 35% of it     $ 130.00\nHeavy fuel, 20% of it $  91.20\nThe slate is worth    $ 121.34\nRefining margin       $   7.34\nOn a 2m barrel cargo  $  14,680,000\n",
+          "values": {
+            "bars": [
+              57.6,
+              45.5,
+              18.24,
+              121.34,
+              114
+            ]
+          }
+        },
+        "37-8": {
+          "stdout": "Crude bought          $ 114.00\nPetrol, 45% of it     $ 130.00\nDiesel, 35% of it     $ 132.00\nHeavy fuel, 20% of it $  91.20\nThe slate is worth    $ 122.94\nRefining margin       $   8.94\nOn a 2m barrel cargo  $  17,880,000\n",
+          "values": {
+            "bars": [
+              58.5,
+              46.2,
+              18.24,
+              122.94,
+              114
+            ]
+          }
+        },
+        "38-0": {
+          "stdout": "Crude bought          $ 116.00\nPetrol, 45% of it     $ 116.00\nDiesel, 35% of it     $ 118.00\nHeavy fuel, 20% of it $  92.80\nThe slate is worth    $ 112.06\nRefining margin       $  -3.94\nOn a 2m barrel cargo  $  -7,880,000\n",
+          "values": {
+            "bars": [
+              52.2,
+              41.3,
+              18.56,
+              112.06,
+              116
+            ]
+          }
+        },
+        "38-1": {
+          "stdout": "Crude bought          $ 116.00\nPetrol, 45% of it     $ 118.00\nDiesel, 35% of it     $ 120.00\nHeavy fuel, 20% of it $  92.80\nThe slate is worth    $ 113.66\nRefining margin       $  -2.34\nOn a 2m barrel cargo  $  -4,680,000\n",
+          "values": {
+            "bars": [
+              53.1,
+              42,
+              18.56,
+              113.66,
+              116
+            ]
+          }
+        },
+        "38-2": {
+          "stdout": "Crude bought          $ 116.00\nPetrol, 45% of it     $ 120.00\nDiesel, 35% of it     $ 122.00\nHeavy fuel, 20% of it $  92.80\nThe slate is worth    $ 115.26\nRefining margin       $  -0.74\nOn a 2m barrel cargo  $  -1,480,000\n",
+          "values": {
+            "bars": [
+              54,
+              42.7,
+              18.56,
+              115.26,
+              116
+            ]
+          }
+        },
+        "38-3": {
+          "stdout": "Crude bought          $ 116.00\nPetrol, 45% of it     $ 122.00\nDiesel, 35% of it     $ 124.00\nHeavy fuel, 20% of it $  92.80\nThe slate is worth    $ 116.86\nRefining margin       $   0.86\nOn a 2m barrel cargo  $   1,720,000\n",
+          "values": {
+            "bars": [
+              54.9,
+              43.4,
+              18.56,
+              116.86,
+              116
+            ]
+          }
+        },
+        "38-4": {
+          "stdout": "Crude bought          $ 116.00\nPetrol, 45% of it     $ 124.00\nDiesel, 35% of it     $ 126.00\nHeavy fuel, 20% of it $  92.80\nThe slate is worth    $ 118.46\nRefining margin       $   2.46\nOn a 2m barrel cargo  $   4,920,000\n",
+          "values": {
+            "bars": [
+              55.8,
+              44.1,
+              18.56,
+              118.46,
+              116
+            ]
+          }
+        },
+        "38-5": {
+          "stdout": "Crude bought          $ 116.00\nPetrol, 45% of it     $ 126.00\nDiesel, 35% of it     $ 128.00\nHeavy fuel, 20% of it $  92.80\nThe slate is worth    $ 120.06\nRefining margin       $   4.06\nOn a 2m barrel cargo  $   8,120,000\n",
+          "values": {
+            "bars": [
+              56.7,
+              44.8,
+              18.56,
+              120.06,
+              116
+            ]
+          }
+        },
+        "38-6": {
+          "stdout": "Crude bought          $ 116.00\nPetrol, 45% of it     $ 128.00\nDiesel, 35% of it     $ 130.00\nHeavy fuel, 20% of it $  92.80\nThe slate is worth    $ 121.66\nRefining margin       $   5.66\nOn a 2m barrel cargo  $  11,320,000\n",
+          "values": {
+            "bars": [
+              57.6,
+              45.5,
+              18.56,
+              121.66,
+              116
+            ]
+          }
+        },
+        "38-7": {
+          "stdout": "Crude bought          $ 116.00\nPetrol, 45% of it     $ 130.00\nDiesel, 35% of it     $ 132.00\nHeavy fuel, 20% of it $  92.80\nThe slate is worth    $ 123.26\nRefining margin       $   7.26\nOn a 2m barrel cargo  $  14,520,000\n",
+          "values": {
+            "bars": [
+              58.5,
+              46.2,
+              18.56,
+              123.26,
+              116
+            ]
+          }
+        },
+        "38-8": {
+          "stdout": "Crude bought          $ 116.00\nPetrol, 45% of it     $ 132.00\nDiesel, 35% of it     $ 134.00\nHeavy fuel, 20% of it $  92.80\nThe slate is worth    $ 124.86\nRefining margin       $   8.86\nOn a 2m barrel cargo  $  17,720,000\n",
+          "values": {
+            "bars": [
+              59.4,
+              46.9,
+              18.56,
+              124.86,
+              116
+            ]
+          }
+        },
+        "39-0": {
+          "stdout": "Crude bought          $ 118.00\nPetrol, 45% of it     $ 118.00\nDiesel, 35% of it     $ 120.00\nHeavy fuel, 20% of it $  94.40\nThe slate is worth    $ 113.98\nRefining margin       $  -4.02\nOn a 2m barrel cargo  $  -8,040,000\n",
+          "values": {
+            "bars": [
+              53.1,
+              42,
+              18.88,
+              113.98,
+              118
+            ]
+          }
+        },
+        "39-1": {
+          "stdout": "Crude bought          $ 118.00\nPetrol, 45% of it     $ 120.00\nDiesel, 35% of it     $ 122.00\nHeavy fuel, 20% of it $  94.40\nThe slate is worth    $ 115.58\nRefining margin       $  -2.42\nOn a 2m barrel cargo  $  -4,840,000\n",
+          "values": {
+            "bars": [
+              54,
+              42.7,
+              18.88,
+              115.58,
+              118
+            ]
+          }
+        },
+        "39-2": {
+          "stdout": "Crude bought          $ 118.00\nPetrol, 45% of it     $ 122.00\nDiesel, 35% of it     $ 124.00\nHeavy fuel, 20% of it $  94.40\nThe slate is worth    $ 117.18\nRefining margin       $  -0.82\nOn a 2m barrel cargo  $  -1,640,000\n",
+          "values": {
+            "bars": [
+              54.9,
+              43.4,
+              18.88,
+              117.18,
+              118
+            ]
+          }
+        },
+        "39-3": {
+          "stdout": "Crude bought          $ 118.00\nPetrol, 45% of it     $ 124.00\nDiesel, 35% of it     $ 126.00\nHeavy fuel, 20% of it $  94.40\nThe slate is worth    $ 118.78\nRefining margin       $   0.78\nOn a 2m barrel cargo  $   1,560,000\n",
+          "values": {
+            "bars": [
+              55.8,
+              44.1,
+              18.88,
+              118.78,
+              118
+            ]
+          }
+        },
+        "39-4": {
+          "stdout": "Crude bought          $ 118.00\nPetrol, 45% of it     $ 126.00\nDiesel, 35% of it     $ 128.00\nHeavy fuel, 20% of it $  94.40\nThe slate is worth    $ 120.38\nRefining margin       $   2.38\nOn a 2m barrel cargo  $   4,760,000\n",
+          "values": {
+            "bars": [
+              56.7,
+              44.8,
+              18.88,
+              120.38,
+              118
+            ]
+          }
+        },
+        "39-5": {
+          "stdout": "Crude bought          $ 118.00\nPetrol, 45% of it     $ 128.00\nDiesel, 35% of it     $ 130.00\nHeavy fuel, 20% of it $  94.40\nThe slate is worth    $ 121.98\nRefining margin       $   3.98\nOn a 2m barrel cargo  $   7,960,000\n",
+          "values": {
+            "bars": [
+              57.6,
+              45.5,
+              18.88,
+              121.98,
+              118
+            ]
+          }
+        },
+        "39-6": {
+          "stdout": "Crude bought          $ 118.00\nPetrol, 45% of it     $ 130.00\nDiesel, 35% of it     $ 132.00\nHeavy fuel, 20% of it $  94.40\nThe slate is worth    $ 123.58\nRefining margin       $   5.58\nOn a 2m barrel cargo  $  11,160,000\n",
+          "values": {
+            "bars": [
+              58.5,
+              46.2,
+              18.88,
+              123.58,
+              118
+            ]
+          }
+        },
+        "39-7": {
+          "stdout": "Crude bought          $ 118.00\nPetrol, 45% of it     $ 132.00\nDiesel, 35% of it     $ 134.00\nHeavy fuel, 20% of it $  94.40\nThe slate is worth    $ 125.18\nRefining margin       $   7.18\nOn a 2m barrel cargo  $  14,360,000\n",
+          "values": {
+            "bars": [
+              59.4,
+              46.9,
+              18.88,
+              125.18,
+              118
+            ]
+          }
+        },
+        "39-8": {
+          "stdout": "Crude bought          $ 118.00\nPetrol, 45% of it     $ 134.00\nDiesel, 35% of it     $ 136.00\nHeavy fuel, 20% of it $  94.40\nThe slate is worth    $ 126.78\nRefining margin       $   8.78\nOn a 2m barrel cargo  $  17,560,000\n",
+          "values": {
+            "bars": [
+              60.3,
+              47.6,
+              18.88,
+              126.78,
+              118
+            ]
+          }
+        },
+        "4-0": {
+          "stdout": "Crude bought          $  48.00\nPetrol, 45% of it     $  48.00\nDiesel, 35% of it     $  50.00\nHeavy fuel, 20% of it $  38.40\nThe slate is worth    $  46.78\nRefining margin       $  -1.22\nOn a 2m barrel cargo  $  -2,440,000\n",
+          "values": {
+            "bars": [
+              21.6,
+              17.5,
+              7.68,
+              46.78,
+              48
+            ]
+          }
+        },
+        "4-1": {
+          "stdout": "Crude bought          $  48.00\nPetrol, 45% of it     $  50.00\nDiesel, 35% of it     $  52.00\nHeavy fuel, 20% of it $  38.40\nThe slate is worth    $  48.38\nRefining margin       $   0.38\nOn a 2m barrel cargo  $     760,000\n",
+          "values": {
+            "bars": [
+              22.5,
+              18.2,
+              7.68,
+              48.38,
+              48
+            ]
+          }
+        },
+        "4-2": {
+          "stdout": "Crude bought          $  48.00\nPetrol, 45% of it     $  52.00\nDiesel, 35% of it     $  54.00\nHeavy fuel, 20% of it $  38.40\nThe slate is worth    $  49.98\nRefining margin       $   1.98\nOn a 2m barrel cargo  $   3,960,000\n",
+          "values": {
+            "bars": [
+              23.4,
+              18.9,
+              7.68,
+              49.98,
+              48
+            ]
+          }
+        },
+        "4-3": {
+          "stdout": "Crude bought          $  48.00\nPetrol, 45% of it     $  54.00\nDiesel, 35% of it     $  56.00\nHeavy fuel, 20% of it $  38.40\nThe slate is worth    $  51.58\nRefining margin       $   3.58\nOn a 2m barrel cargo  $   7,160,000\n",
+          "values": {
+            "bars": [
+              24.3,
+              19.6,
+              7.68,
+              51.58,
+              48
+            ]
+          }
+        },
+        "4-4": {
+          "stdout": "Crude bought          $  48.00\nPetrol, 45% of it     $  56.00\nDiesel, 35% of it     $  58.00\nHeavy fuel, 20% of it $  38.40\nThe slate is worth    $  53.18\nRefining margin       $   5.18\nOn a 2m barrel cargo  $  10,360,000\n",
+          "values": {
+            "bars": [
+              25.2,
+              20.3,
+              7.68,
+              53.18,
+              48
+            ]
+          }
+        },
+        "4-5": {
+          "stdout": "Crude bought          $  48.00\nPetrol, 45% of it     $  58.00\nDiesel, 35% of it     $  60.00\nHeavy fuel, 20% of it $  38.40\nThe slate is worth    $  54.78\nRefining margin       $   6.78\nOn a 2m barrel cargo  $  13,560,000\n",
+          "values": {
+            "bars": [
+              26.1,
+              21,
+              7.68,
+              54.78,
+              48
+            ]
+          }
+        },
+        "4-6": {
+          "stdout": "Crude bought          $  48.00\nPetrol, 45% of it     $  60.00\nDiesel, 35% of it     $  62.00\nHeavy fuel, 20% of it $  38.40\nThe slate is worth    $  56.38\nRefining margin       $   8.38\nOn a 2m barrel cargo  $  16,760,000\n",
+          "values": {
+            "bars": [
+              27,
+              21.7,
+              7.68,
+              56.38,
+              48
+            ]
+          }
+        },
+        "4-7": {
+          "stdout": "Crude bought          $  48.00\nPetrol, 45% of it     $  62.00\nDiesel, 35% of it     $  64.00\nHeavy fuel, 20% of it $  38.40\nThe slate is worth    $  57.98\nRefining margin       $   9.98\nOn a 2m barrel cargo  $  19,960,000\n",
+          "values": {
+            "bars": [
+              27.9,
+              22.4,
+              7.68,
+              57.98,
+              48
+            ]
+          }
+        },
+        "4-8": {
+          "stdout": "Crude bought          $  48.00\nPetrol, 45% of it     $  64.00\nDiesel, 35% of it     $  66.00\nHeavy fuel, 20% of it $  38.40\nThe slate is worth    $  59.58\nRefining margin       $  11.58\nOn a 2m barrel cargo  $  23,160,000\n",
+          "values": {
+            "bars": [
+              28.8,
+              23.1,
+              7.68,
+              59.58,
+              48
+            ]
+          }
+        },
+        "40-0": {
+          "stdout": "Crude bought          $ 120.00\nPetrol, 45% of it     $ 120.00\nDiesel, 35% of it     $ 122.00\nHeavy fuel, 20% of it $  96.00\nThe slate is worth    $ 115.90\nRefining margin       $  -4.10\nOn a 2m barrel cargo  $  -8,200,000\n",
+          "values": {
+            "bars": [
+              54,
+              42.7,
+              19.2,
+              115.9,
+              120
+            ]
+          }
+        },
+        "40-1": {
+          "stdout": "Crude bought          $ 120.00\nPetrol, 45% of it     $ 122.00\nDiesel, 35% of it     $ 124.00\nHeavy fuel, 20% of it $  96.00\nThe slate is worth    $ 117.50\nRefining margin       $  -2.50\nOn a 2m barrel cargo  $  -5,000,000\n",
+          "values": {
+            "bars": [
+              54.9,
+              43.4,
+              19.2,
+              117.5,
+              120
+            ]
+          }
+        },
+        "40-2": {
+          "stdout": "Crude bought          $ 120.00\nPetrol, 45% of it     $ 124.00\nDiesel, 35% of it     $ 126.00\nHeavy fuel, 20% of it $  96.00\nThe slate is worth    $ 119.10\nRefining margin       $  -0.90\nOn a 2m barrel cargo  $  -1,800,000\n",
+          "values": {
+            "bars": [
+              55.8,
+              44.1,
+              19.2,
+              119.1,
+              120
+            ]
+          }
+        },
+        "40-3": {
+          "stdout": "Crude bought          $ 120.00\nPetrol, 45% of it     $ 126.00\nDiesel, 35% of it     $ 128.00\nHeavy fuel, 20% of it $  96.00\nThe slate is worth    $ 120.70\nRefining margin       $   0.70\nOn a 2m barrel cargo  $   1,400,000\n",
+          "values": {
+            "bars": [
+              56.7,
+              44.8,
+              19.2,
+              120.7,
+              120
+            ]
+          }
+        },
+        "40-4": {
+          "stdout": "Crude bought          $ 120.00\nPetrol, 45% of it     $ 128.00\nDiesel, 35% of it     $ 130.00\nHeavy fuel, 20% of it $  96.00\nThe slate is worth    $ 122.30\nRefining margin       $   2.30\nOn a 2m barrel cargo  $   4,600,000\n",
+          "values": {
+            "bars": [
+              57.6,
+              45.5,
+              19.2,
+              122.3,
+              120
+            ]
+          }
+        },
+        "40-5": {
+          "stdout": "Crude bought          $ 120.00\nPetrol, 45% of it     $ 130.00\nDiesel, 35% of it     $ 132.00\nHeavy fuel, 20% of it $  96.00\nThe slate is worth    $ 123.90\nRefining margin       $   3.90\nOn a 2m barrel cargo  $   7,800,000\n",
+          "values": {
+            "bars": [
+              58.5,
+              46.2,
+              19.2,
+              123.9,
+              120
+            ]
+          }
+        },
+        "40-6": {
+          "stdout": "Crude bought          $ 120.00\nPetrol, 45% of it     $ 132.00\nDiesel, 35% of it     $ 134.00\nHeavy fuel, 20% of it $  96.00\nThe slate is worth    $ 125.50\nRefining margin       $   5.50\nOn a 2m barrel cargo  $  11,000,000\n",
+          "values": {
+            "bars": [
+              59.4,
+              46.9,
+              19.2,
+              125.5,
+              120
+            ]
+          }
+        },
+        "40-7": {
+          "stdout": "Crude bought          $ 120.00\nPetrol, 45% of it     $ 134.00\nDiesel, 35% of it     $ 136.00\nHeavy fuel, 20% of it $  96.00\nThe slate is worth    $ 127.10\nRefining margin       $   7.10\nOn a 2m barrel cargo  $  14,200,000\n",
+          "values": {
+            "bars": [
+              60.3,
+              47.6,
+              19.2,
+              127.1,
+              120
+            ]
+          }
+        },
+        "40-8": {
+          "stdout": "Crude bought          $ 120.00\nPetrol, 45% of it     $ 136.00\nDiesel, 35% of it     $ 138.00\nHeavy fuel, 20% of it $  96.00\nThe slate is worth    $ 128.70\nRefining margin       $   8.70\nOn a 2m barrel cargo  $  17,400,000\n",
+          "values": {
+            "bars": [
+              61.2,
+              48.3,
+              19.2,
+              128.7,
+              120
+            ]
+          }
+        },
+        "5-0": {
+          "stdout": "Crude bought          $  50.00\nPetrol, 45% of it     $  50.00\nDiesel, 35% of it     $  52.00\nHeavy fuel, 20% of it $  40.00\nThe slate is worth    $  48.70\nRefining margin       $  -1.30\nOn a 2m barrel cargo  $  -2,600,000\n",
+          "values": {
+            "bars": [
+              22.5,
+              18.2,
+              8,
+              48.7,
+              50
+            ]
+          }
+        },
+        "5-1": {
+          "stdout": "Crude bought          $  50.00\nPetrol, 45% of it     $  52.00\nDiesel, 35% of it     $  54.00\nHeavy fuel, 20% of it $  40.00\nThe slate is worth    $  50.30\nRefining margin       $   0.30\nOn a 2m barrel cargo  $     600,000\n",
+          "values": {
+            "bars": [
+              23.4,
+              18.9,
+              8,
+              50.3,
+              50
+            ]
+          }
+        },
+        "5-2": {
+          "stdout": "Crude bought          $  50.00\nPetrol, 45% of it     $  54.00\nDiesel, 35% of it     $  56.00\nHeavy fuel, 20% of it $  40.00\nThe slate is worth    $  51.90\nRefining margin       $   1.90\nOn a 2m barrel cargo  $   3,800,000\n",
+          "values": {
+            "bars": [
+              24.3,
+              19.6,
+              8,
+              51.9,
+              50
+            ]
+          }
+        },
+        "5-3": {
+          "stdout": "Crude bought          $  50.00\nPetrol, 45% of it     $  56.00\nDiesel, 35% of it     $  58.00\nHeavy fuel, 20% of it $  40.00\nThe slate is worth    $  53.50\nRefining margin       $   3.50\nOn a 2m barrel cargo  $   7,000,000\n",
+          "values": {
+            "bars": [
+              25.2,
+              20.3,
+              8,
+              53.5,
+              50
+            ]
+          }
+        },
+        "5-4": {
+          "stdout": "Crude bought          $  50.00\nPetrol, 45% of it     $  58.00\nDiesel, 35% of it     $  60.00\nHeavy fuel, 20% of it $  40.00\nThe slate is worth    $  55.10\nRefining margin       $   5.10\nOn a 2m barrel cargo  $  10,200,000\n",
+          "values": {
+            "bars": [
+              26.1,
+              21,
+              8,
+              55.1,
+              50
+            ]
+          }
+        },
+        "5-5": {
+          "stdout": "Crude bought          $  50.00\nPetrol, 45% of it     $  60.00\nDiesel, 35% of it     $  62.00\nHeavy fuel, 20% of it $  40.00\nThe slate is worth    $  56.70\nRefining margin       $   6.70\nOn a 2m barrel cargo  $  13,400,000\n",
+          "values": {
+            "bars": [
+              27,
+              21.7,
+              8,
+              56.7,
+              50
+            ]
+          }
+        },
+        "5-6": {
+          "stdout": "Crude bought          $  50.00\nPetrol, 45% of it     $  62.00\nDiesel, 35% of it     $  64.00\nHeavy fuel, 20% of it $  40.00\nThe slate is worth    $  58.30\nRefining margin       $   8.30\nOn a 2m barrel cargo  $  16,600,000\n",
+          "values": {
+            "bars": [
+              27.9,
+              22.4,
+              8,
+              58.3,
+              50
+            ]
+          }
+        },
+        "5-7": {
+          "stdout": "Crude bought          $  50.00\nPetrol, 45% of it     $  64.00\nDiesel, 35% of it     $  66.00\nHeavy fuel, 20% of it $  40.00\nThe slate is worth    $  59.90\nRefining margin       $   9.90\nOn a 2m barrel cargo  $  19,800,000\n",
+          "values": {
+            "bars": [
+              28.8,
+              23.1,
+              8,
+              59.9,
+              50
+            ]
+          }
+        },
+        "5-8": {
+          "stdout": "Crude bought          $  50.00\nPetrol, 45% of it     $  66.00\nDiesel, 35% of it     $  68.00\nHeavy fuel, 20% of it $  40.00\nThe slate is worth    $  61.50\nRefining margin       $  11.50\nOn a 2m barrel cargo  $  23,000,000\n",
+          "values": {
+            "bars": [
+              29.7,
+              23.8,
+              8,
+              61.5,
+              50
+            ]
+          }
+        },
+        "6-0": {
+          "stdout": "Crude bought          $  52.00\nPetrol, 45% of it     $  52.00\nDiesel, 35% of it     $  54.00\nHeavy fuel, 20% of it $  41.60\nThe slate is worth    $  50.62\nRefining margin       $  -1.38\nOn a 2m barrel cargo  $  -2,760,000\n",
+          "values": {
+            "bars": [
+              23.4,
+              18.9,
+              8.32,
+              50.62,
+              52
+            ]
+          }
+        },
+        "6-1": {
+          "stdout": "Crude bought          $  52.00\nPetrol, 45% of it     $  54.00\nDiesel, 35% of it     $  56.00\nHeavy fuel, 20% of it $  41.60\nThe slate is worth    $  52.22\nRefining margin       $   0.22\nOn a 2m barrel cargo  $     440,000\n",
+          "values": {
+            "bars": [
+              24.3,
+              19.6,
+              8.32,
+              52.22,
+              52
+            ]
+          }
+        },
+        "6-2": {
+          "stdout": "Crude bought          $  52.00\nPetrol, 45% of it     $  56.00\nDiesel, 35% of it     $  58.00\nHeavy fuel, 20% of it $  41.60\nThe slate is worth    $  53.82\nRefining margin       $   1.82\nOn a 2m barrel cargo  $   3,640,000\n",
+          "values": {
+            "bars": [
+              25.2,
+              20.3,
+              8.32,
+              53.82,
+              52
+            ]
+          }
+        },
+        "6-3": {
+          "stdout": "Crude bought          $  52.00\nPetrol, 45% of it     $  58.00\nDiesel, 35% of it     $  60.00\nHeavy fuel, 20% of it $  41.60\nThe slate is worth    $  55.42\nRefining margin       $   3.42\nOn a 2m barrel cargo  $   6,840,000\n",
+          "values": {
+            "bars": [
+              26.1,
+              21,
+              8.32,
+              55.42,
+              52
+            ]
+          }
+        },
+        "6-4": {
+          "stdout": "Crude bought          $  52.00\nPetrol, 45% of it     $  60.00\nDiesel, 35% of it     $  62.00\nHeavy fuel, 20% of it $  41.60\nThe slate is worth    $  57.02\nRefining margin       $   5.02\nOn a 2m barrel cargo  $  10,040,000\n",
+          "values": {
+            "bars": [
+              27,
+              21.7,
+              8.32,
+              57.02,
+              52
+            ]
+          }
+        },
+        "6-5": {
+          "stdout": "Crude bought          $  52.00\nPetrol, 45% of it     $  62.00\nDiesel, 35% of it     $  64.00\nHeavy fuel, 20% of it $  41.60\nThe slate is worth    $  58.62\nRefining margin       $   6.62\nOn a 2m barrel cargo  $  13,240,000\n",
+          "values": {
+            "bars": [
+              27.9,
+              22.4,
+              8.32,
+              58.62,
+              52
+            ]
+          }
+        },
+        "6-6": {
+          "stdout": "Crude bought          $  52.00\nPetrol, 45% of it     $  64.00\nDiesel, 35% of it     $  66.00\nHeavy fuel, 20% of it $  41.60\nThe slate is worth    $  60.22\nRefining margin       $   8.22\nOn a 2m barrel cargo  $  16,440,000\n",
+          "values": {
+            "bars": [
+              28.8,
+              23.1,
+              8.32,
+              60.22,
+              52
+            ]
+          }
+        },
+        "6-7": {
+          "stdout": "Crude bought          $  52.00\nPetrol, 45% of it     $  66.00\nDiesel, 35% of it     $  68.00\nHeavy fuel, 20% of it $  41.60\nThe slate is worth    $  61.82\nRefining margin       $   9.82\nOn a 2m barrel cargo  $  19,640,000\n",
+          "values": {
+            "bars": [
+              29.7,
+              23.8,
+              8.32,
+              61.82,
+              52
+            ]
+          }
+        },
+        "6-8": {
+          "stdout": "Crude bought          $  52.00\nPetrol, 45% of it     $  68.00\nDiesel, 35% of it     $  70.00\nHeavy fuel, 20% of it $  41.60\nThe slate is worth    $  63.42\nRefining margin       $  11.42\nOn a 2m barrel cargo  $  22,840,000\n",
+          "values": {
+            "bars": [
+              30.6,
+              24.5,
+              8.32,
+              63.42,
+              52
+            ]
+          }
+        },
+        "7-0": {
+          "stdout": "Crude bought          $  54.00\nPetrol, 45% of it     $  54.00\nDiesel, 35% of it     $  56.00\nHeavy fuel, 20% of it $  43.20\nThe slate is worth    $  52.54\nRefining margin       $  -1.46\nOn a 2m barrel cargo  $  -2,920,000\n",
+          "values": {
+            "bars": [
+              24.3,
+              19.6,
+              8.64,
+              52.54,
+              54
+            ]
+          }
+        },
+        "7-1": {
+          "stdout": "Crude bought          $  54.00\nPetrol, 45% of it     $  56.00\nDiesel, 35% of it     $  58.00\nHeavy fuel, 20% of it $  43.20\nThe slate is worth    $  54.14\nRefining margin       $   0.14\nOn a 2m barrel cargo  $     280,000\n",
+          "values": {
+            "bars": [
+              25.2,
+              20.3,
+              8.64,
+              54.14,
+              54
+            ]
+          }
+        },
+        "7-2": {
+          "stdout": "Crude bought          $  54.00\nPetrol, 45% of it     $  58.00\nDiesel, 35% of it     $  60.00\nHeavy fuel, 20% of it $  43.20\nThe slate is worth    $  55.74\nRefining margin       $   1.74\nOn a 2m barrel cargo  $   3,480,000\n",
+          "values": {
+            "bars": [
+              26.1,
+              21,
+              8.64,
+              55.74,
+              54
+            ]
+          }
+        },
+        "7-3": {
+          "stdout": "Crude bought          $  54.00\nPetrol, 45% of it     $  60.00\nDiesel, 35% of it     $  62.00\nHeavy fuel, 20% of it $  43.20\nThe slate is worth    $  57.34\nRefining margin       $   3.34\nOn a 2m barrel cargo  $   6,680,000\n",
+          "values": {
+            "bars": [
+              27,
+              21.7,
+              8.64,
+              57.34,
+              54
+            ]
+          }
+        },
+        "7-4": {
+          "stdout": "Crude bought          $  54.00\nPetrol, 45% of it     $  62.00\nDiesel, 35% of it     $  64.00\nHeavy fuel, 20% of it $  43.20\nThe slate is worth    $  58.94\nRefining margin       $   4.94\nOn a 2m barrel cargo  $   9,880,000\n",
+          "values": {
+            "bars": [
+              27.9,
+              22.4,
+              8.64,
+              58.94,
+              54
+            ]
+          }
+        },
+        "7-5": {
+          "stdout": "Crude bought          $  54.00\nPetrol, 45% of it     $  64.00\nDiesel, 35% of it     $  66.00\nHeavy fuel, 20% of it $  43.20\nThe slate is worth    $  60.54\nRefining margin       $   6.54\nOn a 2m barrel cargo  $  13,080,000\n",
+          "values": {
+            "bars": [
+              28.8,
+              23.1,
+              8.64,
+              60.54,
+              54
+            ]
+          }
+        },
+        "7-6": {
+          "stdout": "Crude bought          $  54.00\nPetrol, 45% of it     $  66.00\nDiesel, 35% of it     $  68.00\nHeavy fuel, 20% of it $  43.20\nThe slate is worth    $  62.14\nRefining margin       $   8.14\nOn a 2m barrel cargo  $  16,280,000\n",
+          "values": {
+            "bars": [
+              29.7,
+              23.8,
+              8.64,
+              62.14,
+              54
+            ]
+          }
+        },
+        "7-7": {
+          "stdout": "Crude bought          $  54.00\nPetrol, 45% of it     $  68.00\nDiesel, 35% of it     $  70.00\nHeavy fuel, 20% of it $  43.20\nThe slate is worth    $  63.74\nRefining margin       $   9.74\nOn a 2m barrel cargo  $  19,480,000\n",
+          "values": {
+            "bars": [
+              30.6,
+              24.5,
+              8.64,
+              63.74,
+              54
+            ]
+          }
+        },
+        "7-8": {
+          "stdout": "Crude bought          $  54.00\nPetrol, 45% of it     $  70.00\nDiesel, 35% of it     $  72.00\nHeavy fuel, 20% of it $  43.20\nThe slate is worth    $  65.34\nRefining margin       $  11.34\nOn a 2m barrel cargo  $  22,680,000\n",
+          "values": {
+            "bars": [
+              31.5,
+              25.2,
+              8.64,
+              65.34,
+              54
+            ]
+          }
+        },
+        "8-0": {
+          "stdout": "Crude bought          $  56.00\nPetrol, 45% of it     $  56.00\nDiesel, 35% of it     $  58.00\nHeavy fuel, 20% of it $  44.80\nThe slate is worth    $  54.46\nRefining margin       $  -1.54\nOn a 2m barrel cargo  $  -3,080,000\n",
+          "values": {
+            "bars": [
+              25.2,
+              20.3,
+              8.96,
+              54.46,
+              56
+            ]
+          }
+        },
+        "8-1": {
+          "stdout": "Crude bought          $  56.00\nPetrol, 45% of it     $  58.00\nDiesel, 35% of it     $  60.00\nHeavy fuel, 20% of it $  44.80\nThe slate is worth    $  56.06\nRefining margin       $   0.06\nOn a 2m barrel cargo  $     120,000\n",
+          "values": {
+            "bars": [
+              26.1,
+              21,
+              8.96,
+              56.06,
+              56
+            ]
+          }
+        },
+        "8-2": {
+          "stdout": "Crude bought          $  56.00\nPetrol, 45% of it     $  60.00\nDiesel, 35% of it     $  62.00\nHeavy fuel, 20% of it $  44.80\nThe slate is worth    $  57.66\nRefining margin       $   1.66\nOn a 2m barrel cargo  $   3,320,000\n",
+          "values": {
+            "bars": [
+              27,
+              21.7,
+              8.96,
+              57.66,
+              56
+            ]
+          }
+        },
+        "8-3": {
+          "stdout": "Crude bought          $  56.00\nPetrol, 45% of it     $  62.00\nDiesel, 35% of it     $  64.00\nHeavy fuel, 20% of it $  44.80\nThe slate is worth    $  59.26\nRefining margin       $   3.26\nOn a 2m barrel cargo  $   6,520,000\n",
+          "values": {
+            "bars": [
+              27.9,
+              22.4,
+              8.96,
+              59.26,
+              56
+            ]
+          }
+        },
+        "8-4": {
+          "stdout": "Crude bought          $  56.00\nPetrol, 45% of it     $  64.00\nDiesel, 35% of it     $  66.00\nHeavy fuel, 20% of it $  44.80\nThe slate is worth    $  60.86\nRefining margin       $   4.86\nOn a 2m barrel cargo  $   9,720,000\n",
+          "values": {
+            "bars": [
+              28.8,
+              23.1,
+              8.96,
+              60.86,
+              56
+            ]
+          }
+        },
+        "8-5": {
+          "stdout": "Crude bought          $  56.00\nPetrol, 45% of it     $  66.00\nDiesel, 35% of it     $  68.00\nHeavy fuel, 20% of it $  44.80\nThe slate is worth    $  62.46\nRefining margin       $   6.46\nOn a 2m barrel cargo  $  12,920,000\n",
+          "values": {
+            "bars": [
+              29.7,
+              23.8,
+              8.96,
+              62.46,
+              56
+            ]
+          }
+        },
+        "8-6": {
+          "stdout": "Crude bought          $  56.00\nPetrol, 45% of it     $  68.00\nDiesel, 35% of it     $  70.00\nHeavy fuel, 20% of it $  44.80\nThe slate is worth    $  64.06\nRefining margin       $   8.06\nOn a 2m barrel cargo  $  16,120,000\n",
+          "values": {
+            "bars": [
+              30.6,
+              24.5,
+              8.96,
+              64.06,
+              56
+            ]
+          }
+        },
+        "8-7": {
+          "stdout": "Crude bought          $  56.00\nPetrol, 45% of it     $  70.00\nDiesel, 35% of it     $  72.00\nHeavy fuel, 20% of it $  44.80\nThe slate is worth    $  65.66\nRefining margin       $   9.66\nOn a 2m barrel cargo  $  19,320,000\n",
+          "values": {
+            "bars": [
+              31.5,
+              25.2,
+              8.96,
+              65.66,
+              56
+            ]
+          }
+        },
+        "8-8": {
+          "stdout": "Crude bought          $  56.00\nPetrol, 45% of it     $  72.00\nDiesel, 35% of it     $  74.00\nHeavy fuel, 20% of it $  44.80\nThe slate is worth    $  67.26\nRefining margin       $  11.26\nOn a 2m barrel cargo  $  22,520,000\n",
+          "values": {
+            "bars": [
+              32.4,
+              25.9,
+              8.96,
+              67.26,
+              56
+            ]
+          }
+        },
+        "9-0": {
+          "stdout": "Crude bought          $  58.00\nPetrol, 45% of it     $  58.00\nDiesel, 35% of it     $  60.00\nHeavy fuel, 20% of it $  46.40\nThe slate is worth    $  56.38\nRefining margin       $  -1.62\nOn a 2m barrel cargo  $  -3,240,000\n",
+          "values": {
+            "bars": [
+              26.1,
+              21,
+              9.28,
+              56.38,
+              58
+            ]
+          }
+        },
+        "9-1": {
+          "stdout": "Crude bought          $  58.00\nPetrol, 45% of it     $  60.00\nDiesel, 35% of it     $  62.00\nHeavy fuel, 20% of it $  46.40\nThe slate is worth    $  57.98\nRefining margin       $  -0.02\nOn a 2m barrel cargo  $     -40,000\n",
+          "values": {
+            "bars": [
+              27,
+              21.7,
+              9.28,
+              57.98,
+              58
+            ]
+          }
+        },
+        "9-2": {
+          "stdout": "Crude bought          $  58.00\nPetrol, 45% of it     $  62.00\nDiesel, 35% of it     $  64.00\nHeavy fuel, 20% of it $  46.40\nThe slate is worth    $  59.58\nRefining margin       $   1.58\nOn a 2m barrel cargo  $   3,160,000\n",
+          "values": {
+            "bars": [
+              27.9,
+              22.4,
+              9.28,
+              59.58,
+              58
+            ]
+          }
+        },
+        "9-3": {
+          "stdout": "Crude bought          $  58.00\nPetrol, 45% of it     $  64.00\nDiesel, 35% of it     $  66.00\nHeavy fuel, 20% of it $  46.40\nThe slate is worth    $  61.18\nRefining margin       $   3.18\nOn a 2m barrel cargo  $   6,360,000\n",
+          "values": {
+            "bars": [
+              28.8,
+              23.1,
+              9.28,
+              61.18,
+              58
+            ]
+          }
+        },
+        "9-4": {
+          "stdout": "Crude bought          $  58.00\nPetrol, 45% of it     $  66.00\nDiesel, 35% of it     $  68.00\nHeavy fuel, 20% of it $  46.40\nThe slate is worth    $  62.78\nRefining margin       $   4.78\nOn a 2m barrel cargo  $   9,560,000\n",
+          "values": {
+            "bars": [
+              29.7,
+              23.8,
+              9.28,
+              62.78,
+              58
+            ]
+          }
+        },
+        "9-5": {
+          "stdout": "Crude bought          $  58.00\nPetrol, 45% of it     $  68.00\nDiesel, 35% of it     $  70.00\nHeavy fuel, 20% of it $  46.40\nThe slate is worth    $  64.38\nRefining margin       $   6.38\nOn a 2m barrel cargo  $  12,760,000\n",
+          "values": {
+            "bars": [
+              30.6,
+              24.5,
+              9.28,
+              64.38,
+              58
+            ]
+          }
+        },
+        "9-6": {
+          "stdout": "Crude bought          $  58.00\nPetrol, 45% of it     $  70.00\nDiesel, 35% of it     $  72.00\nHeavy fuel, 20% of it $  46.40\nThe slate is worth    $  65.98\nRefining margin       $   7.98\nOn a 2m barrel cargo  $  15,960,000\n",
+          "values": {
+            "bars": [
+              31.5,
+              25.2,
+              9.28,
+              65.98,
+              58
+            ]
+          }
+        },
+        "9-7": {
+          "stdout": "Crude bought          $  58.00\nPetrol, 45% of it     $  72.00\nDiesel, 35% of it     $  74.00\nHeavy fuel, 20% of it $  46.40\nThe slate is worth    $  67.58\nRefining margin       $   9.58\nOn a 2m barrel cargo  $  19,160,000\n",
+          "values": {
+            "bars": [
+              32.4,
+              25.9,
+              9.28,
+              67.58,
+              58
+            ]
+          }
+        },
+        "9-8": {
+          "stdout": "Crude bought          $  58.00\nPetrol, 45% of it     $  74.00\nDiesel, 35% of it     $  76.00\nHeavy fuel, 20% of it $  46.40\nThe slate is worth    $  69.18\nRefining margin       $  11.18\nOn a 2m barrel cargo  $  22,360,000\n",
+          "values": {
+            "bars": [
+              33.3,
+              26.6,
+              9.28,
+              69.18,
+              58
+            ]
+          }
+        }
+      },
+      "shared": {
+        "labels": [
+          "petrol, 45%",
+          "diesel, 35%",
+          "heavy, 20%",
+          "whole slate",
+          "crude cost"
+        ]
+      }
+    }
+  }
+}

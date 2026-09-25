@@ -53,7 +53,7 @@ const SHOTS: Shot[] = [
     prepare: async (page) => {
       await page.locator('[role="switch"][aria-labelledby="set-markets-label"]').first().click().catch(() => {});
       await page.waitForTimeout(300);
-      await page.goto(page.url().replace(/#.*$/, '#/lesson/optionality-at-expiry'), { waitUntil: 'load' });
+      await page.goto(page.url().replace(/#.*$/, '#/lesson/the-storage-trade'), { waitUntil: 'load' });
       await page.waitForTimeout(1200);
       await page.getByRole('button', { name: 'Next', exact: true }).click().catch(() => {});
       await page.waitForTimeout(800);

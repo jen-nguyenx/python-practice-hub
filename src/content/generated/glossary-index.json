@@ -418,108 +418,123 @@
   {
     "also": [
       "spot price",
-      "market price",
+      "prompt",
       "cash price"
     ],
     "id": "spot",
-    "lessonId": "a-price-series",
+    "lessonId": "what-a-barrel-is",
     "markets": true,
-    "note": "Everything else in markets is priced relative to it: a future is spot plus carry, an option is worth something only relative to it.",
-    "short": "The price something trades at right now, for delivery now.",
+    "note": "Everything else prices off it: a forward is spot plus the cost of waiting, a differential is a premium or discount to it.",
+    "short": "The price for a cargo delivered now, rather than on some date in the future.",
     "term": "spot"
   },
   {
     "also": [
-      "returns",
-      "simple return",
-      "percentage change"
+      "grade",
+      "brent",
+      "wti",
+      "dubai",
+      "benchmark"
     ],
-    "demo": "import math\nold, new = 100, 110\nprint(round((new - old) / old, 4))\nprint(round(math.log(new / old), 4))\nup = math.log(110 / 100)\ndown = math.log(100 / 110)\nprint(round(up + down, 10))\n",
-    "id": "log-return",
-    "lessonId": "a-price-series",
+    "id": "crude-grade",
+    "lessonId": "what-a-barrel-is",
     "markets": true,
-    "note": "Log returns add up across days where percentage returns do not: up 10% then down 10% is not back where you started, but two log returns of +x and −x are.",
-    "short": "The change in a price measured as the natural log of new over old, instead of as a percentage.",
-    "term": "log return"
+    "note": "A barrel is not a barrel. Two cargoes at the same volume can be worth several dollars apart because of what comes out of them at the refinery.",
+    "short": "A named type of crude oil with its own chemistry and its own price, such as Brent, WTI or Dubai.",
+    "term": "crude grade"
   },
   {
     "also": [
-      "rolling average",
-      "smoothing",
-      "window"
+      "api",
+      "light crude",
+      "heavy crude",
+      "density"
     ],
-    "demo": "prices = [10, 12, 11, 13, 15, 14]\nn = 3\nfor i in range(n - 1, len(prices)):\n    window = prices[i - n + 1:i + 1]\n    print(i, round(sum(window) / n, 2))\n",
-    "id": "moving-average",
-    "lessonId": "smoothing-and-volatility",
+    "id": "api-gravity",
+    "lessonId": "what-a-barrel-is",
     "markets": true,
-    "note": "A longer window smooths more and lags more. The choice of N is a choice about how much you want to be told about what just happened.",
-    "short": "The average of the last N prices, recomputed each day as the window slides forward.",
-    "term": "moving average"
+    "note": "Light and sweet is the easy stuff; heavy and sour needs a more expensive refinery, which is why it trades at a discount.",
+    "short": "How light or heavy a crude is. Higher API means lighter, and lighter usually means more petrol and diesel per barrel.",
+    "term": "API gravity"
   },
   {
     "also": [
-      "vol",
-      "standard deviation of returns",
-      "how much it moves"
+      "sweet",
+      "sulphur",
+      "sour crude",
+      "sweet crude"
     ],
-    "id": "volatility",
-    "lessonId": "smoothing-and-volatility",
+    "id": "sour",
+    "lessonId": "what-a-barrel-is",
     "markets": true,
-    "note": "High volatility is not \"going down\"; it is going anywhere fast. It is the one number that makes an option worth more the higher it is.",
-    "short": "How much a price tends to move, measured as the standard deviation of its returns.",
-    "term": "volatility"
+    "note": "Sulphur has to be taken out before the fuel can be sold, so sour crude sells at a discount to sweet — the discount is roughly what removing it costs.",
+    "short": "Crude with a lot of sulphur in it. Low sulphur is called sweet.",
+    "term": "sour"
   },
   {
     "also": [
-      "peak to trough",
-      "how far it fell"
+      "diff",
+      "premium to benchmark",
+      "discount to benchmark"
     ],
-    "demo": "prices = [100, 120, 90, 110, 80]\npeak = prices[0]\nfor p in prices:\n    peak = max(peak, p)\n    print(p, \"drawdown\", round((peak - p) / peak, 2))\n",
-    "id": "drawdown",
-    "lessonId": "a-price-series",
+    "id": "differential",
+    "lessonId": "what-a-barrel-is",
     "markets": true,
-    "note": "A 50% drawdown needs a 100% rise to recover, which is why the size of the fall matters more than it looks.",
-    "short": "How far a price has fallen from its highest point so far.",
-    "term": "drawdown"
+    "note": "Physical oil is almost never quoted as a flat price. It is quoted as the benchmark plus or minus a differential, and the differential is where a physical trader actually competes.",
+    "short": "The premium or discount a particular cargo trades at against its benchmark grade.",
+    "term": "differential"
+  },
+  {
+    "also": [
+      "parcel",
+      "lot",
+      "shipment"
+    ],
+    "id": "cargo",
+    "lessonId": "the-physical-chain",
+    "markets": true,
+    "note": "Crude usually moves in cargoes of 500,000 to 2 million barrels, which is why physical trading is a business of few, large, slow decisions.",
+    "short": "One shipload of a commodity, bought and sold as a single unit.",
+    "term": "cargo"
   },
   {
     "also": [
       "futures curve",
       "term structure",
-      "curve"
+      "the curve"
     ],
     "id": "forward-curve",
-    "lessonId": "the-forward-curve",
+    "lessonId": "the-storage-trade",
     "markets": true,
-    "note": "Its shape says what the market thinks holding the thing costs: upward is [[contango]], downward is [[backwardation]].",
-    "short": "The prices agreed today for delivery at each future date, drawn as a line across those dates.",
+    "note": "Its shape is an instruction: upward ([[contango]]) pays you to store, downward ([[backwardation]]) pays you to sell now.",
+    "short": "The prices quoted today for delivery in each future month, drawn as a line across those months.",
     "term": "forward curve"
   },
   {
     "also": [
-      "upward sloping curve",
+      "upward curve",
       "later is dearer"
     ],
     "confusedWith": "backwardation",
     "id": "contango",
-    "lessonId": "the-forward-curve",
+    "lessonId": "the-storage-trade",
     "markets": true,
-    "note": "The normal shape for anything that costs money to store, because the seller must be paid for storing it until you want it.",
-    "short": "A forward curve that rises with time: delivery later costs more than delivery now.",
+    "note": "The shape that fills tanks — but only where it is steeper than the [[carry]].",
+    "short": "A forward curve that rises with time: oil for later delivery costs more than oil now.",
     "term": "contango"
   },
   {
     "also": [
-      "downward sloping curve",
-      "later is cheaper",
-      "inverted curve"
+      "downward curve",
+      "inverted curve",
+      "later is cheaper"
     ],
     "confusedWith": "contango",
     "id": "backwardation",
-    "lessonId": "the-forward-curve",
+    "lessonId": "the-storage-trade",
     "markets": true,
-    "note": "The market's way of saying it wants the thing now, not later — a sign of scarcity today.",
-    "short": "A forward curve that falls with time: delivery now costs more than delivery later.",
+    "note": "The market saying it wants the barrel today. It empties storage, because holding stock means selling it forward for less than you paid.",
+    "short": "A forward curve that falls with time: oil now costs more than oil later.",
     "term": "backwardation"
   },
   {
@@ -528,152 +543,140 @@
       "storage cost",
       "financing cost"
     ],
-    "demo": "spot = 100\nrate = 0.05\nstorage = 0.02\nfor years in [0.5, 1, 2]:\n    fair = spot * (1 + rate + storage) ** years\n    print(years, round(fair, 2))\n",
     "id": "carry",
-    "lessonId": "the-forward-curve",
+    "lessonId": "the-storage-trade",
     "markets": true,
-    "note": "Carry is the whole difference between spot and a fair futures price. Positive carry gives contango, negative carry gives backwardation.",
-    "short": "What it costs to hold something from now until a future date: interest on the money tied up, plus storage, minus anything it pays you meanwhile.",
+    "note": "The number a contango has to beat. On an $80 barrel at 5%, six months of financing alone is $2.",
+    "short": "Everything it costs to hold a barrel until a later date: tank rent, insurance, and interest on the money tied up in it.",
     "term": "carry"
   },
   {
     "also": [
-      "spot minus futures",
-      "the gap"
+      "calendar spread",
+      "spread between months"
     ],
-    "id": "basis",
-    "lessonId": "futures-in-practice",
+    "id": "time-spread",
+    "lessonId": "the-storage-trade",
     "markets": true,
-    "note": "It shrinks to zero as delivery approaches, because on delivery day a future and the thing itself are the same thing.",
-    "short": "The gap between the spot price and a futures price for the same thing.",
-    "term": "basis"
+    "note": "A storage trade is a bought time spread with a tank behind it: you own the near month and are short the far one.",
+    "short": "The price difference between the same commodity for two different delivery months.",
+    "term": "time spread"
   },
   {
     "also": [
-      "initial margin",
-      "collateral",
-      "deposit"
+      "shipping cost",
+      "charter",
+      "worldscale"
     ],
-    "id": "margin",
-    "lessonId": "futures-in-practice",
+    "id": "freight",
+    "lessonId": "freight-and-the-arb",
     "markets": true,
-    "note": "It is not the price of the future — you never pay that until delivery — which is what makes a future so heavily levered.",
-    "short": "The deposit you must keep with the exchange while you hold a future, so that a loss can be taken from it.",
-    "term": "margin"
+    "note": "It is the toll on every location trade, and it moves on its own: a route can stop working because ships got expensive, with no change in the oil price at all.",
+    "short": "What it costs to move a cargo from one port to another, usually quoted per barrel or per tonne.",
+    "term": "freight"
+  },
+  {
+    "also": [
+      "arb",
+      "arbitrage",
+      "regional spread",
+      "east-west"
+    ],
+    "id": "location-spread",
+    "lessonId": "freight-and-the-arb",
+    "markets": true,
+    "note": "The arb is open when that gap is wider than the [[freight]] between them, and closed when it is not. Traders say \"the arb is shut\" to mean the cargo stays home.",
+    "short": "The price difference for the same commodity in two places.",
+    "term": "location spread"
+  },
+  {
+    "also": [
+      "very large crude carrier",
+      "supertanker",
+      "tanker"
+    ],
+    "id": "vlcc",
+    "lessonId": "freight-and-the-arb",
+    "markets": true,
+    "note": "The standard unit of long-haul crude. When the curve is steep enough, traders hire them to sit still as floating storage.",
+    "short": "A very large crude carrier: a tanker holding about two million barrels.",
+    "term": "VLCC"
+  },
+  {
+    "also": [
+      "specification",
+      "on-spec",
+      "off-spec",
+      "quality spec"
+    ],
+    "id": "spec",
+    "lessonId": "blending-to-spec",
+    "markets": true,
+    "note": "Miss one limit by a fraction and the cargo is off-spec, which can turn a premium product into a discounted one instantly.",
+    "short": "The quality a buyer has contracted for: limits on sulphur, density, flash point and the rest.",
+    "term": "spec"
+  },
+  {
+    "also": [
+      "blend",
+      "mixing",
+      "cutting"
+    ],
+    "id": "blending",
+    "lessonId": "blending-to-spec",
+    "markets": true,
+    "note": "The classic asset-backed margin: buy the cheap off-spec barrel, blend it against something better, sell the mixture at the on-spec price.",
+    "short": "Mixing two or more parcels so the result meets a specification neither of them met alone.",
+    "term": "blending"
+  },
+  {
+    "also": [
+      "refining margin",
+      "crack"
+    ],
+    "id": "crack-spread",
+    "lessonId": "the-physical-chain",
+    "markets": true,
+    "note": "A refinery is long the crack whether it likes it or not, which is why refiners hedge by selling it.",
+    "short": "The gap between what a refinery pays for crude and what it gets for the fuels it makes from it.",
+    "term": "crack spread"
+  },
+  {
+    "also": [
+      "basis",
+      "hedge mismatch",
+      "imperfect hedge"
+    ],
+    "id": "basis-risk",
+    "lessonId": "hedging-the-physical",
+    "markets": true,
+    "note": "Hedge a sour cargo in Nigeria with Brent futures and you have swapped price risk for the risk that the two stop moving together. That gap is where hedged traders still lose money.",
+    "short": "The risk left over when what you hedged with is not exactly what you own.",
+    "term": "basis risk"
+  },
+  {
+    "also": [
+      "margin",
+      "variation margin",
+      "collateral"
+    ],
+    "id": "margin-call",
+    "lessonId": "hedging-the-physical",
+    "markets": true,
+    "note": "The cruelty of hedging physical: the paper leg demands cash today while the barrels it protects pay nothing until they are delivered.",
+    "short": "A demand for more cash from the exchange when the market moves against your futures position.",
+    "term": "margin call"
   },
   {
     "also": [
       "daily settlement",
-      "marked",
-      "variation margin"
+      "marked"
     ],
-    "demo": "account = 1000\nprices = [100, 103, 101, 106]\ncontracts = 10\nfor i in range(1, len(prices)):\n    account += (prices[i] - prices[i - 1]) * contracts\n    print(\"day\", i, \"account\", account)\n",
     "id": "mark-to-market",
-    "lessonId": "futures-in-practice",
+    "lessonId": "hedging-the-physical",
     "markets": true,
-    "note": "A future never builds up an unpaid gain or loss the way a bet would. Each day is closed out and the next starts from today's price.",
-    "short": "Settling a future's gain or loss every single day, moving cash into or out of the margin account.",
+    "note": "It is why a perfectly hedged trader can still run out of money: the hedge is settled daily, the cargo is settled once.",
+    "short": "Settling a futures position's gain or loss every day, in cash, rather than at the end.",
     "term": "mark to market"
-  },
-  {
-    "also": [
-      "strike price",
-      "exercise price"
-    ],
-    "id": "strike",
-    "lessonId": "optionality-at-expiry",
-    "markets": true,
-    "note": "Nothing about the market changes it. It is written into the contract on day one and is where the payoff bends.",
-    "short": "The fixed price an option lets you buy or sell at.",
-    "term": "strike"
-  },
-  {
-    "also": [
-      "option price",
-      "what you paid"
-    ],
-    "id": "premium",
-    "lessonId": "optionality-at-expiry",
-    "markets": true,
-    "note": "For the buyer it is the most that can be lost. For the seller it is the most that can be made.",
-    "short": "What an option costs to buy — the fee for the right it gives you.",
-    "term": "premium"
-  },
-  {
-    "also": [
-      "call option",
-      "right to buy"
-    ],
-    "confusedWith": "put",
-    "demo": "strike = 100\nfor spot in [80, 100, 120]:\n    print(spot, max(spot - strike, 0))\n",
-    "id": "call",
-    "lessonId": "optionality-at-expiry",
-    "markets": true,
-    "note": "Worth something at expiry only when the market is above the strike: max(spot − strike, 0).",
-    "short": "An option that gives you the right to buy at the strike.",
-    "term": "call"
-  },
-  {
-    "also": [
-      "put option",
-      "right to sell"
-    ],
-    "confusedWith": "call",
-    "demo": "strike = 100\nfor spot in [80, 100, 120]:\n    print(spot, max(strike - spot, 0))\n",
-    "id": "put",
-    "lessonId": "optionality-at-expiry",
-    "markets": true,
-    "note": "Worth something at expiry only when the market is below the strike: max(strike − spot, 0). Insurance on something you own.",
-    "short": "An option that gives you the right to sell at the strike.",
-    "term": "put"
-  },
-  {
-    "also": [
-      "breakeven",
-      "where you stop losing"
-    ],
-    "id": "break-even",
-    "lessonId": "optionality-at-expiry",
-    "markets": true,
-    "note": "For a bought call it is the strike plus the premium; for a bought put, the strike minus the premium.",
-    "short": "The spot price at which an option position has made back exactly what it cost.",
-    "term": "break-even"
-  },
-  {
-    "also": [
-      "in the money",
-      "out of the money",
-      "at the money"
-    ],
-    "id": "moneyness",
-    "lessonId": "an-option-before-expiry",
-    "markets": true,
-    "note": "An out-of-the-money option is not worthless before expiry — it is worth whatever chance it has of ending up in.",
-    "short": "Where the spot is relative to the strike: in the money if the option would pay now, out if it would not, at if they are equal.",
-    "term": "moneyness"
-  },
-  {
-    "also": [
-      "theta",
-      "losing value over time"
-    ],
-    "id": "time-decay",
-    "lessonId": "an-option-before-expiry",
-    "markets": true,
-    "note": "It speeds up near the end: the last week costs more of the value than the first month did.",
-    "short": "The way an option loses value as expiry approaches with nothing else changing.",
-    "term": "time decay"
-  },
-  {
-    "also": [
-      "implied vol",
-      "what the price implies"
-    ],
-    "id": "implied-volatility",
-    "lessonId": "an-option-before-expiry",
-    "markets": true,
-    "note": "It is the market's opinion of how much the price will move, read backwards from what people are paying.",
-    "short": "The volatility you would have to assume for a pricing model to give the option its market price.",
-    "term": "implied volatility"
   }
 ]

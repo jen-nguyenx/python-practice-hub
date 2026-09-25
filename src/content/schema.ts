@@ -301,6 +301,16 @@ export interface Experiment {
   probes?: Probes;
   /** An optional picture under the output, redrawn as the controls move. */
   visual?: Visual;
+  /**
+   * Hide the program and show only the controls, the picture and the numbers.
+   *
+   * For a card where the code is the engine rather than the subject. A lesson on the economics of a
+   * cargo is not teaching `for` loops, and putting a program beside the answer tells the reader the
+   * program is the point. The verifier still runs it, so the numbers are as honest either way.
+   */
+  hideProgram?: boolean;
+  /** What to call the output when the program is hidden. Defaults to "The numbers". */
+  outputLabel?: string;
   /** The point of the experiment. Always visible under the output. */
   takeaway: Md;
 }

@@ -401,13 +401,19 @@ export function ExperimentCard({ x, gen, compact }: { x: Experiment; gen: Genera
 
       {x.visual ? <Picture visual={x.visual} values={values} /> : null}
 
-      <div class="wi-panes">
+      {/* With the program hidden the numbers take the whole width: on a card about the economics of a
+          cargo, a column of Python beside the answer says the Python is the point. */}
+      <div class={`wi-panes${x.hideProgram ? ' is-solo' : ''}`}>
+        {x.hideProgram ? null : (
+          <div class="wi-pane">
+            <p class="tp-label">The program</p>
+            <KnobbedCode code={filled.code} spans={filled.spans} label={`Program for: ${x.title}`} />
+          </div>
+        )}
         <div class="wi-pane">
-          <p class="tp-label">The program</p>
-          <KnobbedCode code={filled.code} spans={filled.spans} label={`Program for: ${x.title}`} />
-        </div>
-        <div class="wi-pane">
-          <p class="tp-label">{run?.error ? 'What happens' : 'What it prints'}</p>
+          <p class="tp-label">
+            {run?.error ? 'What happens' : x.hideProgram ? (x.outputLabel ?? 'The numbers') : 'What it prints'}
+          </p>
           <Output recorded={run !== undefined} lines={lines} changed={changed} errorAt={run?.error ? lines.length - 1 : -1} />
         </div>
       </div>

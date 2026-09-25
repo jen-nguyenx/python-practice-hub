@@ -925,136 +925,136 @@
     "track": "foundations"
   },
   {
-    "id": "a-price-series",
-    "minutes": 10,
-    "order": 1,
+    "id": "blending-to-spec",
+    "minutes": 11,
+    "order": 5,
     "outcomes": [
-      "Read a price series as a list, one close a day, and pick out the [[spot]] price",
-      "Turn prices into simple returns so two things on different scales can be compared",
-      "Work out a [[log-return]] and say why log returns add up across days when simple returns do not",
-      "Track a running peak and measure the [[drawdown]] from it"
+      "Read a [[spec]] as a price step rather than a target",
+      "Work out the blend that lands just inside a sulphur limit",
+      "Put a number on quality giveaway, and on what missing the limit costs",
+      "Say why the blending tank, not the forecast, is the position"
+    ],
+    "prereqs": [
+      "what-a-barrel-is"
     ],
     "sectionTitles": [
-      "A list of prices",
-      "Returns, not prices",
-      "The fall from the peak"
+      "The line with a price step on it",
+      "Two wrongs, one cargo",
+      "The line only bends one way"
     ],
     "sections": 3,
-    "summary": "What a list of prices is, why returns beat prices for comparing things, and how far a price has fallen from its peak",
-    "title": "A price series",
+    "summary": "Two parcels nobody wants at that price, one tank, and a line you have to land just inside",
+    "title": "Blending to spec",
     "track": "markets"
   },
   {
-    "id": "an-option-before-expiry",
+    "id": "freight-and-the-arb",
+    "minutes": 11,
+    "order": 4,
+    "outcomes": [
+      "Work out whether the gap between two ports pays for the ship that closes it",
+      "Say what a trader means by \"the arb is shut\", and what reopens it",
+      "Explain how a route dies with no change in the oil price at all",
+      "Recognise when a tanker is worth more sitting still than sailing"
+    ],
+    "prereqs": [
+      "the-storage-trade"
+    ],
+    "sectionTitles": [
+      "A cargo in the wrong place",
+      "Ships are a market of their own",
+      "Why the ship is the position"
+    ],
+    "sections": 3,
+    "summary": "Buy where it is cheap, sell where it is dear, and pay the ship in between",
+    "title": "Freight and the arb",
+    "track": "markets"
+  },
+  {
+    "id": "hedging-the-physical",
     "minutes": 12,
     "order": 6,
     "outcomes": [
-      "Say whether a call is in, at or out of the money from the [[spot]] and the [[strike]]",
-      "Explain why an out-of-the-money option is still worth something before expiry",
-      "Name the three things that set an option's value before expiry and say which way each one pushes",
-      "Price a European call with the math module and watch [[time-decay]] happen in the numbers"
+      "Describe the two legs of a physical hedge and what is left over when they cancel",
+      "Name the three mismatches that make a hedge imperfect: grade, place and date",
+      "Explain why a correctly hedged trader can still run out of cash",
+      "Say what hedging actually converts, rather than what it removes"
     ],
     "prereqs": [
-      "optionality-at-expiry",
-      "smoothing-and-volatility"
+      "the-storage-trade"
     ],
     "sectionTitles": [
-      "Still worth something",
-      "Three dials",
-      "A week of nothing"
+      "Two legs, one trade",
+      "Your barrel is not the benchmark",
+      "Right, and still broke"
     ],
     "sections": 3,
-    "summary": "Why an option is worth something before its last day, the three dials that set its value, and what a quiet week costs",
-    "title": "An option before expiry",
+    "summary": "Sell the futures, keep the barrels — and find out what risk you actually kept",
+    "title": "Hedging, and what it does not cover",
     "track": "markets"
   },
   {
-    "id": "futures-in-practice",
-    "minutes": 10,
-    "order": 4,
-    "outcomes": [
-      "Say why selling a future costs [[margin]], not the price of what you agreed to sell",
-      "Work out what [[mark-to-market]] moves into or out of a margin account each day",
-      "Find the day a margin call lands on a price path, and say what it does and does not mean",
-      "Explain why the [[basis]] shrinks to zero at delivery, and what rolling a contract is"
-    ],
-    "prereqs": [
-      "the-forward-curve"
-    ],
-    "sectionTitles": [
-      "An agreement, not a purchase",
-      "Marked every day",
-      "Delivery and the roll"
-    ],
-    "sections": 3,
-    "summary": "What a future asks of you day by day: a deposit, cash settled every evening, a call when it runs low, and a gap that closes at delivery",
-    "title": "Futures in practice",
-    "track": "markets"
-  },
-  {
-    "id": "optionality-at-expiry",
-    "minutes": 10,
-    "order": 5,
-    "outcomes": [
-      "Work out what a call or a put pays at expiry from the spot price and the [[strike]]",
-      "Say why a bought option can never lose more than its [[premium]]",
-      "Read a payoff diagram and find the break-even on it",
-      "Tell insurance from leverage by which option you would buy"
-    ],
-    "sectionTitles": [
-      "A right, not a duty",
-      "The hockey stick",
-      "Insurance or leverage"
-    ],
-    "sections": 3,
-    "summary": "What a call and a put are worth on the day they expire, and why the shape is a hockey stick",
-    "title": "Optionality at expiry",
-    "track": "markets"
-  },
-  {
-    "id": "smoothing-and-volatility",
+    "id": "the-physical-chain",
     "minutes": 10,
     "order": 2,
     "outcomes": [
-      "Compute a [[moving-average]] with a sliding window, and say what a longer window does to it",
-      "Work out [[volatility]] by hand as the standard deviation of returns, with a loop and `math.sqrt`",
-      "Compute a rolling volatility over a window of recent returns",
-      "Decide whether today's move is unusual by comparing it with recent volatility"
+      "Name every hand a barrel passes through, and say which one is carrying the price risk",
+      "Say where a physical trader is paid from: time, place or form",
+      "Read a refining margin off a crude price and a product slate",
+      "Explain why a refinery is long the [[crack-spread]] whether it wants to be or not",
+      "Say why physical trading is a few large decisions rather than a lot of small ones"
     ],
     "prereqs": [
-      "a-price-series"
+      "what-a-barrel-is"
     ],
     "sectionTitles": [
-      "A sliding window",
-      "How much it moves",
-      "Is today unusual?"
+      "Who touches the barrel",
+      "Three ways to make it worth more",
+      "The gap a refinery lives in"
     ],
     "sections": 3,
-    "summary": "Smooth a price series with a sliding window, measure how much it moves, and ask whether today's move is out of the ordinary",
-    "title": "Smoothing and volatility",
+    "summary": "Who touches a barrel between the ground and the tank of a car, and which of them is paid for the risk",
+    "title": "From well to pump",
     "track": "markets"
   },
   {
-    "id": "the-forward-curve",
-    "minutes": 10,
+    "id": "the-storage-trade",
+    "minutes": 11,
     "order": 3,
     "outcomes": [
-      "Work out a fair futures price from the [[spot]] price and the [[carry]], compounded to the delivery date",
-      "Draw the [[forward-curve]] across delivery dates and say whether it is in [[contango]] or [[backwardation]]",
-      "Read the sign of the carry off the shape of the curve",
-      "Say what a falling curve tells you about how badly the market wants the thing now"
-    ],
-    "prereqs": [
-      "a-price-series"
+      "Work out whether a [[contango]] pays for the cost of carrying a barrel",
+      "Say what a tank is worth without owning a single barrel",
+      "Explain why a storage trade is locked in on day one, not hoped for",
+      "Recognise the market shape that empties tanks instead of filling them"
     ],
     "sectionTitles": [
-      "Spot plus carry",
-      "Reading the curve",
-      "Does it want the thing now?"
+      "The oldest trade in the business",
+      "Where the trade lives and dies",
+      "Why the tank is the position"
     ],
     "sections": 3,
-    "summary": "A futures price is spot plus the cost of carry; drawn across delivery dates it becomes a curve whose slope says whether the market wants the thing now",
-    "title": "The forward curve",
+    "summary": "Buy now, store, sell forward — the trade a tank exists to make, and the day it stops working",
+    "title": "The storage trade",
+    "track": "markets"
+  },
+  {
+    "id": "what-a-barrel-is",
+    "minutes": 10,
+    "order": 1,
+    "outcomes": [
+      "Say which benchmark a cargo prices off, and why the answer depends on where it lands",
+      "Read a crude from its two headline numbers: gravity and sulphur",
+      "Explain why sour crude trades at a discount, and what makes that discount move",
+      "Quote a cargo the way the market does — benchmark plus or minus a differential — and say why"
+    ],
+    "sectionTitles": [
+      "Two offers, same volume",
+      "What is actually in the barrel",
+      "Where the trader actually competes"
+    ],
+    "sections": 3,
+    "summary": "Two cargoes, the same 600,000 barrels, millions apart — grades, gravity, sulphur, and why nobody quotes a flat price",
+    "title": "What a barrel actually is",
     "track": "markets"
   }
 ]

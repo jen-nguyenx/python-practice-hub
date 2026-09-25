@@ -13,7 +13,7 @@
 
 .rf-groups { display: flex; flex-wrap: wrap; gap: 6px; }
 .rf-chip { padding: 5px 12px; border: 1px solid var(--border); border-radius: var(--r-1); background: var(--surface); color: var(--text-muted); font-size: var(--fs-13); cursor: pointer; }
-.rf-chip:hover { border-color: var(--border-strong); color: var(--text); }
+.rf-chip:hover { border-color: var(--accent-line); color: var(--text); }
 .rf-chip.is-on { background: var(--accent-soft); border-color: var(--border-strong); color: var(--text); font-weight: 600; }
 .rf-chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 

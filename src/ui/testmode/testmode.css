@@ -116,7 +116,9 @@
 .ms-tile-count { color: var(--text-faint); }
 @media (forced-colors: active) { .ms-tile.on { border-color: Highlight; border-width: 2px; } }
 
-.ms-options { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: start; gap: 20px 32px; }
+/* Wraps rather than squeezes. Three fixed columns gave the last one whatever the two segmented
+   controls left over, which on a long label was a sliver a few characters wide. */
+.ms-options { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px 32px; }
 .ms-field { display: grid; gap: 10px; justify-items: start; align-content: start; min-width: 0; }
 .ms-options .segm { padding: 3px; gap: 2px; background: var(--bg-inset); border: 0; border-radius: var(--r-2); flex-wrap: nowrap; }
 .ms-options .segm-opt {
@@ -125,8 +127,12 @@
 }
 .ms-options .segm-opt:hover { color: var(--text); }
 .ms-options .segm-opt[aria-checked="true"] { background: var(--surface); color: var(--text); font-weight: 600; box-shadow: 0 0 0 1px var(--border-strong); }
-.ms-switch { gap: 6px; padding-top: 30px; justify-self: start; }
-.ms-switch .switch { font-size: var(--fs-15); font-weight: 600; color: var(--text); white-space: nowrap; }
+.ms-switch { gap: 6px; padding-top: 30px; justify-self: start; flex: 1 1 260px; }
+/* The label is long and its column may be narrow: nowrap here pushed "Include coding questions"
+   straight out of its box. It wraps instead. */
+.ms-switch { min-width: 0; }
+.ms-switch .switch { font-size: var(--fs-15); font-weight: 600; color: var(--text); min-width: 0; }
+.ms-switch .switch-label { white-space: normal; text-wrap: balance; }
 .ms-switch .switch-state { display: none; }
 .ms-switch .switch[aria-checked="true"] .switch-track { background: var(--accent); border-color: var(--accent); }
 .ms-switch .switch[aria-checked="true"] .switch-thumb { background: var(--on-accent); }

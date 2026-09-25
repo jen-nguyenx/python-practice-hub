@@ -41,9 +41,11 @@
   color: var(--text); text-decoration: none; box-shadow: var(--shadow-card);
   transition: border-color var(--dur) ease-out, background-color var(--dur) ease-out;
 }
-.tile:hover { border-color: var(--border-strong); text-decoration: none; }
+/* Hover previews the accent; the current tile wears it at full strength. Every card that leads
+   somewhere hovers the same way, so the accent is not a surprise on some of them and absent on others. */
+.tile:hover { border-color: var(--accent-line); text-decoration: none; }
 .tile:focus-visible { outline-offset: 2px; }
-.tile.is-current { border-color: var(--accent-line); }
+.tile.is-current { border-color: var(--accent); }
 .tile.is-locked { background: transparent; box-shadow: none; }
 /* Finished should look finished. It used to read fainter than a topic barely started, which is exactly
    backwards: the work is done and the tile should say so. Ink, not green — the accent this app uses. */
@@ -54,6 +56,8 @@
 }
 .tile.is-done .tile-fill { background: var(--ok); }
 .tile.is-done .tile-min { color: var(--text); font-weight: 600; }
+/* A finished tile still answers the pointer: its own border colour would otherwise win over hover. */
+.tile.is-done:hover { border-color: var(--accent-line); }
 .tile-top { display: flex; align-items: center; justify-content: space-between; font-family: var(--mono); font-size: var(--fs-12); color: var(--text-muted); }
 .tile-icon { display: inline-flex; align-items: center; color: var(--text); }
 .tile.is-locked .tile-icon { color: var(--lock); }
@@ -97,7 +101,7 @@
 
 .td-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: td; }
 .td-item { display: grid; grid-template-columns: 34px minmax(0, 1fr) 20px; gap: 12px; align-items: center; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r-1); background: var(--surface); text-decoration: none; color: inherit; transition: border-color var(--dur) ease-out, transform var(--dur) ease-out; }
-.td-item:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.td-item:hover { border-color: var(--accent-line); transform: translateY(-1px); }
 .td-item:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .td-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--surface-2); color: var(--text-muted); }
 .td-text { display: grid; gap: 1px; min-width: 0; }

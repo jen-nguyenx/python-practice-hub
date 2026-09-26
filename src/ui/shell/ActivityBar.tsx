@@ -11,11 +11,12 @@ import { Tooltip } from '../components/Tooltip.tsx';
 
 export type NavKey = 'topics' | 'lessons' | 'reference' | 'playground' | 'review' | 'tests' | 'report' | 'settings';
 
-export const NAV: { key: NavKey; label: string; short: string; icon: IconName; href: string }[] = [
+/** `tiny` is the phone label: a bottom bar gives each item about 45px, which "Playground" does not fit. */
+export const NAV: { key: NavKey; label: string; short: string; tiny?: string; icon: IconName; href: string }[] = [
   { key: 'topics', label: 'Topics', short: 'Topics', icon: 'ladder', href: href.landing() },
   { key: 'lessons', label: 'Lessons', short: 'Lessons', icon: 'book', href: href.lessons() },
   { key: 'reference', label: 'Look up', short: 'Look up', icon: 'search', href: href.reference() },
-  { key: 'playground', label: 'Playground', short: 'Playground', icon: 'code', href: href.playground() },
+  { key: 'playground', label: 'Playground', short: 'Playground', tiny: 'Code', icon: 'code', href: href.playground() },
   { key: 'review', label: 'Review', short: 'Review', icon: 'refresh', href: href.review() },
   { key: 'tests', label: 'Exams', short: 'Exams', icon: 'clock', href: href.exam() },
   { key: 'report', label: 'Progress', short: 'Progress', icon: 'chart', href: href.report() },
@@ -69,7 +70,10 @@ export function ActivityBar({ route }: { route: Route }) {
             <Tooltip content={n.label} side="right" decorative disabled={wide}>
               <a href={n.href} class={`actbar-item${cur ? ' is-current' : ''}`} aria-label={n.label} aria-current={cur}>
                 <Icon name={n.icon} size={20} />
+                {/* Two labels, one shown at a time by width: the accessible name is on the link itself,
+                    so neither is ever read out twice. */}
                 <span class="actbar-label" aria-hidden="true">{n.short}</span>
+                <span class="actbar-tiny" aria-hidden="true">{n.tiny ?? n.short}</span>
               </a>
             </Tooltip>
           </Fragment>

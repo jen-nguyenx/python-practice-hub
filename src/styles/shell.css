@@ -95,7 +95,7 @@ html, body { height: 100%; overflow: hidden; }
   content: ""; position: absolute; left: -4px; top: 10px; bottom: 10px; width: 2px; border-radius: 0 2px 2px 0; background: var(--accent-2);
 }
 .actbar-item:focus-visible { outline-offset: -2px; }
-.actbar-label { display: none; }
+.actbar-label, .actbar-tiny { display: none; }
 
 /* ---------- status bar (28px) ---------- */
 .statusbar {
@@ -238,7 +238,20 @@ html, body { height: 100%; overflow: hidden; }
   .actbar-spacer { display: none; }
   .actbar-item { flex: 1; flex-direction: column; gap: 2px; height: 56px; margin: 0; border-radius: 0; }
   .actbar-item.is-current::before { left: 25%; right: 25%; top: 0; bottom: auto; width: auto; height: 2px; border-radius: 0 0 2px 2px; }
-  .actbar-label { display: block; font-size: var(--fs-11); line-height: 1.2; }
+  /* Eight items share the width, so each gets about 45px. The desktop rule sets 14px and wins on
+     specificity unless this one matches it, which is how the labels ran together into one string. */
+  .actbar .actbar-label, .actbar.is-wide .actbar-label { display: none; }
+  .actbar .actbar-tiny, .actbar.is-wide .actbar-tiny {
+    display: block; max-width: 100%; padding: 0 2px; font-size: 10px; font-weight: 500; line-height: 1.2;
+    letter-spacing: -0.01em; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  /* A flex item will not shrink below its content unless told to, which is what let a label bleed out. */
+  .actbar-item, .actbar.is-wide .actbar-item { min-width: 0; }
+  .actbar-item.is-current { font-weight: 600; }
+}
+/* The smallest phones still in use give each of the eight items about 40px. */
+@media (max-width: 360px) {
+  .actbar .actbar-tiny, .actbar.is-wide .actbar-tiny { font-size: 9px; padding: 0 1px; letter-spacing: -0.02em; }
   .app-main { padding: var(--sp-5) var(--sp-4) var(--sp-6); }
 }
 @media (max-width: 640px) {

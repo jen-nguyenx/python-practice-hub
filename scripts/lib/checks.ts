@@ -485,3 +485,38 @@ export async function checkMarketsSwitch(c: Ctx): Promise<void> {
   await sw.click().catch(() => {});
   await c.page.waitForTimeout(300);
 }
+
+/**
+ * The bottom bar on a phone.
+ *
+ * Eight destinations share about 45px each, so a label that will not shrink runs into its neighbour —
+ * which is exactly what happened when a desktop rule leaked a 14px size into the phone layout and the
+ * whole bar became one unbroken string. Checked at the narrowest phone still in common use.
+ */
+export async function checkPhoneNav(c: Ctx): Promise<void> {
+  const page = c.page;
+  const before = page.viewportSize();
+  await page.setViewportSize({ width: 320, height: 800 });
+  await visit(c, '#/');
+  await page.waitForTimeout(500);
+
+  const problems = await page.evaluate(() => {
+    const out: string[] = [];
+    const items = [...document.querySelectorAll('.actbar-item')] as HTMLElement[];
+    if (items.length === 0) return ['the bar has no items at all'];
+    items.forEach((el, i) => {
+      const lab = el.querySelector('.actbar-tiny') as HTMLElement | null;
+      if (!lab || getComputedStyle(lab).display === 'none') { out.push('an item shows no label'); return; }
+      if (lab.scrollWidth > lab.clientWidth + 1) out.push(`"${lab.textContent}" is cut off`);
+      const mine = lab.getBoundingClientRect();
+      const next = items[i + 1]?.querySelector('.actbar-tiny')?.getBoundingClientRect();
+      if (next && mine.right > next.left + 0.5) out.push(`"${lab.textContent}" runs into the next label`);
+      // Anything tappable wants about a finger's width.
+      if (el.getBoundingClientRect().height < 44) out.push(`"${lab.textContent}" is too short to tap`);
+    });
+    return out;
+  });
+  for (const p of problems) c.fail(`phone nav: ${p}`);
+
+  if (before) await page.setViewportSize(before);
+}

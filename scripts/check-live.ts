@@ -13,7 +13,7 @@ import { arg, dismissTour, flag, importProgress, LIVE, openBrowser, startPreview
 import type { SeedQuestion } from './lib/browser.ts';
 import {
   checkCalibration, checkConfidence, checkExamPlan, checkGlossary, checkPlacement, checkMainRoutes, checkPaletteReference,
-  checkMarketsSwitch, checkNavExpands, checkProjectBuild, checkReferenceSearch, checkReportSections, checkRevisionPack, checkTermMarks, checkReviewSession, visit,
+  checkMarketsSwitch, checkNavExpands, checkPhoneNav, checkProjectBuild, checkReferenceSearch, checkReportSections, checkRevisionPack, checkTermMarks, checkReviewSession, visit,
 } from './lib/checks.ts';
 import type { Ctx } from './lib/checks.ts';
 
@@ -80,6 +80,7 @@ try {
   await checkRevisionPack(c);
   await checkProjectBuild(c);
   await checkNavExpands(c);
+  await checkPhoneNav(c);
   await checkMarketsSwitch(c);
   // Just past the seeded history, in a topic that history has unlocked.
   await checkConfidence(c, (index[41] ?? index[index.length - 1]).qid);

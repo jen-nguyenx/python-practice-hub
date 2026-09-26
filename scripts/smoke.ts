@@ -11,7 +11,7 @@ import { arg, dismissTour, importProgress, openBrowser, startPreview, waitForPyt
 import type { SeedQuestion } from './lib/browser.ts';
 import {
   checkCalibration, checkConfidence, checkExamPlan, checkGlossary, checkPlacement, checkLessonLibrary, checkMainRoutes, checkPaletteReference,
-  checkMarketsSwitch, checkNavExpands, checkProjectBuild, checkReferenceSearch, checkReportSections, checkRevisionPack, checkTermMarks, checkReviewSession, visit as visitRoute,
+  checkMarketsSwitch, checkNavExpands, checkPhoneNav, checkProjectBuild, checkReferenceSearch, checkReportSections, checkRevisionPack, checkTermMarks, checkReviewSession, visit as visitRoute,
 } from './lib/checks.ts';
 import type { Ctx } from './lib/checks.ts';
 
@@ -62,6 +62,7 @@ await checkTermMarks(c);
 await checkRevisionPack(c);
 await checkProjectBuild(c);
 await checkNavExpands(c);
+await checkPhoneNav(c);
 await checkMarketsSwitch(c);
 await checkPaletteReference(c);
 await checkReferenceSearch(c);

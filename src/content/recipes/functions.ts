@@ -44,8 +44,8 @@ const recipes: Recipe[] = [
     group: 'functions',
     also: ['pass a list', 'list parameter'],
     topicId: 'functions-basics',
-    code: "def total_over(nums, cutoff):\n    return sum(n for n in nums if n > cutoff)\n\nprint(total_over([10, 25, 40], 20))\n",
-    note: 'A list argument is passed by reference, so changes the function makes to the list itself (like `.append()`) are visible to the caller too, unlike changes to a number or a string.',
+    code: "def record_score(scores, new_score):\n    scores.append(new_score)\n\nresults = [10, 25, 40]\nrecord_score(results, 99)\nprint(results)\n",
+    note: 'The function is handed the caller\'s own list, not a copy, so changing the list itself (like `.append()`) shows up in the caller too. Giving the parameter a new list with `=` does not: that only changes what the name means inside the function.',
   },
   {
     id: 'return-early-from-a-function',

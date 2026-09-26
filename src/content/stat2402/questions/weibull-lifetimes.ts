@@ -53,7 +53,7 @@ const questions: StatQuestion[] = [
       'A batch of bearings has Weibull shape 3 and scale 12,000 hours (both chosen for this question). The line above confirms every Weibull has failed this same share by its own scale. By what age, in hours, have a tenth of the bearings failed (the B10 life)? Round to the nearest 10 hours.',
     code: 'shape <- 3\nscale <- 12000\nround(pweibull(scale, shape, scale), 3)\n',
     answer: 'round(qweibull(0.1, shape, scale), -1)',
-    tol: 5,
+    tol: 6,
     unit: 'hours',
     explain: '`qweibull(p, shape, scale)` is the age by which a proportion `p` have failed. The line above uses `p = pweibull(scale, ...)`, the share failed by the scale itself; here `p` is 0.1 instead, with the same shape and scale.',
   },

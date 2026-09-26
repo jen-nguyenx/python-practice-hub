@@ -266,7 +266,7 @@ def stamps_left(spend, stamps_now):
         { id: 'h6', call: 'stamps_left(200, 0)', expect: '5', label: 'stamps left after two coffees', hidden: true },
         { id: 'h7', call: 'free_coffees(5, 7)', expect: '0', label: 'still one stamp short', hidden: true, tag: 'off_by_one_range' },
         { id: 'h8', call: 'stamps_left(5, 7)', expect: '7', label: 'a small visit leaves the card as it was', hidden: true },
-        { id: 'h9', call: 'free_coffees(80, 0)', expect: '1', label: 'exactly one full card', hidden: true },
+        { id: 'h9', call: 'free_coffees(80, 0)', expect: '1', label: 'enough stamps for exactly one free coffee', hidden: true },
       ],
       concepts: ['helper-functions', 'floor-division', 'modulo', 'return-int'],
       detects: ['int_vs_float_division', 'forgot_to_call', 'off_by_one_range', 'print_vs_return', 'return_type_wrong'],

@@ -271,6 +271,10 @@
 .rp-empty p { font-size: var(--fs-15); max-width: 52ch; }
 .rp-empty-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 
+/* ---------- the other unit's work (foot of both units' progress pages) ---------- */
+.rp-elsewhere { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 18px 22px; }
+.rp-elsewhere-text { display: grid; gap: 4px; min-width: 0; max-width: 64ch; }
+
 /* ---------- responsive ---------- */
 @media (max-width: 1000px) {
   .rp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }

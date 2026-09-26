@@ -183,6 +183,8 @@ const scenario: Scenario = {
           expect: "'Jam and Honey of the Hills'",
           label: 'example from the question',
           hidden: false,
+          // 'AND' in capitals: only a case-insensitive check against the small words keeps it lower case.
+          tag: 'case_sensitive_compare',
         },
         { id: 'v2', call: "stall_sign('THE OLD BAKERY')", expect: "'The Old Bakery'", label: 'sign typed in capitals', hidden: false },
         { id: 'v3', call: "stall_sign('olives')", expect: "'Olives'", label: 'one word', hidden: false },
@@ -192,7 +194,6 @@ const scenario: Scenario = {
           expect: "'Of'",
           label: 'a small word on its own',
           hidden: true,
-          tag: 'case_sensitive_compare',
         },
         {
           id: 'h2',
@@ -209,7 +210,6 @@ const scenario: Scenario = {
           expect: "'Coffee and Doughnuts in the Park'",
           label: 'three small words in the middle',
           hidden: true,
-          tag: 'case_sensitive_compare',
         },
       ],
       hints: [

@@ -40,7 +40,7 @@ export function crumbsFor(r: Route): Crumb[] {
     ];
     case 'report': return r.topicId && TOPIC_BY_ID[r.topicId]
       ? [{ label: 'Report', href: href.report() }, { label: TOPIC_BY_ID[r.topicId].short }]
-      : [{ label: 'Report' }];
+      : [{ label: unitOf(store.settings.value) === 'stat2402' ? 'Progress' : 'Report' }];
     case 'lesson': return [topic(r.topicId), { label: 'Lesson' }];
     case 'lessons': return [{ label: 'Lessons' }];
     case 'review': return [{ label: 'Review' }];

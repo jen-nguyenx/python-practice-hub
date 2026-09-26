@@ -110,7 +110,7 @@ const lesson: Lesson = {
             },
             notes: {
               '6-8': 'A $6 contango against a 10% all-in carry: $2 a barrel, a million dollars on a 500,000-barrel tank, and every cent of it locked on day one. Pull the contango down to $4 and watch it go.',
-              '4-8': 'A $4 contango against a 10% all-in carry — rent, insurance and interest together, which is the trade in the table above. The line finishes on zero. This is the market most of the time — the curve pays almost exactly what holding costs, and it is nobody\'s free money.',
+              '4-8': 'A $4 contango against a 10% all-in carry — rent, insurance and interest together, close to the trade in the table above. The line finishes on zero. This is the market most of the time — the curve pays almost exactly what holding costs, and it is nobody\'s free money.',
               '8-0': 'An $8 contango with cheap money: this is 2020, when the curve went so steep that traders chartered tankers as floating tanks because the shore tanks were full.',
               '0-11': 'A flat curve and expensive money: every month in the tank costs you. Stock gets sold down, and the people who must hold it — refineries, governments — are the only ones holding.',
             },

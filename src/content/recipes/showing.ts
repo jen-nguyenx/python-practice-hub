@@ -49,7 +49,7 @@ const recipes: Recipe[] = [
     group: 'showing',
     also: ['table', 'columns', 'align output'],
     code: "rows = [('Ada', 91), ('Bo', 7)]\nfor name, mark in rows:\n    print(f'{name:<6}{mark:>4}')\n",
-    note: '`{value:<6}` pads with spaces up to width 6 on the left side of the text, and `{value:>4}` pads on the left so the text ends up right-aligned within width 4; together they line columns up regardless of how long each value is.',
+    note: '`{value:<6}` pads with spaces up to width 6 on the right side of the text, and `{value:>4}` pads on the left so the text ends up right-aligned within width 4; together they line columns up regardless of how long each value is.',
   },
   {
     id: 'show-a-percentage',

@@ -194,7 +194,7 @@ print(counts)`,
           '- `counts[song] > counts[best]` still takes over whenever a title has a strictly higher count.\n' +
           '- `or (counts[song] == counts[best] and song < best)` is the tie-break: on an equal count the title only wins if it comes earlier alphabetically. ' +
           'The brackets matter, because `and` binds tighter than `or` but the condition is far easier to read with them.\n' +
-          '- `song < best` compares strings the way `sorted` would, so `\'Anchor\' < \'Zenith\'` is `True`. Capitals sort before lower-case letters, which is why `\'Kalka\'` and `\'kalka\'` stay two separate titles with `\'Kalka\'` winning a tie.\n\n' +
+          '- `song < best` compares strings the way `sorted` would, so `\'Anchor\' < \'Zenith\'` is `True`. `\'Kalka\'` and `\'kalka\'` are two separate titles because keys are exact strings, so here `\'Kalka\'` wins outright on the higher count (2 requests to 1), with no tie to break.\n\n' +
           'Without the tie-break the answer is whichever tied title was requested first, because a dictionary gives its keys back in the order they were first added. ' +
           'On `[\'Zenith\', \'Anchor\']` both titles have one request, `best` starts as `\'Zenith\'`, no count is ever strictly greater, and `\'Zenith\'` is returned.\n\n' +
           'The same job can be done by sorting instead: `sorted(counts.items(), key=lambda pair: (-pair[1], pair[0]))[0][0]`. ' +

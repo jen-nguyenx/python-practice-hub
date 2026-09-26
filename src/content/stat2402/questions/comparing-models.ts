@@ -33,7 +33,7 @@ const questions: StatQuestion[] = [
     code:
       'm1 <- glm(cbind(ncases, ncontrols) ~ agegp, family = binomial, data = esoph)\n' +
       'm2 <- glm(cbind(ncases, ncontrols) ~ agegp + tobgp, family = binomial, data = esoph)\n' +
-      'm3 <- glm(cbind(ncases, ncontrols) ~ tobgp, family = binomial, data = esoph)\n' +
+      'm3 <- glm(cbind(ncases, ncontrols) ~ alcgp, family = binomial, data = esoph)\n' +
       'sapply(list(m1 = m1, m2 = m2, m3 = m3), function(m) length(coef(m)))\n',
     options: [
       { text: 'm1 and m2: setting the tobgp coefficients in m2 to zero gives m1 back', correct: true },

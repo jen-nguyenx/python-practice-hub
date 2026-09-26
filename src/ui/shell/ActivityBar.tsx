@@ -1,7 +1,7 @@
 // 52px icon bar down the left side (docs/build/DESIGN.md "Frame"): Topics, Lessons, Playground, Review, Exams, Report, then Settings
 // at the bottom. Muted 20px icons; the current section is ink with a 2px accent bar on its left edge. Under 700px it
 // becomes a bottom tab bar with short labels. A STAT2402 student gets a shorter bar: their home, their lessons,
-// their exams, the R Playground and Settings -- the rest is built on CITS1401's questions.
+// their exams, their progress, the R Playground and Settings -- the rest is built on CITS1401's questions.
 import { Fragment } from 'preact';
 import { href } from '../../app/router.ts';
 import type { Route } from '../../app/router.ts';
@@ -27,14 +27,15 @@ export const NAV: { key: NavKey; label: string; short: string; tiny?: string; ic
 ];
 
 /**
- * STAT2402's bar. Exams opens STAT2402's own R papers; Review, Progress and Look up stand on the CITS1401
- * question bank and the Python reference, so offering them here would send a statistics student to a
- * Python ladder.
+ * STAT2402's bar. Exams opens STAT2402's own R papers and Progress its own report (#/report shows whichever
+ * unit is in force, as #/exam does); Review and Look up stand on the CITS1401 question bank and the Python
+ * reference, so offering them here would send a statistics student to a Python ladder.
  */
 export const STAT_NAV: typeof NAV = [
   { key: 'topics', label: 'Home', short: 'Home', icon: 'home', href: href.landing() },
   { key: 'lessons', label: 'Lessons', short: 'Lessons', icon: 'book', href: href.lessons() },
   { key: 'tests', label: 'Exams', short: 'Exams', icon: 'clock', href: href.exam() },
+  { key: 'report', label: 'Progress', short: 'Progress', icon: 'chart', href: href.report() },
   { key: 'playground', label: 'R Playground', short: 'R Playground', tiny: 'R', icon: 'code', href: href.rPlayground() },
   { key: 'settings', label: 'Settings', short: 'Settings', icon: 'sliders', href: href.settings() },
 ];

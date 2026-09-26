@@ -329,7 +329,7 @@ print('score then name A-Z:  ', [r[0] for r in with_tiebreak])
         },
         {
           kind: 'prose',
-          body: 'Compare the two orders. `reverse=True` flips everything in the key, names included, so the tie comes out backwards; negating the number instead puts the score high to low and leaves the name going A to Z.\n\nRound after ranking, as the final list is built — never before it.',
+          body: 'Compare the two orders. Sorting by score alone gives no rule for the tie at all: the two clubs on 12 come out in whatever order they were listed in, not alphabetical order. Adding the name to the key is what fixes that — negating the score keeps it high to low while the name, left alone, still sorts A to Z.\n\nRound after ranking, as the final list is built — never before it.',
         },
         { kind: 'mistakes', only: ['round_mid_calc', 'sort_tiebreak'] },
       ],

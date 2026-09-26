@@ -141,7 +141,7 @@
     "stdout": "[95, 80, 70] original: [70, 95, 80, 65]\n[95, 80, 70] original: [95, 80, 70, 65]\n"
   },
   "s3-b1": {
-    "stdout": "different outer list: False\nsame inner list:     True\nafter append to copy: [[1, 2], [3, 4]]\nafter change inside:  [[1, 2, 99], [3, 4]]\n"
+    "stdout": "different outer list: True\nsame inner list:     True\nafter append to copy: [[1, 2], [3, 4]]\nafter change inside:  [[1, 2, 99], [3, 4]]\n"
   },
   "s3-b3": {
     "stdout": "shallow shares inner: True\ndeep shares inner:    False\noriginal after deep change:  [[1, 2], [3, 4]]\noriginal after shallow change: [[1, 2, 99], [3, 4]]\n"

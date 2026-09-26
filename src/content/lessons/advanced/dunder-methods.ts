@@ -268,7 +268,7 @@ const lesson: Lesson = {
         {
           kind: 'checkpoint',
           prompt: 'A class defines `__lt__` comparing only rank, and `__eq__` comparing rank and suit. Sorting a list containing two same-rank, different-suit cards puts them in input order; sorting the reversed list reverses them. Why does this not contradict `sorted` being stable?',
-          answer: 'Neither card is less than the other, so `sorted` never swaps them — stability means equal-comparing items keep their relative input order. Sorting the reversed list therefore produces the opposite order to sorting the original, which is exactly what stability predicts, not a contradiction. What it reveals is that the class has two different notions of sameness: `__lt__` and `__eq__` disagree about which fields matter, so results depend on input order — the reason `functools.total_ordering` insists both are defined over the same fields.',
+          answer: 'Neither card is less than the other, so `sorted` never swaps them — stability means equal-comparing items keep their relative input order. Sorting the reversed list therefore produces the opposite order to sorting the original, which is exactly what stability predicts, not a contradiction. What it reveals is that the class has two different notions of sameness: `__lt__` and `__eq__` disagree about which fields matter, so results depend on input order — the reason `functools.total_ordering`, which builds the other comparisons from these two, simply assumes they agree: nothing checks it for you.',
         },
       ],
     },

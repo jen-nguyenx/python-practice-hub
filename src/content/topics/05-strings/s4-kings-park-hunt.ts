@@ -226,7 +226,7 @@ const scenario: Scenario = {
         "- Return `''` when `name` is empty.\n\n" +
         "For example, `space_capitals('BotanicGarden')` returns `'Botanic Garden'`. Use a loop and string methods only: no lists and no `split`.",
       concepts: ['string-building', 'loop-over-string', 'case', 'methods'],
-      detects: ['off_by_one_range', 'case_sensitive_compare', 'accumulator_init', 'string_immutability', 'print_vs_return'],
+      detects: ['off_by_one_range', 'accumulator_init', 'string_immutability', 'print_vs_return'],
       expectedSec: 360,
       fnName: 'space_capitals',
       rules: ['noImport'],
@@ -266,7 +266,6 @@ const scenario: Scenario = {
           expect: "'Level2 Lookout'",
           label: 'a digit in the middle',
           hidden: true,
-          tag: 'case_sensitive_compare',
         },
       ],
       hints: [

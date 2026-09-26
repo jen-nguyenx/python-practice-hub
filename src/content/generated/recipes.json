@@ -78,7 +78,7 @@
     "stdout": "Ada scored 91\nAda scored 100 with bonus\n"
   },
   "function-that-takes-a-list": {
-    "stdout": "65\n"
+    "stdout": "[10, 25, 40, 99]\n"
   },
   "group-rows": {
     "stdout": "{'Perth': ['Ada', 'Bo'], 'Broome': ['Cy']}\n"
@@ -213,7 +213,7 @@
     "stdout": "caught: ZeroDivisionError division by zero\n"
   },
   "why-point-one-plus-point-two": {
-    "stdout": "0.30000000000000004\nTrue\nTrue\n"
+    "stdout": "0.30000000000000004\nFalse\nTrue\nTrue\n"
   },
   "why-print-is-not-return": {
     "stdout": "7\nNone 7\n"

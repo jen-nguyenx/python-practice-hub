@@ -17,6 +17,7 @@ import { QuestionPage } from '../ui/screens/QuestionPage.tsx';
 import { Playground } from '../ui/screens/Playground.tsx';
 import { RPlayground } from '../ui/screens/RPlayground.tsx';
 import { StatExams } from '../ui/screens/StatExams.tsx';
+import { StatProgress } from '../ui/screens/StatProgress.tsx';
 import { StatQuiz } from '../ui/screens/StatQuiz.tsx';
 import { store } from './services.ts';
 import { unitOf } from '../content/units.ts';
@@ -38,7 +39,7 @@ export function App() {
     case 'question': screen = <QuestionPage qid={r.qid} />; break;
     case 'playground': screen = <Playground />; break;
     case 'r-playground': screen = <RPlayground />; break;
-    case 'report': screen = <Report topicId={r.topicId} />; break;
+    case 'report': screen = unitOf(store.settings.value) === 'stat2402' && !r.topicId ? <StatProgress /> : <Report topicId={r.topicId} />; break;
     case 'review': screen = <Review />; break;
     case 'decode': screen = <DecodeError />; break;
     case 'reference': screen = <Reference />; break;

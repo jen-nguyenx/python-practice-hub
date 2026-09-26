@@ -338,10 +338,10 @@
       "pass a list",
       "list parameter"
     ],
-    "code": "def total_over(nums, cutoff):\n    return sum(n for n in nums if n > cutoff)\n\nprint(total_over([10, 25, 40], 20))\n",
+    "code": "def record_score(scores, new_score):\n    scores.append(new_score)\n\nresults = [10, 25, 40]\nrecord_score(results, 99)\nprint(results)\n",
     "group": "functions",
     "id": "function-that-takes-a-list",
-    "note": "A list argument is passed by reference, so changes the function makes to the list itself (like `.append()`) are visible to the caller too, unlike changes to a number or a string.",
+    "note": "The function is handed the caller's own list, not a copy, so changing the list itself (like `.append()`) shows up in the caller too. Giving the parameter a new list with `=` does not: that only changes what the name means inside the function.",
     "task": "Write a function that takes a list and works on it",
     "topicId": "functions-basics"
   },
@@ -476,7 +476,7 @@
     "code": "marks = [72, 45, 91, 68]\nprint(max(marks), min(marks), sum(marks))\nprint(sum(marks) / len(marks))\nprint(round(sum(marks) / len(marks), 2))\n",
     "group": "lists",
     "id": "biggest-and-total",
-    "note": "All of these raise `ValueError` on an empty list, and the average also divides by zero, so guard with `if marks:` when the data might be empty.",
+    "note": "`max()` and `min()` raise `ValueError` on an empty list; `sum()` quietly gives `0` instead, and the average then divides by zero, so guard with `if marks:` when the data might be empty.",
     "task": "Find the largest, smallest, total or average",
     "topicId": "lists-tuples"
   },
@@ -707,7 +707,7 @@
       "rounding error",
       "float equality"
     ],
-    "code": "print(0.1 + 0.2)\nprint(round(0.1 + 0.2, 2) == 0.3)\nprint(abs((0.1 + 0.2) - 0.3) < 1e-9)\n",
+    "code": "print(0.1 + 0.2)\nprint(0.1 + 0.2 == 0.3)\nprint(round(0.1 + 0.2, 2) == 0.3)\nprint(abs((0.1 + 0.2) - 0.3) < 1e-9)\n",
     "group": "numbers",
     "id": "why-point-one-plus-point-two",
     "note": "Computers store most decimals as an approximation in binary, so `0.1 + 0.2 == 0.3` is `False`. Compare floats by rounding first or by checking the difference is tiny, never with `==`.",
@@ -804,7 +804,7 @@
     "code": "rows = [('Ada', 91), ('Bo', 7)]\nfor name, mark in rows:\n    print(f'{name:<6}{mark:>4}')\n",
     "group": "showing",
     "id": "align-columns-in-output",
-    "note": "`{value:<6}` pads with spaces up to width 6 on the left side of the text, and `{value:>4}` pads on the left so the text ends up right-aligned within width 4; together they line columns up regardless of how long each value is.",
+    "note": "`{value:<6}` pads with spaces up to width 6 on the right side of the text, and `{value:>4}` pads on the left so the text ends up right-aligned within width 4; together they line columns up regardless of how long each value is.",
     "task": "Align columns when printing a table of results"
   },
   {

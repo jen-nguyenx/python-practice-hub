@@ -73,7 +73,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'quiz',
-          prompt: '`stock` has no `\'latte\'` key. What happens on each of these two lines, run one after the other?',
+          prompt: '`stock` has no `\'latte\'` key. What would each of these two lines print, if you ran them separately?',
           code: "stock = {'flat white': 12, 'muffin': 3}\nprint(stock['latte'])\nprint(stock.get('latte'))\n",
           options: [
             { text: 'The first line raises KeyError; the second prints None', correct: true, why: 'Square brackets demand the key exist. `get` asks and supplies a fallback instead of raising — `None` when none is given.' },

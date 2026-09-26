@@ -54,7 +54,7 @@ const recipes: Recipe[] = [
     also: ['max', 'min', 'sum', 'mean', 'average'],
     topicId: 'lists-tuples',
     code: "marks = [72, 45, 91, 68]\nprint(max(marks), min(marks), sum(marks))\nprint(sum(marks) / len(marks))\nprint(round(sum(marks) / len(marks), 2))\n",
-    note: 'All of these raise `ValueError` on an empty list, and the average also divides by zero, so guard with `if marks:` when the data might be empty.',
+    note: '`max()` and `min()` raise `ValueError` on an empty list; `sum()` quietly gives `0` instead, and the average then divides by zero, so guard with `if marks:` when the data might be empty.',
   },
 ];
 

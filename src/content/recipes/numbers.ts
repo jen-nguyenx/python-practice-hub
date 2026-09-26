@@ -67,7 +67,7 @@ const recipes: Recipe[] = [
     task: 'Understand why 0.1 + 0.2 is not exactly 0.3',
     group: 'numbers',
     also: ['floating point', 'rounding error', 'float equality'],
-    code: "print(0.1 + 0.2)\nprint(round(0.1 + 0.2, 2) == 0.3)\nprint(abs((0.1 + 0.2) - 0.3) < 1e-9)\n",
+    code: "print(0.1 + 0.2)\nprint(0.1 + 0.2 == 0.3)\nprint(round(0.1 + 0.2, 2) == 0.3)\nprint(abs((0.1 + 0.2) - 0.3) < 1e-9)\n",
     note: 'Computers store most decimals as an approximation in binary, so `0.1 + 0.2 == 0.3` is `False`. Compare floats by rounding first or by checking the difference is tiny, never with `==`.',
   },
   {

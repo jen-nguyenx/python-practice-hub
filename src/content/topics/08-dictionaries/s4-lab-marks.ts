@@ -324,7 +324,7 @@ print(len(sessions))`,
         explanation:
           "Line 1 builds a dictionary whose keys are the tuples `('Tue', 9)` and `('Wed', 14)`, and line 2 prints `2 ['Aisha', 'Chen']`.\n\n" +
           'Line 3 builds `label` with **square** brackets, so it is a list, not a tuple. Line 4 tries to use that list as a key and Python raises ' +
-          "`TypeError: unhashable type: 'list'`. Line 5 never runs.\n\n" +
+          "`TypeError: cannot use 'list' as a dict key (unhashable type: 'list')`. Line 5 never runs.\n\n" +
           'Python works out where to store a key from the key itself. If the key could change later, the entry would be lost, so only values that cannot change are allowed: ' +
           'strings, numbers, booleans and tuples of those. Lists and dictionaries are not.\n\n' +
           "The fix is one character each side: `label = ('Thu', 11)`. Then `sessions[label] = []` adds a third session and line 5 prints `3`.\n\n" +

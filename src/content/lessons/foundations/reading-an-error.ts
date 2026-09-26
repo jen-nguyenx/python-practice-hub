@@ -63,7 +63,7 @@ const lesson: Lesson = {
           kind: 'table',
           head: ['Type', 'What Python is saying', 'First thing to check'],
           rows: [
-            ['SyntaxError', 'I cannot even read this, so I have not run anything', 'The line above the one reported: a missing bracket or quote'],
+            ['SyntaxError', 'I cannot even read this, so I have not run anything', 'The exact wording of the message: it usually names the missing bracket or quote directly'],
             ['NameError', 'You used a name I have never been given', 'Spelling, and whether you created it before using it'],
             ['TypeError', 'That operation does not make sense for this kind of value', 'Whether something is text when you meant a number'],
             ['IndexError', 'There is no item at that position', 'The length, and that counting starts at 0'],
@@ -150,16 +150,16 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'The other three happen **while** your program runs, so anything before them has already happened. A `SyntaxError` is different: Python could not understand the file at all, so **nothing ran**. Not one line.\n\nThat matters when you are hunting it, because a `SyntaxError` is often reported one line *later* than the real mistake. Python reads left to right and only realises something is wrong when it hits something that cannot follow.',
+          body: 'The other three happen **while** your program runs, so anything before them has already happened. A `SyntaxError` is different: Python could not understand the file at all, so **nothing ran**. Not one line.\n\nThat also makes the reported line worth reading carefully: for a problem like an unclosed bracket, Python has been keeping track since the moment the bracket opened, and names that exact line rather than wherever it eventually gave up.',
         },
         {
           kind: 'code',
-          caption: 'The bracket is missing on line 1, but look at which line Python blames.',
+          caption: 'The bracket is missing on line 1, and the message points straight at it.',
           code: "total = (3 + 4\nprint(total)\n",
         },
         {
           kind: 'prose',
-          body: 'Python got to the end of line 1 with a bracket still open, carried on to line 2 hoping the rest was coming, and only gave up there. So the rule is: **look at the reported line, then the line above it**.',
+          body: 'Python\'s parser tracks every bracket from the moment it opens, so when one is never closed the error names that opening line directly, and says so, instead of blaming wherever it finally ran out of file to read. So the rule is: **read the wording of the message itself before you guess which line it means**.',
         },
         {
           kind: 'annotate',
@@ -237,7 +237,7 @@ const lesson: Lesson = {
           items: [
             'Read the last line. It names the type and explains the problem in words.',
             'Find the line number, and open that line.',
-            'If it is a `SyntaxError`, check the line above too.',
+            'If it is a `SyntaxError`, read the message itself before guessing which line it means.',
             'Ask what each name on that line is holding. Use `print()` or `type()` if you are not sure.',
             'Change one thing, then run it again. Changing three things at once tells you nothing.',
           ],

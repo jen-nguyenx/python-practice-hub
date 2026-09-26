@@ -12,6 +12,11 @@
 import { mkdirSync, readFileSync } from 'node:fs';
 import { answerCurrent, arg, chooseUnit, dismissTour, flag, importProgress, openBrowser, startPreview, switchUnit, writeSeed } from './lib/browser.ts';
 import type { SeedQuestion } from './lib/browser.ts';
+import type { StatQuestion } from '../src/content/statQuestionSchema.ts';
+import { scaleMarks } from '../src/engine/statExam.ts';
+import rBasics from '../src/content/stat2402/questions/r-basics.ts';
+import regression from '../src/content/stat2402/questions/regression-in-r.ts';
+import logistic from '../src/content/stat2402/questions/logistic-regression.ts';
 
 interface Shot {
   name: string;
@@ -33,6 +38,45 @@ async function go(page: import('playwright-core').Page, hash: string) {
 async function toStat(page: import('playwright-core').Page) {
   await switchUnit(page, root, 'STAT2402');
 }
+/**
+ * Rest the pointer a third of the way into the first element matching `selector`, so its spotlight is lit.
+ * These shots photograph the viewport: photographing an element scrolls it into view first, which moves it
+ * out from under the pointer.
+ */
+async function hoverInto(page: import('playwright-core').Page, selector: string) {
+  const el = page.locator(selector).first();
+  await el.scrollIntoViewIfNeeded().catch(() => {});
+  const box = await el.boundingBox();
+  if (!box) return;
+  await page.mouse.move(box.x + box.width / 3, box.y + box.height / 3, { steps: 4 });
+  await page.waitForTimeout(400);
+}
+/**
+ * STAT2402 work for the shots of its progress page: four lessons read, three quizzes (one of them poor),
+ * and a mock final. Only the shots carry it; the smoke run checks the STAT2402 path from nothing.
+ */
+function statSeed(): unknown[] {
+  const day = 24 * 60 * 60 * 1000;
+  const t0 = Date.now() - 9 * day;
+  const ev = (i: number, rest: object) => ({ eid: `seed-stat-${i}`, v: 1, ts: t0 + i * (day / 2), sessionId: 'seed-stat', ...rest });
+  const paper = (i: number, kind: string, qs: StatQuestion[], outOf: number[], got: (k: number) => number) => {
+    const earned = outOf.map((m, k) => Math.min(m, got(k) * m));
+    return ev(i, {
+      type: 'stat_test', kind, lessonIds: [...new Set(qs.map((q) => q.lessonId))], qids: qs.map((q) => q.id),
+      earned, score: earned.reduce((a, b) => a + b, 0), total: outOf.reduce((a, b) => a + b, 0), durationMs: 14 * 60_000, timedOut: false,
+    });
+  };
+  const quiz = (i: number, qs: StatQuestion[], got: (k: number) => number) => paper(i, 'quiz', qs, qs.map((q) => q.marks), got);
+  const mockQs = [rBasics[0], regression[1], logistic[0], regression.find((q) => q.kind === 'write')!];
+  return [
+    ...['r-basics', 'probability-and-likelihood', 'regression-in-r', 'logistic-regression'].map((lessonId, i) => ev(i * 3, { type: 'lesson_done', lessonId })),
+    quiz(1, rBasics, (k) => (k % 5 === 4 ? 0 : 1)),
+    quiz(7, regression, () => 1),
+    quiz(10, logistic, (k) => (k % 2 ? 0 : 0.5)),
+    paper(12, 'mock', mockQs, scaleMarks(mockQs.map((q) => q.marks), 100), (k) => (k === 2 ? 0 : 1)),
+  ];
+}
+
 // Past the seeded history, so the question is one this profile has not checked yet.
 const FRESH_QID = (index[41] ?? index[index.length - 1]).qid;
 
@@ -41,6 +85,9 @@ const SHOTS: Shot[] = [
   { name: 'unit-chooser', hash: '#/' },
   { name: 'landing', hash: '#/' },
   { name: 'today', hash: '#/', selector: '.td' },
+  // The pixel spotlight: a ladder tile and a Today item under the pointer.
+  { name: 'hover-tile', hash: '#/', prepare: (page) => hoverInto(page, '.tile:not(.is-locked) >> nth=1') },
+  { name: 'hover-today', hash: '#/', prepare: (page) => hoverInto(page, '.td-item') },
   { name: 'report', hash: '#/report' },
   { name: 'skills', hash: '#/report', selector: 'section:has(#rp-concepts)' },
   { name: 'calibration', hash: '#/report', selector: '.rp-cal' },
@@ -191,7 +238,13 @@ const SHOTS: Shot[] = [
       await page.waitForTimeout(800);
     },
   },
+  {
+    name: 'hover-stat',
+    hash: '#/settings',
+    prepare: async (page) => { await toStat(page); await go(page, '#/'); await hoverInto(page, '.sh-step >> nth=1'); },
+  },
   { name: 'stat-exams', hash: '#/settings', prepare: async (page) => { await toStat(page); await go(page, '#/exam'); } },
+  { name: 'stat-progress', hash: '#/settings', prepare: async (page) => { await toStat(page); await go(page, '#/report'); } },
   {
     name: 'r-playground',
     hash: '#/settings',
@@ -252,7 +305,7 @@ await dismissTour(page);
 
 // Everything interesting on the report needs a history behind it, and the confidence question needs one
 // that has not touched the question being photographed.
-const seed = writeSeed(`${out}/seed.json`, index, { confidence: true });
+const seed = writeSeed(`${out}/seed.json`, index, { confidence: true, extra: statSeed() });
 await importProgress(page, base, seed);
 
 for (const shot of wanted) {

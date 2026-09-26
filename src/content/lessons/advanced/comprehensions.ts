@@ -126,7 +126,7 @@ const lesson: Lesson = {
             },
             {
               text: 'sum(row[1] for row in rows) if row[1] >= 50',
-              why: 'The `if` sits outside the parentheses entirely, and `row` does not exist out there — this raises a `NameError` before anything is summed.',
+              why: 'The `if` sits outside the parentheses entirely, so Python reads it as the start of an `x if condition else y` expression with no `else`. That is a `SyntaxError`: the line never runs at all.',
             },
           ],
         },

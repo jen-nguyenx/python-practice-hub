@@ -161,7 +161,7 @@ const lesson: Lesson = {
           code: "class Account:\n    def __init__(self, balance):\n        self.balance = balance\n\n    def deposit(amount):\n        return amount\n\na = Account(100.0)\nprint(a.deposit(10.0))\n",
           options: [
             {
-              text: 'TypeError: deposit() takes 1 positional argument but 2 were given',
+              text: 'TypeError: Account.deposit() takes 1 positional argument but 2 were given',
               correct: true,
               why: 'The dot call always passes the object on the left of the dot as the first argument, so `a.deposit(10.0)` really hands over two values: `a` and `10.0`. The method as written has room for one.',
             },

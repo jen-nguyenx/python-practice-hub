@@ -140,7 +140,8 @@
   padding: 28px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--r-2);
   box-shadow: var(--shadow-card); cursor: pointer; font: inherit;
 }
-.up-card:hover { border-color: var(--border-strong); }
+/* The app's one hover language (see .tile): resting neutral, hover the accent at 40%, current at full. */
+.up-card:hover { border-color: var(--accent-line); }
 .up-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .up-code { font-family: var(--mono); font-size: var(--fs-13); font-weight: 600; letter-spacing: 0.1em; color: var(--text-muted); }
 .up-name { font-family: var(--display); font-size: var(--fs-24); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
@@ -157,8 +158,9 @@
   padding: 16px 18px; background: var(--surface); color: var(--text); text-decoration: none;
   border: 1px solid var(--border); border-radius: var(--r-2);
 }
-.sh-step:hover { border-color: var(--border-strong); }
-.sh-step.is-next { border-color: var(--accent-line); }
+.sh-step:hover { border-color: var(--accent-line); }
+/* The lesson you are on wears the accent at full, as the current tile on the CITS1401 ladder does. */
+.sh-step.is-next { border-color: var(--accent); }
 .sh-n {
   width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
   border: 1px solid var(--border-strong); font-family: var(--mono); font-size: var(--fs-13); color: var(--text-muted);

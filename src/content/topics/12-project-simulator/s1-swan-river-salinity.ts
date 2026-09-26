@@ -523,7 +523,7 @@ for site in readings:
         explanation:
           'The dictionary is walked in insertion order, so Blackwall Reach is summarised first. Its three readings give `n` 3 and `n - 1` 2, and the line prints normally.\n\n' +
           'Guildford has one reading. `mean = sum(values) / n` is fine (12.6 / 1), and the loop runs once, adding `(12.6 - 12.6) ** 2`, which is 0.0. ' +
-          'The crash is on `return (total / (n - 1)) ** 0.5`: `n - 1` is 0, so Python raises `ZeroDivisionError: float division by zero`.\n\n' +
+          'The crash is on `return (total / (n - 1)) ** 0.5`: `n - 1` is 0, so Python raises `ZeroDivisionError: division by zero`.\n\n' +
           'The fix belongs in the function, before the division:\n\n' +
           '```python\ndef std_dev(values):\n    n = len(values)\n    if n < 2:\n        return None\n    ...\n```\n\n' +
           'Option (b) is wrong about the loop: it does run once for Guildford, and `total` being 0.0 is not the problem, because 0.0 divided by a non-zero number is simply 0.0. ' +

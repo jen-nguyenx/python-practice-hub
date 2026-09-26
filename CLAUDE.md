@@ -49,6 +49,7 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/ui/shell/landing/UnitChooser.tsx`, `StatHome.tsx` | The first-visit "which unit?" question, and STAT2402's home |
 | `src/content/statQuestionSchema.ts`, `stat2402/questions/` | STAT2402 exam questions, one file per lesson; checked by `scripts/verify/statQuestions.ts` |
 | `src/engine/statExam.ts`, `src/ui/stat/`, `StatExams.tsx`, `StatQuiz.tsx` | STAT2402 exams: lesson quizzes (`#/quiz/:id`), practice test and mock final (`#/exam`) |
+| `src/engine/statProgress.ts`, `StatProgress.tsx` | STAT2402 progress (`#/report`): lessons read, marks per lesson and per kind rebuilt from `stat_test` events, what to work on |
 | `src/content/recipes/`, `recipeSchema.ts` | The reference: one file per area, every snippet run by the verifier |
 | `src/content/conceptWords.ts` | Concept tags in a student's words; nothing shows a raw tag |
 | `src/content/glossary.ts`, `glossarySchema.ts` | The glossary: one entry per word the course uses, each demo run by the verifier |
@@ -70,10 +71,12 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
   is answered (changeable in Settings), and `unitOf()` treats null as CITS1401, so nothing changed for an
   existing student until they choose. Each track belongs to a unit (`TRACK_UNIT`); `visibleTracks()` is
   the one rule, and a unit sees only its own tracks (Markets belongs to neither and keeps its switch).
-  STAT2402 gets its own home, a five-item bar (Home, Lessons, Exams, R Playground, Settings), an R runtime pill,
-  a lessons-and-exams palette, and no tour; Python is never warmed for it. Everything CITS1401 has --
-  topics, questions, tests, the run-in, the report -- is untouched and unreachable from the STAT2402 bar;
-  `#/exam` shows whichever unit's exams are in force.
+  STAT2402 gets its own home, a six-item bar (Home, Lessons, Exams, Progress, R Playground, Settings), an R
+  runtime pill, a lessons-and-exams palette, and no tour; Python is never warmed for it. Everything CITS1401
+  has -- topics, questions, tests, the run-in, the report -- is untouched and unreachable from the STAT2402 bar;
+  `#/exam` and `#/report` show whichever unit's exams and progress are in force. One browser keeps one event
+  log for both units, so switching unit never loses anything; each unit's progress page counts only its own,
+  and `UnitElsewhere` at its foot says when the other unit has work too and switches to it.
 - **STAT2402 lessons are in R, and R's output is R's own.** The language comes from the track
   (`TRACK_LANG`), never a lesson. The verifier types each top-level expression at webR's real console and
   records what R printed, so warnings and `Error in f(x) :` reports are R's wording, not ours; the same

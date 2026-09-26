@@ -336,7 +336,7 @@ print(is_century_heat(20.0))
             notes: {
               '0': 'At -40 the function returns -40 too. This is the one temperature where the Celsius number and the Fahrenheit number are identical, which is exactly where the two lines in the picture cross.',
               '40': 'At 0 Celsius the function returns 32, the freezing point of water. It is a good value to test a temperature function against, because you already know the answer by heart.',
-              '80': 'At 40 Celsius the function returns 104. Past the crossing point the two lines pull apart in the other direction.',
+              '80': 'At 40 Celsius the function returns 104. The gap between the two lines is now the widest shown: it only grows as the temperature climbs away from -40.',
             },
             takeaway: 'A function has exactly one return value for each argument, so plotting them across a range shows the whole relationship at once instead of one call at a time. Here the two lines cross exactly once, at -40, the single temperature where the Celsius reading and the Fahrenheit reading happen to agree. Everywhere else they diverge, which is why "the same number" is not the same thing as "the same temperature".',
           },
@@ -362,7 +362,7 @@ print(is_century_heat(20.0))
       blocks: [
         {
           kind: 'prose',
-          body: 'The first of these costs more marks in CITS1401 than any other single mistake.',
+          body: 'The first of these is the one to take most seriously: the code looks completely right on screen and still hands back nothing.',
         },
         {
           kind: 'mistakes',

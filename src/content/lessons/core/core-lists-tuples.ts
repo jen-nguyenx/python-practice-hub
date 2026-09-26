@@ -328,7 +328,7 @@ const lesson: Lesson = {
       blocks: [
         {
           kind: 'prose',
-          body: 'Six mistakes cover nearly every lost mark in this topic. Four of them produce no error at all, which is what makes them expensive.',
+          body: 'Six mistakes cover nearly every lost mark in this topic. Five of them produce no error at all, which is what makes them expensive.',
         },
         {
           kind: 'mistakes',

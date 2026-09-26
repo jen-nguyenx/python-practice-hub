@@ -140,6 +140,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
       { id: 'a-home', group: 'Pages and actions', label: 'Home', detail: 'Your STAT2402 path', icon: 'home', search: 'home path start', href: href.landing(), run: go(href.landing()) },
       ...actions.filter((a) => keep.has(a.id)),
       { id: 'a-exam', group: 'Pages and actions', label: 'Exams', detail: 'Mock final, practice tests and lesson quizzes', icon: 'clock', search: 'exam final mock practice test quiz timed', href: href.exam(), run: go(href.exam()) },
+      { id: 'a-sprog', group: 'Pages and actions', label: 'Progress', detail: 'Lessons read, marks lesson by lesson, what to work on', icon: 'chart', search: 'progress report marks stats weak strengths', href: href.report(), run: go(href.report()) },
       { id: 'a-rplay', group: 'Pages and actions', label: 'R Playground', detail: 'Write and run any R', icon: 'code', search: 'editor run r console script', href: href.rPlayground(), run: go(href.rPlayground()) },
     ];
     return { items: [...statActions, ...lessons], continueItem: null };

@@ -19,6 +19,7 @@ import { ReportBody } from '../report/ReportView.tsx';
 import { formatDate } from '../report/format.ts';
 import { unlockAllInRange } from '../report/overrides.ts';
 import { eventsForTopic, narrowReport } from '../report/topicFilter.ts';
+import { UnitElsewhere } from '../report/UnitElsewhere.tsx';
 import '../report/report.css';
 
 const RANGE_KEY = 'pyladder:report-range';
@@ -43,8 +44,8 @@ export function Report({ topicId }: { topicId?: string }) {
   return <ReportScreen key={topicId ?? '*'} topicId={topicId} />;
 }
 
-/** Print with the light palette and every collapsed section open, then put things back. */
-function usePrintMode() {
+/** Print with the light palette and every collapsed section open, then put things back. STAT2402's progress page uses it too. */
+export function usePrintMode() {
   useEffect(() => {
     let printing = false;
     let prevTheme: string | null = null;
@@ -197,6 +198,7 @@ function ReportScreen({ topicId }: { topicId?: string }) {
         <ReportBody data={built.data} events={built.events} topicId={tid} now={now}
           unlocked={built.unlocked} unlockAll={unlockAllInRange(events, range, now)} />
       )}
+      {topicId || !ready ? null : <UnitElsewhere current="cits1401" />}
     </div>
   );
 }

@@ -13,9 +13,6 @@ const lesson: Lesson = {
   track: 'markets',
   order: 4,
   minutes: 12,
-  // The intended prerequisite is 'futures-and-swaps', which does not exist in the library yet; the
-  // verifier rejects a prereq that is not a lesson id. 'hedging-the-physical' is the nearest thing
-  // currently written (selling futures against a cargo). Switch this back the day that lesson lands.
   prereqs: ['futures-and-swaps'],
   outcomes: [
     'Say what a bought put does for a producer above and below the strike, and what the premium bought',

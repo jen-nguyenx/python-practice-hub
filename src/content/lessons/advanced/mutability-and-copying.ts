@@ -180,7 +180,7 @@ const lesson: Lesson = {
         {
           kind: 'code',
           caption: 'A copy of a list of lists. Watch what happens to the copy.',
-          code: 'original = [[1, 2], [3, 4]]\nshallow = list(original)\n\nprint("different outer list:", shallow is original)\nprint("same inner list:    ", shallow[0] is original[0])\n\nshallow.append([5, 6])\nprint("after append to copy:", original)\n\nshallow[0].append(99)\nprint("after change inside: ", original)\n',
+          code: 'original = [[1, 2], [3, 4]]\nshallow = list(original)\n\nprint("different outer list:", shallow is not original)\nprint("same inner list:    ", shallow[0] is original[0])\n\nshallow.append([5, 6])\nprint("after append to copy:", original)\n\nshallow[0].append(99)\nprint("after change inside: ", original)\n',
         },
         {
           kind: 'callout',

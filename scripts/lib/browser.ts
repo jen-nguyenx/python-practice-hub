@@ -114,6 +114,8 @@ export interface SeedOptions {
   wrongEvery?: number;
   /** Also record what the student said before checking, to fill the calibration card. */
   confidence?: boolean;
+  /** More events to add as they are: the shots' STAT2402 work, which the smoke run must not start with. */
+  extra?: readonly unknown[];
 }
 
 export interface SeedQuestion { qid: string; topicId: string; format: string; diff: string }
@@ -150,6 +152,7 @@ export function writeSeed(path: string, index: readonly SeedQuestion[], opts: Se
       ...(opts.confidence ? { confidence: i % 2 === 0 ? 'sure' : 'unsure' } : {}),
     });
   });
+  events.push(...(opts.extra ?? []));
   mkdirSync(dirname(path), { recursive: true });
   // Replacing progress replaces settings too, so the file carries a CITS1401 student who has already seen
   // the welcome tour — otherwise the unit question and the tour reopen over every page checked after it.

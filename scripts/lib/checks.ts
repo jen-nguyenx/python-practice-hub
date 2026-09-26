@@ -566,8 +566,8 @@ export async function checkStatPath(c: Ctx, lessonCount: number): Promise<void> 
     const steps = await page.locator('.sh-step').count();
     if (steps !== lessonCount) c.fail(`#/: the STAT2402 path lists ${steps} lessons, not ${lessonCount}`);
     const bar = await page.locator('.actbar-item').allInnerTexts();
-    if (bar.length !== 5) c.fail(`STAT2402 bar: ${bar.length} destinations, expected Home, Lessons, Exams, R Playground and Settings`);
-    if (bar.some((t) => /Review|Progress|Look up/.test(t))) c.fail('STAT2402 bar: still offers a CITS1401 destination');
+    if (bar.length !== 6) c.fail(`STAT2402 bar: ${bar.length} destinations, expected Home, Lessons, Exams, Progress, R Playground and Settings`);
+    if (bar.some((t) => /Review|Look up/.test(t))) c.fail('STAT2402 bar: still offers a CITS1401 destination');
 
     await visit(c, '#/lessons');
     const tracks = await page.locator('.lx-track-title').allInnerTexts();
@@ -710,6 +710,29 @@ export async function checkStatExams(c: Ctx): Promise<void> {
     if (await finishPaper('#/exam mock final')) {
       const total = ((await page.locator('.trs-big span').first().textContent().catch(() => '')) ?? '').replace(/\D/g, '');
       if (total !== '100') c.fail(`#/exam: the mock final was marked out of ${total || 'nothing'}, not 100`);
+    }
+
+    // Progress: STAT2402's own report, counting the quiz and the paper just sat, and pointing at the
+    // CITS1401 history the seeded profile already has.
+    await visit(c, '#/report');
+    if ((await page.locator('.stat-rp').count()) === 0) c.fail('#/report: a STAT2402 student is shown the CITS1401 report');
+    else {
+      const mock = ((await page.locator('.rp-stat', { hasText: 'best mock final' }).locator('.rp-stat-num').textContent().catch(() => '')) ?? '').trim();
+      if (!/%$/.test(mock)) c.fail(`#/report: the mock final just sat does not show (best mock final "${mock}")`);
+      if ((await page.locator('.sp-table a', { hasText: 'Retake' }).count()) === 0) c.fail('#/report: the lesson quiz just taken does not show in the lessons table');
+      const marks = await page.waitForFunction(
+        () => [...document.querySelectorAll('.sp-table .rp-heat')].some((el) => /%$/.test(el.textContent ?? '')), null, { timeout: 15000 },
+      ).then(() => true).catch(() => false);
+      if (!marks) c.fail('#/report: no lesson shows its marks from the papers sat');
+      const other = page.locator('.rp-elsewhere', { hasText: 'CITS1401' });
+      if ((await other.count()) === 0) c.fail('#/report: the CITS1401 history in the same browser is not mentioned');
+      else {
+        await other.getByRole('button', { name: /Switch to CITS1401/ }).click();
+        await page.waitForTimeout(600);
+        if ((await page.locator('.rp-elsewhere', { hasText: 'STAT2402' }).count()) === 0) {
+          c.fail('#/report: switching to CITS1401 from Progress does not show the CITS1401 report with the STAT2402 work beside it');
+        }
+      }
     }
   } finally {
     if (!(await switchUnit(page, c.base, 'CITS1401'))) c.fail('#/settings: could not switch back to CITS1401');

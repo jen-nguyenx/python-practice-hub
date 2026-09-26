@@ -2094,7 +2094,6 @@
     "core": false,
     "detects": [
       "off_by_one_range",
-      "case_sensitive_compare",
       "accumulator_init",
       "string_immutability",
       "print_vs_return"

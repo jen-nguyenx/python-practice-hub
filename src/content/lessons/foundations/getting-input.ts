@@ -145,7 +145,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'shell',
-          caption: 'Four of these raise an error. `int("3.5")` fails; `float("3.5")` does not.',
+          caption: 'Two of these raise an error. `int("3.5")` fails; `float("3.5")` does not.',
           lines: [
             'int("21")',
             'int("hello")',

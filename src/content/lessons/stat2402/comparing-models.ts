@@ -407,7 +407,7 @@ const lesson: Lesson = {
               caption: 'For a model that is right, the check expects these two bars to be about the same height.',
             },
             takeaway:
-              'Every one of these samples came from exactly the model being fitted, so a check that worked would show two bars of about the same height at every setting. With a mean of several counts the deviance sits only a little above its degrees of freedom, and the gap narrows as the mean grows. Below that the two part company: around a mean of 1 the deviance runs well above its degrees of freedom, and when nearly every count is 0 it falls far below. A right model can look worse or better than it is, depending only on how small the counts are. So when many fitted counts are small, read little into a residual deviance far from its degrees of freedom, or into the p-value built on it.',
+              'Every one of these samples came from exactly the model being fitted, so a check that worked would show two bars of about the same height at every setting. With a mean of several counts the deviance sits only a little above its degrees of freedom, and the gap narrows as the mean grows. Below that the two part company: around a mean of 1 the deviance runs noticeably above its degrees of freedom, and when nearly every count is 0 it falls far below. A right model can look worse or better than it is, depending only on how small the counts are. So when many fitted counts are small, read little into a residual deviance far from its degrees of freedom, or into the p-value built on it.',
           },
         },
         {

@@ -202,7 +202,7 @@ def reverse_email(email):
           '- `email.index(\'@\')` finds the position of the `@`. `email.split(\'@\')` would also work.\n' +
           '- `email[:at]` is everything before it and `email[at + 1:]` everything after it.\n' +
           '- Both parts go through `reverse`, and the `@` is put back in the middle. No loop is needed anywhere: the repetition comes from `reverse` calling itself.\n\n' +
-          'This is the shape of a 13-mark CITS1401 exam question.',
+          'This is the shape of a CITS1401 exam question that asks for a helper function as well as the main one.',
       },
       selfExplain: 'Why is the empty string a better base case for reverse than a string of length 1?',
     },

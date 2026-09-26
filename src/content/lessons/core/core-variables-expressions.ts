@@ -85,7 +85,7 @@ const lesson: Lesson = {
             { text: '3', correct: true, why: '`int()` on a number with decimals cuts off everything after the point rather than rounding, so 3.7 becomes 3.' },
             { text: '4', why: 'That is what `round(3.7)` gives. `int()` never rounds; it only cuts, and cutting 3.7 leaves 3.' },
             { text: '3.7', why: '`int()` always hands back a whole number. It never leaves the value as a float.' },
-            { text: 'An error', why: '`int()` on a number never raises. It only refuses text that is not a whole number, such as `int(\'12.5\')` above.' },
+            { text: 'An error', why: '`int()` on a number like this never raises. It only refuses text that is not a whole number, such as `int(\'12.0\')` above.' },
           ],
         },
         {
@@ -334,7 +334,7 @@ print(f'{fare * trips:.0f} dollars, near enough')
       blocks: [
         {
           kind: 'prose',
-          body: 'These are the mistakes that cost marks in this topic. Most of them are quiet: the program runs and gives an answer, and the answer is wrong.',
+          body: 'These are the mistakes that cost marks in this topic. Some raise an error outright; others are quieter, running to completion with an answer that is wrong, or one that is marked down for its style rather than for being incorrect.',
         },
         {
           kind: 'mistakes',

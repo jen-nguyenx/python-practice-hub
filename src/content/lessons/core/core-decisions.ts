@@ -347,7 +347,7 @@ else:
       blocks: [
         {
           kind: 'prose',
-          body: 'Four of these five run without any error at all and give a wrong answer, which is what makes them expensive.',
+          body: 'Two of these five run without any error at all and give a wrong answer, which is what makes them expensive. The other three are different traps: two stop the whole program with an error you cannot miss, and one still gives the right answer while doing needless extra work.',
         },
         {
           kind: 'mistakes',

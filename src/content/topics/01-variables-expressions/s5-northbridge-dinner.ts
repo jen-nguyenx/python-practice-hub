@@ -93,7 +93,7 @@ const scenario: Scenario = {
       ],
       solution: {
         explanation: md(
-          'Line 4 raises `ZeroDivisionError: float division by zero`.',
+          'Line 4 raises `ZeroDivisionError: division by zero`.',
           '',
           '- Lines 1-3 run normally, which is why `Bill: 96.0` is printed before the crash.',
           '- Line 4 is `96.0 / 0`. Division by zero has no answer, so Python stops the program instead of inventing one.',
@@ -128,12 +128,12 @@ const scenario: Scenario = {
       solution: {
         explanation: md(
           '- **Left** rounds first: `share` becomes `33.33`, and `33.33 * 3` is `99.99`, so it prints `99.99`. A cent has vanished from the bill.',
-          '- **Right** keeps the full value `33.333333333333336`. Multiplying by 3 gives `100.00000000000001`, and rounding that at the end prints `100.0`.',
+          '- **Right** keeps the full value `33.333333333333336`. Multiplying that back by 3 lands on exactly `100.0` here (the two roundings happen to cancel out for 3 people), and `round(100.0, 2)` is still `100.0`.',
           '',
           'The rule is: calculate with full precision and round only at the moment you show a number. ' +
           'Rounding in the middle makes the error grow with every later step, which is why the CITS1401 projects insist on rounding at output only.',
           '',
-          'It also shows why you should never test money with `==`: `share * people` is `100.00000000000001`, not exactly `100.0`.',
+          'It is also a reminder not to lean on `==` for money: split the same $100 eleven ways instead of three and `share * people` comes back as `100.00000000000001`, not exactly `100.0`.',
         ),
       },
       selfExplain: 'If the bill were split 7 ways instead of 3, how far off would the left version be?',

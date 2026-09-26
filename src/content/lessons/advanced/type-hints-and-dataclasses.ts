@@ -106,7 +106,7 @@ const lesson: Lesson = {
         },
         {
           kind: 'predict',
-          ask: 'Every call here contradicts the annotations. What does the fourth line print?',
+          ask: 'One of these three calls matches the annotations; two contradict them. Predict what all three lines print, in order.',
           code: "def add(a: int, b: int) -> int:\n    return a + b\n\nprint(add(2, 3))\nprint(add('two', 'three'))\nprint(add(1.5, 2.5))\n",
           choices: ['5\ntwothree\n4.0', '5\ntwothree\n4', '5\nTypeError\n4.0', 'TypeError\ntwothree\n4.0'],
         },

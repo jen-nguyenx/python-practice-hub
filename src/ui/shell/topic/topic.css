@@ -300,6 +300,16 @@ a.tp-q:focus-visible { outline: 2px solid var(--focus); outline-offset: -3px; bo
 .wi-slider::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 50%; background: var(--blue); border: 2px solid var(--surface); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
 .wi-slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--blue); border: 2px solid var(--surface); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
 .wi-slider:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: var(--r-1); }
+/* Touch: dragging these is the whole interaction, and a 22px strip with an 18px thumb is a fiddle with
+   a finger. On a coarse pointer the track gets a finger's height to land on and the thumb grows. */
+@media (pointer: coarse) {
+  .wi-slider { height: 44px; }
+  .wi-slider::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; }
+  .wi-slider::-moz-range-track { height: 6px; border-radius: 3px; }
+  .wi-slider::-webkit-slider-thumb { width: 26px; height: 26px; margin-top: -10px; }
+  .wi-slider::-moz-range-thumb { width: 26px; height: 26px; }
+  .wi-knob [role="radio"] { min-height: 44px; }
+}
 .wi-slider-val { flex: 0 0 auto; min-width: 3ch; padding: 2px 8px; border: 1px solid var(--border); border-radius: var(--r-1); background: var(--surface); font-family: var(--mono); font-size: var(--fs-13); font-variant-numeric: tabular-nums; text-align: center; color: var(--text); }
 
 /* ---------- what if: pictures ---------- */

@@ -1,8 +1,12 @@
-// Python runtime state in the title bar and status bar: a small dot and "Python ready".
-// Visible text updates every second while loading; one polite live region announces state changes only.
+// Runtime state in the title bar and status bar: a small dot and "Python ready" -- or, for a STAT2402
+// student, "R ready". Visible text updates every second while loading; one polite live region announces
+// state changes only.
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { py } from '../../app/services.ts';
+import { py, r, store } from '../../app/services.ts';
+import { unitOf } from '../../content/units.ts';
 import type { RuntimeStatus } from '../../runtime/protocol.ts';
+import type { RStatus } from '../../runtime/rClient.ts';
+import { WEBR_VERSION } from '../../runtime/version.ts';
 import { Tooltip } from '../components/Tooltip.tsx';
 
 function shortVersion(v: string) {
@@ -83,4 +87,50 @@ export function RuntimePill({ compact }: { compact?: boolean }) {
       {s.state === 'error' ? <button type="button" class="rt-retry" onClick={retry}>Retry</button> : null}
     </div>
   );
+}
+
+export function describeR(s: RStatus): { tone: RuntimeTone; text: string; announce: string; title: string } {
+  switch (s.state) {
+    case 'idle':
+      return { tone: 'idle', text: 'R not started', announce: 'R has not started', title: 'R starts when you run code: an exercise in a lesson, or the R Playground.' };
+    case 'loading':
+      return { tone: 'loading', text: 'Starting R', announce: 'R is starting', title: `${s.message ?? 'Starting R'}. Reading a lesson works while R starts.` };
+    case 'ready':
+      return { tone: 'ok', text: 'R ready', announce: 'R is ready', title: `R (webR ${WEBR_VERSION}) is running in your browser` };
+    case 'running':
+      return { tone: 'busy', text: s.message ?? 'Running', announce: 'R is ready', title: s.message ? `${s.message}: the first use of a package downloads it` : 'R is running your code' };
+    case 'error':
+      return { tone: 'bad', text: 'R failed to load', announce: 'R failed to load', title: s.message ?? 'R failed to load' };
+  }
+}
+
+/** The R pill: the same look as Python's, fed by the R client. Retry just asks again; R starts afresh. */
+export function RRuntimePill({ compact }: { compact?: boolean }) {
+  const s = r.status.value;
+  const d = describeR(s);
+  if (compact) {
+    return (
+      <span class={`rt rt-${d.tone} rt-compact`}>
+        <span class="rt-dot" aria-hidden="true" />
+        <span class="rt-text">{d.text}</span>
+      </span>
+    );
+  }
+  return (
+    <div class={`rt rt-${d.tone}`}>
+      <Tooltip content={d.title} side="bottom" align="end" decorative>
+        <span class="rt-main">
+          <span class="rt-dot" aria-hidden="true" />
+          <span class="rt-text">{d.text}</span>
+        </span>
+      </Tooltip>
+      <span class="sr-only" aria-live="polite">{d.announce}</span>
+      {s.state === 'error' ? <button type="button" class="rt-retry" onClick={() => r.warmUp()}>Retry</button> : null}
+    </div>
+  );
+}
+
+/** Whichever runtime this student's unit uses. */
+export function UnitRuntimePill({ compact }: { compact?: boolean }) {
+  return unitOf(store.settings.value) === 'stat2402' ? <RRuntimePill compact={compact} /> : <RuntimePill compact={compact} />;
 }

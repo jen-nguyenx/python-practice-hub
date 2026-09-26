@@ -1,18 +1,21 @@
 // The blocks a reader answers rather than reads: a quiz, a prediction, a drag-to-order, a matching
 // exercise and a click-to-annotate program.
 //
-// Nothing here decides what Python does. A prediction is checked against the output the verifier
+// Nothing here decides what Python (or R) does. A prediction is checked against the output the verifier
 // recorded, and an ordering is checked against the order the verifier proved runs.
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { LessonError } from '../../content/lessonSchema.ts';
 import type { Test } from '../../content/schema.ts';
 import type { TestsResult } from '../../runtime/protocol.ts';
-import { py } from '../../app/services.ts';
+import type { RTaskResult, RTest } from '../../runtime/r/driver.ts';
+import { py, r } from '../../app/services.ts';
 import { runTestsLogged } from '../workbench/runner.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
+import { errorText, LANG_NAME, useCodeLang } from '../components/codeLang.ts';
+import { CodeEditor } from '../editor/CodeEditor.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd, Markdown } from '../components/Markdown.tsx';
-import { openInPlayground } from '../workbench/openInPlayground.ts';
+import { openInPlayground, openInRPlayground } from '../workbench/openInPlayground.ts';
 import { judge, normalise } from './predictAnswer.ts';
 
 /** Deterministic shuffle: the same block always presents in the same order, so a reader can come back. */
@@ -94,6 +97,7 @@ export function Predict({ code, ask, choices, stdout, error, slug, back, recorde
   const verdict = judge(answer, real);
   const right = verdict !== 'wrong';
   const order = useMemo(() => (choices ? shuffled(choices, code) : []), [choices, code]);
+  const lang = useCodeLang();
 
   return (
     <div class="ib ib-predict">
@@ -133,11 +137,11 @@ export function Predict({ code, ask, choices, stdout, error, slug, back, recorde
         <div class={`ib-verdict${right ? ' is-right' : ''}`}>
           <p class="ib-verdict-t" role="status">
             {verdict === 'right' ? 'That is exactly it.'
-              : verdict === 'close' ? 'Right — and worth noticing that Python writes it with a space after each comma:'
-              : 'Not quite. Here is what Python actually printed:'}
+              : verdict === 'close' ? `Right — and worth noticing that ${LANG_NAME[lang]} writes it with a space after each comma:`
+              : `Not quite. Here is what ${LANG_NAME[lang]} actually printed:`}
           </p>
           <p class="lb-tryit">
-            <button type="button" class="btn ghost lb-tryit-btn" onClick={() => openInPlayground(code, `${slug ?? 'predict'}.py`, back)}>
+            <button type="button" class="btn ghost lb-tryit-btn" onClick={() => (lang === 'r' ? openInRPlayground(code, back) : openInPlayground(code, `${slug ?? 'predict'}.py`, back))}>
               <Icon name="terminal" size={14} /> Try it yourself
             </button>
           </p>
@@ -146,7 +150,7 @@ export function Predict({ code, ask, choices, stdout, error, slug, back, recorde
               {(real === '' ? ['(nothing)'] : real.split('\n')).map((l, i) => (
                 <span key={i} class="lb-out-line">{l || ' '}{'\n'}</span>
               ))}
-              {error ? <span class="lb-out-line is-error">{error.type}{error.message ? `: ${error.message}` : ''}{'\n'}</span> : null}
+              {error ? <span class="lb-out-line is-error">{errorText(error, lang)}{'\n'}</span> : null}
             </code></pre>
           )}
         </div>
@@ -659,6 +663,124 @@ export function Task({ prompt, run, fnName, starter, solution, tests, hint }: {
                     </li>
                   );
                 })}
+              </ul>
+            </>
+          )}
+        </div>
+      ) : null}
+
+      {showAnswer ? (
+        <div class="ib-task-answer">
+          <p class="ib-walk-h">One way to do it</p>
+          <CodeBlock code={solution} numbered label="A worked answer" />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// ---------- R task ----------
+
+/**
+ * The same exercise as Task, in R. The program runs in the R sandbox (src/runtime/rClient.ts) through the
+ * driver the verifier used to prove the solution, so "all tests pass" here means what it meant there.
+ * Shows what the code printed as well as the tests: in R, reading a model's output is half the job.
+ */
+export function RTask({ prompt, run, fnName, starter, solution, tests, hint }: {
+  prompt: string; run: 'function' | 'program'; fnName?: string;
+  starter: string; solution: string; tests: readonly LessonTest[]; hint?: string;
+}) {
+  const [code, setCode] = useState(starter);
+  const [result, setResult] = useState<RTaskResult | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [tried, setTried] = useState(false);
+
+  const status = r.status.value;
+  // Start R as soon as someone reaches an exercise, so the first check does not wait for the download.
+  useEffect(() => { r.warmUp(); }, []);
+  const passed = result ? !result.run.error && result.outcomes.every((o) => o.pass) : false;
+  const loading = status.state === 'loading';
+
+  const check = async () => {
+    setBusy(true);
+    setResult(await r.task(code, run, tests as unknown as RTest[]));
+    setTried(true);
+    setBusy(false);
+  };
+
+  const out = result ? (result.run.stdout ?? '').replace(/\n$/, '') : '';
+
+  return (
+    <div class="ib ib-task">
+      <p class="ib-tag">Write it yourself</p>
+      <Markdown text={prompt} class="lb-md" />
+
+      <div class="ib-field">
+        <span class="ib-field-l">{run === 'function' && fnName ? `Your ${fnName}()` : 'Your code'}</span>
+        <CodeEditor
+          value={code}
+          onChange={setCode}
+          onRun={() => { if (!busy) void check(); }}
+          language="r"
+          minHeight={120}
+          maxHeight={360}
+          ariaLabel={run === 'function' && fnName ? `Your ${fnName} function, in R` : 'Your R code'}
+        />
+      </div>
+
+      <div class="ib-row">
+        <button type="button" class="btn primary" onClick={check} disabled={busy || loading}>
+          {busy ? 'Checking…' : loading ? 'Starting R…' : 'Check my code'}
+        </button>
+        <button type="button" class="btn ghost" onClick={() => { setCode(starter); setResult(null); }} disabled={code === starter}>
+          Reset
+        </button>
+        {hint ? (
+          <button type="button" class="btn ghost" onClick={() => setShowHint(!showHint)} aria-expanded={showHint}>
+            {showHint ? 'Hide the hint' : 'Hint'}
+          </button>
+        ) : null}
+        {tried ? (
+          <button type="button" class="btn ghost" onClick={() => setShowAnswer(!showAnswer)} aria-expanded={showAnswer}>
+            {showAnswer ? 'Hide the answer' : 'Show an answer'}
+          </button>
+        ) : null}
+      </div>
+
+      {status.state === 'error' && !busy ? <p class="ib-verdict-t" role="status">{status.message}</p> : null}
+      {showHint && hint ? <div class="ib-why"><Markdown text={hint} class="lb-md" /></div> : null}
+
+      {result ? (
+        <div class={`ib-task-out${passed ? ' is-right' : ''}`}>
+          {out || result.run.error ? (
+            <pre class="lb-out" aria-label="What your code printed"><code>
+              {out ? out.split('\n').map((l, i) => <span key={i} class="lb-out-line">{l || ' '}{'\n'}</span>) : null}
+              {result.run.error ? <span class="lb-out-line is-error">{result.run.error.message}{'\n'}</span> : null}
+            </code></pre>
+          ) : null}
+          {result.run.error ? (
+            <p class="ib-verdict-t">Your code stopped with an error, so none of the tests could run.</p>
+          ) : (
+            <>
+              <p class={`ib-verdict-t${passed ? ' is-right' : ''}`} role="status">
+                {passed ? 'All tests pass. That is the job done.'
+                  : `${result.outcomes.filter((o) => o.pass).length} of ${result.outcomes.length} tests pass.`}
+              </p>
+              <ul class="ib-task-tests">
+                {result.outcomes.map((o) => (
+                  <li key={o.id} class={o.pass ? 'is-pass' : 'is-fail'}>
+                    <span class="ib-task-mark" aria-hidden="true">
+                      <Icon name={o.pass ? 'check' : 'x'} size={11} />
+                    </span>
+                    <span class="ib-task-label">{o.label}</span>
+                    {!o.pass && !o.hidden && o.want !== undefined && !o.error ? (
+                      <span class="ib-task-detail">wanted <code>{o.want}</code>, got <code>{o.got ?? 'nothing'}</code></span>
+                    ) : null}
+                    {!o.pass && o.error ? <span class="ib-task-detail">{o.error}</span> : null}
+                  </li>
+                ))}
               </ul>
             </>
           )}

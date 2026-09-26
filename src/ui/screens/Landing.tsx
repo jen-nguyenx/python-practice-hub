@@ -1,5 +1,9 @@
 // Home (#/), docs/build/DESIGN.md "Home": mono eyebrow with the week, today's numbers, the Continue and mock exam
 // practice test cards in one row, then the 13-tile ladder. Nothing else.
+//
+// That is CITS1401's home. A student who has not said which unit they study is asked first (UnitChooser),
+// and a STAT2402 student gets their own (StatHome). Three components, not one with branches, so each keeps
+// its own hooks whichever the others would have called.
 import { useMemo } from 'preact/hooks';
 import { store } from '../../app/services.ts';
 import { QUESTION_INDEX } from '../../content/loadIndex.ts';
@@ -15,6 +19,8 @@ import { Badges } from '../shell/landing/Badges.tsx';
 import { Ladder, LadderSkeleton } from '../shell/landing/Ladder.tsx';
 import { useSemester } from '../shell/StatusBar.tsx';
 import { storeReady } from '../shell/storeReady.ts';
+import { StatHome } from '../shell/landing/StatHome.tsx';
+import { UnitChooser } from '../shell/landing/UnitChooser.tsx';
 import '../shell/landing/landing.css';
 
 function Today({ events }: { events: Parameters<typeof todayNumbers>[0] }) {
@@ -32,6 +38,14 @@ function Today({ events }: { events: Parameters<typeof todayNumbers>[0] }) {
 }
 
 export function Landing() {
+  const ready = storeReady.value;
+  const unit = store.settings.value.unit;
+  if (ready && unit === null) return <UnitChooser />;
+  if (ready && unit === 'stat2402') return <StatHome />;
+  return <CitsHome />;
+}
+
+function CitsHome() {
   const ready = storeReady.value;
   const events = store.events.value;
   const settings = store.settings.value;

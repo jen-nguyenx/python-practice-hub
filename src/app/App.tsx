@@ -15,6 +15,11 @@ import { Review } from '../ui/screens/Review.tsx';
 import { TopicPage } from '../ui/screens/TopicPage.tsx';
 import { QuestionPage } from '../ui/screens/QuestionPage.tsx';
 import { Playground } from '../ui/screens/Playground.tsx';
+import { RPlayground } from '../ui/screens/RPlayground.tsx';
+import { StatExams } from '../ui/screens/StatExams.tsx';
+import { StatQuiz } from '../ui/screens/StatQuiz.tsx';
+import { store } from './services.ts';
+import { unitOf } from '../content/units.ts';
 import { Report } from '../ui/screens/Report.tsx';
 import { TopicTest } from '../ui/screens/TopicTest.tsx';
 import { ExamPractice } from '../ui/screens/ExamPractice.tsx';
@@ -32,6 +37,7 @@ export function App() {
     case 'lesson-read': screen = <LessonReader key={r.lessonId} lessonId={r.lessonId} />; break;
     case 'question': screen = <QuestionPage qid={r.qid} />; break;
     case 'playground': screen = <Playground />; break;
+    case 'r-playground': screen = <RPlayground />; break;
     case 'report': screen = <Report topicId={r.topicId} />; break;
     case 'review': screen = <Review />; break;
     case 'decode': screen = <DecodeError />; break;
@@ -42,7 +48,9 @@ export function App() {
     case 'revision': screen = <Revision />; break;
     case 'build': screen = <ProjectBuild key={r.scenarioId} scenarioId={r.scenarioId} />; break;
     case 'topic-test': screen = <TopicTest topicId={r.topicId} />; break;
-    case 'exam': screen = <ExamPractice />; break;
+    // One Exams door, two papers behind it: CITS1401's Python bank or STAT2402's R one.
+    case 'exam': screen = unitOf(store.settings.value) === 'stat2402' ? <StatExams /> : <ExamPractice />; break;
+    case 'stat-quiz': screen = <StatQuiz key={r.lessonId} lessonId={r.lessonId} />; break;
     case 'settings': screen = <Settings />; break;
     default:
       screen = (

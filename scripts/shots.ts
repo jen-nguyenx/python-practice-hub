@@ -10,7 +10,7 @@
 //   npm run shots -- --list
 //   npm run shots -- --base https://jen-nguyenx.github.io/python-practice-hub/
 import { mkdirSync, readFileSync } from 'node:fs';
-import { answerCurrent, arg, dismissTour, flag, importProgress, openBrowser, startPreview, writeSeed } from './lib/browser.ts';
+import { answerCurrent, arg, chooseUnit, dismissTour, flag, importProgress, openBrowser, startPreview, switchUnit, writeSeed } from './lib/browser.ts';
 import type { SeedQuestion } from './lib/browser.ts';
 
 interface Shot {
@@ -23,10 +23,22 @@ interface Shot {
 }
 
 const index: SeedQuestion[] = JSON.parse(readFileSync('src/content/generated/question-index.json', 'utf8'));
+
+/** Where the shots run from; set once the preview is up. */
+let root = '';
+async function go(page: import('playwright-core').Page, hash: string) {
+  await page.goto(root + hash, { waitUntil: 'load' });
+  await page.waitForTimeout(1200);
+}
+async function toStat(page: import('playwright-core').Page) {
+  await switchUnit(page, root, 'STAT2402');
+}
 // Past the seeded history, so the question is one this profile has not checked yet.
 const FRESH_QID = (index[41] ?? index[index.length - 1]).qid;
 
 const SHOTS: Shot[] = [
+  // Taken at start-up, on the fresh profile, before the question is answered.
+  { name: 'unit-chooser', hash: '#/' },
   { name: 'landing', hash: '#/' },
   { name: 'today', hash: '#/', selector: '.td' },
   { name: 'report', hash: '#/report' },
@@ -167,6 +179,44 @@ const SHOTS: Shot[] = [
       await page.waitForTimeout(400);
     },
   },
+  // STAT2402, last: each switches unit through Settings first, and the run switches back at the end.
+  { name: 'stat-home', hash: '#/settings', prepare: async (page) => { await toStat(page); await go(page, '#/'); } },
+  {
+    name: 'stat-lesson',
+    hash: '#/settings',
+    prepare: async (page) => {
+      await toStat(page);
+      await go(page, '#/lesson/regression-in-r');
+      await page.locator('.ls-step', { hasText: 'Where the line comes from' }).first().click().catch(() => {});
+      await page.waitForTimeout(800);
+    },
+  },
+  { name: 'stat-exams', hash: '#/settings', prepare: async (page) => { await toStat(page); await go(page, '#/exam'); } },
+  {
+    name: 'r-playground',
+    hash: '#/settings',
+    prepare: async (page) => {
+      await toStat(page);
+      await go(page, '#/r');
+      await page.getByRole('button', { name: /^Run/ }).first().click().catch(() => {});
+      await page.waitForFunction(() => /Residual standard error/.test(document.body.innerText), null, { timeout: 150000 }).catch(() => {});
+      await page.waitForTimeout(400);
+    },
+  },
+  {
+    // A lesson quiz under way: the runner, the question map and a question with R's output. Last, because
+    // a paper in progress guards against leaving it.
+    name: 'stat-quiz',
+    hash: '#/settings',
+    prepare: async (page) => {
+      await toStat(page);
+      await go(page, '#/quiz/regression-in-r');
+      await page.getByRole('button', { name: /^Start the quiz/ }).click().catch(() => {});
+      await page.waitForTimeout(600);
+      await page.locator('.tr .ib-option').first().click().catch(() => {});
+      await page.waitForTimeout(300);
+    },
+  },
 ];
 
 if (flag('--list')) {
@@ -188,9 +238,16 @@ let base = arg('--base', '');
 let server;
 if (!base) ({ base, server } = await startPreview());
 
+root = base;
 const { browser, page } = await openBrowser(1280, 1000);
 await page.goto(`${base}#/`, { waitUntil: 'load' });
 await page.waitForTimeout(1500);
+// The very first screen is the unit question; photograph it when asked for, then answer it.
+if (wanted.some((s) => s.name === 'unit-chooser')) {
+  await page.screenshot({ path: `${out}/unit-chooser.png` });
+  console.log(`- unit-chooser -> ${out}/unit-chooser.png`);
+}
+await chooseUnit(page, 'CITS1401');
 await dismissTour(page);
 
 // Everything interesting on the report needs a history behind it, and the confidence question needs one
@@ -199,6 +256,7 @@ const seed = writeSeed(`${out}/seed.json`, index, { confidence: true });
 await importProgress(page, base, seed);
 
 for (const shot of wanted) {
+  if (shot.name === 'unit-chooser') continue;
   await page.goto(base + shot.hash, { waitUntil: 'load' });
   await page.waitForTimeout(1500);
   await shot.prepare?.(page);
@@ -218,6 +276,9 @@ for (const shot of wanted) {
   console.log(`- ${shot.name} -> ${path}`);
 }
 
+// Leave the profile as the other shots expect it, in case a STAT2402 shot switched it. A quiz shot leaves a
+// paper running whose guard refuses to navigate away, so this is best effort: the context is thrown away anyway.
+await switchUnit(page, base, 'CITS1401').catch(() => false);
 await browser.close();
 server?.kill();
 console.log(`${wanted.length} shot${wanted.length === 1 ? '' : 's'} in ${out}`);

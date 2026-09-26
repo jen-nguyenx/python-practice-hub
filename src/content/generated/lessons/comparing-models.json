@@ -1,0 +1,1439 @@
+{
+  "s0-b1": {
+    "stdout": "\nCall:  glm(formula = breaks ~ wool + tension, family = poisson, data = warpbreaks)\n\nCoefficients:\n(Intercept)        woolB     tensionM     tensionH  \n     3.6920      -0.2060      -0.3213      -0.5185  \n\nDegrees of Freedom: 53 Total (i.e. Null);  50 Residual\nNull Deviance:\t    297.4 \nResidual Deviance: 210.4 \tAIC: 493.1\n"
+  },
+  "s0-b3": {
+    "shell": [
+      {
+        "source": "fit <- glm(breaks ~ wool + tension, family = poisson, data = warpbreaks)",
+        "stdout": ""
+      },
+      {
+        "source": "sat <- glm(breaks ~ factor(seq_along(breaks)), family = poisson, data = warpbreaks)",
+        "stdout": ""
+      },
+      {
+        "source": "length(coef(sat)) == nrow(warpbreaks)",
+        "stdout": "[1] TRUE\n"
+      },
+      {
+        "source": "logLik(sat)",
+        "stdout": "'log Lik.' -137.332 (df=54)\n"
+      },
+      {
+        "source": "logLik(fit)",
+        "stdout": "'log Lik.' -242.528 (df=4)\n"
+      },
+      {
+        "source": "2 * (as.numeric(logLik(sat)) - as.numeric(logLik(fit)))",
+        "stdout": "[1] 210.3919\n"
+      },
+      {
+        "source": "deviance(fit)",
+        "stdout": "[1] 210.3919\n"
+      }
+    ]
+  },
+  "s0-b4": {
+    "stdout": "[1] 0\n"
+  },
+  "s1-b1": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "Coefficients: 1 \nResidual deviance: 297.37 on 53 degrees of freedom\nAIC: 574.04 \n",
+          "values": {
+            "wool-a": [
+              [
+                0.92,
+                28.1481481496769
+              ],
+              [
+                1.92,
+                28.1481481496769
+              ],
+              [
+                2.92,
+                28.1481481496769
+              ]
+            ],
+            "wool-b": [
+              [
+                1.08,
+                28.1481481496769
+              ],
+              [
+                2.08,
+                28.1481481496769
+              ],
+              [
+                3.08,
+                28.1481481496769
+              ]
+            ]
+          }
+        },
+        "1": {
+          "stdout": "Coefficients: 3 \nResidual deviance: 226.43 on 51 degrees of freedom\nAIC: 507.09 \n",
+          "values": {
+            "wool-a": [
+              [
+                0.92,
+                36.3888888901615
+              ],
+              [
+                1.92,
+                26.388888888909
+              ],
+              [
+                2.92,
+                21.6666666667166
+              ]
+            ],
+            "wool-b": [
+              [
+                1.08,
+                36.3888888901615
+              ],
+              [
+                2.08,
+                26.388888888909
+              ],
+              [
+                3.08,
+                21.6666666667166
+              ]
+            ]
+          }
+        },
+        "2": {
+          "stdout": "Coefficients: 4 \nResidual deviance: 210.39 on 50 degrees of freedom\nAIC: 493.06 \n",
+          "values": {
+            "wool-a": [
+              [
+                0.92,
+                40.1235380122175
+              ],
+              [
+                1.92,
+                29.0972222226127
+              ],
+              [
+                2.92,
+                23.8903508773654
+              ]
+            ],
+            "wool-b": [
+              [
+                1.08,
+                32.6542397661719
+              ],
+              [
+                2.08,
+                23.6805555556308
+              ],
+              [
+                3.08,
+                19.4429824560815
+              ]
+            ]
+          }
+        },
+        "3": {
+          "stdout": "Coefficients: 6 \nResidual deviance: 182.31 on 48 degrees of freedom\nAIC: 468.97 \n",
+          "values": {
+            "wool-a": [
+              [
+                0.92,
+                44.5555555558488
+              ],
+              [
+                1.92,
+                24.0000000000224
+              ],
+              [
+                2.92,
+                24.5555555557758
+              ]
+            ],
+            "wool-b": [
+              [
+                1.08,
+                28.222222222238
+              ],
+              [
+                2.08,
+                28.7777777777837
+              ],
+              [
+                3.08,
+                18.7777777777778
+              ]
+            ]
+          }
+        }
+      },
+      "shared": {
+        "looms": [
+          [
+            0.92,
+            26
+          ],
+          [
+            0.92,
+            30
+          ],
+          [
+            0.92,
+            54
+          ],
+          [
+            0.92,
+            25
+          ],
+          [
+            0.92,
+            70
+          ],
+          [
+            0.92,
+            52
+          ],
+          [
+            0.92,
+            51
+          ],
+          [
+            0.92,
+            26
+          ],
+          [
+            0.92,
+            67
+          ],
+          [
+            1.92,
+            18
+          ],
+          [
+            1.92,
+            21
+          ],
+          [
+            1.92,
+            29
+          ],
+          [
+            1.92,
+            17
+          ],
+          [
+            1.92,
+            12
+          ],
+          [
+            1.92,
+            18
+          ],
+          [
+            1.92,
+            35
+          ],
+          [
+            1.92,
+            30
+          ],
+          [
+            1.92,
+            36
+          ],
+          [
+            2.92,
+            36
+          ],
+          [
+            2.92,
+            21
+          ],
+          [
+            2.92,
+            24
+          ],
+          [
+            2.92,
+            18
+          ],
+          [
+            2.92,
+            10
+          ],
+          [
+            2.92,
+            43
+          ],
+          [
+            2.92,
+            28
+          ],
+          [
+            2.92,
+            15
+          ],
+          [
+            2.92,
+            26
+          ],
+          [
+            1.08,
+            27
+          ],
+          [
+            1.08,
+            14
+          ],
+          [
+            1.08,
+            29
+          ],
+          [
+            1.08,
+            19
+          ],
+          [
+            1.08,
+            29
+          ],
+          [
+            1.08,
+            31
+          ],
+          [
+            1.08,
+            41
+          ],
+          [
+            1.08,
+            20
+          ],
+          [
+            1.08,
+            44
+          ],
+          [
+            2.08,
+            42
+          ],
+          [
+            2.08,
+            26
+          ],
+          [
+            2.08,
+            19
+          ],
+          [
+            2.08,
+            16
+          ],
+          [
+            2.08,
+            39
+          ],
+          [
+            2.08,
+            28
+          ],
+          [
+            2.08,
+            21
+          ],
+          [
+            2.08,
+            39
+          ],
+          [
+            2.08,
+            29
+          ],
+          [
+            3.08,
+            20
+          ],
+          [
+            3.08,
+            21
+          ],
+          [
+            3.08,
+            24
+          ],
+          [
+            3.08,
+            17
+          ],
+          [
+            3.08,
+            13
+          ],
+          [
+            3.08,
+            15
+          ],
+          [
+            3.08,
+            15
+          ],
+          [
+            3.08,
+            16
+          ],
+          [
+            3.08,
+            28
+          ]
+        ]
+      }
+    }
+  },
+  "s2-b1": {
+    "stdout": "Analysis of Deviance Table\n\nModel 1: breaks ~ wool + tension\nModel 2: breaks ~ wool * tension\n  Resid. Df Resid. Dev Df Deviance  Pr(>Chi)    \n1        50     210.39                          \n2        48     182.31  2   28.087 7.962e-07 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+  },
+  "s2-b2": {
+    "stdout": "[1] NA  2\n"
+  },
+  "s2-b3": {
+    "shell": [
+      {
+        "source": "small <- glm(breaks ~ wool + tension, family = poisson, data = warpbreaks)",
+        "stdout": ""
+      },
+      {
+        "source": "big <- glm(breaks ~ wool * tension, family = poisson, data = warpbreaks)",
+        "stdout": ""
+      },
+      {
+        "source": "drop <- deviance(small) - deviance(big)",
+        "stdout": ""
+      },
+      {
+        "source": "extra <- df.residual(small) - df.residual(big)",
+        "stdout": ""
+      },
+      {
+        "source": "c(drop = drop, extra = extra)",
+        "stdout": "    drop    extra \n28.08676  2.00000 \n"
+      },
+      {
+        "source": "pchisq(drop, extra, lower.tail = FALSE)",
+        "stdout": "[1] 7.962292e-07\n"
+      }
+    ]
+  },
+  "s3-b1": {
+    "stdout": "Single term deletions\n\nModel:\nbreaks ~ wool + tension\n        Df Deviance    AIC    LRT  Pr(>Chi)    \n<none>       210.39 493.06                     \nwool     1   226.43 507.09 16.039 6.206e-05 ***\ntension  2   281.33 560.00 70.942 3.938e-16 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+  },
+  "s3-b3": {
+    "stdout": "Single term deletions\n\nModel:\nbreaks ~ wool * tension\n             Df Deviance    AIC    LRT  Pr(>Chi)    \n<none>            182.31 468.97                     \nwool:tension  2   210.39 493.06 28.087 7.962e-07 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "fit <- glm(breaks ~ wool + tension, family = poisson, data = warpbreaks)",
+        "stdout": ""
+      },
+      {
+        "source": "logLik(fit)",
+        "stdout": "'log Lik.' -242.528 (df=4)\n"
+      },
+      {
+        "source": "k <- attr(logLik(fit), \"df\")",
+        "stdout": ""
+      },
+      {
+        "source": "-2 * as.numeric(logLik(fit)) + 2 * k",
+        "stdout": "[1] 493.056\n"
+      },
+      {
+        "source": "AIC(fit)",
+        "stdout": "[1] 493.056\n"
+      }
+    ]
+  },
+  "s4-b2": {
+    "stdout": "           df      AIC\nby_wool     2 559.9975\nby_tension  3 507.0947\n"
+  },
+  "s4-b4": {
+    "stdout": "          df      AIC\nall_rows   2 559.9975\nsome_rows  2 296.1847\nWarning message:\nIn AIC.default(all_rows, some_rows) :\n  models are not all fitted to the same number of observations\n"
+  },
+  "s4-b7": {
+    "stdout": "Start:  AIC=574.04\nbreaks ~ 1\n\n          Df Deviance    AIC\n+ tension  2   226.43 507.09\n+ wool     1   281.33 560.00\n<none>         297.37 574.04\n\nStep:  AIC=507.09\nbreaks ~ tension\n\n          Df Deviance    AIC\n+ wool     1   210.39 493.06\n<none>         226.43 507.09\n- tension  2   297.37 574.04\n\nStep:  AIC=493.06\nbreaks ~ tension + wool\n\n               Df Deviance    AIC\n+ wool:tension  2   182.31 468.97\n<none>              210.39 493.06\n- wool          1   226.43 507.09\n- tension       2   281.33 560.00\n\nStep:  AIC=468.97\nbreaks ~ tension + wool + tension:wool\n\n               Df Deviance    AIC\n<none>              182.31 468.97\n- tension:wool  2   210.39 493.06\nbreaks ~ tension + wool + tension:wool\n"
+  },
+  "s5-b1": {
+    "left": {
+      "stdout": "Single term deletions\n\nModel:\nbreaks ~ wool + tension\n        Df Deviance    AIC    LRT  Pr(>Chi)    \n<none>       210.39 493.06                     \nwool     1   226.43 507.09 16.039 6.206e-05 ***\ntension  2   281.33 560.00 70.942 3.938e-16 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+    },
+    "right": {
+      "stdout": "Single term deletions\n\nModel:\nbreaks ~ wool + tension\n        Df Deviance F value    Pr(>F)    \n<none>       210.39                      \nwool     1   226.43  3.8116 0.0565082 .  \ntension  2   281.33  8.4297 0.0007001 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+    }
+  },
+  "s5-b3": {
+    "shell": [
+      {
+        "source": "small <- glm(breaks ~ wool + tension, family = quasipoisson, data = warpbreaks)",
+        "stdout": ""
+      },
+      {
+        "source": "big <- glm(breaks ~ wool * tension, family = quasipoisson, data = warpbreaks)",
+        "stdout": ""
+      },
+      {
+        "source": "AIC(big)",
+        "stdout": "[1] NA\n"
+      },
+      {
+        "source": "((deviance(small) - deviance(big)) / (df.residual(small) - df.residual(big))) / summary(big)$dispersion",
+        "stdout": "[1] 3.731081\n"
+      },
+      {
+        "source": "anova(small, big, test = \"F\")",
+        "stdout": "Analysis of Deviance Table\n\nModel 1: breaks ~ wool + tension\nModel 2: breaks ~ wool * tension\n  Resid. Df Resid. Dev Df Deviance      F  Pr(>F)  \n1        50     210.39                             \n2        48     182.31  2   28.087 3.7311 0.03118 *\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+      }
+    ]
+  },
+  "s6-b1": {
+    "shell": [
+      {
+        "source": "fit <- glm(breaks ~ wool * tension, family = poisson, data = warpbreaks)",
+        "stdout": ""
+      },
+      {
+        "source": "deviance(fit)",
+        "stdout": "[1] 182.3051\n"
+      },
+      {
+        "source": "df.residual(fit)",
+        "stdout": "[1] 48\n"
+      },
+      {
+        "source": "pchisq(deviance(fit), df.residual(fit), lower.tail = FALSE)",
+        "stdout": "[1] 1.582538e-17\n"
+      },
+      {
+        "source": "min(warpbreaks$breaks)",
+        "stdout": "[1] 10\n"
+      }
+    ]
+  },
+  "s6-b3": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "True mean: 0.1    counts of zero: 9060 of 10000\nResidual deviance: 4707.9 on 9999 degrees of freedom\nDeviance / df: 0.471 \n",
+          "values": {
+            "sizes": [
+              4707.89431923019,
+              9999
+            ]
+          }
+        },
+        "1": {
+          "stdout": "True mean: 0.2    counts of zero: 8216 of 10000\nResidual deviance: 6920.8 on 9999 degrees of freedom\nDeviance / df: 0.692 \n",
+          "values": {
+            "sizes": [
+              6920.78438107592,
+              9999
+            ]
+          }
+        },
+        "2": {
+          "stdout": "True mean: 0.3    counts of zero: 7442 of 10000\nResidual deviance: 8371.8 on 9999 degrees of freedom\nDeviance / df: 0.837 \n",
+          "values": {
+            "sizes": [
+              8371.75988632774,
+              9999
+            ]
+          }
+        },
+        "3": {
+          "stdout": "True mean: 0.4    counts of zero: 6748 of 10000\nResidual deviance: 9384.6 on 9999 degrees of freedom\nDeviance / df: 0.939 \n",
+          "values": {
+            "sizes": [
+              9384.59860059136,
+              9999
+            ]
+          }
+        },
+        "4": {
+          "stdout": "True mean: 0.5    counts of zero: 6111 of 10000\nResidual deviance: 10019.5 on 9999 degrees of freedom\nDeviance / df: 1.002 \n",
+          "values": {
+            "sizes": [
+              10019.5420777531,
+              9999
+            ]
+          }
+        },
+        "5": {
+          "stdout": "True mean: 0.6    counts of zero: 5530 of 10000\nResidual deviance: 10549.6 on 9999 degrees of freedom\nDeviance / df: 1.055 \n",
+          "values": {
+            "sizes": [
+              10549.6324967914,
+              9999
+            ]
+          }
+        },
+        "6": {
+          "stdout": "True mean: 0.7    counts of zero: 5006 of 10000\nResidual deviance: 10995.2 on 9999 degrees of freedom\nDeviance / df: 1.1 \n",
+          "values": {
+            "sizes": [
+              10995.1537453103,
+              9999
+            ]
+          }
+        },
+        "7": {
+          "stdout": "True mean: 0.8    counts of zero: 4552 of 10000\nResidual deviance: 11261.2 on 9999 degrees of freedom\nDeviance / df: 1.126 \n",
+          "values": {
+            "sizes": [
+              11261.1561009981,
+              9999
+            ]
+          }
+        },
+        "8": {
+          "stdout": "True mean: 0.9    counts of zero: 4133 of 10000\nResidual deviance: 11401.8 on 9999 degrees of freedom\nDeviance / df: 1.14 \n",
+          "values": {
+            "sizes": [
+              11401.8336275747,
+              9999
+            ]
+          }
+        },
+        "9": {
+          "stdout": "True mean: 1    counts of zero: 3733 of 10000\nResidual deviance: 11503.6 on 9999 degrees of freedom\nDeviance / df: 1.15 \n",
+          "values": {
+            "sizes": [
+              11503.5897372599,
+              9999
+            ]
+          }
+        },
+        "10": {
+          "stdout": "True mean: 1.1    counts of zero: 3373 of 10000\nResidual deviance: 11611.1 on 9999 degrees of freedom\nDeviance / df: 1.161 \n",
+          "values": {
+            "sizes": [
+              11611.1197422827,
+              9999
+            ]
+          }
+        },
+        "11": {
+          "stdout": "True mean: 1.2    counts of zero: 3039 of 10000\nResidual deviance: 11606.2 on 9999 degrees of freedom\nDeviance / df: 1.161 \n",
+          "values": {
+            "sizes": [
+              11606.1694015262,
+              9999
+            ]
+          }
+        },
+        "12": {
+          "stdout": "True mean: 1.3    counts of zero: 2760 of 10000\nResidual deviance: 11664.6 on 9999 degrees of freedom\nDeviance / df: 1.167 \n",
+          "values": {
+            "sizes": [
+              11664.597346657,
+              9999
+            ]
+          }
+        },
+        "13": {
+          "stdout": "True mean: 1.4    counts of zero: 2493 of 10000\nResidual deviance: 11660.4 on 9999 degrees of freedom\nDeviance / df: 1.166 \n",
+          "values": {
+            "sizes": [
+              11660.4360672517,
+              9999
+            ]
+          }
+        },
+        "14": {
+          "stdout": "True mean: 1.5    counts of zero: 2251 of 10000\nResidual deviance: 11601.5 on 9999 degrees of freedom\nDeviance / df: 1.16 \n",
+          "values": {
+            "sizes": [
+              11601.5269420591,
+              9999
+            ]
+          }
+        },
+        "15": {
+          "stdout": "True mean: 1.6    counts of zero: 2023 of 10000\nResidual deviance: 11532.7 on 9999 degrees of freedom\nDeviance / df: 1.153 \n",
+          "values": {
+            "sizes": [
+              11532.6671380252,
+              9999
+            ]
+          }
+        },
+        "16": {
+          "stdout": "True mean: 1.7    counts of zero: 1833 of 10000\nResidual deviance: 11513.5 on 9999 degrees of freedom\nDeviance / df: 1.151 \n",
+          "values": {
+            "sizes": [
+              11513.481282505,
+              9999
+            ]
+          }
+        },
+        "17": {
+          "stdout": "True mean: 1.8    counts of zero: 1673 of 10000\nResidual deviance: 11517 on 9999 degrees of freedom\nDeviance / df: 1.152 \n",
+          "values": {
+            "sizes": [
+              11517.0287327613,
+              9999
+            ]
+          }
+        },
+        "18": {
+          "stdout": "True mean: 1.9    counts of zero: 1524 of 10000\nResidual deviance: 11518.3 on 9999 degrees of freedom\nDeviance / df: 1.152 \n",
+          "values": {
+            "sizes": [
+              11518.3396513224,
+              9999
+            ]
+          }
+        },
+        "19": {
+          "stdout": "True mean: 2    counts of zero: 1376 of 10000\nResidual deviance: 11474.2 on 9999 degrees of freedom\nDeviance / df: 1.148 \n",
+          "values": {
+            "sizes": [
+              11474.1963416579,
+              9999
+            ]
+          }
+        },
+        "20": {
+          "stdout": "True mean: 2.1    counts of zero: 1233 of 10000\nResidual deviance: 11383.6 on 9999 degrees of freedom\nDeviance / df: 1.138 \n",
+          "values": {
+            "sizes": [
+              11383.638067212,
+              9999
+            ]
+          }
+        },
+        "21": {
+          "stdout": "True mean: 2.2    counts of zero: 1118 of 10000\nResidual deviance: 11336.7 on 9999 degrees of freedom\nDeviance / df: 1.134 \n",
+          "values": {
+            "sizes": [
+              11336.6795253543,
+              9999
+            ]
+          }
+        },
+        "22": {
+          "stdout": "True mean: 2.3    counts of zero: 1017 of 10000\nResidual deviance: 11289.1 on 9999 degrees of freedom\nDeviance / df: 1.129 \n",
+          "values": {
+            "sizes": [
+              11289.141810517,
+              9999
+            ]
+          }
+        },
+        "23": {
+          "stdout": "True mean: 2.4    counts of zero: 915 of 10000\nResidual deviance: 11216.1 on 9999 degrees of freedom\nDeviance / df: 1.122 \n",
+          "values": {
+            "sizes": [
+              11216.1142128269,
+              9999
+            ]
+          }
+        },
+        "24": {
+          "stdout": "True mean: 2.5    counts of zero: 837 of 10000\nResidual deviance: 11198.9 on 9999 degrees of freedom\nDeviance / df: 1.12 \n",
+          "values": {
+            "sizes": [
+              11198.8943526665,
+              9999
+            ]
+          }
+        },
+        "25": {
+          "stdout": "True mean: 2.6    counts of zero: 749 of 10000\nResidual deviance: 11135.2 on 9999 degrees of freedom\nDeviance / df: 1.114 \n",
+          "values": {
+            "sizes": [
+              11135.1712722537,
+              9999
+            ]
+          }
+        },
+        "26": {
+          "stdout": "True mean: 2.7    counts of zero: 678 of 10000\nResidual deviance: 11117.6 on 9999 degrees of freedom\nDeviance / df: 1.112 \n",
+          "values": {
+            "sizes": [
+              11117.6351277669,
+              9999
+            ]
+          }
+        },
+        "27": {
+          "stdout": "True mean: 2.8    counts of zero: 619 of 10000\nResidual deviance: 11089.6 on 9999 degrees of freedom\nDeviance / df: 1.109 \n",
+          "values": {
+            "sizes": [
+              11089.5899723641,
+              9999
+            ]
+          }
+        },
+        "28": {
+          "stdout": "True mean: 2.9    counts of zero: 561 of 10000\nResidual deviance: 10992.5 on 9999 degrees of freedom\nDeviance / df: 1.099 \n",
+          "values": {
+            "sizes": [
+              10992.5361994412,
+              9999
+            ]
+          }
+        },
+        "29": {
+          "stdout": "True mean: 3    counts of zero: 509 of 10000\nResidual deviance: 10955.1 on 9999 degrees of freedom\nDeviance / df: 1.096 \n",
+          "values": {
+            "sizes": [
+              10955.0759474381,
+              9999
+            ]
+          }
+        },
+        "30": {
+          "stdout": "True mean: 3.1    counts of zero: 466 of 10000\nResidual deviance: 10968.2 on 9999 degrees of freedom\nDeviance / df: 1.097 \n",
+          "values": {
+            "sizes": [
+              10968.2418695177,
+              9999
+            ]
+          }
+        },
+        "31": {
+          "stdout": "True mean: 3.2    counts of zero: 412 of 10000\nResidual deviance: 10879.4 on 9999 degrees of freedom\nDeviance / df: 1.088 \n",
+          "values": {
+            "sizes": [
+              10879.4470356524,
+              9999
+            ]
+          }
+        },
+        "32": {
+          "stdout": "True mean: 3.3    counts of zero: 380 of 10000\nResidual deviance: 10936.6 on 9999 degrees of freedom\nDeviance / df: 1.094 \n",
+          "values": {
+            "sizes": [
+              10936.581669702,
+              9999
+            ]
+          }
+        },
+        "33": {
+          "stdout": "True mean: 3.4    counts of zero: 345 of 10000\nResidual deviance: 10904.7 on 9999 degrees of freedom\nDeviance / df: 1.091 \n",
+          "values": {
+            "sizes": [
+              10904.7279857688,
+              9999
+            ]
+          }
+        },
+        "34": {
+          "stdout": "True mean: 3.5    counts of zero: 319 of 10000\nResidual deviance: 10862.7 on 9999 degrees of freedom\nDeviance / df: 1.086 \n",
+          "values": {
+            "sizes": [
+              10862.6848808499,
+              9999
+            ]
+          }
+        },
+        "35": {
+          "stdout": "True mean: 3.6    counts of zero: 283 of 10000\nResidual deviance: 10783.2 on 9999 degrees of freedom\nDeviance / df: 1.078 \n",
+          "values": {
+            "sizes": [
+              10783.2171628574,
+              9999
+            ]
+          }
+        },
+        "36": {
+          "stdout": "True mean: 3.7    counts of zero: 256 of 10000\nResidual deviance: 10762 on 9999 degrees of freedom\nDeviance / df: 1.076 \n",
+          "values": {
+            "sizes": [
+              10761.9673773526,
+              9999
+            ]
+          }
+        },
+        "37": {
+          "stdout": "True mean: 3.8    counts of zero: 229 of 10000\nResidual deviance: 10718.2 on 9999 degrees of freedom\nDeviance / df: 1.072 \n",
+          "values": {
+            "sizes": [
+              10718.1882832902,
+              9999
+            ]
+          }
+        },
+        "38": {
+          "stdout": "True mean: 3.9    counts of zero: 208 of 10000\nResidual deviance: 10713 on 9999 degrees of freedom\nDeviance / df: 1.071 \n",
+          "values": {
+            "sizes": [
+              10712.9690460236,
+              9999
+            ]
+          }
+        },
+        "39": {
+          "stdout": "True mean: 4    counts of zero: 188 of 10000\nResidual deviance: 10683.4 on 9999 degrees of freedom\nDeviance / df: 1.068 \n",
+          "values": {
+            "sizes": [
+              10683.4003710953,
+              9999
+            ]
+          }
+        },
+        "40": {
+          "stdout": "True mean: 4.1    counts of zero: 168 of 10000\nResidual deviance: 10646.8 on 9999 degrees of freedom\nDeviance / df: 1.065 \n",
+          "values": {
+            "sizes": [
+              10646.7936050394,
+              9999
+            ]
+          }
+        },
+        "41": {
+          "stdout": "True mean: 4.2    counts of zero: 156 of 10000\nResidual deviance: 10628.3 on 9999 degrees of freedom\nDeviance / df: 1.063 \n",
+          "values": {
+            "sizes": [
+              10628.3073388159,
+              9999
+            ]
+          }
+        },
+        "42": {
+          "stdout": "True mean: 4.3    counts of zero: 138 of 10000\nResidual deviance: 10590.3 on 9999 degrees of freedom\nDeviance / df: 1.059 \n",
+          "values": {
+            "sizes": [
+              10590.2908485693,
+              9999
+            ]
+          }
+        },
+        "43": {
+          "stdout": "True mean: 4.4    counts of zero: 127 of 10000\nResidual deviance: 10605.8 on 9999 degrees of freedom\nDeviance / df: 1.061 \n",
+          "values": {
+            "sizes": [
+              10605.7820966442,
+              9999
+            ]
+          }
+        },
+        "44": {
+          "stdout": "True mean: 4.5    counts of zero: 119 of 10000\nResidual deviance: 10600.5 on 9999 degrees of freedom\nDeviance / df: 1.06 \n",
+          "values": {
+            "sizes": [
+              10600.4842246859,
+              9999
+            ]
+          }
+        },
+        "45": {
+          "stdout": "True mean: 4.6    counts of zero: 108 of 10000\nResidual deviance: 10607.9 on 9999 degrees of freedom\nDeviance / df: 1.061 \n",
+          "values": {
+            "sizes": [
+              10607.8754455803,
+              9999
+            ]
+          }
+        },
+        "46": {
+          "stdout": "True mean: 4.7    counts of zero: 96 of 10000\nResidual deviance: 10585.6 on 9999 degrees of freedom\nDeviance / df: 1.059 \n",
+          "values": {
+            "sizes": [
+              10585.6077102666,
+              9999
+            ]
+          }
+        },
+        "47": {
+          "stdout": "True mean: 4.8    counts of zero: 91 of 10000\nResidual deviance: 10597.6 on 9999 degrees of freedom\nDeviance / df: 1.06 \n",
+          "values": {
+            "sizes": [
+              10597.5739028736,
+              9999
+            ]
+          }
+        },
+        "48": {
+          "stdout": "True mean: 4.9    counts of zero: 84 of 10000\nResidual deviance: 10562.5 on 9999 degrees of freedom\nDeviance / df: 1.056 \n",
+          "values": {
+            "sizes": [
+              10562.4869408357,
+              9999
+            ]
+          }
+        },
+        "49": {
+          "stdout": "True mean: 5    counts of zero: 79 of 10000\nResidual deviance: 10549.9 on 9999 degrees of freedom\nDeviance / df: 1.055 \n",
+          "values": {
+            "sizes": [
+              10549.9208179267,
+              9999
+            ]
+          }
+        },
+        "50": {
+          "stdout": "True mean: 5.1    counts of zero: 74 of 10000\nResidual deviance: 10552.9 on 9999 degrees of freedom\nDeviance / df: 1.055 \n",
+          "values": {
+            "sizes": [
+              10552.8906673231,
+              9999
+            ]
+          }
+        },
+        "51": {
+          "stdout": "True mean: 5.2    counts of zero: 66 of 10000\nResidual deviance: 10533.4 on 9999 degrees of freedom\nDeviance / df: 1.053 \n",
+          "values": {
+            "sizes": [
+              10533.365964358,
+              9999
+            ]
+          }
+        },
+        "52": {
+          "stdout": "True mean: 5.3    counts of zero: 64 of 10000\nResidual deviance: 10554.8 on 9999 degrees of freedom\nDeviance / df: 1.056 \n",
+          "values": {
+            "sizes": [
+              10554.7787177623,
+              9999
+            ]
+          }
+        },
+        "53": {
+          "stdout": "True mean: 5.4    counts of zero: 60 of 10000\nResidual deviance: 10519.4 on 9999 degrees of freedom\nDeviance / df: 1.052 \n",
+          "values": {
+            "sizes": [
+              10519.3966421537,
+              9999
+            ]
+          }
+        },
+        "54": {
+          "stdout": "True mean: 5.5    counts of zero: 47 of 10000\nResidual deviance: 10481.4 on 9999 degrees of freedom\nDeviance / df: 1.048 \n",
+          "values": {
+            "sizes": [
+              10481.4388099697,
+              9999
+            ]
+          }
+        },
+        "55": {
+          "stdout": "True mean: 5.6    counts of zero: 45 of 10000\nResidual deviance: 10500 on 9999 degrees of freedom\nDeviance / df: 1.05 \n",
+          "values": {
+            "sizes": [
+              10500.049787278,
+              9999
+            ]
+          }
+        },
+        "56": {
+          "stdout": "True mean: 5.7    counts of zero: 42 of 10000\nResidual deviance: 10446.4 on 9999 degrees of freedom\nDeviance / df: 1.045 \n",
+          "values": {
+            "sizes": [
+              10446.417986928,
+              9999
+            ]
+          }
+        },
+        "57": {
+          "stdout": "True mean: 5.8    counts of zero: 37 of 10000\nResidual deviance: 10427.8 on 9999 degrees of freedom\nDeviance / df: 1.043 \n",
+          "values": {
+            "sizes": [
+              10427.8017954682,
+              9999
+            ]
+          }
+        },
+        "58": {
+          "stdout": "True mean: 5.9    counts of zero: 32 of 10000\nResidual deviance: 10410.9 on 9999 degrees of freedom\nDeviance / df: 1.041 \n",
+          "values": {
+            "sizes": [
+              10410.8856612445,
+              9999
+            ]
+          }
+        },
+        "59": {
+          "stdout": "True mean: 6    counts of zero: 31 of 10000\nResidual deviance: 10434.9 on 9999 degrees of freedom\nDeviance / df: 1.044 \n",
+          "values": {
+            "sizes": [
+              10434.8724263168,
+              9999
+            ]
+          }
+        },
+        "60": {
+          "stdout": "True mean: 6.1    counts of zero: 29 of 10000\nResidual deviance: 10438.1 on 9999 degrees of freedom\nDeviance / df: 1.044 \n",
+          "values": {
+            "sizes": [
+              10438.0708094957,
+              9999
+            ]
+          }
+        },
+        "61": {
+          "stdout": "True mean: 6.2    counts of zero: 26 of 10000\nResidual deviance: 10444.2 on 9999 degrees of freedom\nDeviance / df: 1.045 \n",
+          "values": {
+            "sizes": [
+              10444.2075021234,
+              9999
+            ]
+          }
+        },
+        "62": {
+          "stdout": "True mean: 6.3    counts of zero: 20 of 10000\nResidual deviance: 10385.4 on 9999 degrees of freedom\nDeviance / df: 1.039 \n",
+          "values": {
+            "sizes": [
+              10385.352791338,
+              9999
+            ]
+          }
+        },
+        "63": {
+          "stdout": "True mean: 6.4    counts of zero: 19 of 10000\nResidual deviance: 10362 on 9999 degrees of freedom\nDeviance / df: 1.036 \n",
+          "values": {
+            "sizes": [
+              10361.9798747298,
+              9999
+            ]
+          }
+        },
+        "64": {
+          "stdout": "True mean: 6.5    counts of zero: 19 of 10000\nResidual deviance: 10387.9 on 9999 degrees of freedom\nDeviance / df: 1.039 \n",
+          "values": {
+            "sizes": [
+              10387.896982565,
+              9999
+            ]
+          }
+        },
+        "65": {
+          "stdout": "True mean: 6.6    counts of zero: 17 of 10000\nResidual deviance: 10320.3 on 9999 degrees of freedom\nDeviance / df: 1.032 \n",
+          "values": {
+            "sizes": [
+              10320.3344127565,
+              9999
+            ]
+          }
+        },
+        "66": {
+          "stdout": "True mean: 6.7    counts of zero: 17 of 10000\nResidual deviance: 10343.7 on 9999 degrees of freedom\nDeviance / df: 1.034 \n",
+          "values": {
+            "sizes": [
+              10343.7353431315,
+              9999
+            ]
+          }
+        },
+        "67": {
+          "stdout": "True mean: 6.8    counts of zero: 16 of 10000\nResidual deviance: 10362.9 on 9999 degrees of freedom\nDeviance / df: 1.036 \n",
+          "values": {
+            "sizes": [
+              10362.9306606946,
+              9999
+            ]
+          }
+        },
+        "68": {
+          "stdout": "True mean: 6.9    counts of zero: 15 of 10000\nResidual deviance: 10396.4 on 9999 degrees of freedom\nDeviance / df: 1.04 \n",
+          "values": {
+            "sizes": [
+              10396.4304501043,
+              9999
+            ]
+          }
+        },
+        "69": {
+          "stdout": "True mean: 7    counts of zero: 13 of 10000\nResidual deviance: 10383.5 on 9999 degrees of freedom\nDeviance / df: 1.038 \n",
+          "values": {
+            "sizes": [
+              10383.4953703878,
+              9999
+            ]
+          }
+        },
+        "70": {
+          "stdout": "True mean: 7.1    counts of zero: 11 of 10000\nResidual deviance: 10388.9 on 9999 degrees of freedom\nDeviance / df: 1.039 \n",
+          "values": {
+            "sizes": [
+              10388.8919182816,
+              9999
+            ]
+          }
+        },
+        "71": {
+          "stdout": "True mean: 7.2    counts of zero: 11 of 10000\nResidual deviance: 10378.2 on 9999 degrees of freedom\nDeviance / df: 1.038 \n",
+          "values": {
+            "sizes": [
+              10378.2201600473,
+              9999
+            ]
+          }
+        },
+        "72": {
+          "stdout": "True mean: 7.3    counts of zero: 10 of 10000\nResidual deviance: 10365.7 on 9999 degrees of freedom\nDeviance / df: 1.037 \n",
+          "values": {
+            "sizes": [
+              10365.6816177627,
+              9999
+            ]
+          }
+        },
+        "73": {
+          "stdout": "True mean: 7.4    counts of zero: 9 of 10000\nResidual deviance: 10342.8 on 9999 degrees of freedom\nDeviance / df: 1.034 \n",
+          "values": {
+            "sizes": [
+              10342.755419353,
+              9999
+            ]
+          }
+        },
+        "74": {
+          "stdout": "True mean: 7.5    counts of zero: 8 of 10000\nResidual deviance: 10361.7 on 9999 degrees of freedom\nDeviance / df: 1.036 \n",
+          "values": {
+            "sizes": [
+              10361.6706355255,
+              9999
+            ]
+          }
+        },
+        "75": {
+          "stdout": "True mean: 7.6    counts of zero: 6 of 10000\nResidual deviance: 10364.2 on 9999 degrees of freedom\nDeviance / df: 1.037 \n",
+          "values": {
+            "sizes": [
+              10364.1936306436,
+              9999
+            ]
+          }
+        },
+        "76": {
+          "stdout": "True mean: 7.7    counts of zero: 4 of 10000\nResidual deviance: 10308.2 on 9999 degrees of freedom\nDeviance / df: 1.031 \n",
+          "values": {
+            "sizes": [
+              10308.2233330076,
+              9999
+            ]
+          }
+        },
+        "77": {
+          "stdout": "True mean: 7.8    counts of zero: 4 of 10000\nResidual deviance: 10315.7 on 9999 degrees of freedom\nDeviance / df: 1.032 \n",
+          "values": {
+            "sizes": [
+              10315.7255218862,
+              9999
+            ]
+          }
+        },
+        "78": {
+          "stdout": "True mean: 7.9    counts of zero: 3 of 10000\nResidual deviance: 10274.8 on 9999 degrees of freedom\nDeviance / df: 1.028 \n",
+          "values": {
+            "sizes": [
+              10274.8191502456,
+              9999
+            ]
+          }
+        },
+        "79": {
+          "stdout": "True mean: 8    counts of zero: 3 of 10000\nResidual deviance: 10275.5 on 9999 degrees of freedom\nDeviance / df: 1.028 \n",
+          "values": {
+            "sizes": [
+              10275.5199774465,
+              9999
+            ]
+          }
+        },
+        "80": {
+          "stdout": "True mean: 8.1    counts of zero: 3 of 10000\nResidual deviance: 10244.6 on 9999 degrees of freedom\nDeviance / df: 1.025 \n",
+          "values": {
+            "sizes": [
+              10244.5765051142,
+              9999
+            ]
+          }
+        },
+        "81": {
+          "stdout": "True mean: 8.2    counts of zero: 3 of 10000\nResidual deviance: 10274.9 on 9999 degrees of freedom\nDeviance / df: 1.028 \n",
+          "values": {
+            "sizes": [
+              10274.9201406728,
+              9999
+            ]
+          }
+        },
+        "82": {
+          "stdout": "True mean: 8.3    counts of zero: 2 of 10000\nResidual deviance: 10322.1 on 9999 degrees of freedom\nDeviance / df: 1.032 \n",
+          "values": {
+            "sizes": [
+              10322.0805810664,
+              9999
+            ]
+          }
+        },
+        "83": {
+          "stdout": "True mean: 8.4    counts of zero: 2 of 10000\nResidual deviance: 10317 on 9999 degrees of freedom\nDeviance / df: 1.032 \n",
+          "values": {
+            "sizes": [
+              10316.9622041358,
+              9999
+            ]
+          }
+        },
+        "84": {
+          "stdout": "True mean: 8.5    counts of zero: 2 of 10000\nResidual deviance: 10311.3 on 9999 degrees of freedom\nDeviance / df: 1.031 \n",
+          "values": {
+            "sizes": [
+              10311.2606107495,
+              9999
+            ]
+          }
+        },
+        "85": {
+          "stdout": "True mean: 8.6    counts of zero: 2 of 10000\nResidual deviance: 10297.4 on 9999 degrees of freedom\nDeviance / df: 1.03 \n",
+          "values": {
+            "sizes": [
+              10297.3746727134,
+              9999
+            ]
+          }
+        },
+        "86": {
+          "stdout": "True mean: 8.7    counts of zero: 2 of 10000\nResidual deviance: 10271.5 on 9999 degrees of freedom\nDeviance / df: 1.027 \n",
+          "values": {
+            "sizes": [
+              10271.4832623522,
+              9999
+            ]
+          }
+        },
+        "87": {
+          "stdout": "True mean: 8.8    counts of zero: 2 of 10000\nResidual deviance: 10274.5 on 9999 degrees of freedom\nDeviance / df: 1.028 \n",
+          "values": {
+            "sizes": [
+              10274.4528839993,
+              9999
+            ]
+          }
+        },
+        "88": {
+          "stdout": "True mean: 8.9    counts of zero: 2 of 10000\nResidual deviance: 10266.4 on 9999 degrees of freedom\nDeviance / df: 1.027 \n",
+          "values": {
+            "sizes": [
+              10266.4459558609,
+              9999
+            ]
+          }
+        },
+        "89": {
+          "stdout": "True mean: 9    counts of zero: 2 of 10000\nResidual deviance: 10274.4 on 9999 degrees of freedom\nDeviance / df: 1.028 \n",
+          "values": {
+            "sizes": [
+              10274.4261868187,
+              9999
+            ]
+          }
+        },
+        "90": {
+          "stdout": "True mean: 9.1    counts of zero: 1 of 10000\nResidual deviance: 10267.4 on 9999 degrees of freedom\nDeviance / df: 1.027 \n",
+          "values": {
+            "sizes": [
+              10267.3863018589,
+              9999
+            ]
+          }
+        },
+        "91": {
+          "stdout": "True mean: 9.2    counts of zero: 1 of 10000\nResidual deviance: 10283.7 on 9999 degrees of freedom\nDeviance / df: 1.028 \n",
+          "values": {
+            "sizes": [
+              10283.691463965,
+              9999
+            ]
+          }
+        },
+        "92": {
+          "stdout": "True mean: 9.3    counts of zero: 1 of 10000\nResidual deviance: 10252 on 9999 degrees of freedom\nDeviance / df: 1.025 \n",
+          "values": {
+            "sizes": [
+              10251.9939257437,
+              9999
+            ]
+          }
+        },
+        "93": {
+          "stdout": "True mean: 9.4    counts of zero: 1 of 10000\nResidual deviance: 10267.3 on 9999 degrees of freedom\nDeviance / df: 1.027 \n",
+          "values": {
+            "sizes": [
+              10267.2876340072,
+              9999
+            ]
+          }
+        },
+        "94": {
+          "stdout": "True mean: 9.5    counts of zero: 1 of 10000\nResidual deviance: 10257 on 9999 degrees of freedom\nDeviance / df: 1.026 \n",
+          "values": {
+            "sizes": [
+              10257.0284431255,
+              9999
+            ]
+          }
+        },
+        "95": {
+          "stdout": "True mean: 9.6    counts of zero: 1 of 10000\nResidual deviance: 10270.2 on 9999 degrees of freedom\nDeviance / df: 1.027 \n",
+          "values": {
+            "sizes": [
+              10270.198718313,
+              9999
+            ]
+          }
+        },
+        "96": {
+          "stdout": "True mean: 9.7    counts of zero: 1 of 10000\nResidual deviance: 10272.7 on 9999 degrees of freedom\nDeviance / df: 1.027 \n",
+          "values": {
+            "sizes": [
+              10272.73206462,
+              9999
+            ]
+          }
+        },
+        "97": {
+          "stdout": "True mean: 9.8    counts of zero: 0 of 10000\nResidual deviance: 10260.6 on 9999 degrees of freedom\nDeviance / df: 1.026 \n",
+          "values": {
+            "sizes": [
+              10260.5971577363,
+              9999
+            ]
+          }
+        },
+        "98": {
+          "stdout": "True mean: 9.9    counts of zero: 0 of 10000\nResidual deviance: 10278.3 on 9999 degrees of freedom\nDeviance / df: 1.028 \n",
+          "values": {
+            "sizes": [
+              10278.316066915,
+              9999
+            ]
+          }
+        },
+        "99": {
+          "stdout": "True mean: 10    counts of zero: 0 of 10000\nResidual deviance: 10172.7 on 9999 degrees of freedom\nDeviance / df: 1.017 \n",
+          "values": {
+            "sizes": [
+              10172.6943633769,
+              9999
+            ]
+          }
+        }
+      },
+      "shared": {
+        "names": [
+          "residual deviance",
+          "degrees of freedom"
+        ]
+      }
+    }
+  }
+}

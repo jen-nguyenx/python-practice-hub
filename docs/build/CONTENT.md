@@ -220,5 +220,104 @@ printing a function without calling it is safe to teach.
 
 Run `npm run verify:lessons` (fast: skips every topic) until it reports 0 errors and 0 warnings.
 
+## STAT2402 lessons (R)
+
+The `stat2402` track is taught in R, because STAT2402 is: the language is decided by the track
+(`TRACK_LANG` in `lessonSchema.ts`), never per lesson. The verifier runs every block in real R (webR, pinned
+in `package.json` and in `src/runtime/version.ts`) through R's own console, so what a block shows is R's own
+autoprint, `Warning message:` and `Error in f(x) :` text. `src/content/lessons/stat2402/regression-in-r.ts`
+is the exemplar. Everything above applies; these are the differences.
+
+**Never type a number R computed** — a coefficient, a p-value, an odds ratio, a deviance, a prediction.
+Point at the output ("the `wt` estimate in the table above"). Inputs you choose (p = 0.2, a weight of
+3 thousand pounds) and definitions (odds = p / (1 − p)) are fine. A statistics lesson is full of numbers,
+which makes this the rule most easily broken without noticing; read the generated JSON and check every
+sentence against it, including qualitative ones ("below 0", "larger standard errors").
+
+**Every block starts from an empty workspace**, with R's starting options and `set.seed(2402)`. Each
+`code`, `shell`, `compare` and `predict` block builds its own data and model — repeat the `fit <- glm(...)`
+line. The verifier fails a block that stops for want of a name an earlier block set.
+
+**Base R, plus three pinned packages.** The data sets in R's `datasets` package (`cars`, `mtcars`,
+`InsectSprays`, `warpbreaks`, `esoph`, `quakes`, ...), the base packages (`stats`, `utils`, `graphics`),
+and **MASS**, **pscl** and **survival** (with their data sets, e.g. `pscl::bioChemists`, `survival::lung`).
+Those three are kept in `public/r-packages/`, pinned by hash in `src/runtime/r/packages.json`, and installed
+the first time a block asks for one with `library()`, `require()` or `pkg::`. Nothing else is available (no
+tidyverse, no ggplot2). Every block starts with nothing attached, so **each block that uses a package calls
+`library()` itself**; the verifier names the missing call if you forget. pscl prints a six-line banner when
+attached; `suppressPackageStartupMessages(library(pscl))` is ordinary R and keeps it out of every block, but
+say once what it does. To add a package, list it in `WANTED` in `scripts/r-packages.ts` and run it with
+`--update`.
+
+**Not available in R lessons:** `walkthrough` (it is Python's line tracer), `topicId` and the blocks that
+need it (`experiment`, `workedExample`, `mistakes`, `practice` — the topics are CITS1401's), `stdin`, and
+`watch` on an `interactive` card. The verifier refuses each.
+
+**Glossary marks are off** in R lessons: the glossary defines Python's words, and "function" or "list"
+mean something else in R. Do not write `[[term]]` links.
+
+**Interactive cards** work exactly as in Python, with R probes. A probe is an R expression evaluated in the
+workspace the program left: a length-1 vector becomes a number, a longer one an array (wrap in `as.list()`
+to force an array), a matrix or data frame one array per row — so `cbind(x, y)` gives the `[x, y]` pairs a
+`plot` series wants. Non-finite numbers become null and are refused. A plot's `points` probe draws the data
+as plain dots under the curves (one colour for all of them); `marker` dots are coloured by position, the
+first dot in the first series' colour, the second in the second's, and so on.
+Sliders show whole numbers, so a fractional parameter needs a label such as "slope, in tenths". Near 0 and
+1, `round(p, 3)` prints exactly 0 or 1; keep slider ranges where that cannot contradict the takeaway.
+
+**Tasks** use the same `Test` fields, read as R: `call` and `expect` are R expressions, `setup` is R
+statements, and `cmp: 'float'` allows `tol` of difference **relative to the expected value**
+(|got − want| ≤ tol·|want|, plus 1e-12 so an expected zero allows rounding noise) — not absolute as in
+Python, so a test expecting a tiny p-value really checks it (names and attributes ignored). `expect`
+runs in a fresh environment of its own, not the one `setup` made, so it cannot see a `fit` that `setup`
+built: refit inside `expect` (for instance with `local({...})`). `stdin`, `files`, `argsUnchanged`, `tag`
+and `cmp: 'unordered'` are not supported. The student's code runs in the browser's R, through the driver
+the verifier used, so "all tests pass" means the same thing in both.
+
+**R prints some things you did not ask for, and they are real output**: `confint()` on a glm prints
+"Waiting for profiling to be done..."; say what it is in the caption rather than hiding it.
+`summary(fit)$dispersion` and a hand-computed Pearson statistic can differ (the summary uses the final
+iteration's working residuals): in the last digits for a log link, from the fifth significant figure for a
+Gamma fit with the inverse link. Show both before saying they agree, and give a task comparing them a
+`tol` of about 1e-4.
+
+## STAT2402 exam questions
+
+The STAT2402 lesson quizzes, practice tests and mock final draw from a bank of R questions:
+`src/content/stat2402/questions/<lessonId>.ts`, one file per lesson, default-exporting a `StatQuestion[]`
+(`src/content/statQuestionSchema.ts`). `src/content/stat2402/questions/regression-in-r.ts` is the exemplar.
+**Every STAT2402 lesson needs one, with at least 6 questions**, or the verifier fails.
+
+**The lesson rule applies unchanged: nothing states what R does.** A question shows R code, and what R
+printed under it was recorded by the verifier. Prompts, options and `explain` never contain a number R
+computed. A `number` question's correct answer is an R expression (`answer`) the verifier evaluates in the
+workspace the code left — write `round(coef(fit)[["speed"]], 2)`, never `3.93`.
+
+**Four kinds.** Aim for 8 to 10 per lesson, mixing them:
+- `choice` — one right option among 2 to 5. With `code`, the code and its output are shown above the options:
+  this is how "read the R output and interpret it" is asked, and it should be most of the bank. Without
+  `code` it is a concept question. Options are shuffled on screen, so write the right one wherever you like.
+  Wrong options should be the mistakes a student actually makes, not jokes.
+- `number` — the student reads or works out one number from the output shown (an estimate, a prediction, a
+  percentage change, a dispersion). Say in the prompt how to round it, and set `tol` to match: half a unit
+  of the last place asked for plus a little (two decimal places: `tol: 0.006`). `unit` is plain words
+  after the box.
+- `predict` — "what does this print?" with 2 to 4 `choices`; exactly one must equal R's real output
+  (trailing spaces ignored, leading spaces not), and the wrong ones must look like something R prints.
+  The output is hidden until the test is marked.
+- `write` — write R, marked by running `tests` in the browser's R; marks are shared out by tests passed.
+  Same fields and rules as a lesson `task` (see above): starter fails, solution passes, `expect` refits in
+  its own environment.
+
+**`marks`** (1 to 10) are relative weights: 2 for a quick read, 3 for a number that takes a step of
+working, 5 or more for `write`. The mock final rescales whatever it picks to 100.
+
+**`explain`** is shown after marking: why the right answer is right and, briefly, why the tempting wrong
+ones are wrong. It is where a quiz teaches, so never leave it thin.
+
+**Each question is its own clean run**, like a lesson block: empty workspace, nothing attached, so code
+that needs MASS calls `library(MASS)`. Ids are globally unique kebab-case with a short lesson prefix
+(`rir-`, `lr-`, `pois-` ...).
+
 ## Verify (mandatory)
 Run `npm run verify -- --topic <topic-id>` until it reports zero errors. It checks your content against the schema rules, runs every solution against its tests in real Python (Pyodide, Python 3.14), checks mutants/distractors/buggy versions fail as intended, and writes `src/content/generated/<topic-id>.json` (plus `generated/experiments/<topic-id>.json` if you wrote experiments). Also run `npx tsc --noEmit -p .` and fix type errors in your folder. If the verifier command does not exist yet, wait by working on content quality, then retry. Report the final verifier output summary in your last message.

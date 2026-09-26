@@ -1,0 +1,67 @@
+/* STAT2402 exams: the question view, the review list, the quiz list and the resume card.
+   Everything else comes from testmode.css (the CITS1401 test look) and lesson.css (options, output). Tokens only. */
+
+/* ---------- one question ---------- */
+.sq { display: grid; gap: 14px; }
+.sq-meta { display: flex; flex-wrap: wrap; gap: 4px 0; margin: 0; font-family: var(--mono); font-size: var(--fs-12); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.sq-meta span + span::before { content: "·"; margin: 0 10px; color: var(--text-faint); }
+.sq-prompt { font-size: var(--fs-16); }
+.sq-code { display: grid; gap: 8px; }
+.sq-code .code-block { margin: 0; }
+.sq-number-row { display: flex; align-items: center; gap: 10px; }
+.sq-number-in { max-width: 14ch; font-family: var(--mono); font-size: var(--fs-16); padding: 8px 10px; }
+.sq-unit { color: var(--text-muted); font-size: var(--fs-15); }
+.sq-hint { margin: 0; font-size: var(--fs-13); color: var(--text-muted); }
+.sq-write-review { display: grid; gap: 6px; }
+
+.sq-review { display: grid; gap: 10px; padding: 14px 16px; border: 1px solid var(--bad-line); border-radius: var(--r-2); background: var(--surface-2); }
+.sq-review.is-right { border-color: var(--ok-line); }
+.sq-verdict { display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 600; }
+.sq-review:not(.is-right) .sq-verdict { color: var(--bad); }
+.sq-tests { font-weight: 400; color: var(--text-muted); }
+.sq-right { margin: 0; }
+.sq-right .num { font-family: var(--mono); }
+.sq-solution { display: grid; gap: 6px; }
+.sq-explain { color: var(--text); }
+
+/* ---------- marking ---------- */
+.sx-marking { display: grid; gap: 8px; max-width: 520px; }
+.sx-h { font-family: var(--display); font-size: var(--fs-24); font-weight: 700; letter-spacing: -0.02em; }
+
+/* ---------- review list ---------- */
+.sx-review { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.sx-review-row { border: 1px solid var(--border); border-radius: var(--r-2); background: var(--surface); }
+.sx-review-head {
+  display: grid; grid-template-columns: 22px auto minmax(0, 1fr) auto 16px; align-items: center; gap: 12px;
+  width: 100%; padding: 12px 14px; border: 0; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer;
+}
+.sx-review-head:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: var(--r-2); }
+.sx-review-mark { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--bad-soft); color: var(--bad); }
+.sx-review-row.is-right .sx-review-mark { background: var(--accent); color: var(--on-accent); }
+.sx-review-n { font-weight: 600; white-space: nowrap; }
+.sx-review-lesson { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); font-size: var(--fs-14); }
+.sx-review-score { font-family: var(--mono); font-size: var(--fs-13); color: var(--text-muted); }
+.sx-review-body { padding: 4px 16px 16px; border-top: 1px solid var(--border); }
+
+/* ---------- resume, notes ---------- */
+.sx-resume { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; border-color: var(--accent-line); }
+.sx-resume-t { margin: 2px 0; font-weight: 600; }
+.sx-note { font-size: var(--fs-13); }
+
+/* ---------- lesson quiz list ---------- */
+.sx-quiz-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.sx-quiz {
+  display: grid; grid-template-columns: 28px minmax(0, 1fr) auto 16px; align-items: center; gap: 12px;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r-2); color: var(--text); text-decoration: none; background: var(--surface);
+}
+.sx-quiz:hover { border-color: var(--border-strong); }
+.sx-quiz-n { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border-strong); font-family: var(--mono); font-size: var(--fs-12); color: var(--text-muted); }
+.sx-quiz-t { font-weight: 600; min-width: 0; }
+.sx-quiz-best { font-family: var(--mono); font-size: var(--fs-12); color: var(--text-muted); white-space: nowrap; }
+
+@media (max-width: 700px) {
+  .sx-review-head { grid-template-columns: 22px minmax(0, 1fr) auto 16px; }
+  .sx-review-lesson { display: none; }
+  .sx-quiz { grid-template-columns: 28px minmax(0, 1fr) 16px; }
+  .sx-quiz-best { grid-column: 2; }
+}

@@ -8,6 +8,8 @@ export type Route =
   | { name: 'lesson-read'; lessonId: string }
   | { name: 'question'; qid: string }
   | { name: 'playground' }
+  | { name: 'r-playground' }
+  | { name: 'stat-quiz'; lessonId: string }
   | { name: 'report'; topicId?: string }
   | { name: 'review' }
   | { name: 'decode' }
@@ -42,6 +44,8 @@ export function parseHash(hash: string): Route {
     case 'learn': return parts[1] ? { name: 'lesson', topicId: parts[1] } : { name: 'not-found', path };
     case 'q': return parts[1] ? { name: 'question', qid: parts[1] } : { name: 'not-found', path };
     case 'playground': return { name: 'playground' };
+    case 'r': return { name: 'r-playground' };
+    case 'quiz': return parts[1] ? { name: 'stat-quiz', lessonId: parts[1] } : { name: 'exam' };
     case 'report': return { name: 'report', topicId: parts[1] };
     case 'review': return { name: 'review' };
     case 'error': return { name: 'decode' };
@@ -101,6 +105,10 @@ export const href = {
   build: (scenarioId: string) => `#/build/${scenarioId}`,
   question: (qid: string) => `#/q/${qid}`,
   playground: () => '#/playground',
+  /** The R Playground, for STAT2402. */
+  rPlayground: () => '#/r',
+  /** A STAT2402 lesson's quiz. */
+  quiz: (lessonId: string) => `#/quiz/${lessonId}`,
   report: (topicId?: string) => (topicId ? `#/report/${topicId}` : '#/report'),
   topicTest: (id: string) => `#/test/${id}`,
   exam: () => '#/exam',

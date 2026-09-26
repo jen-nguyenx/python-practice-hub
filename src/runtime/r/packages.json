@@ -1,0 +1,43 @@
+{
+  "MASS": {
+    "name": "MASS",
+    "version": "7.3-65",
+    "file": "MASS_7.3-65.tgz",
+    "sha256": "9cb66dfbaf017f74e4408117128c04a859697ad8ff49cffad0537b2b15f0d846",
+    "deps": []
+  },
+  "Matrix": {
+    "name": "Matrix",
+    "version": "1.7-5",
+    "file": "Matrix_1.7-5.tgz",
+    "sha256": "52f76ce63e3421b0a0381d8983e7f18bebf492ddf5dde71f57a50ee4d27782d8",
+    "deps": [
+      "lattice"
+    ]
+  },
+  "lattice": {
+    "name": "lattice",
+    "version": "0.22-9",
+    "file": "lattice_0.22-9.tgz",
+    "sha256": "2797c655d7bd06c7bd212a6dd6eeb1b3c672a8bac43d09a406e1a2190264f79b",
+    "deps": []
+  },
+  "pscl": {
+    "name": "pscl",
+    "version": "1.5.9",
+    "file": "pscl_1.5.9.tgz",
+    "sha256": "83bb3e95841b316c74c00de33ae966cdb63c43ee5f48216adb558ec1e10c4ca3",
+    "deps": [
+      "MASS"
+    ]
+  },
+  "survival": {
+    "name": "survival",
+    "version": "3.8-6",
+    "file": "survival_3.8-6.tgz",
+    "sha256": "925e35820900c4c0f1762dee8b0fac59d69dee33e597d2de8bc7724d075507ba",
+    "deps": [
+      "Matrix"
+    ]
+  }
+}

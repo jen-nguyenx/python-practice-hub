@@ -1,7 +1,7 @@
 // An interactive "what if" card: change one part of a program with a control and see the real output
 // change. Rendered inside a lesson; the topic page has no tab of its own for these.
 //
-// Nothing here runs Python. The verifier ran every combination of every control in real Python and wrote
+// Nothing here runs Python (or R). The verifier ran every combination of every control in the real language and wrote
 // the results to src/content/generated/experiments/<topic>.json, so a click answers instantly, works
 // before Python has started, and shows output that is true by construction rather than typed by hand.
 // That is also what lets a slider redraw on every step while it is being dragged: the answers are already
@@ -16,6 +16,7 @@ import { Markdown } from '../../components/Markdown.tsx';
 import { Segmented } from '../../components/Segmented.tsx';
 import { niceTicks } from './ticks.ts';
 import { candlesOrNull, intsOrNull, labelsOrNull, numbersOrNull, pieceLines, pieces, pointsOrNull } from './whatIfLogic.ts';
+import { useCodeLang } from '../../components/codeLang.ts';
 
 /** The program, with the fragment each control put there marked so a change is visible in place. */
 function KnobbedCode({ code, spans, label }: { code: string; spans: ReturnType<typeof fillTemplate>['spans']; label: string }) {
@@ -134,12 +135,17 @@ function NumberLine({ min, max, picked, at }: { min: number; max: number; picked
 
 /** A bar per number. The tallest bar names its own value, so the scale is never a mystery. */
 function Bars({ values, labels, top }: { values: number[]; labels: string[]; top?: number }) {
-  const peak = Math.max(top ?? 0, ...values.map((v) => Math.abs(v)), 1);
+  // Scaled to the tallest bar, so standard errors or probabilities (all below 1) fill the track as counts
+  // do. Only an all-zero chart falls back to 1, which is there to avoid dividing by zero.
+  const peak = Math.max(top ?? 0, ...values.map((v) => Math.abs(v))) || 1;
   const hasNeg = values.some((v) => v < 0);
   // Every bar that reaches the top is marked, not just the first: singling one out of a tie would say
   // it was special when it is not.
   const tallest = values.length ? Math.max(...values.map((v) => Math.abs(v))) : 0;
-  const round = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/\.?0+$/, ''));
+  // Two decimals from 1 up; below 1, three significant figures, so 0.265 and 0.0123 keep their meaning.
+  const round = (n: number) => (Number.isInteger(n) ? String(n)
+    : Math.abs(n) >= 1 ? n.toFixed(2).replace(/\.?0+$/, '')
+    : String(Number(n.toPrecision(3))));
   return (
     <div class="wi-vis">
       <div class="wi-bars" role="img" aria-label={values.map((v, i) => `${labels[i] ?? i + 1}: ${round(v)}`).join(', ') || 'No bars'}>
@@ -172,10 +178,11 @@ const SERIES_CLASS = ['is-a', 'is-b', 'is-c', 'is-d'];
  * there are round ticks now, with faint gridlines to carry the eye across. And the numbers on them are
  * chosen the way a person would choose them rather than taken from wherever the data happens to stop.
  */
-function Plot({ series, xLabel, yLabel, marker }: {
+function Plot({ series, xLabel, yLabel, marker, points }: {
   series: { label: string; points: [number, number][] }[]; xLabel?: string; yLabel?: string; marker?: [number, number][];
+  points?: [number, number][];
 }) {
-  const all = [...series.flatMap((s) => s.points), ...(marker ?? [])];
+  const all = [...series.flatMap((s) => s.points), ...(marker ?? []), ...(points ?? [])];
   if (all.length === 0) return <p class="wi-note">There is nothing to draw yet.</p>;
   const xs = all.map((p) => p[0]);
   const ys = all.map((p) => p[1]);
@@ -230,6 +237,10 @@ function Plot({ series, xLabel, yLabel, marker }: {
         <line class="wi-axis" x1={padL} y1={H - padB} x2={W - padR} y2={H - padB} />
         {yLabel ? <text class="wi-axis-t" x={0} y={11} text-anchor="start">{yLabel}</text> : null}
         {xLabel ? <text class="wi-axis-t" x={W - padR} y={H - 4} text-anchor="end">{xLabel}</text> : null}
+        {/* The data under the curves: drawn first and faint, so a fitted line reads as running through it. */}
+        {(points ?? []).map((p, i) => (
+          <circle key={`p${i}`} class="wi-dotp" cx={px(p[0])} cy={py(p[1])} r={2.5} />
+        ))}
         {series.map((s, i) => (
           <polyline
             key={s.label}
@@ -365,7 +376,9 @@ function Drawing({ visual, values }: { visual: Visual; values: Record<string, un
       }
       const marker = visual.marker ? pointsOrNull(values[visual.marker]) : undefined;
       if (visual.marker && !marker) return null;
-      return <Plot series={series} xLabel={visual.xLabel} yLabel={visual.yLabel} marker={marker ?? undefined} />;
+      const points = visual.points ? pointsOrNull(values[visual.points]) : undefined;
+      if (visual.points && !points) return null;
+      return <Plot series={series} xLabel={visual.xLabel} yLabel={visual.yLabel} marker={marker ?? undefined} points={points ?? undefined} />;
     }
   }
 }
@@ -428,17 +441,18 @@ interface CardState { picks: number[]; prev: string[] }
  */
 export function ExperimentCard({ x, gen, compact }: { x: Experiment; gen: GeneratedExperiment; compact?: boolean }) {
   const runs = gen.runs;
+  const lang = useCodeLang();
   // `prev` starts as the opening output so nothing is marked as changed until the student changes something.
   const [state, setState] = useState<CardState>(() => {
     const picks = defaultPicks(x.knobs);
-    return { picks, prev: outputLines(runs[comboKey(picks)]) };
+    return { picks, prev: outputLines(runs[comboKey(picks)], lang) };
   });
 
   const run: GeneratedRun | undefined = runs[comboKey(state.picks)];
   // Probe values that never change are stored once for the whole experiment; a run's own values win.
   const values = { ...gen.shared, ...run?.values };
   const filled = useMemo(() => fillTemplate(x.template, x.knobs, state.picks), [x, state.picks]);
-  const lines = outputLines(run);
+  const lines = outputLines(run, lang);
   const changed = changedLines(state.prev, lines);
   const note = noteFor(x, state.picks as Picks);
   const watch = x.watch ?? [];
@@ -448,7 +462,7 @@ export function ExperimentCard({ x, gen, compact }: { x: Experiment; gen: Genera
       if (s.picks[knobIndex] === choiceIndex) return s;
       const picks = s.picks.slice();
       picks[knobIndex] = choiceIndex;
-      return { picks, prev: outputLines(runs[comboKey(s.picks)]) };
+      return { picks, prev: outputLines(runs[comboKey(s.picks)], lang) };
     });
   };
 

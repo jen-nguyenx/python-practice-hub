@@ -74,6 +74,31 @@ export async function dismissTour(page: Page): Promise<boolean> {
   return gone;
 }
 
+/**
+ * Answer the question a first visit asks on the home page: which unit? Clicks the card for `unit` if the
+ * question is showing, and reports whether it was.
+ */
+export async function chooseUnit(page: Page, unit: 'CITS1401' | 'STAT2402'): Promise<boolean> {
+  const card = page.locator('.up-card', { hasText: unit }).first();
+  const shown = await card.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
+  if (shown) {
+    await card.click();
+    await page.waitForTimeout(500);
+  }
+  return shown;
+}
+
+/** Switch unit the way a student would after the first visit: the segmented control in Settings. */
+export async function switchUnit(page: Page, base: string, unit: 'CITS1401' | 'STAT2402'): Promise<boolean> {
+  await page.goto(`${base}#/settings`, { waitUntil: 'load' });
+  await page.waitForTimeout(600);
+  const opt = page.locator('[role="radiogroup"][aria-labelledby="set-course-label"] [role="radio"]', { hasText: unit }).first();
+  if ((await opt.count()) === 0) return false;
+  await opt.click();
+  await page.waitForTimeout(300);
+  return (await opt.getAttribute('aria-checked')) === 'true';
+}
+
 /** Wait for the Python worker to report itself ready. */
 export async function waitForPython(page: Page, timeout = 90000): Promise<boolean> {
   return page
@@ -126,10 +151,10 @@ export function writeSeed(path: string, index: readonly SeedQuestion[], opts: Se
     });
   });
   mkdirSync(dirname(path), { recursive: true });
-  // Replacing progress replaces settings too, so the file carries a student who has already seen the
-  // welcome tour — otherwise the tour reopens over every page checked after the import.
+  // Replacing progress replaces settings too, so the file carries a CITS1401 student who has already seen
+  // the welcome tour — otherwise the unit question and the tour reopen over every page checked after it.
   writeFileSync(path, JSON.stringify({
-    format: 'pyladder-export', version: 1, exportedAt: start, settings: { seenTour: true }, events,
+    format: 'pyladder-export', version: 1, exportedAt: start, settings: { seenTour: true, unit: 'cits1401' }, events,
   }));
   return path;
 }

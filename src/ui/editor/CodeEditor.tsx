@@ -62,8 +62,9 @@ function MonacoEditor(props: CodeEditorProps & { onFail: () => void }) {
         const { monaco } = mod;
         const p = propsRef.current;
         modRef.current = mod;
-        model = monaco.editor.createModel(p.value, p.plain ? 'plaintext' : 'python');
-        model.updateOptions({ tabSize: 4, insertSpaces: true });
+        model = monaco.editor.createModel(p.value, p.plain ? 'plaintext' : (p.language ?? 'python'));
+        // R style is two spaces, Python's four.
+        model.updateOptions({ tabSize: p.language === 'r' ? 2 : 4, insertSpaces: true });
         monaco.editor.setTheme(themeName(resolveTheme()));
         editor = monaco.editor.create(hostRef.current, {
           model,
@@ -157,8 +158,8 @@ function MonacoEditor(props: CodeEditorProps & { onFail: () => void }) {
     if (!editor || !mod) return;
     editor.updateOptions({ ...baseOptions(fontSize, !!plain, !!readOnly), ariaLabel });
     const model = editor.getModel();
-    if (model) mod.monaco.editor.setModelLanguage(model, plain ? 'plaintext' : 'python');
-  }, [plain, readOnly, fontSize, ariaLabel, ready]);
+    if (model) mod.monaco.editor.setModelLanguage(model, plain ? 'plaintext' : (props.language ?? 'python'));
+  }, [plain, readOnly, fontSize, ariaLabel, ready, props.language]);
 
   useEffect(() => {
     modRef.current?.monaco.editor.setTheme(themeName(theme));

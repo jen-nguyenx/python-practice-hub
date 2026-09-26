@@ -12,6 +12,7 @@ import type { SeedQuestion } from './lib/browser.ts';
 import {
   checkCalibration, checkConfidence, checkExamPlan, checkGlossary, checkPlacement, checkLessonLibrary, checkMainRoutes, checkPaletteReference,
   checkMarketsSwitch, checkNavExpands, checkPhoneNav, checkProjectBuild, checkReferenceSearch, checkReportSections, checkRevisionPack, checkTermMarks, checkReviewSession, visit as visitRoute,
+  checkStatExams, checkStatPath, checkUnitChooser,
 } from './lib/checks.ts';
 import type { Ctx } from './lib/checks.ts';
 
@@ -34,11 +35,13 @@ async function visit(_p: Page, hash: string, shot?: string) {
   await visitRoute(c, hash, shot, SHOTS);
 }
 
-await visit(page, '#/', 'landing');
+// A first visit asks which unit before anything else; the checks below are written for CITS1401.
+await visit(page, '#/', 'unit-chooser');
+await checkUnitChooser(c);
 if (!(await waitForPython(page))) failures.push('Python runtime never showed ready');
 
-// The welcome tour opens over the landing page on a first visit and swallows clicks everywhere after it,
-// so it is shown, photographed, and then dismissed exactly as a student would dismiss it.
+// The welcome tour opens over the landing page once the unit is chosen and swallows clicks everywhere
+// after it, so it is dismissed exactly as a student would dismiss it.
 if (!(await dismissTour(page))) failures.push('#/: the welcome tour did not offer a way out');
 
 await checkMainRoutes(c);
@@ -99,10 +102,11 @@ console.log(`Resolved the lesson route for ${TOPICS.length} topics.`);
 // An empty section means generated output is missing for a block that needs it.
 const ALL_LESSONS: { id: string; title: string; sections: number; track: string }[] =
   JSON.parse(readFileSync('src/content/generated/lesson-index.json', 'utf8'));
-// Markets is off unless its switch is on, so the library is right to show fewer cards than the index
-// has. Every lesson is still walked below: hidden from the library is not hidden from its own route.
+// Markets is off unless its switch is on, and STAT2402 is another unit's path, so a CITS1401 library is
+// right to show fewer cards than the index has. Every lesson is still walked below: hidden from the
+// library is not hidden from its own route, and the R lessons' cards are exercised like the rest.
 const LESSONS = ALL_LESSONS;
-const LISTED = ALL_LESSONS.filter((l) => l.track !== 'markets');
+const LISTED = ALL_LESSONS.filter((l) => l.track !== 'markets' && l.track !== 'stat2402');
 await visit(page, '#/lessons', 'lessons');
 await checkLessonLibrary(c, LISTED.length);
 for (const l of LESSONS) {
@@ -175,6 +179,12 @@ for (const l of LESSONS) {
   if (open > 0) failures.push(`lesson ${l.id}: a checkpoint answer is visible before it is asked for`);
 }
 console.log(`Walked ${LESSONS.length} lessons in the library, exercising the controls in each.`);
+
+// STAT2402: its home, bar and library, real R in its sandbox, an R exercise, and R kept away from the app.
+await checkStatPath(c, ALL_LESSONS.filter((l) => l.track === 'stat2402').length);
+console.log('Checked the STAT2402 path and the R sandbox.');
+await checkStatExams(c);
+console.log('Sat a STAT2402 lesson quiz and a mock final.');
 
 // The Python worker must not hand student code a route to JavaScript. With one, pasted code could read the
 // app's IndexedDB (same origin) and POST a student's whole progress log anywhere. The import denylist in

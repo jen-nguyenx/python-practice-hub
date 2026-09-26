@@ -1,8 +1,10 @@
 // 28px status bar (docs/build/DESIGN.md "Frame"): runtime on the left; an optional screen note (e.g. "Ln 4, Col 26")
-// and "Week N · exams in N days" from the CITS1401 calendar on the right. Mono 12px.
+// and "Week N · exams in N days" from the semester 2 calendar on the right. Mono 12px.
 import { useEffect, useState } from 'preact/hooks';
-import { RuntimePill } from './RuntimePill.tsx';
+import { UnitRuntimePill } from './RuntimePill.tsx';
 import { href } from '../../app/router.ts';
+import { store } from '../../app/services.ts';
+import { unitOf } from '../../content/units.ts';
 import { semesterInfo } from '../../engine/semester.ts';
 import { statusBarExtra } from './uiState.ts';
 
@@ -21,11 +23,14 @@ export function StatusBar() {
   const extra = statusBarExtra.value;
   return (
     <footer class="statusbar">
-      <RuntimePill compact />
+      <UnitRuntimePill compact />
       <span class="spacer" />
       {extra ? <span class="sb-item num">{extra}</span> : null}
-      {/* The line that mentions the exams is the way to the page about them. */}
-      <a class="sb-item sb-link num" href={href.plan()} title={`${sem.detail} Open the run-in.`}>{sem.label}</a>
+      {/* The line that mentions the exams is the way to the page about them. The run-in plans against
+          CITS1401's ladder, so for STAT2402 the date is only a date. */}
+      {unitOf(store.settings.value) === 'stat2402'
+        ? <span class="sb-item num" title={sem.detail}>{sem.label}</span>
+        : <a class="sb-item sb-link num" href={href.plan()} title={`${sem.detail} Open the run-in.`}>{sem.label}</a>}
     </footer>
   );
 }

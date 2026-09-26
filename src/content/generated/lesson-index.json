@@ -1142,5 +1142,440 @@
     "summary": "Two cargoes, the same 600,000 barrels, millions apart — grades, gravity, sulphur, and why nobody quotes a flat price",
     "title": "What a barrel actually is",
     "track": "markets"
+  },
+  {
+    "id": "binomial-proportions",
+    "minutes": 18,
+    "order": 10,
+    "outcomes": [
+      "Recognise data recorded as successes out of a number of trials, with 0/1 data as the case n = 1",
+      "Fit a binomial glm with `cbind(successes, failures)`, or with a proportion and `weights = n`",
+      "Get fitted proportions and expected counts with `predict(type = \"response\")`",
+      "Estimate the dose at which half respond as −b0 / b1, with a standard error from `MASS::dose.p()`",
+      "Compare logit, probit and cloglog links by AIC, and refit overdispersed counts with `quasibinomial`"
+    ],
+    "prereqs": [
+      "logistic-regression",
+      "comparing-models"
+    ],
+    "sectionTitles": [
+      "Successes out of n",
+      "Fitting with cbind()",
+      "Three ways to write it",
+      "Fitted proportions",
+      "The dose that kills half",
+      "Probit and cloglog",
+      "Too much spread",
+      "Your turn"
+    ],
+    "sections": 8,
+    "summary": "Counts of successes out of a known number of trials: fitting them with cbind() or weights, reading fitted proportions, finding the dose that kills half, trying other links and handling extra spread",
+    "title": "Successes out of n: binomial proportions",
+    "track": "stat2402"
+  },
+  {
+    "id": "comparing-models",
+    "minutes": 18,
+    "order": 9,
+    "outcomes": [
+      "Say what the null and residual deviance measure, and what the saturated model is",
+      "Test a model against a bigger one that contains it with `anova(small, big, test = \"Chisq\")`, and say where the degrees of freedom come from",
+      "Test each term of a model with `drop1()`, and explain why it leaves main effects alone while their interaction is in",
+      "Compare models with `AIC()`, including models that are not nested, and say when AIC cannot be used",
+      "Use F tests for quasi fits, and check a fit with its residual deviance and degrees of freedom, knowing when that check fails"
+    ],
+    "prereqs": [
+      "overdispersion"
+    ],
+    "sectionTitles": [
+      "Deviance: how far from perfect",
+      "Nested models",
+      "The likelihood ratio test",
+      "Testing each term",
+      "AIC",
+      "Quasi fits: F tests instead",
+      "Does the model fit at all?",
+      "Your turn"
+    ],
+    "sections": 8,
+    "summary": "How to decide whether a bigger model earns its extra coefficients: deviance, likelihood ratio tests with anova() and drop1(), AIC, and what still works for quasi fits",
+    "title": "Choosing between models: deviance, likelihood ratio tests and AIC",
+    "track": "stat2402"
+  },
+  {
+    "id": "gamma-regression",
+    "minutes": 18,
+    "order": 13,
+    "outcomes": [
+      "Say why a normal model with one constant spread suits positive, right-skewed amounts badly",
+      "Describe a Gamma distribution by its shape and mean, and explain why its variance grows with the square of the mean",
+      "Fit `glm(y ~ x, family = Gamma(link = \"log\"))` and read each coefficient as a multiplier on the mean with `exp()`",
+      "Read the estimated dispersion in `summary()` and compare nested fits with `anova(..., test = \"F\")`",
+      "Explain how the Gamma GLM differs from `lm(log(y) ~ x)`, and check its residuals against the fitted values"
+    ],
+    "prereqs": [
+      "regression-in-r",
+      "comparing-models"
+    ],
+    "sectionTitles": [
+      "Positive and skewed",
+      "The Gamma distribution",
+      "Fitting it with glm()",
+      "Why the log link",
+      "The dispersion and F tests",
+      "Logging y instead",
+      "Checking the residuals",
+      "Your turn"
+    ],
+    "sections": 8,
+    "summary": "Amounts that are never negative and spread out more as they grow: the Gamma distribution, glm() with a log link, the estimated dispersion, and how it differs from logging the response",
+    "title": "Positive and skewed: Gamma regression",
+    "track": "stat2402"
+  },
+  {
+    "id": "glm-theory",
+    "minutes": 20,
+    "order": 7,
+    "outcomes": [
+      "Name the three parts of a GLM: a distribution for the response, a linear predictor and a link",
+      "Use a family object's `$linkfun`, `$linkinv` and `$variance` to see what a family assumes",
+      "Say what the variance function V(μ) and the dispersion φ are, and how quasi families use them",
+      "Explain what a canonical link is and why R makes it the default",
+      "Describe how `glm()` fits by iteratively reweighted least squares, and read its trace",
+      "Move between the link scale and the response scale with `family(fit)$linkinv`"
+    ],
+    "prereqs": [
+      "overdispersion"
+    ],
+    "sectionTitles": [
+      "Three parts of every GLM",
+      "Family objects in R",
+      "Variance and dispersion",
+      "Canonical links",
+      "How glm() fits",
+      "The linear model is a GLM",
+      "Two scales",
+      "Your turn"
+    ],
+    "sections": 8,
+    "summary": "The three parts every generalised linear model shares, how R stores them in a family object, and how glm() finds its estimates",
+    "title": "What makes a model a GLM: family, link and variance",
+    "track": "stat2402"
+  },
+  {
+    "id": "logistic-regression",
+    "minutes": 18,
+    "order": 4,
+    "outcomes": [
+      "Say why a straight line is the wrong model for a 0/1 response",
+      "Move between probability, odds and log-odds with `p / (1 - p)`, `qlogis()` and `plogis()`",
+      "Fit a logistic regression with `glm(..., family = binomial)` and read its `summary()` on the log-odds scale",
+      "Turn a coefficient into an odds ratio with `exp()` and say it in words",
+      "Predict a probability with `type = \"response\"`, and recognise a log-odds prediction when you see one"
+    ],
+    "prereqs": [
+      "regression-in-r"
+    ],
+    "sectionTitles": [
+      "Why a straight line fails",
+      "Probability, odds and log-odds",
+      "The logit link",
+      "Fitting it with glm()",
+      "Reading a glm summary",
+      "Odds ratios",
+      "Predictions on two scales",
+      "Your turn"
+    ],
+    "sections": 8,
+    "summary": "Why a straight line fails for yes/no data, how odds and log-odds fix it, and how to fit, read and predict from a binomial glm in R",
+    "title": "Yes or no: logistic regression",
+    "track": "stat2402"
+  },
+  {
+    "id": "negative-binomial",
+    "minutes": 18,
+    "order": 11,
+    "outcomes": [
+      "Say what the negative binomial variance μ + μ²/θ means, and what a small or a large θ tells you",
+      "Fit a negative binomial model with glm.nb() from MASS and read its summary, Theta and its standard error included",
+      "Choose between a Poisson and a negative binomial fit with AIC and a likelihood ratio test, and say why that test is conservative",
+      "Explain how the negative binomial and quasi-Poisson let the variance grow with the mean in different ways",
+      "Predict counts with predict(type = \"response\") and simulate new ones with rnbinom()"
+    ],
+    "prereqs": [
+      "overdispersion",
+      "comparing-models"
+    ],
+    "sectionTitles": [
+      "One more parameter",
+      "Fitting glm.nb()",
+      "Three fits side by side",
+      "Poisson or negative binomial?",
+      "Or quasi-Poisson?",
+      "Predicting and simulating",
+      "Your turn"
+    ],
+    "sections": 7,
+    "summary": "Fit the negative binomial with glm.nb(), read theta off its summary, and choose between it, the Poisson and quasi-Poisson",
+    "title": "A model for extra spread: the negative binomial",
+    "track": "stat2402"
+  },
+  {
+    "id": "overdispersion",
+    "minutes": 18,
+    "order": 6,
+    "outcomes": [
+      "Say what a Poisson model assumes about the spread of counts, and check it group by group with `tapply()`",
+      "Judge a fitted model with its residual deviance and the Pearson estimate of the dispersion",
+      "Explain why overdispersion makes Poisson standard errors and p-values too small",
+      "Refit with `family = quasipoisson` and read the dispersion line in its summary",
+      "Say what a negative binomial model adds, and when to reach for it"
+    ],
+    "prereqs": [
+      "poisson-regression"
+    ],
+    "sectionTitles": [
+      "The Poisson promise",
+      "Checking a fitted model",
+      "What extra spread looks like",
+      "Standard errors that are too small",
+      "Fitting quasi-Poisson",
+      "Your turn",
+      "Next: the negative binomial"
+    ],
+    "sections": 7,
+    "summary": "How to tell when counts vary more than a Poisson model allows, what that does to its standard errors, and the quasi-Poisson fix",
+    "title": "When counts spread too far: overdispersion",
+    "track": "stat2402"
+  },
+  {
+    "id": "poisson-regression",
+    "minutes": 18,
+    "order": 5,
+    "outcomes": [
+      "Say what makes a count different from a measurement, and what `dpois()` gives",
+      "Explain why the log link keeps every predicted count above zero",
+      "Fit a Poisson model with `glm(..., family = poisson)` and read its coefficients as log rate ratios",
+      "Turn coefficients into rate ratios with `exp()` and say them as \"times the baseline\"",
+      "Get predicted counts with `predict(type = \"response\")`",
+      "Model counts watched for unequal lengths of time with an offset"
+    ],
+    "prereqs": [
+      "logistic-regression"
+    ],
+    "sectionTitles": [
+      "What makes a count different",
+      "The Poisson distribution",
+      "The log link",
+      "Fitting it with glm()",
+      "Coefficients as rate ratios",
+      "Predicted counts",
+      "Counts over unequal time",
+      "Your turn"
+    ],
+    "sections": 8,
+    "summary": "Counts are whole numbers that never go below zero: the Poisson distribution, the log link, rate ratios and offsets, fitted with glm() in R",
+    "title": "Counting things: Poisson regression",
+    "track": "stat2402"
+  },
+  {
+    "id": "probability-and-likelihood",
+    "minutes": 18,
+    "order": 2,
+    "outcomes": [
+      "Use R's d, p, q and r functions for the binomial, Poisson and normal distributions",
+      "Give the mean and variance of each, and check them by simulating with `set.seed()`",
+      "Say what a likelihood is, and why R works with the log-likelihood instead",
+      "Find a maximum likelihood estimate with `optimize()` and check it against the sample mean or proportion",
+      "Explain why a sharply curved log-likelihood means a more precise estimate",
+      "Say what `glm()` maximises, and read `logLik()`"
+    ],
+    "prereqs": [
+      "r-basics"
+    ],
+    "sectionTitles": [
+      "Three distributions",
+      "d, p, q and r",
+      "Simulating with a seed",
+      "The likelihood",
+      "Why the log",
+      "The best value",
+      "How sure the estimate is",
+      "Where glm() comes in"
+    ],
+    "sections": 8,
+    "summary": "The binomial, Poisson and normal distributions in R, the likelihood of a parameter given the data, and the maximum likelihood estimates that glm() is built on",
+    "title": "Distributions and likelihood: where the estimates come from",
+    "track": "stat2402"
+  },
+  {
+    "id": "r-basics",
+    "minutes": 18,
+    "order": 1,
+    "outcomes": [
+      "Store values with `<-` and do arithmetic on a whole vector at once",
+      "Pick out values by position, by condition and by column name with `[ ]` and `$`",
+      "Look inside a data frame with `head()`, `str()` and `summary()`, and keep only the rows you want",
+      "Say what a factor's levels are, and why the first level becomes the baseline of a model",
+      "Deal with missing values using `is.na()`, `na.rm = TRUE` and `na.omit()`",
+      "Read data with `read.csv()` and summarise it group by group with `tapply()`"
+    ],
+    "sectionTitles": [
+      "Typing at the console",
+      "Vectors and functions",
+      "Picking values out",
+      "Data frames",
+      "Factors and the baseline",
+      "Missing values",
+      "Reading and grouping data",
+      "Your turn"
+    ],
+    "sections": 8,
+    "summary": "The R every later lesson leans on: the console, vectors, data frames, factors and their baseline, missing values and group summaries",
+    "title": "R for this unit: vectors, data frames and factors",
+    "track": "stat2402"
+  },
+  {
+    "id": "regression-in-r",
+    "minutes": 16,
+    "order": 3,
+    "outcomes": [
+      "Fit a linear model with `lm()` and a formula like `dist ~ speed`",
+      "Say what an intercept and a slope mean in the units of the data",
+      "Read each part of `summary()`: estimates, standard errors, t values, p-values and R-squared",
+      "Explain why a coefficient changes when another predictor joins the model",
+      "Say which assumptions of the straight line counts and yes/no data break"
+    ],
+    "sectionTitles": [
+      "Why start with a straight line",
+      "Fitting a line with lm()",
+      "Where the line comes from",
+      "Reading summary()",
+      "More than one predictor",
+      "Your turn",
+      "What the straight line assumes"
+    ],
+    "sections": 7,
+    "summary": "The formula, the coefficients and the summary table, read line by line before the unit moves past the normal model",
+    "title": "Linear regression, the way R reports it",
+    "track": "stat2402"
+  },
+  {
+    "id": "reporting-results",
+    "minutes": 20,
+    "order": 15,
+    "outcomes": [
+      "Turn a log-link coefficient into \"times as many\" and a percentage change, with its variable, baseline, direction and size",
+      "Put a 95% interval on the same scale with `exp(confint(fit))` or the Wald version, and say what \"Waiting for profiling to be done...\" means",
+      "Predict for chosen cases with `se.fit = TRUE`, building the interval on the link scale and transforming both ends",
+      "Translate an odds ratio into chances for cases a reader can picture",
+      "Avoid four claims a model cannot support: p-values as probabilities, \"no effect\", causation and extrapolation",
+      "Have R write the report sentences from the fitted model, so no number is copied by hand"
+    ],
+    "prereqs": [
+      "poisson-regression",
+      "overdispersion",
+      "comparing-models"
+    ],
+    "sectionTitles": [
+      "Who reads your report",
+      "Times as many, or a percentage",
+      "Intervals on the same scale",
+      "Predictions for real cases",
+      "Odds are not chances",
+      "What not to say",
+      "Your turn",
+      "From summary() to a paragraph"
+    ],
+    "sections": 8,
+    "summary": "Turning a fitted glm into sentences a non-statistician can use: sizes on a scale they understand, intervals done properly, predictions for real cases, and what not to claim",
+    "title": "Saying what the model found, to someone who is not a statistician",
+    "track": "stat2402"
+  },
+  {
+    "id": "residual-diagnostics",
+    "minutes": 20,
+    "order": 8,
+    "outcomes": [
+      "Say why a GLM residual is scaled, and get the four kinds with `residuals(fit, type = ...)`",
+      "Read residuals against fitted values for a curve (the wrong mean) or a fan (the wrong variance)",
+      "Find high-leverage points with `hatvalues()` and the 2p/n rule, and standardise residuals with `rstandard()`, naming the type",
+      "Measure influence with `cooks.distance()`, and refit without a point to see what changes",
+      "Read a normal quantile plot of deviance residuals, and say why it misleads when counts are small"
+    ],
+    "prereqs": [
+      "glm-theory"
+    ],
+    "sectionTitles": [
+      "Why check a model",
+      "Four kinds of residual",
+      "Residuals against fitted values",
+      "Leverage and standardised residuals",
+      "Influence and Cook's distance",
+      "A normal quantile check",
+      "Putting it together"
+    ],
+    "sections": 7,
+    "summary": "The four kinds of residual R gives for a GLM, the plots that show a wrong mean or a wrong variance, and how to find the points that steer a fit",
+    "title": "Checking a GLM: residuals, leverage and influence",
+    "track": "stat2402"
+  },
+  {
+    "id": "weibull-lifetimes",
+    "minutes": 18,
+    "order": 14,
+    "outcomes": [
+      "Say why lifetimes are positive, skewed and often censored, and what a censored time tells you",
+      "Use `dweibull()`, `pweibull()` and `qweibull()`, and read the Weibull shape as a failure rate that falls, stays flat or rises with age",
+      "Fit a Weibull to complete lifetimes with `fitdistr()` from MASS and read its estimates and standard errors",
+      "Explain why leaving out censored units, or counting them as failures, makes lifetimes look too short",
+      "Fit `survreg(Surv(time, status) ~ group, dist = \"weibull\")` and turn its output into a shape, a time ratio and predicted median lifetimes"
+    ],
+    "prereqs": [
+      "gamma-regression"
+    ],
+    "sectionTitles": [
+      "Lifetimes are different",
+      "The Weibull distribution",
+      "What the shape says",
+      "Fitting complete lifetimes",
+      "Censored lifetimes",
+      "Reading survreg()",
+      "Comparing two designs",
+      "Your turn"
+    ],
+    "sections": 8,
+    "summary": "Lifetimes that are skewed and often censored, the Weibull shape and scale, and fitting them in R with fitdistr() and survreg()",
+    "title": "How long until it fails: Weibull lifetimes",
+    "track": "stat2402"
+  },
+  {
+    "id": "zero-inflated",
+    "minutes": 20,
+    "order": 12,
+    "outcomes": [
+      "Compare the zeros in the data with the zeros a fitted Poisson or negative binomial model expects",
+      "Explain the difference between a structural zero and a zero that happened by chance",
+      "Fit zero-inflated Poisson and negative binomial models with `zeroinfl()`, and read both parts of the summary",
+      "Predict the mean count and the chance of a structural zero with `predict()`",
+      "Compare the models with AIC, and say how a hurdle model treats zeros differently"
+    ],
+    "prereqs": [
+      "negative-binomial"
+    ],
+    "sectionTitles": [
+      "More zeros than a count allows",
+      "How many zeros to expect",
+      "Measuring the excess",
+      "Two ways to get a zero",
+      "Fitting it with zeroinfl()",
+      "Predictions from both parts",
+      "Choosing a model",
+      "Hurdle models"
+    ],
+    "sections": 8,
+    "summary": "When counts have more zeros than a Poisson or negative binomial model expects: counting them, the two-process idea, and fitting zero-inflated and hurdle models with pscl",
+    "title": "Too many zeros: zero-inflated models",
+    "track": "stat2402"
   }
 ]

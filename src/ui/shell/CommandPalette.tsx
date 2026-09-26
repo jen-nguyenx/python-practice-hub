@@ -22,6 +22,7 @@ import { continueInfo } from './homeData.ts';
 import { safeTopicProgress } from './progressData.ts';
 import { toggleTheme } from './ThemeToggle.tsx';
 import { glossaryJump, mainFill, paletteOpen, referenceJump, shortcutSheetOpen } from './uiState.ts';
+import { unitOf } from '../../content/units.ts';
 
 type Group = 'Pages and actions' | 'Lessons' | 'Reference' | 'Glossary' | 'Topics' | 'Questions';
 interface Item {
@@ -131,6 +132,18 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
     href: href.glossary(t.id),
     run: () => { glossaryJump.value = t.term; navigate(href.glossary(t.id)); },
   }));
+  // A STAT2402 student's app is their lessons and R. The topics, questions, Python reference and glossary
+  // are CITS1401's, and searching "regression" should not turn up a Python recipe.
+  if (unitOf(settings) === 'stat2402') {
+    const keep = new Set(['a-lessons', 'a-settings', 'a-theme', 'a-keys']);
+    const statActions: Item[] = [
+      { id: 'a-home', group: 'Pages and actions', label: 'Home', detail: 'Your STAT2402 path', icon: 'home', search: 'home path start', href: href.landing(), run: go(href.landing()) },
+      ...actions.filter((a) => keep.has(a.id)),
+      { id: 'a-exam', group: 'Pages and actions', label: 'Exams', detail: 'Mock final, practice tests and lesson quizzes', icon: 'clock', search: 'exam final mock practice test quiz timed', href: href.exam(), run: go(href.exam()) },
+      { id: 'a-rplay', group: 'Pages and actions', label: 'R Playground', detail: 'Write and run any R', icon: 'code', search: 'editor run r console script', href: href.rPlayground(), run: go(href.rPlayground()) },
+    ];
+    return { items: [...statActions, ...lessons], continueItem: null };
+  }
   return { items: [...actions, ...lessons, ...reference, ...glossary, ...topics, ...questions], continueItem };
 }
 

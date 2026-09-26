@@ -206,6 +206,7 @@ function checkVisual(sc: Scope, v: Visual, probeIds: Set<string>): void {
       needs(one?.probe, `series ${i + 1} probe`);
     }
     if (v.marker !== undefined) needs(v.marker, 'marker');
+    if (v.points !== undefined) needs(v.points, 'points');
     return;
   }
   sc.error(`visual: unknown kind ${quote(String((v as Loose).kind))}`);
@@ -313,7 +314,7 @@ function visualProbes(v: Visual): string[] {
   if (v.kind === 'numberline') return [v.picked, ...(v.at ? [v.at] : [])];
   if (v.kind === 'bars') return [v.values, ...(v.labels ? [v.labels] : [])];
   if (v.kind === 'candles') return [v.bars, ...(v.labels ? [v.labels] : [])];
-  return [...v.series.map((one) => one.probe), ...(v.marker ? [v.marker] : [])];
+  return [...v.series.map((one) => one.probe), ...(v.marker ? [v.marker] : []), ...(v.points ? [v.points] : [])];
 }
 
 /**
@@ -434,12 +435,13 @@ function checkOneVisual(
         fail(`probe ${quote(one.probe)} gives ${pts.length} point(s)${at}; a curve needs at least 2`);
       }
     }
-    if (v.marker) {
-      wantList(v.marker, 'the marker dots');
-      const pts = values[v.marker];
+    for (const [probe, what] of [[v.marker, 'the marker dots'], [v.points, 'the data points']] as const) {
+      if (!probe) continue;
+      wantList(probe, what);
+      const pts = values[probe];
       if (Array.isArray(pts) && !pts.every((pt) => Array.isArray(pt) && pt.length === 2
         && pt.every((n) => typeof n === 'number' && Number.isFinite(n)))) {
-        fail(`probe ${quote(v.marker)} must evaluate to a list of [x, y] number pairs${at}`);
+        fail(`probe ${quote(probe)} must evaluate to a list of [x, y] number pairs${at}`);
       }
     }
   }
@@ -474,7 +476,7 @@ function checkRuntime(sc: Scope, x: Experiment, runs: Record<string, Diagnosed>)
   for (const c of combos) {
     const type = runs[comboKey(c)]?.error?.type;
     if (type === 'SyntaxError' || type === 'IndentationError' || type === 'TabError') {
-      sc.error(`with ${describe(x.knobs, c)} the program does not compile (${type}: ${runs[comboKey(c)]?.error?.message}); every combination must be valid Python`);
+      sc.error(`with ${describe(x.knobs, c)} the program does not compile (${type}: ${runs[comboKey(c)]?.error?.message}); every combination must be valid code`);
     } else if (type === 'TimeoutError') {
       sc.error(`with ${describe(x.knobs, c)} the program runs forever; every combination must finish`);
     }

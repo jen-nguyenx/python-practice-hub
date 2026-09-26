@@ -297,3 +297,5 @@
 @media (prefers-reduced-motion: reduce) {
   .ib-walk-box { transition: none; }
 }
+/* A STAT2402 lesson ends with two ways on: back to the library, or straight into its quiz. */
+.ls-nav-end { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }

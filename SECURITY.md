@@ -26,6 +26,19 @@ JavaScript; the check has been verified to fail when the fix is removed.
 The denylist stays as a teaching aid: it gives a clear "Importing sys is not available here" instead of a
 confusing traceback. It is not the security boundary.
 
+**R cannot reach the app either, by a different route.** STAT2402 runs R through webR, and R can run
+JavaScript by design (`webr::eval_js()`); webR itself will not start unless its page allows `eval`. So R is
+not given a page that has anything worth reaching. It runs in `public/r-sandbox.html`, loaded in an iframe
+with `sandbox="allow-scripts"` and without `allow-same-origin`, which gives it an opaque origin: JavaScript
+there has no storage of its own and cannot open the app's IndexedDB or localStorage, and the app's document
+is cross-origin to it. webR's worker is a `blob:` worker created by that page, so it inherits both the
+opaque origin and the frame's policy, which limits scripts and network to the pinned CDN. The console driver
+(`src/runtime/r/driver.ts`) runs on the app side and only ever exchanges text with the frame over
+`postMessage`. `scripts/lib/checks.ts` (`checkStatPath`, run by smoke and check:live) runs R that calls
+`eval_js` to read its own origin and open IndexedDB, and fails unless the origin is opaque and storage is
+refused; it also fails if the frame ever gains `allow-same-origin`. A runaway R program is stopped the same
+way as Python's: the watchdog in `src/runtime/rClient.ts` removes the iframe, which ends its worker.
+
 **Verifier-only code is not shipped.** `probe()` and `repl()` evaluate expressions in the namespace a
 program left behind, so a lesson's outputs and pictures come from the interpreter rather than an author.
 They are wrappers around `exec`/`eval` and only the content verifier calls them, so they live in
@@ -74,6 +87,18 @@ Pyodide into `public/` would close this and make the app work offline, at the co
 the repository. Offline use was considered and deliberately set aside, so this risk is accepted rather
 than merely outstanding: the pin plus its test is the mitigation. Revisit if the CDN dependency ever
 becomes a practical problem rather than a theoretical one.
+
+**R packages come from the app itself, not a package repository.** MASS, pscl and survival (with Matrix
+and lattice) are kept in `public/r-packages/` and pinned by SHA-256 in `src/runtime/r/packages.json`. The app
+fetches a package from its own origin, checks the hash with `crypto.subtle`, and only then hands the bytes to
+the sandbox to unpack; the verifier checks the same hash before installing. Nothing is fetched from
+repo.r-wasm.org at run time, and `install.packages()` is masked. `node scripts/r-packages.ts --update` is the
+one way to change them.
+
+**webR is fetched from jsdelivr at runtime,** like Pyodide: the version is pinned and a test checks it
+against `package.json`, but the files cannot carry integrity hashes. The same risk, accepted for the same
+reason, and smaller in effect: a compromised copy would run inside the opaque-origin sandbox described above,
+with no access to a student's data. It is only downloaded by students who run R.
 
 **Monaco depends on a version of DOMPurify with published advisories.** They are markdown-sanitiser bypasses.
 Monaco only sanitises hover and suggestion markdown, and the only content reaching those paths here is the

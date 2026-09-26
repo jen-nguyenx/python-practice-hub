@@ -1,22 +1,51 @@
 // Lesson content schema. Lessons live under src/content/lessons/** and are authored teaching material,
 // unlike questions (practice) and experiments (exploration).
 //
-// The rule that governs everything here: a lesson never states what Python does. Every output shown to a
-// student is produced by running the code in real Python at verify time, exactly like the read-format
-// answers. If a lesson claims `int(3.7)` is 3, that 3 came from the interpreter.
+// The rule that governs everything here: a lesson never states what the language does. Every output shown
+// to a student is produced by running the code at verify time -- real Python for most tracks, real R for
+// STAT2402 -- exactly like the read-format answers. If a lesson claims `int(3.7)` is 3, that 3 came from
+// the interpreter.
 import type { MistakeId, TopicId } from './ids.ts';
 import type { Experiment, GeneratedExperiment, Md, Test } from './schema.ts';
 
 /** Where a lesson sits in the library. */
-export type Track = 'foundations' | 'core' | 'advanced' | 'markets';
+export type Track = 'foundations' | 'core' | 'advanced' | 'markets' | 'stat2402';
 
-export const TRACKS: readonly Track[] = ['foundations', 'core', 'advanced', 'markets'];
+export const TRACKS: readonly Track[] = ['foundations', 'core', 'advanced', 'markets', 'stat2402'];
 
 export const TRACK_LABEL: Record<Track, string> = {
   foundations: 'Foundations',
   core: 'Core',
   advanced: 'Going further',
   markets: 'Markets',
+  stat2402: 'STAT2402',
+};
+
+/** The language a lesson's code is written in, and so the interpreter the verifier runs it with. */
+export type Lang = 'python' | 'r';
+
+/**
+ * The unit each track belongs to, which decides who is offered it (lessons/index.ts `visibleTracks`).
+ * Markets belongs to neither: it is outside both units and has its own switch.
+ */
+export const TRACK_UNIT: Record<Track, 'cits1401' | 'stat2402' | null> = {
+  foundations: 'cits1401',
+  core: 'cits1401',
+  advanced: 'cits1401',
+  markets: null,
+  stat2402: 'stat2402',
+};
+
+/**
+ * Decided by the track, never per lesson: a whole track is taught in one language, so a reader never
+ * meets R in the middle of a Python path, and an author cannot mislabel one lesson.
+ */
+export const TRACK_LANG: Record<Track, Lang> = {
+  foundations: 'python',
+  core: 'python',
+  advanced: 'python',
+  markets: 'python',
+  stat2402: 'r',
 };
 
 export const TRACK_BLURB: Record<Track, string> = {
@@ -24,6 +53,7 @@ export const TRACK_BLURB: Record<Track, string> = {
   core: 'The thirteen topics the unit is built on, each one explained end to end and paired with its questions.',
   advanced: 'Beyond the unit: the tools and ideas that separate code that works from code a professional would write.',
   markets: 'Python applied to prices, futures and options. Every curve is drawn from numbers Python worked out; every slider was run ahead of time. Beyond the unit, and off by default.',
+  stat2402: 'Analysis of Observations: regression and generalised linear models, in R. Every table and curve here was produced by R itself, the same R you use in the labs.',
 };
 
 /** One side of a side-by-side comparison. */

@@ -5,7 +5,7 @@
 // live here rather than inside one runner so that the smoke test and the live check ask exactly the same
 // questions — a check that only ever ran locally is a check that never covered what students have.
 import type { Page } from 'playwright-core';
-import { answerCurrent } from './browser.ts';
+import { answerCurrent, switchUnit } from './browser.ts';
 import type { SeedQuestion } from './browser.ts';
 
 export interface Ctx {
@@ -519,4 +519,199 @@ export async function checkPhoneNav(c: Ctx): Promise<void> {
   for (const p of problems) c.fail(`phone nav: ${p}`);
 
   if (before) await page.setViewportSize(before);
+}
+
+/**
+ * The question a first visit asks: which unit? Needs a fresh profile on the home page.
+ *
+ * It has to come before anything else -- the tour describes CITS1401, so opening it over a STAT2402
+ * student's first screen would be the app answering the question for them. Answers CITS1401, the unit
+ * every other check is written for, and confirms the ladder follows.
+ */
+export async function checkUnitChooser(c: Ctx): Promise<void> {
+  const page = c.page;
+  const heading = page.getByRole('heading', { name: 'Which unit are you studying?' });
+  if (!(await heading.isVisible().catch(() => false))) {
+    c.fail('#/: a first visit does not ask which unit');
+    return;
+  }
+  if ((await page.locator('.up-card').count()) !== 2) c.fail('#/: the unit question does not offer both units');
+  if (await page.getByRole('button', { name: /^Skip/ }).first().isVisible().catch(() => false)) {
+    c.fail('#/: the welcome tour opened over the unit question');
+  }
+  await page.locator('.up-card', { hasText: 'CITS1401' }).first().click();
+  await page.waitForTimeout(600);
+  if ((await page.locator('.tiles').count()) === 0) c.fail('#/: choosing CITS1401 did not show the topic ladder');
+}
+
+/**
+ * The STAT2402 path, end to end in a real browser: switching unit changes home, the bar and the library;
+ * R starts in its sandbox and runs a model; an R exercise in a lesson can be completed; and R cannot
+ * reach the app. Puts the unit back to CITS1401 afterwards, as the other checks expect.
+ *
+ * The isolation half is the one that matters most. R runs in an iframe with an opaque origin precisely so
+ * that webr::eval_js() -- a route from R to JavaScript that R itself provides -- lands somewhere with no
+ * access to the app's IndexedDB. If the frame ever became same-origin, pasted R could read a student's
+ * whole history. See SECURITY.md.
+ */
+export async function checkStatPath(c: Ctx, lessonCount: number): Promise<void> {
+  const page = c.page;
+  if (!(await switchUnit(page, c.base, 'STAT2402'))) {
+    c.fail('#/settings: there is no way to switch unit');
+    return;
+  }
+  try {
+    await visit(c, '#/');
+    if ((await page.locator('.stat-home').count()) === 0) c.fail('#/: switching to STAT2402 did not change the home page');
+    const steps = await page.locator('.sh-step').count();
+    if (steps !== lessonCount) c.fail(`#/: the STAT2402 path lists ${steps} lessons, not ${lessonCount}`);
+    const bar = await page.locator('.actbar-item').allInnerTexts();
+    if (bar.length !== 5) c.fail(`STAT2402 bar: ${bar.length} destinations, expected Home, Lessons, Exams, R Playground and Settings`);
+    if (bar.some((t) => /Review|Progress|Look up/.test(t))) c.fail('STAT2402 bar: still offers a CITS1401 destination');
+
+    await visit(c, '#/lessons');
+    const tracks = await page.locator('.lx-track-title').allInnerTexts();
+    if (!tracks.includes('STAT2402')) c.fail('#/lessons: the STAT2402 track is missing for a STAT2402 student');
+    if (tracks.some((t) => t === 'Core' || t === 'Foundations')) c.fail('#/lessons: a STAT2402 student is shown the Python tracks');
+
+    // Real R: the Playground's own starting script fits a model and prints its summary.
+    await visit(c, '#/r');
+    await page.getByRole('button', { name: /^Run/ }).first().click();
+    const ran = await page.waitForFunction(
+      () => /Residual standard error/.test(document.querySelector('.pg-out-body')?.textContent ?? ''), null, { timeout: 150000 },
+    ).then(() => true).catch(() => false);
+    if (!ran) {
+      const said = ((await page.locator('.pg-out-body').textContent().catch(() => '')) ?? '').slice(0, 160);
+      c.fail(`#/r: R never printed the model summary (${said || 'nothing'})`);
+      return;
+    }
+
+    // A pinned package, fetched from the app's own folder, checked against its hash, installed on first use.
+    const editorForPkg = page.locator('.pg-editor .monaco-editor').first();
+    if (await editorForPkg.count()) {
+      await editorForPkg.click();
+      await page.keyboard.press('ControlOrMeta+A');
+      await page.keyboard.type('library(MASS); class(glm.nb(breaks ~ tension, data = warpbreaks))[1]');
+      await page.getByRole('button', { name: /^Run/ }).first().click();
+      const loaded = await page.waitForFunction(
+        () => /"negbin"/.test(document.querySelector('.pg-out-body')?.textContent ?? ''), null, { timeout: 120000 },
+      ).then(() => true).catch(() => false);
+      if (!loaded) {
+        const said = ((await page.locator('.pg-out-body').textContent().catch(() => '')) ?? '').slice(0, 200);
+        c.fail(`#/r: library(MASS) did not load a working glm.nb (${said || 'nothing'})`);
+      }
+    }
+
+    // The frame R lives in must be cross-origin to the app: its document is not ours to read.
+    const isolated = await page.evaluate(() => {
+      const f = document.querySelector('iframe[title="R"]') as HTMLIFrameElement | null;
+      if (!f) return 'no R frame';
+      if (!(f.getAttribute('sandbox') ?? '').split(/\s+/).includes('allow-scripts')) return 'frame is not sandboxed';
+      if ((f.getAttribute('sandbox') ?? '').includes('allow-same-origin')) return 'frame is allowed the same origin';
+      try { return f.contentDocument === null ? 'ok' : 'frame document is readable from the app'; } catch { return 'ok'; }
+    });
+    if (isolated !== 'ok') c.fail(`R sandbox: ${isolated}`);
+
+    // R can run JavaScript (webr::eval_js is part of webR, and webR needs eval to start), so the question
+    // is what that JavaScript can reach. It must find itself in an opaque origin, and be refused storage.
+    // The marker is joined at run time, so it is on the page only if JavaScript really opened a database.
+    const editor = page.locator('.pg-editor .monaco-editor').first();
+    if (await editor.count()) {
+      await editor.click();
+      await page.keyboard.press('ControlOrMeta+A');
+      await page.keyboard.type(
+        `cat("origin", webr::eval_js("self.origin"), webr::eval_js("(() => { try { indexedDB.open('pyladder'); return 'PL' + '_IDB_OPEN'; } catch (e) { return 'storage ' + e.name; } })()"), "\\n")`,
+      );
+      await page.getByRole('button', { name: /^Run/ }).first().click();
+      await page.waitForFunction(() => /Finished|Stopped/.test(document.querySelector('.pg-out-body')?.textContent ?? ''), null, { timeout: 30000 }).catch(() => {});
+      const said = (await page.locator('.pg-out-body').innerText().catch(() => '')) ?? '';
+      if (said.includes('PL_IDB_OPEN')) c.fail('R sandbox: JavaScript run from R opened IndexedDB');
+      if (!/origin null storage/.test(said)) c.fail(`R sandbox: JavaScript run from R is not in an opaque, storage-less origin (${said.slice(0, 160)})`);
+    }
+
+    // An exercise inside a lesson, checked by R.
+    await visit(c, '#/lesson/regression-in-r');
+    await page.locator('.ls-step', { hasText: 'Your turn' }).first().click();
+    await page.waitForTimeout(400);
+    const taskEditor = page.locator('.ib-task .monaco-editor, .ib-task textarea').first();
+    if ((await taskEditor.count()) === 0) {
+      c.fail('regression-in-r: the exercise has no editor');
+    } else {
+      await taskEditor.click();
+      await page.keyboard.press('ControlOrMeta+A');
+      await page.keyboard.type('slope_of <- function(x, y) unname(coef(lm(y ~ x))[2])');
+      await page.getByRole('button', { name: 'Check my code' }).click();
+      const passed = await page.waitForFunction(
+        () => /All tests pass/.test(document.querySelector('.ib-task')?.textContent ?? ''), null, { timeout: 150000 },
+      ).then(() => true).catch(() => false);
+      if (!passed) {
+        const said = ((await page.locator('.ib-task-out').textContent().catch(() => '')) ?? '').slice(0, 200);
+        c.fail(`regression-in-r: a correct answer to the exercise did not pass (${said || 'no result'})`);
+      }
+    }
+  } finally {
+    if (!(await switchUnit(page, c.base, 'CITS1401'))) c.fail('#/settings: could not switch back to CITS1401');
+  }
+}
+
+/**
+ * STAT2402's exams in a real browser: a lesson quiz sat, marked and remembered on the home page, and a mock
+ * final built to 100 marks and marked. Answers are left mostly blank on purpose -- what is checked is that a
+ * paper can be started, finished and scored, and that the result reaches the event log, not the content.
+ */
+export async function checkStatExams(c: Ctx): Promise<void> {
+  const page = c.page;
+  if (!(await switchUnit(page, c.base, 'STAT2402'))) {
+    c.fail('#/settings: there is no way to switch unit');
+    return;
+  }
+  const finishPaper = async (where: string) => {
+    await page.getByRole('button', { name: 'Finish', exact: true }).first().click();
+    // The dialog only opens when something is unanswered or flagged, and it animates in, so wait for it.
+    const confirm = page.getByRole('button', { name: 'Finish and mark' });
+    if (await confirm.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false)) await confirm.click();
+    const marked = await page.locator('.trs-big').first().waitFor({ state: 'visible', timeout: 60000 }).then(() => true).catch(() => false);
+    if (!marked) c.fail(`${where}: finishing the paper did not show a mark`);
+    return marked;
+  };
+  try {
+    // A lesson quiz: answer the first question, finish, get a mark and a review.
+    await visit(c, '#/quiz/regression-in-r');
+    const start = page.getByRole('button', { name: /^Start the quiz/ });
+    if (!(await start.waitFor({ state: 'visible', timeout: 15000 }).then(() => true).catch(() => false))) {
+      c.fail('#/quiz/regression-in-r: no way to start the quiz');
+      return;
+    }
+    await start.click();
+    const option = page.locator('.tr .ib-option').first();
+    if (await option.count()) await option.click();
+    else await page.locator('.tr .sq-number-in').first().fill('1').catch(() => {});
+    if (await finishPaper('#/quiz/regression-in-r')) {
+      const rows = await page.locator('.sx-review-row').count();
+      if (rows < 6) c.fail(`#/quiz/regression-in-r: the review lists ${rows} questions`);
+      await page.locator('.sx-review-head').first().click();
+      if ((await page.locator('.sq-review .sq-explain').count()) === 0) c.fail('#/quiz/regression-in-r: an opened review row shows no explanation');
+    }
+    await visit(c, '#/');
+    if ((await page.locator('.sh-quiz').count()) === 0) c.fail('#/: a finished quiz does not show on the STAT2402 path');
+
+    // The mock final: built to 100 marks, finished blank, marked.
+    await visit(c, '#/exam');
+    await page.getByRole('radio', { name: 'Mock final' }).click().catch(() => {});
+    // Its label reads "Loading questions…" until the bank has arrived.
+    const sit = page.getByRole('button', { name: /^Sit the mock final/ });
+    if (!(await sit.waitFor({ state: 'visible', timeout: 15000 }).then(() => true).catch(() => false))) {
+      c.fail('#/exam: the mock final cannot be started');
+      return;
+    }
+    await sit.click();
+    const title = (await page.locator('.tr-bar-title h1').textContent().catch(() => '')) ?? '';
+    if (!/100 marks/.test(title)) c.fail(`#/exam: the mock final is titled "${title}", not out of 100 marks`);
+    if (await finishPaper('#/exam mock final')) {
+      const total = ((await page.locator('.trs-big span').first().textContent().catch(() => '')) ?? '').replace(/\D/g, '');
+      if (total !== '100') c.fail(`#/exam: the mock final was marked out of ${total || 'nothing'}, not 100`);
+    }
+  } finally {
+    if (!(await switchUnit(page, c.base, 'CITS1401'))) c.fail('#/settings: could not switch back to CITS1401');
+  }
 }

@@ -1,6 +1,7 @@
 # PyLadder — CLAUDE.md
 
-Python learning and practice app for first-year UWA CITS1401 students: a lesson library in three tracks (foundations, the 13 unit topics, and going further), 13 unlockable topics, 278 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, interactive "what if" experiments, a searchable reference of runnable snippets, a review queue, an error decoder, topic tests, a custom timed practice test, a mock final exam (eight slots, 100 marks, two hours), and reports.
+Two paths in one app, chosen on the first visit: a Python path for first-year UWA CITS1401 students, and an
+R path for STAT2402 (Analysis of Observations: regression and GLMs). The CITS1401 path is the bulk of it: a lesson library in three tracks (foundations, the 13 unit topics, and going further), 13 unlockable topics, 278 questions in 12 formats, real Python 3.14 in the browser (Pyodide), a Monaco editor, hints and answers, a Playground, interactive "what if" experiments, a searchable reference of runnable snippets, a review queue, an error decoder, topic tests, a custom timed practice test, a mock final exam (eight slots, 100 marks, two hours), and reports.
 
 ## Commands
 ```bash
@@ -16,19 +17,24 @@ npm run gate                         # typecheck + test + verify:check + build +
 npm run check:live                   # the same user-facing checks against the deployed site (~40 s, no build)
 npm run shots                        # screenshots of named parts of the app, seeded with practice history
 npm run shots -- --list              # the names; --only skills,calibration for just those
+node scripts/r-packages.ts [--update] # check (or refresh) the pinned R packages in public/r-packages
 ```
 Do not write a throwaway Playwright script to look at the app or to check a deploy — add a check to
 `scripts/lib/checks.ts` (shared by smoke and check:live) or a shot to `scripts/shots.ts`, and rerun it.
 Pushing to `main` deploys to GitHub Pages via `.github/workflows/deploy.yml` (typecheck, test, verify:check, build).
 
 ## Stack
-Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local files with extensions), Preact 10 + @preact/signals, monaco-editor 0.56 (slim import list in `src/ui/editor/monacoFeatures.ts`, `@monaco/*` alias to `node_modules/monaco-editor/esm/vs`), Pyodide 314.0.7 from jsdelivr in a module worker; the `pyodide` npm package runs the same harness in Node for the verifier and tests.
+Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local files with extensions), Preact 10 + @preact/signals, monaco-editor 0.56 (slim import list in `src/ui/editor/monacoFeatures.ts`, `@monaco/*` alias to `node_modules/monaco-editor/esm/vs`), Pyodide 314.0.7 from jsdelivr in a module worker; the `pyodide` npm package runs the same harness in Node for the verifier and tests. webR 0.6.0 (R 4.6) from jsdelivr in a sandboxed iframe for STAT2402; the `webr` npm package runs the same R in Node for the verifier and tests (both pinned in `src/runtime/version.ts`).
 
 ## Map
 | Path | What |
 |---|---|
 | `src/content/ids.ts`, `schema.ts`, `topics.ts` | Contracts: id catalogues, question schema, topic order + unlock minimums |
-| `src/content/lessonSchema.ts`, `lessons/` | Lesson contract and content: `src/content/lessons/<track>/<id>.ts`, one file per lesson. Tracks: foundations, core, advanced, markets |
+| `src/content/lessonSchema.ts`, `lessons/` | Lesson contract and content: `src/content/lessons/<track>/<id>.ts`, one file per lesson. Tracks: foundations, core, advanced, markets (Python), stat2402 (R); `TRACK_LANG`, `TRACK_UNIT` |
+| `src/content/units.ts` | The two units, `unitOf(settings)` (unchosen means CITS1401) |
+| `src/runtime/r/` | `harness.R` + `driver.ts`: runs R through R's own console, shared by the verifier (`scripts/verify/r.ts`) and the browser |
+| `src/runtime/rClient.ts`, `public/r-sandbox.*` | Browser R: an opaque-origin iframe running webR, queue, watchdog. `r` in `services.ts` |
+| `src/runtime/r/packages.ts`, `packages.json`, `public/r-packages/` | MASS, pscl, survival (+ Matrix, lattice): pinned by SHA-256, installed on first `library()` |
 | `src/content/topics/NN-id/` | Topic content (cheat sheet, worked example, common mistakes, scenarios) |
 | `src/content/generated/` | Verifier output (expected outputs, trace rows, real exceptions, question index, experiment runs). Never hand-edit |
 | `src/content/experiments.ts` | "What if" helpers: combinations, template filling, output diffing. UI in `src/ui/shell/topic/WhatIf.tsx` |
@@ -39,7 +45,10 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/engine/` | Pure logic: `grade.ts`, `progress.ts` (unlock rule), `report.ts`, `review.ts` (which mistakes are due), `reviewSession.ts` (what a session asks), `concepts.ts` (skill strength), `calibration.ts` (sure vs right), `examPlan.ts` (the run-in), `placement.ts` (where to join the ladder), `projectBuild.ts` (a project in stages), `achievements.ts` (what is finished), `semester.ts` (the CITS1401 calendar), `streak.ts`, `traceback.ts` |
 | `src/store/` | IndexedDB event log, snapshots, scratch files, settings (localStorage), export/import |
 | `src/app/` | App shell, hash router, singletons (`services.ts`), `markTopicOpened` |
-| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, Reference, Glossary, Revision, ProjectBuild, Review, ExamPlan, Placement, DecodeError, Report, TopicTest, ExamPractice, Settings |
+| `src/ui/screens/` | Landing, TopicPage, LessonsIndex, LessonReader, TopicLesson, QuestionPage, Playground, RPlayground (`#/r`), Reference, Glossary, Revision, ProjectBuild, Review, ExamPlan, Placement, DecodeError, Report, TopicTest, ExamPractice, Settings |
+| `src/ui/shell/landing/UnitChooser.tsx`, `StatHome.tsx` | The first-visit "which unit?" question, and STAT2402's home |
+| `src/content/statQuestionSchema.ts`, `stat2402/questions/` | STAT2402 exam questions, one file per lesson; checked by `scripts/verify/statQuestions.ts` |
+| `src/engine/statExam.ts`, `src/ui/stat/`, `StatExams.tsx`, `StatQuiz.tsx` | STAT2402 exams: lesson quizzes (`#/quiz/:id`), practice test and mock final (`#/exam`) |
 | `src/content/recipes/`, `recipeSchema.ts` | The reference: one file per area, every snippet run by the verifier |
 | `src/content/conceptWords.ts` | Concept tags in a student's words; nothing shows a raw tag |
 | `src/content/glossary.ts`, `glossarySchema.ts` | The glossary: one entry per word the course uses, each demo run by the verifier |
@@ -57,6 +66,36 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `docs/build/CONTENT.md` | How to write questions (mix table, quality bar, concept order) |
 
 ## Rules that matter
+- **Two units, two paths.** `settings.unit` is null until the home page's "Which unit are you studying?"
+  is answered (changeable in Settings), and `unitOf()` treats null as CITS1401, so nothing changed for an
+  existing student until they choose. Each track belongs to a unit (`TRACK_UNIT`); `visibleTracks()` is
+  the one rule, and a unit sees only its own tracks (Markets belongs to neither and keeps its switch).
+  STAT2402 gets its own home, a five-item bar (Home, Lessons, Exams, R Playground, Settings), an R runtime pill,
+  a lessons-and-exams palette, and no tour; Python is never warmed for it. Everything CITS1401 has --
+  topics, questions, tests, the run-in, the report -- is untouched and unreachable from the STAT2402 bar;
+  `#/exam` shows whichever unit's exams are in force.
+- **STAT2402 lessons are in R, and R's output is R's own.** The language comes from the track
+  (`TRACK_LANG`), never a lesson. The verifier types each top-level expression at webR's real console and
+  records what R printed, so warnings and `Error in f(x) :` reports are R's wording, not ours; the same
+  driver runs a student's code in the browser. Every block starts from an empty workspace with nothing
+  attached and `set.seed(2402)`, and prose never types a number R computed. Beyond base R there are only
+  MASS, pscl and survival, kept in `public/r-packages/` (repo.r-wasm.org deletes old builds, so a pinned URL
+  there would break) and installed the first time code calls `library()` or `pkg::`. Authoring rules:
+  "STAT2402 lessons (R)" in `docs/build/CONTENT.md`.
+- **STAT2402 exams are the lesson rule applied to tests.** A quiz for every lesson, a practice test and a
+  mock final (100 marks, two hours) draw from `src/content/stat2402/questions/`, where every lesson must
+  have at least six questions. Each shows R code with the output the verifier recorded; a number
+  question's right answer is an R expression the verifier evaluates, a predict question's right choice is
+  proved to be R's output, and a write question is marked by running its tests in the browser's R. Results
+  are `stat_test` events. It is its own runner (`src/ui/stat/`), not the CITS1401 one: the question bank,
+  the topics and the unlock rule of CITS1401 are untouched. Authoring: "STAT2402 exam questions" in
+  `docs/build/CONTENT.md`.
+- **Never give R the app's origin.** R runs in `public/r-sandbox.html` inside an iframe with
+  `sandbox="allow-scripts"` and no `allow-same-origin`. R can run JavaScript by design (`webr::eval_js`),
+  and webR needs `'unsafe-eval'` to start, so the opaque origin is the whole boundary: adding
+  `allow-same-origin`, or running webR in the app's own page or a same-origin worker, would let pasted R
+  read a student's IndexedDB. `checkStatPath` in `scripts/lib/checks.ts` fails the smoke if it can.
+  See SECURITY.md.
 - **Unlock rule** (`src/engine/progress.ts`): topic 1 always open; topic N+1 unlocks when topic N was opened and its `minimum` is met (questions solved without revealing the answer; hints are fine; `code` of them must be code formats), or its topic test was passed, or a **placement check** was answered through it (`placement` event — access only, the minimum still has to be met), or Settings "Unlock all topics" is on.
 - **Everything is derived from the append-only event log** (`src/engine/types.ts` `AppEvent`). Add a new event type rather than mutating state.
 - **Content changes must pass the verifier** with 0 errors: solutions pass tests in Pyodide, buggy variants and distractors fail tagged tests, read-format answers are generated not typed.

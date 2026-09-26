@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!--
+  R runs here, never in the app's own page. The app loads this file in an iframe with sandbox="allow-scripts"
+  and without allow-same-origin, so it has an opaque origin. That is the boundary: R can run JavaScript
+  (webr::eval_js() is part of webR), but JavaScript here has no storage of its own and no access to the
+  app's IndexedDB or localStorage, so there is nothing of the student's for it to read.
+
+  This policy narrows the rest, and also covers webR's worker, which inherits it as a blob: worker: scripts
+  only from here and the pinned CDN, network only to the CDN, so code has nowhere to send anything.
+  'unsafe-eval' is required, not chosen: webR does not start without it (checked in Chrome, 0.6.0), so it
+  cannot be the thing that stops eval_js(). scripts/lib/checks.ts proves the boundary on every smoke run.
+  See SECURITY.md.
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval' 'unsafe-eval'; worker-src blob:; connect-src https://cdn.jsdelivr.net; base-uri 'none'; form-action 'none'">
+<title>R</title>
+</head>
+<body>
+<script src="r-sandbox.js"></script>
+</body>
+</html>

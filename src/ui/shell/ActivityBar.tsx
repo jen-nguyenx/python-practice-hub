@@ -1,10 +1,13 @@
 // 52px icon bar down the left side (docs/build/DESIGN.md "Frame"): Topics, Lessons, Playground, Review, Exams, Report, then Settings
 // at the bottom. Muted 20px icons; the current section is ink with a 2px accent bar on its left edge. Under 700px it
-// becomes a bottom tab bar with short labels.
+// becomes a bottom tab bar with short labels. A STAT2402 student gets a shorter bar: their home, their lessons,
+// their exams, the R Playground and Settings -- the rest is built on CITS1401's questions.
 import { Fragment } from 'preact';
 import { href } from '../../app/router.ts';
 import type { Route } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
+import type { UnitId } from '../../content/units.ts';
+import { unitOf } from '../../content/units.ts';
 import { Icon } from '../components/Icon.tsx';
 import type { IconName } from '../components/Icon.tsx';
 import { Tooltip } from '../components/Tooltip.tsx';
@@ -23,6 +26,23 @@ export const NAV: { key: NavKey; label: string; short: string; tiny?: string; ic
   { key: 'settings', label: 'Settings', short: 'Settings', icon: 'sliders', href: href.settings() },
 ];
 
+/**
+ * STAT2402's bar. Exams opens STAT2402's own R papers; Review, Progress and Look up stand on the CITS1401
+ * question bank and the Python reference, so offering them here would send a statistics student to a
+ * Python ladder.
+ */
+export const STAT_NAV: typeof NAV = [
+  { key: 'topics', label: 'Home', short: 'Home', icon: 'home', href: href.landing() },
+  { key: 'lessons', label: 'Lessons', short: 'Lessons', icon: 'book', href: href.lessons() },
+  { key: 'tests', label: 'Exams', short: 'Exams', icon: 'clock', href: href.exam() },
+  { key: 'playground', label: 'R Playground', short: 'R Playground', tiny: 'R', icon: 'code', href: href.rPlayground() },
+  { key: 'settings', label: 'Settings', short: 'Settings', icon: 'sliders', href: href.settings() },
+];
+
+export function navFor(unit: UnitId): typeof NAV {
+  return unit === 'stat2402' ? STAT_NAV : NAV;
+}
+
 /** aria-current value for a nav item: "page" on the exact page, "true" when inside that section. */
 export function currentFor(key: NavKey, r: Route): 'page' | 'true' | undefined {
   switch (key) {
@@ -34,11 +54,11 @@ export function currentFor(key: NavKey, r: Route): 'page' | 'true' | undefined {
       return r.name === 'lesson-read' || r.name === 'lesson' ? 'true' : undefined;
     // One door for each pair: the switch at the top of the page moves between the two.
     case 'reference': return r.name === 'reference' || r.name === 'glossary' ? 'page' : undefined;
-    case 'playground': return r.name === 'playground' ? 'page' : undefined;
+    case 'playground': return r.name === 'playground' || r.name === 'r-playground' ? 'page' : undefined;
     case 'review': return r.name === 'review' ? 'page' : undefined;
     case 'tests':
       if (r.name === 'exam') return 'page';
-      return r.name === 'topic-test' ? 'true' : undefined;
+      return r.name === 'topic-test' || r.name === 'stat-quiz' ? 'true' : undefined;
     case 'report':
       if (r.name === 'plan') return 'page';
       if (r.name !== 'report') return undefined;
@@ -49,6 +69,7 @@ export function currentFor(key: NavKey, r: Route): 'page' | 'true' | undefined {
 
 export function ActivityBar({ route }: { route: Route }) {
   const wide = store.settings.value.navExpanded !== false;
+  const items = navFor(unitOf(store.settings.value));
   return (
     <nav class={`actbar${wide ? ' is-wide' : ''}`} aria-label="Main">
       <button
@@ -61,7 +82,7 @@ export function ActivityBar({ route }: { route: Route }) {
       >
         <Icon name={wide ? 'chevronLeft' : 'menu'} size={16} />
       </button>
-      {NAV.map((n) => {
+      {items.map((n) => {
         const cur = currentFor(n.key, route);
         return (
           <Fragment key={n.key}>

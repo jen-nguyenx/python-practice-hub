@@ -1,29 +1,32 @@
 // Renders one lesson block. Every output shown here was recorded by the verifier running the code in real
-// Python, so nothing in this file decides what Python does: it only lays out what Python already said.
+// Python (or real R, for STAT2402), so nothing in this file decides what the language does: it only lays
+// out what the interpreter already said. The language comes from the CodeLang provider the reader sets.
 import { useState } from 'preact/hooks';
 import type { GeneratedBlock, LessonBlock, LessonError, ShellLine } from '../../content/lessonSchema.ts';
 import type { Experiment, GeneratedExperiments, Topic } from '../../content/schema.ts';
 import { CodeBlock } from '../components/CodeBlock.tsx';
+import { errorText, useCodeLang } from '../components/codeLang.ts';
 import { Icon } from '../components/Icon.tsx';
 import { InlineMd, Markdown } from '../components/Markdown.tsx';
-import { Annotate, Match, Order, Predict, Quiz, Task, Walkthrough } from './Interactive.tsx';
-import { openInPlayground } from '../workbench/openInPlayground.ts';
+import { Annotate, Match, Order, Predict, Quiz, RTask, Task, Walkthrough } from './Interactive.tsx';
+import { openInPlayground, openInRPlayground } from '../workbench/openInPlayground.ts';
 import { MistakesTab, WorkedExampleTab } from '../shell/topic/ReadTabs.tsx';
 import { ExperimentCard } from '../shell/topic/WhatIf.tsx';
-
-function errorText(e: LessonError): string {
-  return `${e.type}${e.message ? `: ${e.message}` : ''}`;
-}
 
 /**
  * Takes the program to the Playground so a reader can change it and run it themselves. Deliberately not
  * offered on a prediction until it has been answered: being able to run the code first would turn
- * "what does this print" into "press the button".
+ * "what does this print" into "press the button". R goes to the R Playground, Python to the other.
  */
-function TryIt({ code, name, back }: { code: string; name: string; back?: { href: string; label: string } }) {
+export function TryIt({ code, name, back }: { code: string; name: string; back?: { href: string; label: string } }) {
+  const lang = useCodeLang();
   return (
     <p class="lb-tryit">
-      <button type="button" class="btn ghost lb-tryit-btn" onClick={() => openInPlayground(code, name, back)}>
+      <button
+        type="button"
+        class="btn ghost lb-tryit-btn"
+        onClick={() => (lang === 'r' ? openInRPlayground(code, back) : openInPlayground(code, name, back))}
+      >
         <Icon name="terminal" size={14} /> Try it yourself
       </button>
     </p>
@@ -38,6 +41,7 @@ function TryIt({ code, name, back }: { code: string; name: string; back?: { href
  * claiming something about Python that Python never said, so it says nothing at all instead.
  */
 function Output({ recorded, stdout, error, label }: { recorded: boolean; stdout?: string; error?: LessonError; label: string }) {
+  const lang = useCodeLang();
   if (!recorded) return null;
   const text = (stdout ?? '').replace(/\r\n?/g, '\n').replace(/\n$/, '');
   const lines = text === '' ? [] : text.split('\n');
@@ -48,25 +52,26 @@ function Output({ recorded, stdout, error, label }: { recorded: boolean; stdout?
     <div class="lb-out" role="group" aria-label={label}>
       <pre><code>
         {lines.map((l, i) => <span key={i} class="lb-out-line">{l || ' '}{'\n'}</span>)}
-        {error ? <span class="lb-out-line is-error">{errorText(error)}{'\n'}</span> : null}
+        {error ? <span class="lb-out-line is-error">{errorText(error, lang)}{'\n'}</span> : null}
       </code></pre>
-      {error ? <p class="lb-out-where">Stopped on line {error.line}.</p> : null}
+      {error && error.line > 0 ? <p class="lb-out-where">Stopped on line {error.line}.</p> : null}
     </div>
   );
 }
 
 function Shell({ lines }: { lines: ShellLine[] }) {
+  const lang = useCodeLang();
   return (
-    <div class="lb-shell" role="group" aria-label="Python shell session">
+    <div class="lb-shell" role="group" aria-label={lang === 'r' ? 'R console session' : 'Python shell session'}>
       <pre><code>
         {lines.map((l, i) => (
           <span key={i}>
-            <span class="lb-sh-in"><span class="lb-sh-prompt" aria-hidden="true">{'>>> '}</span>{l.source}{'\n'}</span>
+            <span class="lb-sh-in"><span class="lb-sh-prompt" aria-hidden="true">{lang === 'r' ? '> ' : '>>> '}</span>{l.source}{'\n'}</span>
             {l.stdout ? l.stdout.replace(/\n$/, '').split('\n').map((o, j) => (
               <span key={`o${j}`} class="lb-sh-out">{o || ' '}{'\n'}</span>
             )) : null}
             {l.value !== undefined ? <span class="lb-sh-val">{l.value}{'\n'}</span> : null}
-            {l.error ? <span class="lb-sh-err">{errorText(l.error)}{'\n'}</span> : null}
+            {l.error ? <span class="lb-sh-err">{errorText(l.error, lang)}{'\n'}</span> : null}
           </span>
         ))}
       </code></pre>
@@ -113,10 +118,12 @@ export interface BlockContext {
 }
 
 export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedBlock | undefined; ctx: BlockContext }) {
+  const lang = useCodeLang();
   switch (block.kind) {
     case 'prose':
       // Lesson prose is exactly where a student meets the vocabulary, so it is where the words are marked.
-      return <Markdown text={block.body} class="lb-md lb-prose" terms />;
+      // Not in R: the glossary defines Python's words, and "function" or "list" in R mean something else.
+      return <Markdown text={block.body} class="lb-md lb-prose" terms={lang === 'python'} />;
 
     case 'code':
       return (
@@ -258,6 +265,9 @@ export function Block({ block, gen, ctx }: { block: LessonBlock; gen: GeneratedB
     }
 
     case 'task':
+      if (lang === 'r') {
+        return <RTask prompt={block.prompt} run={block.run} fnName={block.fnName} starter={block.starter} solution={block.solution} tests={block.tests} hint={block.hint} />;
+      }
       return (
         <Task
           prompt={block.prompt}

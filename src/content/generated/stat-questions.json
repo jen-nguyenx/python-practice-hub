@@ -1,0 +1,415 @@
+{
+  "bp-cbind-mistake": {
+    "stdout": "             right  wrong\n(Intercept) -1.898 -2.139\nagegp.L      3.235  2.882\nagegp.Q     -1.755 -1.629\nagegp.C      0.044  0.151\nagegp^4      0.257  0.218\nagegp^5     -0.190 -0.178\n"
+  },
+  "bp-deviance-df-ratio": {
+    "answer": 1.08,
+    "stdout": "[1] 82.33687\n[1] 76\n"
+  },
+  "bp-dosep-matches": {
+    "stdout": "[1] TRUE\n"
+  },
+  "bp-identify-response": {
+    "stdout": "  agegp     alcgp    tobgp ncases ncontrols\n1 25-34 0-39g/day 0-9g/day      0        40\n2 25-34 0-39g/day    10-19      0        10\n3 25-34 0-39g/day    20-29      0         6\n4 25-34 0-39g/day      30+      0         5\n5 25-34     40-79 0-9g/day      0        27\n6 25-34     40-79    10-19      0         7\n"
+  },
+  "bp-links-aic-reading": {
+    "stdout": "            df      AIC\nfit_logit   12 221.3918\nfit_probit  12 219.6172\nfit_cloglog 12 227.8236\n"
+  },
+  "bp-menarche-ld50": {
+    "answer": 13,
+    "stdout": "(Intercept)         Age \n -21.226395    1.631968 \n"
+  },
+  "bp-menarche-slope": {
+    "stdout": "              Estimate Std. Error   z value      Pr(>|z|)\n(Intercept) -21.226395 0.77068466 -27.54226 5.479038e-167\nAge           1.631968 0.05895308  27.68249 1.134448e-168\n"
+  },
+  "bp-quasibinomial-what-changes": {
+    "stdout": "(Intercept)     agegp.L     agegp.Q     agegp.C     agegp^4     agegp^5 \n      0.207       0.694       0.621       0.468       0.325       0.213 \n    alcgp.L     alcgp.Q     alcgp.C     tobgp.L     tobgp.Q     tobgp.C \n      0.264       0.224       0.183       0.240       0.224       0.211 \n(Intercept)     agegp.L     agegp.Q     agegp.C     agegp^4     agegp^5 \n      0.221       0.741       0.663       0.500       0.346       0.228 \n    alcgp.L     alcgp.Q     alcgp.C     tobgp.L     tobgp.Q     tobgp.C \n      0.282       0.239       0.196       0.256       0.239       0.225 \n"
+  },
+  "bp-weights-vs-cbind": {
+    "stdout": "            cbind_form weights_form\n(Intercept)    -1.8984      -1.8984\nagegp.L         3.2353       3.2353\nagegp.Q        -1.7546      -1.7546\nagegp.C         0.0441       0.0441\nagegp^4         0.2575       0.2575\nagegp^5        -0.1897      -0.1897\n"
+  },
+  "cm-aic-gap": {
+    "answer": 26.6,
+    "stdout": "      df      AIC\nm_eth  2 2484.452\nm_age  4 2511.026\n"
+  },
+  "cm-aic-rows-warning": {
+    "stdout": "      df      AIC\nfull   4 2511.026\ngirls  4 1390.607\nWarning message:\nIn AIC.default(full, girls) :\n  models are not all fitted to the same number of observations\n"
+  },
+  "cm-drop1-marginality": {
+    "stdout": "Single term deletions\n\nModel:\nDays ~ Eth * Sex\n        Df Deviance    AIC    LRT  Pr(>Chi)    \n<none>       1858.0 2454.5                     \nEth:Sex  1   1875.1 2469.6 17.096 3.553e-05 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+  },
+  "cm-lrt-df": {
+    "answer": 5,
+    "stdout": "Analysis of Deviance Table\n\nModel 1: count ~ 1\nModel 2: count ~ spray\n  Resid. Df Resid. Dev Df Deviance  Pr(>Chi)    \n1        71     409.04                          \n2        66      98.33  5   310.71 < 2.2e-16 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+  },
+  "cm-lrt-pvalue-read": {
+    "stdout": "Analysis of Deviance Table\n\nModel 1: Days ~ Eth\nModel 2: Days ~ Eth + Sex + Age + Lrn\n  Resid. Df Resid. Dev Df Deviance  Pr(>Chi)    \n1       144     1892.0                          \n2       139     1696.7  5   195.27 < 2.2e-16 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+  },
+  "cm-nested-pair": {
+    "stdout": "m1 m2 m3 \n 6  9  4 \n"
+  },
+  "cm-null-residual-gap": {
+    "stdout": "\nCall:  glm(formula = Days ~ Eth + Sex + Age + Lrn, family = poisson, \n    data = quine)\n\nCoefficients:\n(Intercept)         EthN         SexM        AgeF1        AgeF2        AgeF3  \n     2.7154      -0.5336       0.1616      -0.3339       0.2578       0.4277  \n      LrnSL  \n     0.3489  \n\nDegrees of Freedom: 145 Total (i.e. Null);  139 Residual\nNull Deviance:\t    2074 \nResidual Deviance: 1697 \tAIC: 2299\n"
+  },
+  "cm-quasi-aic-na": {
+    "stdout": "[1] NA\n"
+  },
+  "cm-quasi-f-vs-chisq": {
+    "stdout": "Single term deletions\n\nModel:\nDays ~ Eth + Sex + Age + Lrn\n       Df Deviance    AIC     LRT  Pr(>Chi)    \n<none>      1696.7 2299.2                      \nEth     1   1863.5 2464.0 166.845 < 2.2e-16 ***\nSex     1   1711.1 2311.6  14.404 0.0001475 ***\nAge     3   1865.0 2461.5 168.324 < 2.2e-16 ***\nLrn     1   1742.5 2343.0  45.798 1.311e-11 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\nSingle term deletions\n\nModel:\nDays ~ Eth + Sex + Age + Lrn\n       Df Deviance F value   Pr(>F)    \n<none>      1696.7                     \nEth     1   1863.5 13.6685 0.000313 ***\nSex     1   1711.1  1.1800 0.279230    \nAge     3   1865.0  4.5966 0.004234 ** \nLrn     1   1742.5  3.7519 0.054775 .  \n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n"
+  },
+  "gam-cv-predict": {
+    "stdout": "[1]  36 144\n[1] 0.33 0.33\n"
+  },
+  "gam-dispersion-cv-number": {
+    "answer": 0.37,
+    "stdout": "[1] 0.1375\n"
+  },
+  "gam-f-test-reason": {
+    "stdout": "Analysis of Deviance Table\n\nModel 1: cost ~ hours\nModel 2: cost ~ hours + machine_age\n  Resid. Df Resid. Dev Df Deviance      F Pr(>F)\n1       248     31.590                          \n2       247     31.492  1 0.098095 0.7926 0.3742\n"
+  },
+  "gam-inverse-vs-log-default": {
+    "stdout": "         1          2          3          4 \n  183.3329   390.9609 -2950.2220  -309.0506 \n       1        2        3        4 \n185.2085 275.9495 411.1481 612.5860 \n"
+  },
+  "gam-lm-log-vs-gamma": {
+    "stdout": "               1        2        3\nlm_log  91.07549 136.5230 184.9521\ngamma  101.83749 151.7317 204.6223\n    data    gamma   lm_log \n143.9142 143.7462 129.3225 \n"
+  },
+  "gam-log-link-meaning": {
+    "stdout": "\nCall:\nglm(formula = claim ~ age, family = Gamma(link = \"log\"), data = d)\n\nCoefficients:\n            Estimate Std. Error t value Pr(>|t|)    \n(Intercept) 4.025275   0.080395   50.07   <2e-16 ***\nage         0.019937   0.001691   11.79   <2e-16 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\n(Dispersion parameter for Gamma family taken to be 0.2067816)\n\n    Null deviance: 93.165  on 299  degrees of freedom\nResidual deviance: 64.295  on 298  degrees of freedom\nAIC: 3294.3\n\nNumber of Fisher Scoring iterations: 4\n\n(Intercept)         age \n  55.995686    1.020137 \n"
+  },
+  "gam-percent-change-number": {
+    "answer": 2,
+    "stdout": "(Intercept)         age \n  55.995686    1.020137 \n"
+  },
+  "gam-residual-narrowing": {
+    "stdout": " low  mid high \n0.89 0.78 0.46 \n"
+  },
+  "gam-variance-mean-squared": {
+    "stdout": "[1] 12 48\n[1] 0.41 0.41\n[1]  24.1 382.1\n"
+  },
+  "gt-binomial-variance": {
+    "stdout": "[1] 0.16 0.25\n"
+  },
+  "gt-gamma-spread": {
+    "stdout": "[1]  1  4 16\n"
+  },
+  "gt-gaussian-dispersion": {
+    "answer": 236.5,
+    "stdout": "[1] 15.37959\n"
+  },
+  "gt-linkinv-prob": {
+    "answer": 0.492,
+    "stdout": "          1 \n-0.03154016 \n"
+  },
+  "gt-lm-glm": {
+    "stdout": "(Intercept)       speed \n -17.579095    3.932409 \n(Intercept)       speed \n -17.579095    3.932409 \n"
+  },
+  "gt-not-converged": {
+    "stdout": "Warning message:\nglm.fit: algorithm did not converge \n[1] FALSE\n"
+  },
+  "gt-quasi": {
+    "stdout": "[1] \"log\"\n[1] 1 5\n[1] NA\n"
+  },
+  "gt-three-parts": {
+    "stdout": "\nFamily: poisson \nLink function: log \n\n"
+  },
+  "lr-class-predict": {
+    "stdout": "[1] \"glm\" \"lm\" \n"
+  },
+  "lr-confint-scale": {
+    "stdout": "Waiting for profiling to be done...\n                 2.5 %       97.5 %\n(Intercept) 6.91721352 7.487173e+04\nwt          0.02633297 4.881136e-01\n"
+  },
+  "lr-deviance-drop": {
+    "stdout": "\nCall:\nglm(formula = case ~ age + parity + induced + spontaneous, family = binomial, \n    data = infert)\n\nCoefficients:\n            Estimate Std. Error z value Pr(>|z|)    \n(Intercept) -2.85239    1.00428  -2.840  0.00451 ** \nage          0.05318    0.03014   1.764  0.07767 .  \nparity      -0.70883    0.18091  -3.918 8.92e-05 ***\ninduced      1.18966    0.28987   4.104 4.06e-05 ***\nspontaneous  1.92534    0.29863   6.447 1.14e-10 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 316.17  on 247  degrees of freedom\nResidual deviance: 260.94  on 243  degrees of freedom\nAIC: 270.94\n\nNumber of Fisher Scoring iterations: 4\n\n"
+  },
+  "lr-lm-range": {
+    "stdout": "[1] -0.1932868  0.9246501\n"
+  },
+  "lr-odds-def": {
+    "answer": 0.538461538461538,
+    "stdout": "[1] 0.35\n"
+  },
+  "lr-oddsratio-small-step": {
+    "stdout": " (Intercept)           hp \n4350.4041474    0.9337368 \n"
+  },
+  "lr-predict-format": {
+    "stdout": "    1     2 \n0.869 0.127 \n"
+  },
+  "lr-predicted-prob": {
+    "answer": 0.33,
+    "stdout": " (Intercept)          age \n-0.732075515  0.001427164 \n"
+  },
+  "lr-z-not-t": {
+    "stdout": "\nCall:\nglm(formula = case ~ age + parity + induced + spontaneous, family = binomial, \n    data = infert)\n\nCoefficients:\n            Estimate Std. Error z value Pr(>|z|)    \n(Intercept) -2.85239    1.00428  -2.840  0.00451 ** \nage          0.05318    0.03014   1.764  0.07767 .  \nparity      -0.70883    0.18091  -3.918 8.92e-05 ***\ninduced      1.18966    0.28987   4.104 4.06e-05 ***\nspontaneous  1.92534    0.29863   6.447 1.14e-10 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 316.17  on 247  degrees of freedom\nResidual deviance: 260.94  on 243  degrees of freedom\nAIC: 270.94\n\nNumber of Fisher Scoring iterations: 4\n\n"
+  },
+  "nb-aic-gap-insects": {
+    "answer": 2.4,
+    "stdout": "     df      AIC\npois  6 376.5892\nnb    7 374.2179\n"
+  },
+  "nb-loglik-statistic": {
+    "answer": 1192,
+    "stdout": "'log Lik.' -1142.592 (df=7)\n'log Lik.' -546.5755 (df=8)\n"
+  },
+  "nb-lrt-boundary": {
+    "stdout": "[1] 1192.033\n[1] 3.287302e-261\n"
+  },
+  "nb-predict-response": {
+    "stdout": "[1] TRUE\n"
+  },
+  "nb-se-comparison": {
+    "stdout": "            poisson quasi negbin\n(Intercept)   0.076 0.093  0.093\nsprayB        0.106 0.130  0.131\nsprayC        0.214 0.263  0.227\nsprayD        0.151 0.185  0.169\nsprayE        0.172 0.211  0.188\nsprayF        0.104 0.127  0.129\n"
+  },
+  "nb-theta-meaning": {
+    "stdout": "\nCall:\nglm.nb(formula = Days ~ Eth + Sex + Age + Lrn, data = quine, \n    init.theta = 1.274892646, link = log)\n\nCoefficients:\n            Estimate Std. Error z value Pr(>|z|)    \n(Intercept)  2.89458    0.22842  12.672  < 2e-16 ***\nEthN        -0.56937    0.15333  -3.713 0.000205 ***\nSexM         0.08232    0.15992   0.515 0.606710    \nAgeF1       -0.44843    0.23975  -1.870 0.061425 .  \nAgeF2        0.08808    0.23619   0.373 0.709211    \nAgeF3        0.35690    0.24832   1.437 0.150651    \nLrnSL        0.29211    0.18647   1.566 0.117236    \n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\n(Dispersion parameter for Negative Binomial(1.2749) family taken to be 1)\n\n    Null deviance: 195.29  on 145  degrees of freedom\nResidual deviance: 167.95  on 139  degrees of freedom\nAIC: 1109.2\n\nNumber of Fisher Scoring iterations: 1\n\n\n              Theta:  1.275 \n          Std. Err.:  0.161 \n\n 2 x log-likelihood:  -1093.151 \n"
+  },
+  "nb-variance-at-a-point": {
+    "answer": 645,
+    "stdout": "       1 \n28.04474 \n[1] 1.274893\n"
+  },
+  "nb-variance-shape": {
+    "stdout": "           A     B    C    D    E     F\nmean   14.50 15.33 2.08 4.92 3.50 16.67\nquasi  21.86 23.12 3.14 7.41 5.28 25.13\nnegbin 21.98 23.70 2.24 5.78 3.94 26.55\n"
+  },
+  "od-aic-na-quasipoisson": {
+    "stdout": "[1] NA\n"
+  },
+  "od-insectsprays-pearson-number": {
+    "answer": 1.51,
+    "stdout": "\nCall:\nglm(formula = count ~ spray, family = poisson, data = InsectSprays)\n\nCoefficients:\n            Estimate Std. Error z value Pr(>|z|)    \n(Intercept)  2.67415    0.07581  35.274  < 2e-16 ***\nsprayB       0.05588    0.10574   0.528    0.597    \nsprayC      -1.94018    0.21389  -9.071  < 2e-16 ***\nsprayD      -1.08152    0.15065  -7.179 7.03e-13 ***\nsprayE      -1.42139    0.17192  -8.268  < 2e-16 ***\nsprayF       0.13926    0.10367   1.343    0.179    \n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\n(Dispersion parameter for poisson family taken to be 1)\n\n    Null deviance: 409.041  on 71  degrees of freedom\nResidual deviance:  98.329  on 66  degrees of freedom\nAIC: 376.59\n\nNumber of Fisher Scoring iterations: 5\n\n"
+  },
+  "od-quasipoisson-se-compare": {
+    "stdout": "      Estimate     Std. Error        z value       Pr(>|z|) \n -1.303722e+00   5.201294e-02  -2.506534e+01  1.188090e-138 \n    Estimate   Std. Error      t value     Pr(>|t|) \n-1.303721860  0.420946801 -3.097117871  0.004775826 \n"
+  },
+  "od-titanic-pearson-number": {
+    "answer": 65,
+    "stdout": "\nCall:\nglm(formula = Freq ~ Class + Sex + Age + Survived, family = poisson, \n    data = as.data.frame(Titanic))\n\nCoefficients:\n            Estimate Std. Error z value Pr(>|z|)    \n(Intercept)  2.14816    0.11017  19.499   <2e-16 ***\nClass2nd    -0.13134    0.08115  -1.618    0.106    \nClass3rd     0.77579    0.06703  11.573   <2e-16 ***\nClassCrew    1.00176    0.06486  15.445   <2e-16 ***\nSexFemale   -1.30372    0.05201 -25.065   <2e-16 ***\nAgeAdult     2.95453    0.09824  30.073   <2e-16 ***\nSurvivedYes -0.73986    0.04558 -16.232   <2e-16 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\n(Dispersion parameter for poisson family taken to be 1)\n\n    Null deviance: 4953.1  on 31  degrees of freedom\nResidual deviance: 1243.7  on 25  degrees of freedom\nAIC: 1385.1\n\nNumber of Fisher Scoring iterations: 6\n\n"
+  },
+  "od-titanic-ratio": {
+    "stdout": "[1] 49.74653\n"
+  },
+  "od-warpbreaks-tension-only": {
+    "stdout": "[1] 4.439816\n"
+  },
+  "od-warpbreaks-wool-ratio": {
+    "stdout": "             A    B\nmean      31.0 25.3\nvariance 251.3 86.5\nratio      8.1  3.4\n"
+  },
+  "pl-at-least-four": {
+    "answer": 0.121,
+    "stdout": "[1] 0.8791261\n"
+  },
+  "pl-binom-mle-predict": {
+    "stdout": "[1] 0.3\n"
+  },
+  "pl-curvature": {
+    "stdout": "[1] 1.270555\n[1] 12.70555\n"
+  },
+  "pl-glm-loglik": {
+    "stdout": "(Intercept) \n        3.5 \n[1] 3.5\n'log Lik.' -11.72168 (df=1)\n[1] -11.72168\n"
+  },
+  "pl-likelihood-meaning": {
+    "stdout": "[1] 0.0005614956\n[1] 0.0004842659\n"
+  },
+  "pl-mean-variance": {
+    "stdout": "    mean variance \n4.005500 4.052275 \n"
+  },
+  "pl-qnorm-meaning": {
+    "stdout": "[1] 34.20811\n"
+  },
+  "pl-read-optimize": {
+    "answer": 3.57,
+    "stdout": "$maximum\n[1] 3.571438\n\n$objective\n[1] -16.42814\n\n"
+  },
+  "pois-baseline-level": {
+    "stdout": "\nCall:\nglm(formula = breaks ~ tension, family = poisson, data = warpbreaks)\n\nCoefficients:\n            Estimate Std. Error z value Pr(>|z|)    \n(Intercept)  3.59426    0.03907  91.988  < 2e-16 ***\ntensionM    -0.32132    0.06027  -5.332 9.73e-08 ***\ntensionH    -0.51849    0.06396  -8.107 5.21e-16 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\n(Dispersion parameter for poisson family taken to be 1)\n\n    Null deviance: 297.37  on 53  degrees of freedom\nResidual deviance: 226.43  on 51  degrees of freedom\nAIC: 507.09\n\nNumber of Fisher Scoring iterations: 4\n\n"
+  },
+  "pois-family-default-link": {
+    "stdout": "[1] \"identity\"\n"
+  },
+  "pois-oddsratio-below-one": {
+    "stdout": "(Intercept)    tensionM    tensionH \n 36.3888889   0.7251908   0.5954198 \n"
+  },
+  "pois-offset-interpretation": {
+    "stdout": "(Intercept) regionsouth \n  2.3157895   0.7711039 \n"
+  },
+  "pois-overdispersion-preview": {
+    "stdout": "\nCall:\nglm(formula = count ~ spray, family = poisson, data = InsectSprays)\n\nCoefficients:\n            Estimate Std. Error z value Pr(>|z|)    \n(Intercept)  2.67415    0.07581  35.274  < 2e-16 ***\nsprayB       0.05588    0.10574   0.528    0.597    \nsprayC      -1.94018    0.21389  -9.071  < 2e-16 ***\nsprayD      -1.08152    0.15065  -7.179 7.03e-13 ***\nsprayE      -1.42139    0.17192  -8.268  < 2e-16 ***\nsprayF       0.13926    0.10367   1.343    0.179    \n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\n(Dispersion parameter for poisson family taken to be 1)\n\n    Null deviance: 409.041  on 71  degrees of freedom\nResidual deviance:  98.329  on 66  degrees of freedom\nAIC: 376.59\n\nNumber of Fisher Scoring iterations: 5\n\n"
+  },
+  "pois-predict-no-type": {
+    "stdout": "       1 \n3.075775 \n"
+  },
+  "pois-predicted-count-depth": {
+    "answer": 33.5,
+    "stdout": " (Intercept)        depth \n 3.577905191 -0.000224743 \n"
+  },
+  "pois-quakes-negative-slope": {
+    "stdout": "\nCall:\nglm(formula = stations ~ depth, family = poisson, data = quakes)\n\nCoefficients:\n              Estimate Std. Error z value Pr(>|z|)    \n(Intercept)  3.578e+00  9.435e-03   379.2   <2e-16 ***\ndepth       -2.247e-04  2.554e-05    -8.8   <2e-16 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\n(Dispersion parameter for poisson family taken to be 1)\n\n    Null deviance: 12198  on 999  degrees of freedom\nResidual deviance: 12121  on 998  degrees of freedom\nAIC: 17301\n\nNumber of Fisher Scoring iterations: 5\n\n"
+  },
+  "pois-rate-ratio-depth": {
+    "answer": 0.98,
+    "stdout": " (Intercept)        depth \n 3.577905191 -0.000224743 \n"
+  },
+  "rb-levels-order": {
+    "stdout": "[1] \"large\"  \"medium\" \"small\" \n"
+  },
+  "rb-manual-share": {
+    "answer": 41,
+    "stdout": "\n 0  1 \n19 13 \n[1] 32\n"
+  },
+  "rb-minus-index": {
+    "stdout": "[1] 10 30 40 50\n"
+  },
+  "rb-missing-ozone": {
+    "answer": 37,
+    "stdout": "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.     NAs \n   1.00   18.00   31.50   42.13   63.25  168.00      37 \n"
+  },
+  "rb-na-mean": {
+    "stdout": "[1] NA\n[1] 42.12931\n"
+  },
+  "rb-relevel-baseline": {
+    "stdout": "[1] \"L\" \"M\" \"H\"\n[1] \"H\" \"L\" \"M\"\n"
+  },
+  "rb-rows-and-columns": {
+    "stdout": "                mpg    wt\nFiat 128       32.4 2.200\nHonda Civic    30.4 1.615\nToyota Corolla 33.9 1.835\nLotus Europa   30.4 1.513\n"
+  },
+  "rb-str-columns": {
+    "stdout": "'data.frame':\t150 obs. of  5 variables:\n $ Sepal.Length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...\n $ Sepal.Width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...\n $ Petal.Length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...\n $ Petal.Width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...\n $ Species     : Factor w/ 3 levels \"setosa\",\"versicolor\",..: 1 1 1 1 1 1 1 1 1 1 ...\n"
+  },
+  "rb-tension-gap": {
+    "answer": 14.72,
+    "stdout": "       L        M        H \n36.38889 26.38889 21.66667 \n"
+  },
+  "rd-curve": {
+    "stdout": "   low middle   high \n -0.14   0.50  -1.81 \n"
+  },
+  "rd-cutoff-count": {
+    "answer": 3,
+    "stdout": "[1] 2\n[1] 32\nLincoln Continental   Chrysler Imperial  Cadillac Fleetwood        Lotus Europa \n              0.247               0.228               0.206               0.094 \n        Honda Civic      Toyota Corolla \n              0.089               0.078 \n"
+  },
+  "rd-default-type": {
+    "stdout": "[1]  TRUE FALSE\n"
+  },
+  "rd-fan": {
+    "stdout": "   low middle   high \n -0.12   0.15  -0.04 \n   low middle   high \n  1.27   1.57   2.78 \n"
+  },
+  "rd-pearson-by-hand": {
+    "answer": 4.72,
+    "stdout": "  breaks wool tension\n5     70    A       L\n       5 \n40.12354 \n"
+  },
+  "rd-qq-small": {
+    "stdout": "\n-1.28  0.19   1.1  2.51 \n   19    23     7     1 \n"
+  },
+  "rd-refit": {
+    "stdout": "  30 \n6.85 \n        (Intercept)     x\nwith          0.858 0.040\nwithout       0.529 0.125\n"
+  },
+  "rd-standardised": {
+    "answer": 3.34,
+    "stdout": "    39 \n3.1945 \n    39 \n0.0833 \n"
+  },
+  "rir-coef-names": {
+    "stdout": "[1] \"(Intercept)\" \"wt\"          \"hp\"         \n"
+  },
+  "rir-held-fixed": {
+    "stdout": "(Intercept)          wt \n  37.285126   -5.344472 \n(Intercept)          wt          hp \n37.22727012 -3.87783074 -0.03177295 \n"
+  },
+  "rir-predict-20": {
+    "answer": 61.1,
+    "stdout": "(Intercept)       speed \n -17.579095    3.932409 \n"
+  },
+  "rir-pvalue-reading": {
+    "stdout": "              Estimate Std. Error   t value     Pr(>|t|)\n(Intercept) -17.579095  6.7584402 -2.601058 1.231882e-02\nspeed         3.932409  0.4155128  9.463990 1.489836e-12\n"
+  },
+  "rir-r-squared": {
+    "answer": 65,
+    "stdout": "[1] 0.6510794\n"
+  },
+  "rir-slope-meaning": {
+    "stdout": "(Intercept)       speed \n -17.579095    3.932409 \n"
+  },
+  "rir-slope-value": {
+    "answer": 3.93,
+    "stdout": "              Estimate Std. Error   t value     Pr(>|t|)\n(Intercept) -17.579095  6.7584402 -2.601058 1.231882e-02\nspeed         3.932409  0.4155128  9.463990 1.489836e-12\n"
+  },
+  "rr-causation": {
+    "stdout": "              Estimate Std. Error   z value    Pr(>|z|)\n(Intercept)  8.3780240 3.21593158  2.605162 0.009183072\nhp          -0.0685607 0.02739945 -2.502265 0.012340143\n"
+  },
+  "rr-ci-both-ends": {
+    "stdout": "                  2.5 %     97.5 %\n(Intercept)  2.71252811  3.2295898\nEthN        -0.88761326 -0.2616344\nSexM        -0.09916784  0.5289765\n"
+  },
+  "rr-ci-lower-number": {
+    "answer": 10.3,
+    "stdout": "   lower estimate    upper \n10.26014 13.49968 17.76208 \n"
+  },
+  "rr-extrapolation": {
+    "stdout": "[1]  8.3 20.6\n       1 \n115.0322 \n"
+  },
+  "rr-nb-coef-names": {
+    "stdout": "[1] \"(Intercept)\" \"EthN\"        \"SexM\"       \n"
+  },
+  "rr-not-significant": {
+    "stdout": "               Estimate Std. Error   t value     Pr(>|t|)\n(Intercept) -2.21621697 0.60354302 -3.672012 0.0003170844\nmag          0.05690043 0.09851422  0.577586 0.5642654499\n"
+  },
+  "rr-odds-vs-probability": {
+    "stdout": "[1] 0.5037843\n"
+  },
+  "rr-pct-number": {
+    "answer": -85.6,
+    "stdout": "               Estimate Std. Error    t value     Pr(>|t|)\n(Intercept)  2.67414865 0.09308607 28.7276987 5.025647e-39\nsprayB       0.05588046 0.12984263  0.4303707 6.683282e-01\nsprayC      -1.94017947 0.26262799 -7.3875580 3.300470e-10\nsprayD      -1.08151786 0.18498506 -5.8465145 1.703601e-07\nsprayE      -1.42138568 0.21109937 -6.7332540 4.815503e-09\nsprayF       0.13926207 0.12729329  1.0940252 2.779207e-01\n"
+  },
+  "rr-pct-scale": {
+    "stdout": "               Estimate Std. Error    t value     Pr(>|t|)\n(Intercept)  2.67414865 0.09308607 28.7276987 5.025647e-39\nsprayB       0.05588046 0.12984263  0.4303707 6.683282e-01\nsprayC      -1.94017947 0.26262799 -7.3875580 3.300470e-10\nsprayD      -1.08151786 0.18498506 -5.8465145 1.703601e-07\nsprayE      -1.42138568 0.21109937 -6.7332540 4.815503e-09\nsprayF       0.13926207 0.12729329  1.0940252 2.779207e-01\n"
+  },
+  "rr-predict-scale": {
+    "stdout": "[1] 2.311719e-10 1.004248e-01\n[1] -4.570827e-05  5.586834e-05\n"
+  },
+  "rr-predicted-prob-number": {
+    "answer": 54,
+    "stdout": "        1 \n0.5376137 \n"
+  },
+  "wb-b10-life": {
+    "answer": 5670,
+    "stdout": "[1] 0.632\n"
+  },
+  "wb-censoring-bias": {
+    "stdout": "[1] 225\n  1 \n318 \n  1 \n483 \n"
+  },
+  "wb-fitdistr-reading": {
+    "stdout": "      shape         scale   \n    1.4765381   719.6958450 \n (  0.2030364) ( 87.4488201)\n           2.5 %     97.5 %\nshape   1.078594   1.874482\nscale 548.299307 891.092383\n"
+  },
+  "wb-hazard-reading": {
+    "stdout": "[1] 0.1660975 0.1203841\n[1] 0.08018754 0.89652392\n"
+  },
+  "wb-predicted-median": {
+    "answer": 31400,
+    "stdout": "    1     2 \n18587 31369 \n"
+  },
+  "wb-scale-shape-reading": {
+    "stdout": "\nCall:\nsurvreg(formula = Surv(time, status) ~ 1, dist = \"weibull\")\n              Value Std. Error     z      p\n(Intercept)  6.3796     0.0425 150.1 <2e-16\nLog(scale)  -0.6069     0.0587 -10.3 <2e-16\n\nScale= 0.545 \n\nWeibull distribution\nLoglik(model)= -1290.9   Loglik(intercept only)= -1290.9\nNumber of Newton-Raphson Iterations: 8 \nn= 400 \n\n"
+  },
+  "wb-surv-print": {
+    "stdout": "[1]  5   8+  3  10+\n"
+  },
+  "wb-time-ratio-meaning": {
+    "stdout": "\nCall:\nsurvreg(formula = Surv(time, status) ~ pad, data = brakes, dist = \"weibull\")\n              Value Std. Error      z       p\n(Intercept) 10.0115     0.0707 141.51 < 2e-16\npadceramic   0.5234     0.1237   4.23 2.3e-05\nLog(scale)  -0.7036     0.0903  -7.79 6.6e-15\n\nScale= 0.495 \n\nWeibull distribution\nLoglik(model)= -830.9   Loglik(intercept only)= -840.8\n\tChisq= 19.83 on 1 degrees of freedom, p= 8.5e-06 \nNumber of Newton-Raphson Iterations: 6 \nn= 140 \n\n (Intercept)   padceramic \n22282.028186     1.687722 \n"
+  },
+  "zi-aic-story": {
+    "stdout": "     df      AIC\npois  2 2757.856\nnb    3 2008.821\nzip   4 2290.057\nzinb  5 2006.803\n"
+  },
+  "zi-excess-zeros-number": {
+    "answer": 89,
+    "stdout": "[1] 275\n[1] 186.1636\n"
+  },
+  "zi-mixture-share": {
+    "stdout": "[1] 0.48\n"
+  },
+  "zi-poisson-expected-zeros": {
+    "stdout": "[1] 275\n[1] 186.1636\n"
+  },
+  "zi-predict-zero-value": {
+    "answer": 0.309,
+    "stdout": "    1     2 \n0.309 0.001 \n"
+  },
+  "zi-vuong-disagreement": {
+    "stdout": "Vuong Non-Nested Hypothesis Test-Statistic: \n(test-statistic is asymptotically distributed N(0,1) under the\n null that the models are indistinguishible)\n-------------------------------------------------------------\n              Vuong z-statistic             H_A  p-value\nRaw                  -1.3344950 model2 > model1 0.091021\nAIC-corrected        -0.4475292 model2 > model1 0.327247\nBIC-corrected         1.4215773 model1 > model2 0.077574\n"
+  },
+  "zi-zero-part-kid5": {
+    "stdout": "              Estimate Std. Error    z value     Pr(>|z|)\n(Intercept) -1.6474692  0.1963231 -8.3916222 4.794794e-17\nfemWomen     0.1633308  0.2549276  0.6406949 5.217210e-01\nkid5         0.3077245  0.1354790  2.2713823 2.312384e-02\n"
+  }
+}

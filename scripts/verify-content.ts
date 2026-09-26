@@ -1,4 +1,5 @@
-// Content verifier: schema/authoring checks, real-Python runtime checks, and generated data.
+// Content verifier: schema/authoring checks, real-Python (and, for STAT2402 lessons, real-R) runtime
+// checks, and generated data.
 //
 //   node scripts/verify-content.ts                 verify every topic, write generated files
 //   node scripts/verify-content.ts --topic strings verify one topic (repeatable)
@@ -18,7 +19,10 @@ import { jsonEqual, readJson, stableStringify, writeIfChanged } from './verify/j
 import { formatIssue, Issues, plural, topicHeader } from './verify/report.ts';
 import { checkTopicExperiments } from './verify/experiments.ts';
 import { checkLessons } from './verify/lessons.ts';
+import { createRSession } from './verify/r.ts';
+import type { RSession } from './verify/r.ts';
 import { checkGlossary } from './verify/glossary.ts';
+import { checkStatQuestions } from './verify/statQuestions.ts';
 import { checkRecipes } from './verify/recipes.ts';
 import { checkTopicRuntime } from './verify/runtime.ts';
 import type { RuntimeContext } from './verify/runtime.ts';
@@ -133,9 +137,21 @@ const topicsById = new Map<string, Topic>();
 for (const { info, topic } of loaded) if (topic) topicsById.set(info.id, topic);
 // Lessons are global, not per topic, so they are only checked on a full run.
 const wholeRun = lessonsOnly || selected.length === 0;
+// R starts only if an R lesson needs it: most verify runs never pay for a second interpreter.
+let rSession: Promise<RSession> | null = null;
+const rDriver = async () => (await (rSession ??= createRSession())).driver;
 const lessons = wholeRun
-  ? await checkLessons(issues, topicsById, staticOnly ? null : () => ctx.harness())
+  ? await checkLessons(issues, topicsById, staticOnly ? null : () => ctx.harness(), staticOnly ? null : rDriver)
   : { generated: new Map<string, GeneratedLesson>(), index: [] as unknown[] };
+
+// ---------- STAT2402 exam questions (checked on a whole run, in R) ----------
+const statQuestions = wholeRun
+  ? await checkStatQuestions(
+    issues,
+    new Map((lessons.index as { id: string; track: string }[]).map((l) => [l.id, l.track])),
+    staticOnly ? null : rDriver,
+  )
+  : { generated: {}, count: 0 };
 
 // ---------- the reference (checked on a whole run) ----------
 const recipes = wholeRun
@@ -201,6 +217,7 @@ if (!staticOnly) {
   for (const [id, gen] of lessons.generated) emitOrRemove(join(GENERATED_DIR, 'lessons', `${id}.json`), gen);
   if (wholeRun) emit(join(GENERATED_DIR, 'recipes.json'), recipes.generated);
   if (wholeRun) emit(join(GENERATED_DIR, 'glossary.json'), glossary.generated);
+  if (wholeRun) emit(join(GENERATED_DIR, 'stat-questions.json'), statQuestions.generated);
 }
 if (!lessonsOnly) emit(join(GENERATED_DIR, 'question-index.json'), index);
 if (wholeRun) emit(join(GENERATED_DIR, 'lesson-index.json'), lessons.index);
@@ -219,6 +236,10 @@ const lessonWarns = issues.count('warn', 'lessons');
 if (wholeRun) {
   lines.push(`${lessonErrors > 0 ? 'FAIL' : 'ok  '} -- lessons: ${plural(lessons.index.length, 'lesson')}, ${plural(lessonErrors, 'error')}, ${plural(lessonWarns, 'warning')}`);
   for (const i of issues.forTopic('lessons')) lines.push(formatIssue(i));
+  const sqErrors = issues.count('error', 'stat-questions');
+  const sqWarns = issues.count('warn', 'stat-questions');
+  lines.push(`${sqErrors > 0 ? 'FAIL' : 'ok  '} -- STAT2402 questions: ${plural(statQuestions.count, 'question')}, ${plural(sqErrors, 'error')}, ${plural(sqWarns, 'warning')}`);
+  for (const i of issues.forTopic('stat-questions')) lines.push(formatIssue(i));
   const refErrors = issues.count('error', 'reference');
   const refWarns = issues.count('warn', 'reference');
   lines.push(`${refErrors > 0 ? 'FAIL' : 'ok  '} -- reference: ${recipes.index.length} ${recipes.index.length === 1 ? 'entry' : 'entries'}, ${plural(refErrors, 'error')}, ${plural(refWarns, 'warning')}`);
@@ -229,7 +250,8 @@ if (wholeRun) {
   for (const i of issues.forTopic('glossary')) lines.push(formatIssue(i));
 }
 console.log(lines.join('\n'));
-const errors = targets.reduce((n, t) => n + issues.count('error', t.info.id), 0) + lessonErrors + issues.count('error', 'reference');
+const errors = targets.reduce((n, t) => n + issues.count('error', t.info.id), 0) + lessonErrors + issues.count('error', 'reference')
+  + issues.count('error', 'stat-questions');
 const warns = targets.reduce((n, t) => n + issues.count('warn', t.info.id), 0) + lessonWarns + issues.count('warn', 'reference');
 const qTotal = targets.reduce((n, t) => n + (t.topic ? questionsOf(t.topic).length : 0), 0);
 const scopeText = lessonsOnly ? plural(lessons.index.length, 'lesson') : `${plural(targets.length, 'topic')}, ${plural(qTotal, 'question')}`;
@@ -237,4 +259,5 @@ console.log(`\n${scopeText}: ${plural(errors, 'error')}, ${plural(warns, 'warnin
 if (check && stale.length) {
   console.log(`Stale generated files (run npm run verify): ${stale.join(', ')}`);
 }
+if (rSession) (await rSession).close();
 process.exit(errors > 0 || (check && stale.length > 0) ? 1 : 0);

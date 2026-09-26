@@ -1,6 +1,7 @@
 // Shared engine types: grading results, the event log, settings and the props every format component receives.
 import type { AstFlag, Diff, Format, MistakeId, TopicId } from '../content/ids.ts';
 import type { GeneratedQuestion, Question } from '../content/schema.ts';
+import type { UnitId } from '../content/units.ts';
 
 export type DetectionChannel = 'runtime' | 'static' | 'distractor' | 'test';
 
@@ -68,6 +69,11 @@ export type AppEvent =
   | (EventBase & { type: 'run'; qid: string | null; topicId: TopicId | null; ok: boolean; errorType?: string; timedOut: boolean; durationMs: number })
   | (EventBase & { type: 'self_explain'; qid: string; text: string })
   | (EventBase & { type: 'test_result'; kind: TestKind; topicIds: TopicId[]; score: number; total: number; passed: boolean; durationMs: number; qids: string[] })
+  /**
+   * A finished STAT2402 test: a lesson quiz, a practice test or the mock final. `score` and `total` are
+   * marks; `earned` is the marks for each question in `qids`, in the same order.
+   */
+  | (EventBase & { type: 'stat_test'; kind: 'quiz' | 'mock' | 'practice'; lessonIds: string[]; score: number; total: number; durationMs: number; timedOut: boolean; qids: string[]; earned: number[] })
   /** `lessonId` names the lesson read; `topicId` is set only for the 13 lessons that teach a topic. */
   | (EventBase & { type: 'lesson_done'; lessonId: string; topicId?: TopicId })
   | (EventBase & { type: 'override'; what: 'unlockAll'; value: boolean })
@@ -105,6 +111,11 @@ export interface Settings {
   navExpanded: boolean;
   /** Show the Markets track: Python applied to finance. Off by default; it is not part of CITS1401. */
   showMarkets: boolean;
+  /**
+   * Which unit this student is here for. null until they answer the question on the home page; until
+   * then the app behaves as CITS1401 (content/units.ts `unitOf`).
+   */
+  unit: UnitId | null;
   seenTour: boolean;
   lastExportTs: number | null;
 }
@@ -112,7 +123,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system', accent: 'blue-gold', layout: 'full', editorFontSize: 14, unlockAll: false,
   reducedMotion: 'system', singleKeyShortcuts: true, askConfidence: true, navExpanded: true, showMarkets: false,
-  seenTour: false, lastExportTs: null,
+  unit: null, seenTour: false, lastExportTs: null,
 };
 
 // ---------- format components ----------

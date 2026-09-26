@@ -9,7 +9,8 @@ import type { TopicId } from '../../content/ids.ts';
 import { loadExperiments, loadTopic } from '../../content/index.ts';
 import { LESSON_BY_ID, loadLesson, loadLessonOutputs } from '../../content/lessons/index.ts';
 import type { GeneratedLesson, Lesson } from '../../content/lessonSchema.ts';
-import { blockKey, TRACK_LABEL } from '../../content/lessonSchema.ts';
+import { blockKey, TRACK_LABEL, TRACK_LANG } from '../../content/lessonSchema.ts';
+import { CodeLang } from '../components/codeLang.ts';
 import type { GeneratedExperiments, Topic } from '../../content/schema.ts';
 import { TOPIC_BY_ID } from '../../content/topics.ts';
 import { Icon } from '../components/Icon.tsx';
@@ -208,13 +209,16 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
           <>
             <h2 class="ls-step-title"><InlineMd text={section.title} /></h2>
             {at === 0 ? <Outcomes lesson={lesson} /> : null}
-            <div class="lb-flow">
-              {section.blocks.map((b, bi) => (
-                // Keyed by section as well as index, so no block state (a picked slider, an opened
-                // checkpoint answer) can leak into the block at the same position in the next section.
-                <Block key={`${section.id}-${bi}`} block={b} gen={outputs[blockKey(at, bi)]} ctx={ctx} />
-              ))}
-            </div>
+            {/* The track decides the language, so every block below highlights, prompts and runs in it. */}
+            <CodeLang.Provider value={TRACK_LANG[lesson.track] ?? 'python'}>
+              <div class="lb-flow">
+                {section.blocks.map((b, bi) => (
+                  // Keyed by section as well as index, so no block state (a picked slider, an opened
+                  // checkpoint answer) can leak into the block at the same position in the next section.
+                  <Block key={`${section.id}-${bi}`} block={b} gen={outputs[blockKey(at, bi)]} ctx={ctx} />
+                ))}
+              </div>
+            </CodeLang.Provider>
           </>
         )}
       </div>
@@ -229,6 +233,12 @@ export function LessonReader({ lessonId }: { lessonId: string }) {
             <button type="button" class="btn primary" onClick={() => go(at + 1)}>
               Next <Icon name="chevronRight" size={14} />
             </button>
+          ) : lesson?.track === 'stat2402' ? (
+            // Every STAT2402 lesson has a quiz, and the end of the lesson is the moment to take it.
+            <span class="ls-nav-end">
+              <a class="btn ghost" href={href.lessons()}>Back to lessons</a>
+              <a class="btn primary" href={href.quiz(lessonId)}>Take the lesson quiz <Icon name="arrowRight" size={14} /></a>
+            </span>
           ) : (
             <a class="btn ghost" href={href.lessons()}>Back to lessons</a>
           )}

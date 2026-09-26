@@ -116,11 +116,12 @@ export function markerIds(template: string): string[] {
 }
 
 /** What the student sees in the output panel: printed lines, then the error line if it crashed. */
-export function outputLines(run: GeneratedRun | undefined): string[] {
+export function outputLines(run: GeneratedRun | undefined, lang: 'python' | 'r' = 'python'): string[] {
   if (!run) return [];
   const text = (run.stdout ?? '').replace(/\r\n?/g, '\n').replace(/\n$/, '');
   const lines = text === '' ? [] : text.split('\n');
-  if (run.error) lines.push(`${run.error.type}${run.error.message ? `: ${run.error.message}` : ''}`);
+  // R's message is already the whole report R printed ("Error in f(x) : ..."); Python's needs its type.
+  if (run.error) lines.push(lang === 'r' ? run.error.message : `${run.error.type}${run.error.message ? `: ${run.error.message}` : ''}`);
   return lines;
 }
 

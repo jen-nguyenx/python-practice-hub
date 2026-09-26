@@ -15,6 +15,8 @@ export interface CodeEditorProps {
   readOnly?: boolean;
   /** Paper mode: plain text, no suggestions, no bracket colours. */
   plain?: boolean;
+  /** The language being written. Python unless set; R for STAT2402, indented by two spaces. */
+  language?: 'python' | 'r';
   /** Auto-grow between these heights (px). Ignored when `fill` is set. */
   minHeight?: number;
   maxHeight?: number;

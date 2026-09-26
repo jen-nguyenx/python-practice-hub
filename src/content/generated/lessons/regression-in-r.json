@@ -1,0 +1,543 @@
+{
+  "s0-b2": {
+    "stdout": "  speed dist\n1     4    2\n2     4   10\n3     7    4\n4     7   22\n5     8   16\n6     9   10\n[1] 50\n"
+  },
+  "s1-b1": {
+    "stdout": "\nCall:\nlm(formula = dist ~ speed, data = cars)\n\nCoefficients:\n(Intercept)        speed  \n    -17.579        3.932  \n\n"
+  },
+  "s1-b3": {
+    "shell": [
+      {
+        "source": "fit <- lm(dist ~ speed, data = cars)",
+        "stdout": ""
+      },
+      {
+        "source": "coef(fit)",
+        "stdout": "(Intercept)       speed \n -17.579095    3.932409 \n"
+      },
+      {
+        "source": "coef(fit)[\"speed\"]",
+        "stdout": "   speed \n3.932409 \n"
+      },
+      {
+        "source": "predict(fit, data.frame(speed = c(10, 20)))",
+        "stdout": "       1        2 \n21.74499 61.06908 \n"
+      }
+    ]
+  },
+  "s1-b4": {
+    "stdout": "[1] \"(Intercept)\" \"speed\"      \n"
+  },
+  "s2-b1": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "Your line:  dist = 43 + 0 * speed\nYour squared errors: 32539 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                42.98
+              ],
+              [
+                25,
+                42.98
+              ]
+            ]
+          }
+        },
+        "1": {
+          "stdout": "Your line:  dist = 35.3 + 0.5 * speed\nYour squared errors: 27494 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                37.28
+              ],
+              [
+                25,
+                47.78
+              ]
+            ]
+          }
+        },
+        "2": {
+          "stdout": "Your line:  dist = 27.6 + 1 * speed\nYour squared errors: 23134 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                31.58
+              ],
+              [
+                25,
+                52.58
+              ]
+            ]
+          }
+        },
+        "3": {
+          "stdout": "Your line:  dist = 19.9 + 1.5 * speed\nYour squared errors: 19459 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                25.88
+              ],
+              [
+                25,
+                57.38
+              ]
+            ]
+          }
+        },
+        "4": {
+          "stdout": "Your line:  dist = 12.2 + 2 * speed\nYour squared errors: 16469 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                20.18
+              ],
+              [
+                25,
+                62.18
+              ]
+            ]
+          }
+        },
+        "5": {
+          "stdout": "Your line:  dist = 4.5 + 2.5 * speed\nYour squared errors: 14164 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                14.48
+              ],
+              [
+                25,
+                66.98
+              ]
+            ]
+          }
+        },
+        "6": {
+          "stdout": "Your line:  dist = -3.2 + 3 * speed\nYour squared errors: 12545 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                8.77999999999999
+              ],
+              [
+                25,
+                71.78
+              ]
+            ]
+          }
+        },
+        "7": {
+          "stdout": "Your line:  dist = -10.9 + 3.5 * speed\nYour squared errors: 11610 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                3.08
+              ],
+              [
+                25,
+                76.58
+              ]
+            ]
+          }
+        },
+        "8": {
+          "stdout": "Your line:  dist = -18.6 + 4 * speed\nYour squared errors: 11360 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                -2.62
+              ],
+              [
+                25,
+                81.38
+              ]
+            ]
+          }
+        },
+        "9": {
+          "stdout": "Your line:  dist = -26.3 + 4.5 * speed\nYour squared errors: 11795 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                -8.32
+              ],
+              [
+                25,
+                86.18
+              ]
+            ]
+          }
+        },
+        "10": {
+          "stdout": "Your line:  dist = -34 + 5 * speed\nYour squared errors: 12915 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                -14.02
+              ],
+              [
+                25,
+                90.98
+              ]
+            ]
+          }
+        },
+        "11": {
+          "stdout": "Your line:  dist = -41.7 + 5.5 * speed\nYour squared errors: 14720 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                -19.72
+              ],
+              [
+                25,
+                95.78
+              ]
+            ]
+          }
+        },
+        "12": {
+          "stdout": "Your line:  dist = -49.4 + 6 * speed\nYour squared errors: 17210 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                -25.42
+              ],
+              [
+                25,
+                100.58
+              ]
+            ]
+          }
+        },
+        "13": {
+          "stdout": "Your line:  dist = -57.1 + 6.5 * speed\nYour squared errors: 20385 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                -31.12
+              ],
+              [
+                25,
+                105.38
+              ]
+            ]
+          }
+        },
+        "14": {
+          "stdout": "Your line:  dist = -64.8 + 7 * speed\nYour squared errors: 24245 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                -36.82
+              ],
+              [
+                25,
+                110.18
+              ]
+            ]
+          }
+        },
+        "15": {
+          "stdout": "Your line:  dist = -72.5 + 7.5 * speed\nYour squared errors: 28790 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                -42.52
+              ],
+              [
+                25,
+                114.98
+              ]
+            ]
+          }
+        },
+        "16": {
+          "stdout": "Your line:  dist = -80.2 + 8 * speed\nYour squared errors: 34021 \nlm's line:  dist = -17.6 + 3.93 * speed\nlm's squared errors: 11354 \n",
+          "values": {
+            "yours": [
+              [
+                4,
+                -48.22
+              ],
+              [
+                25,
+                119.78
+              ]
+            ]
+          }
+        }
+      },
+      "shared": {
+        "best": [
+          [
+            4,
+            -1.84945985401455
+          ],
+          [
+            25,
+            80.7311240875912
+          ]
+        ],
+        "data": [
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            7,
+            4
+          ],
+          [
+            7,
+            22
+          ],
+          [
+            8,
+            16
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            10,
+            18
+          ],
+          [
+            10,
+            26
+          ],
+          [
+            10,
+            34
+          ],
+          [
+            11,
+            17
+          ],
+          [
+            11,
+            28
+          ],
+          [
+            12,
+            14
+          ],
+          [
+            12,
+            20
+          ],
+          [
+            12,
+            24
+          ],
+          [
+            12,
+            28
+          ],
+          [
+            13,
+            26
+          ],
+          [
+            13,
+            34
+          ],
+          [
+            13,
+            34
+          ],
+          [
+            13,
+            46
+          ],
+          [
+            14,
+            26
+          ],
+          [
+            14,
+            36
+          ],
+          [
+            14,
+            60
+          ],
+          [
+            14,
+            80
+          ],
+          [
+            15,
+            20
+          ],
+          [
+            15,
+            26
+          ],
+          [
+            15,
+            54
+          ],
+          [
+            16,
+            32
+          ],
+          [
+            16,
+            40
+          ],
+          [
+            17,
+            32
+          ],
+          [
+            17,
+            40
+          ],
+          [
+            17,
+            50
+          ],
+          [
+            18,
+            42
+          ],
+          [
+            18,
+            56
+          ],
+          [
+            18,
+            76
+          ],
+          [
+            18,
+            84
+          ],
+          [
+            19,
+            36
+          ],
+          [
+            19,
+            46
+          ],
+          [
+            19,
+            68
+          ],
+          [
+            20,
+            32
+          ],
+          [
+            20,
+            48
+          ],
+          [
+            20,
+            52
+          ],
+          [
+            20,
+            56
+          ],
+          [
+            20,
+            64
+          ],
+          [
+            22,
+            66
+          ],
+          [
+            23,
+            54
+          ],
+          [
+            24,
+            70
+          ],
+          [
+            24,
+            92
+          ],
+          [
+            24,
+            93
+          ],
+          [
+            24,
+            120
+          ],
+          [
+            25,
+            85
+          ]
+        ]
+      }
+    }
+  },
+  "s3-b1": {
+    "stdout": "\nCall:\nlm(formula = dist ~ speed, data = cars)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-29.069  -9.525  -2.272   9.215  43.201 \n\nCoefficients:\n            Estimate Std. Error t value Pr(>|t|)    \n(Intercept) -17.5791     6.7584  -2.601   0.0123 *  \nspeed         3.9324     0.4155   9.464 1.49e-12 ***\n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n\nResidual standard error: 15.38 on 48 degrees of freedom\nMultiple R-squared:  0.6511,\tAdjusted R-squared:  0.6438 \nF-statistic: 89.57 on 1 and 48 DF,  p-value: 1.49e-12\n\n"
+  },
+  "s3-b4": {
+    "shell": [
+      {
+        "source": "fit <- lm(dist ~ speed, data = cars)",
+        "stdout": ""
+      },
+      {
+        "source": "summary(fit)$coefficients",
+        "stdout": "              Estimate Std. Error   t value     Pr(>|t|)\n(Intercept) -17.579095  6.7584402 -2.601058 1.231882e-02\nspeed         3.932409  0.4155128  9.463990 1.489836e-12\n"
+      },
+      {
+        "source": "summary(fit)$r.squared",
+        "stdout": "[1] 0.6510794\n"
+      },
+      {
+        "source": "confint(fit)",
+        "stdout": "                 2.5 %    97.5 %\n(Intercept) -31.167850 -3.990340\nspeed         3.096964  4.767853\n"
+      }
+    ]
+  },
+  "s4-b1": {
+    "stdout": "               Estimate Std. Error   t value     Pr(>|t|)\n(Intercept) 37.22727012 1.59878754 23.284689 2.565459e-20\nwt          -3.87783074 0.63273349 -6.128695 1.119647e-06\nhp          -0.03177295 0.00902971 -3.518712 1.451229e-03\n"
+  },
+  "s4-b3": {
+    "left": {
+      "stdout": "(Intercept)          wt \n  37.285126   -5.344472 \n"
+    },
+    "right": {
+      "stdout": "(Intercept)          wt          hp \n37.22727012 -3.87783074 -0.03177295 \n"
+    }
+  },
+  "s6-b2": {
+    "stdout": "         1          2 \n 1.0127084 -0.3999186 \n"
+  }
+}

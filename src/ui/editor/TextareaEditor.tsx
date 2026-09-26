@@ -1,12 +1,11 @@
 // Fallback editor for touch devices, narrow screens, or when Monaco cannot load.
-// Mono font, line-number gutter, Tab inserts 4 spaces, Enter keeps indentation, Esc then Tab leaves.
+// Mono font, line-number gutter, Tab inserts 4 spaces (2 in R), Enter keeps indentation, Esc then Tab leaves.
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 import { store } from '../../app/services.ts';
 import type { CodeEditorProps } from './types.ts';
 import './editor.css';
 
-const INDENT = '    ';
 
 function insertText(ta: HTMLTextAreaElement, text: string) {
   ta.focus();
@@ -25,6 +24,10 @@ function insertText(ta: HTMLTextAreaElement, text: string) {
 
 export function TextareaEditor(props: CodeEditorProps) {
   const { value, onChange, readOnly, plain, fill, markers, ariaLabel, hideHint } = props;
+  // R is indented by two spaces and opens a block with "{"; Python by four, after a ":".
+  const r = props.language === 'r';
+  const width = r ? 2 : 4;
+  const indentUnit = ' '.repeat(width);
   const minHeight = props.minHeight ?? 160;
   const maxHeight = props.maxHeight ?? 560;
   const fontSize = store.settings.value.editorFontSize || 14;
@@ -85,7 +88,7 @@ export function TextareaEditor(props: CodeEditorProps) {
       const lineStart = v.lastIndexOf('\n', s - 1) + 1;
       if (e.shiftKey) {
         const lineText = v.slice(lineStart);
-        const m = /^ {1,4}/.exec(lineText);
+        const m = (r ? /^ {1,2}/ : /^ {1,4}/).exec(lineText);
         if (m) {
           ta.setSelectionRange(lineStart, lineStart + m[0].length);
           insertText(ta, '');
@@ -95,12 +98,12 @@ export function TextareaEditor(props: CodeEditorProps) {
       } else if (s !== end && v.slice(s, end).includes('\n')) {
         // Indent every selected line.
         const block = v.slice(lineStart, end);
-        const indented = block.split('\n').map((l) => INDENT + l).join('\n');
+        const indented = block.split('\n').map((l) => indentUnit + l).join('\n');
         ta.setSelectionRange(lineStart, end);
         insertText(ta, indented);
       } else {
         const col = s - lineStart;
-        insertText(ta, ' '.repeat(4 - (col % 4)));
+        insertText(ta, ' '.repeat(width - (col % width)));
       }
       return;
     }
@@ -111,7 +114,7 @@ export function TextareaEditor(props: CodeEditorProps) {
       const lineStart = v.lastIndexOf('\n', s - 1) + 1;
       const current = v.slice(lineStart, s);
       let indent = /^\s*/.exec(current)?.[0] ?? '';
-      if (!plain && /:\s*(#.*)?$/.test(current)) indent += INDENT;
+      if (!plain && (r ? /\{\s*(#.*)?$/ : /:\s*(#.*)?$/).test(current)) indent += indentUnit;
       insertText(ta, '\n' + indent);
       return;
     }
@@ -121,7 +124,7 @@ export function TextareaEditor(props: CodeEditorProps) {
       const before = v.slice(lineStart, s);
       if (before.length > 0 && /^ +$/.test(before)) {
         e.preventDefault();
-        const n = before.length % 4 === 0 ? 4 : before.length % 4;
+        const n = before.length % width === 0 ? width : before.length % width;
         ta.setSelectionRange(s - n, s);
         insertText(ta, '');
       }

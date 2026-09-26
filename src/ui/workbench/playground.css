@@ -237,3 +237,8 @@
 .pg-back-t { max-width: 24ch; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 860px) { .pg-back-t { max-width: 12ch; } }
 @media (prefers-reduced-motion: reduce) { .pg-back { transition: none; } }
+
+/* ---------- R Playground ---------- */
+/* R lays its output out in fixed columns (a coefficient table, a summary), so a wrapped line breaks the
+   table apart. R's console scrolls sideways instead, as RStudio's does. */
+.rpg .pg-term-out, .rpg .pg-term-tb { white-space: pre; word-break: normal; overflow-x: auto; }

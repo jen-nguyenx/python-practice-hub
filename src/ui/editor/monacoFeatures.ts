@@ -75,3 +75,5 @@ import '@monaco/editor/contrib/suggest/browser/suggestController.js';
 import '@monaco/editor/common/standaloneStrings.js';
 import '@monaco/base/browser/ui/codicons/codicon/codicon-modifiers.css';
 import '@monaco/languages/definitions/python/register.js';
+// R, for the STAT2402 lessons and the R Playground.
+import '@monaco/languages/definitions/r/register.js';

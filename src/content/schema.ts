@@ -31,6 +31,13 @@ export interface QuestionBase {
   selfExplain?: string;
 }
 
+/**
+ * One test of a coding question or a lesson task. The fields are described for Python; in a STAT2402 (R)
+ * lesson the same fields are read as R: `call` and `expect` are R expressions, `setup` is R statements,
+ * `cmp: 'float'` allows `tol` relative to the expected value (|got − want| ≤ tol·|want|), not absolute, and
+ * `expect` is evaluated in a fresh environment of its own, so it cannot see what `setup` built
+ * (docs/build/CONTENT.md "STAT2402 lessons (R)").
+ */
 export interface Test {
   id: string;
   /** Python expression evaluated after the student's code, e.g. "sum_of_squares(3)". Omit for program tests. */
@@ -285,6 +292,12 @@ export type Visual =
        * lets a control that picks a point still move the picture, rather than leaving a static shape.
        */
       marker?: string;
+      /**
+       * Probe returning a list of [x, y] pairs drawn as small plain dots beneath the curves: the data a
+       * fitted line runs through. One colour for all of them, unlike `marker`, whose dots each take their
+       * series' colour -- fifty observations in rotating colours would look like fifty groups.
+       */
+      points?: string;
     };
 
 export interface Experiment {

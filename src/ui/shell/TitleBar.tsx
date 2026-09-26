@@ -9,9 +9,11 @@ import { Icon } from '../components/Icon.tsx';
 import { IS_MAC } from './format.ts';
 import { LogoMark } from './LogoMark.tsx';
 import { scenarioTitleOf } from './outline.ts';
-import { RuntimePill } from './RuntimePill.tsx';
+import { UnitRuntimePill } from './RuntimePill.tsx';
 import { ThemeToggle } from './ThemeToggle.tsx';
 import { paletteOpen } from './uiState.ts';
+import { store } from '../../app/services.ts';
+import { unitOf } from '../../content/units.ts';
 
 export interface Crumb { label: string; href?: string }
 
@@ -31,6 +33,11 @@ export function crumbsFor(r: Route): Crumb[] {
       return out;
     }
     case 'playground': return [{ label: 'Playground' }];
+    case 'r-playground': return [{ label: 'R Playground' }];
+    case 'stat-quiz': return [
+      { label: 'Exams', href: href.exam() },
+      { label: LESSON_BY_ID[r.lessonId] ? `Quiz: ${LESSON_BY_ID[r.lessonId].title}` : 'Quiz not found' },
+    ];
     case 'report': return r.topicId && TOPIC_BY_ID[r.topicId]
       ? [{ label: 'Report', href: href.report() }, { label: TOPIC_BY_ID[r.topicId].short }]
       : [{ label: 'Report' }];
@@ -77,6 +84,8 @@ function Breadcrumb({ route }: { route: Route }) {
 }
 
 export function TitleBar({ route }: { route: Route }) {
+  // A STAT2402 student has no questions or topics to jump to, only lessons.
+  const searchLabel = unitOf(store.settings.value) === 'stat2402' ? 'Search lessons' : 'Go to question or topic';
   return (
     <header class="titlebar">
       <a class="tb-logo" href={href.landing()} aria-label="PyLadder home">
@@ -87,16 +96,16 @@ export function TitleBar({ route }: { route: Route }) {
         <button
           type="button"
           class="tb-search"
-          aria-label="Go to question or topic"
+          aria-label={searchLabel}
           aria-haspopup="dialog"
           aria-keyshortcuts={IS_MAC ? 'Meta+K' : 'Control+K'}
           onClick={() => { paletteOpen.value = true; }}
         >
           <Icon name="search" size={16} />
-          <span class="tb-search-text">Go to question or topic</span>
+          <span class="tb-search-text">{searchLabel}</span>
           <kbd class="tb-search-kbd" aria-hidden="true">{IS_MAC ? '⌘K' : 'Ctrl K'}</kbd>
         </button>
-        <RuntimePill />
+        <UnitRuntimePill />
         <ThemeToggle />
       </div>
     </header>

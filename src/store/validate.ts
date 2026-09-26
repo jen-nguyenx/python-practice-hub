@@ -5,6 +5,7 @@ import type { AstFlag, MistakeId, TopicId } from '../content/ids.ts';
 import { DEFAULT_SETTINGS, ACCENT_IDS } from '../engine/types.ts';
 import type { AppEvent, DetectionChannel, Mode, Settings, TestKind } from '../engine/types.ts';
 import type { ScratchFile, Snapshot } from './types.ts';
+import { isUnitId } from '../content/units.ts';
 
 export class ImportError extends Error {}
 
@@ -145,6 +146,21 @@ export function sanitizeEvent(raw: unknown): AppEvent | null {
         durationMs, qids: r.qids.filter(idStr).slice(0, 200),
       };
     }
+    case 'stat_test': {
+      // Marks, not question counts: a mock final is out of 100. Capped so a crafted file cannot claim a
+      // thousand questions or a score above its own total.
+      const durationMs = nonNeg(r.durationMs);
+      const kind = r.kind === 'quiz' || r.kind === 'mock' || r.kind === 'practice' ? r.kind : null;
+      if (kind === null || durationMs === null || !Array.isArray(r.lessonIds) || !Array.isArray(r.qids) || !Array.isArray(r.earned)) return null;
+      if (!isNum(r.score) || !isNum(r.total) || r.total < 0 || r.total > 1000 || r.score < 0 || r.score > r.total || !isBool(r.timedOut)) return null;
+      const qids = r.qids.filter(idStr).slice(0, 60).map((q) => cap(q, 64));
+      const earned = r.earned.filter(isNum).slice(0, qids.length).map((n) => Math.max(0, Math.min(n, r.total as number)));
+      if (earned.length !== qids.length) return null;
+      return {
+        ...base, type, kind, lessonIds: [...new Set(r.lessonIds.filter(idStr).map((l) => cap(l, 64)))].slice(0, 40),
+        score: r.score, total: r.total, durationMs, timedOut: r.timedOut, qids, earned,
+      };
+    }
     case 'lesson_done': {
       // Older events carry only a topicId; keep them by deriving the id they would have had.
       const lessonId = idStr(r.lessonId) ? r.lessonId : (topic(r.topicId) ? `topic:${r.topicId}` : null);
@@ -186,6 +202,7 @@ export function sanitizeSettings(raw: unknown): Partial<Settings> {
   if (isBool(raw.askConfidence)) out.askConfidence = raw.askConfidence;
   if (isBool(raw.navExpanded)) out.navExpanded = raw.navExpanded;
   if (isBool(raw.showMarkets)) out.showMarkets = raw.showMarkets;
+  if (raw.unit === null || isUnitId(raw.unit)) out.unit = raw.unit;
   if (isBool(raw.seenTour)) out.seenTour = raw.seenTour;
   if (raw.lastExportTs === null || (isNum(raw.lastExportTs) && raw.lastExportTs > 0)) out.lastExportTs = raw.lastExportTs;
   return out;

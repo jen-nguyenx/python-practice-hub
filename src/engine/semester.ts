@@ -1,4 +1,5 @@
-// CITS1401 Semester 2, 2026 calendar (docs/build/DESIGN.md "Status bar").
+// UWA Semester 2, 2026 calendar (docs/build/DESIGN.md "Status bar"). CITS1401 and STAT2402 both run in
+// semester 2, so they share the teaching weeks and the exam period.
 // Week 1 starts Mon 20 Jul. Study break the week of 31 Aug. Week 12 is the week of 12 Oct.
 // Study break (swotvac) the week of 19 Oct. Exams 26 Oct to Fri 6 Nov.
 
@@ -37,7 +38,7 @@ function plural(n: number, word: string) {
   return `${n} ${word}${n === 1 ? '' : 's'}`;
 }
 
-const DETAIL = 'CITS1401 Semester 2, 2026. Exams run 26 Oct to 6 Nov.';
+const DETAIL = 'UWA Semester 2, 2026. Exams run 26 Oct to 6 Nov.';
 
 export function semesterInfo(now: Date = new Date()): SemesterInfo {
   const today = startOfDay(now);

@@ -12,6 +12,34 @@ export interface PendingPlaygroundFile { code: string; name?: string; ts: number
 /** A link back to whatever sent the reader here, so taking code away is not a one-way trip. */
 export interface PlaygroundReturn { href: string; label: string }
 
+/** The R Playground's hand-off slot: one buffer, so only the code travels. */
+export const R_PLAYGROUND_OPEN_KEY = 'pyladder:r-playground-open';
+
+/** "Try it yourself" from an R lesson: the same hand-off, to the R Playground (#/r). */
+export function openInRPlayground(code: string, back?: PlaygroundReturn) {
+  try {
+    sessionStorage.setItem(R_PLAYGROUND_OPEN_KEY, JSON.stringify({ code, ts: Date.now() }));
+    if (back && back.href && back.label) sessionStorage.setItem(PLAYGROUND_BACK_KEY, JSON.stringify(back));
+    else sessionStorage.removeItem(PLAYGROUND_BACK_KEY);
+  } catch {
+    /* storage blocked: the R Playground opens with what it had */
+  }
+  navigate(href.rPlayground());
+}
+
+/** Read and remove code handed to the R Playground (called on mount). */
+export function takePendingRCode(): string | null {
+  try {
+    const raw = sessionStorage.getItem(R_PLAYGROUND_OPEN_KEY);
+    if (!raw) return null;
+    sessionStorage.removeItem(R_PLAYGROUND_OPEN_KEY);
+    const v = JSON.parse(raw) as { code?: unknown };
+    return typeof v?.code === 'string' ? v.code : null;
+  } catch {
+    return null;
+  }
+}
+
 export function openInPlayground(code: string, name?: string, back?: PlaygroundReturn) {
   try {
     const pending: PendingPlaygroundFile = { code, name, ts: Date.now() };

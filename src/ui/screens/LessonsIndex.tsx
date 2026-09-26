@@ -18,6 +18,7 @@ import { lessonsRead, safeTopicProgress } from '../shell/progressData.ts';
 import { Icon } from '../components/Icon.tsx';
 import { storeReady } from '../shell/storeReady.ts';
 import '../lesson/lesson.css';
+import { unitOf } from '../../content/units.ts';
 
 function Card({ lesson, done, solved, total }: { lesson: LessonMeta; done: boolean; solved: number; total: number }) {
   const topic = lesson.topicId ? TOPIC_BY_ID[lesson.topicId] : undefined;
@@ -112,8 +113,17 @@ function UpNext({ read }: { read: Set<string> }) {
       <section class="lx-next is-done">
         <p class="lx-next-tag">All read</p>
         <h2 class="lx-next-t">You have been through every lesson.</h2>
-        <p class="lx-next-p">Reading them again is worth less than practising, so go and answer some questions.</p>
-        <p><a class="btn" href={href.landing()}>Go to the topics</a></p>
+        {unitOf(store.settings.value) === 'stat2402' ? (
+          <>
+            <p class="lx-next-p">Reading them again is worth less than using them, so take a model to the R Playground and change it.</p>
+            <p><a class="btn" href={href.rPlayground()}>Open the R Playground</a></p>
+          </>
+        ) : (
+          <>
+            <p class="lx-next-p">Reading them again is worth less than practising, so go and answer some questions.</p>
+            <p><a class="btn" href={href.landing()}>Go to the topics</a></p>
+          </>
+        )}
       </section>
     );
   }
@@ -146,6 +156,7 @@ export function LessonsIndex() {
   const read = useMemo(() => lessonsRead(events), [events]);
   const [query, setQuery] = useState('');
   const progress = useMemo(() => (ready ? safeTopicProgress(events, settings) : null), [ready, events, settings]);
+  const stat = unitOf(settings) === 'stat2402';
 
   return (
     <div class="lx">
@@ -153,7 +164,7 @@ export function LessonsIndex() {
         <h1 class="lx-title">Lessons</h1>
         <p class="lx-lede">
           Explanations, worked examples and programs you can change, in the order that makes them make sense.
-          Everything Python prints here was produced by running the code, not typed by hand.
+          Everything {stat ? 'R' : 'Python'} prints here was produced by running the code, not typed by hand.
         </p>
       </header>
       <UpNext read={read} />
@@ -170,7 +181,7 @@ export function LessonsIndex() {
       </div>
       {tracks.map((t) => <TrackSection key={t} track={t} read={read} progress={progress} query={query} />)}
       {query && tracks.every((t) => lessonsInTrack(t).every((l) => !matches(l, query)))
-        ? <p class="lx-none">Nothing matches “{query}”. Try a word that would appear in what you want to learn, like “slice” or “rounding”.</p>
+        ? <p class="lx-none">Nothing matches “{query}”. Try a word that would appear in what you want to learn, like {stat ? '“odds” or “deviance”' : '“slice” or “rounding”'}.</p>
         : null}
     </div>
   );

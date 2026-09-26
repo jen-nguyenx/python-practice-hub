@@ -6,7 +6,7 @@
 import type { AppEvent } from './types.ts';
 
 /** Events that count as having studied. Opening a page does not. */
-const COUNTS = new Set(['attempt', 'lesson_done', 'test_result', 'run']);
+const COUNTS = new Set(['attempt', 'lesson_done', 'test_result', 'stat_test', 'run']);
 
 const DAY = 86_400_000;
 

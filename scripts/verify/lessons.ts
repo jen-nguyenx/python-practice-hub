@@ -1,19 +1,23 @@
 // Checks and generated data for lessons.
 //
-// The contract: a lesson never states what Python does. Every output a student reads is produced here by
-// running the code, so a lesson cannot drift away from the language, and an author cannot type an output
-// that is subtly wrong. A block that raises on purpose is allowed; one that fails to compile is not.
+// The contract: a lesson never states what the language does. Every output a student reads is produced
+// here by running the code -- in Pyodide for the Python tracks, in webR for STAT2402 -- so a lesson cannot
+// drift away from the language, and an author cannot type an output that is subtly wrong. A block that
+// raises on purpose is allowed; one that fails to compile is not.
 import { readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { TOPIC_BY_ID } from '../../src/content/topics.ts';
 import { MISTAKE_IDS } from '../../src/content/ids.ts';
-import { blockKey, TRACKS } from '../../src/content/lessonSchema.ts';
-import type { GeneratedBlock, GeneratedLesson, Lesson, LessonBlock } from '../../src/content/lessonSchema.ts';
+import { blockKey, TRACK_LANG, TRACKS } from '../../src/content/lessonSchema.ts';
+import type { GeneratedBlock, GeneratedLesson, Lang, Lesson, LessonBlock } from '../../src/content/lessonSchema.ts';
 import type { Experiment, Test, Topic } from '../../src/content/schema.ts';
+import { allCombos, fillTemplate } from '../../src/content/experiments.ts';
+import type { RDriver, RError } from '../../src/runtime/r/driver.ts';
+import { normOutput } from '../../src/runtime/r/driver.ts';
 import { checkOneExperiment, stable } from './experiments.ts';
 import { PROJECT_ROOT } from './pyodide.ts';
-import type { Harness } from './pyodide.ts';
+import type { CaptureResult, Harness, ProbeResult } from './pyodide.ts';
 import type { Issues, Scope } from './report.ts';
 import { plural, scope } from './report.ts';
 
@@ -272,6 +276,43 @@ function checkBlock(sc: Scope, b: LessonBlock, where: string, topic: Topic | nul
   }
 }
 
+/** The language a lesson is run in; an unknown track is reported elsewhere and treated as Python. */
+function langOf(x: Lesson): Lang {
+  return TRACK_LANG[x?.track] ?? 'python';
+}
+
+/**
+ * What an R lesson cannot use. Each of these leans on something only the Python harness has: the line
+ * tracer, the CITS1401 topic ladder, or a program reading typed input.
+ */
+function checkRBlock(sc: Scope, b: LessonBlock, where: string): void {
+  const l = b as unknown as Loose;
+  switch (b.kind) {
+    case 'walkthrough':
+      sc.error(`${where}: a walkthrough steps through Python's line tracer, which R does not have; use an annotate block to explain an R program line by line`);
+      return;
+    case 'experiment': case 'workedExample': case 'mistakes': case 'practice':
+      sc.error(`${where}: a ${b.kind} block comes from a CITS1401 topic, and an R lesson is not on that ladder`);
+      return;
+    case 'interactive':
+      if (b.experiment?.watch !== undefined) sc.error(`${where}: watch records Python variables line by line, which R cannot do; draw the values with probes instead`);
+      return;
+    case 'task': {
+      for (const t of arr(b.tests) as Loose[]) {
+        for (const field of ['stdin', 'files', 'argsUnchanged', 'tag'] as const) {
+          if (t?.[field] !== undefined) sc.error(`${where}: test ${quote(String(t.id))} sets ${field}, which R tasks do not support`);
+        }
+        if (t?.cmp === 'unordered') sc.error(`${where}: test ${quote(String(t.id))} uses cmp "unordered", which R tasks do not support; sort() both sides in the call and expect`);
+        if (b.run === 'function' && !nonEmpty(t?.call)) sc.error(`${where}: test ${quote(String(t?.id))} needs a call (an R expression)`);
+        if (b.run === 'function' && !nonEmpty(t?.expect)) sc.error(`${where}: test ${quote(String(t?.id))} needs an expect (an R expression for the value wanted)`);
+      }
+      return;
+    }
+  }
+  // Nothing in R reads a line typed at the console here, so there is nothing for stdin to feed.
+  if (l.stdin !== undefined) sc.error(`${where}: an R block cannot take stdin; put the values in the code`);
+}
+
 function checkStatic(sc: Scope, x: Lesson, seen: Set<string>, topics: Map<string, Topic>): Topic | null {
   const l = x as unknown as Loose;
   if (!nonEmpty(l.id) || !KEBAB.test(String(l.id))) sc.error('id must be kebab-case');
@@ -295,7 +336,10 @@ function checkStatic(sc: Scope, x: Lesson, seen: Set<string>, topics: Map<string
   if (!outcomes.every(nonEmpty)) sc.error('every outcome must be non-empty text');
 
   let topic: Topic | null = null;
-  if (l.topicId !== undefined) {
+  const lang = langOf(x);
+  if (l.topicId !== undefined && lang === 'r') {
+    sc.error('an R lesson cannot set topicId: the topics are the CITS1401 Python ladder');
+  } else if (l.topicId !== undefined) {
     if (!TOPIC_BY_ID[String(l.topicId)]) sc.error(`topicId ${quote(String(l.topicId))} is not a topic id`);
     else topic = topics.get(String(l.topicId)) ?? null;
   }
@@ -324,6 +368,7 @@ function checkStatic(sc: Scope, x: Lesson, seen: Set<string>, topics: Map<string
         continue;
       }
       checkBlock(sc, b, `section ${sid} block ${bi + 1}`, topic, experiments);
+      if (lang === 'r') checkRBlock(sc, b, `section ${sid} block ${bi + 1}`);
       // Every card on a page emits DOM ids built from its experiment id, which its slider labels and
       // <output for> point at. Two cards sharing one would make both resolve to the first.
       const cardId = b.kind === 'interactive' ? b.experiment?.id : b.kind === 'experiment' ? b.id : null;
@@ -486,10 +531,246 @@ function runBlocks(h: Harness, x: Lesson, sc: Scope): GeneratedLesson {
   return out;
 }
 
+/**
+ * R prints an environment or a compiled function with its memory address, which differs from run to run.
+ * Recording it would make the generated file change with no content change, so the address is
+ * normalised, exactly as Python's default reprs are.
+ */
+export function stableR(text: string): string {
+  return text.replace(/<(environment|bytecode): 0x[0-9a-f]+>/g, '<$1: 0x...>');
+}
+
+const toRErr = (e: RError | undefined) => (e ? { type: e.type, message: stableR(e.message), line: e.line } : undefined);
+
+/**
+ * An R object named on the left of `<-` or `=` at the very start of a line. Unindented only: an indented
+ * `type = rep(...)` is an argument inside a call spread over several lines, not an assignment.
+ */
+const R_ASSIGN = /^([A-Za-z.][A-Za-z0-9._]*)\s*(?:<-|=(?!=))/;
+
+/**
+ * Run every combination of an interactive card in R first, then hand the shared experiment checker a
+ * harness that answers from those runs. The checker is synchronous, because Pyodide is; webR is not.
+ * Keyed by the exact program and probes, so a lookup can only ever return that program's own run.
+ */
+async function precomputeR(r: RDriver, x: Experiment): Promise<Harness | null> {
+  const key = (code: string, probes: Record<string, string> | null) => JSON.stringify([code, probes]);
+  const runs = new Map<string, CaptureResult | ProbeResult>();
+  let combos: number[][];
+  try {
+    combos = allCombos(x.knobs);
+  } catch {
+    return null;
+  }
+  const probeEntries = Object.entries(x.probes ?? {});
+  for (const picks of combos) {
+    let code: string;
+    let filled: Record<string, string> | null = null;
+    try {
+      code = fillTemplate(x.template, x.knobs, picks).code;
+      if (probeEntries.length) filled = Object.fromEntries(probeEntries.map(([id, expr]) => [id, fillTemplate(expr, x.knobs, picks).code]));
+    } catch {
+      // A template the static checks will reject; they report it, so there is nothing to run.
+      return null;
+    }
+    if (filled) {
+      const p = await r.probe(code, filled);
+      runs.set(key(code, filled), {
+        stdout: stableR(p.stdout), values: p.values,
+        ...(p.error ? { error: { type: p.error.type, message: stableR(p.error.message), line: p.error.line } as never } : {}),
+        ...(p.probeErrors ? { probeErrors: p.probeErrors } : {}),
+      });
+    } else {
+      const c = await r.runScript(code);
+      runs.set(key(code, null), {
+        stdout: stableR(c.stdout),
+        ...(c.error ? { error: { type: c.error.type, message: stableR(c.error.message), line: c.error.line } as never } : {}),
+      });
+    }
+  }
+  const find = <T>(k: string): T => {
+    const hit = runs.get(k);
+    if (!hit) throw new Error('an R card asked for a run that was not made ahead of time');
+    return hit as T;
+  };
+  return {
+    runCapture: (code: string) => find<CaptureResult>(key(code, null)),
+    probe: (code: string, probes: Record<string, string>) => find<ProbeResult>(key(code, probes)),
+    trace: () => { throw new Error('R cards cannot watch variables'); },
+  } as unknown as Harness;
+}
+
+/** Every name a block of R assigns at the start of a line, for spotting a later block that relies on it. */
+function rAssigned(b: LessonBlock): string[] {
+  const code = b.kind === 'code' || b.kind === 'predict' || b.kind === 'annotate' ? b.code
+    : b.kind === 'shell' ? b.lines.join('\n')
+    : b.kind === 'compare' ? `${b.left.code}\n${b.right.code}` : '';
+  return code.split('\n').map((line) => R_ASSIGN.exec(line)?.[1]).filter((n): n is string => !!n);
+}
+
+/** The object an R error says is missing: "object 'fit' not found", 'could not find function "odds"'. */
+function rMissing(message: string | undefined): string | undefined {
+  return /object '([^']+)' not found/.exec(message ?? '')?.[1] ?? /could not find function "([^"]+)"/.exec(message ?? '')?.[1];
+}
+
+/** The R counterpart of runBlocks: the same guarantees, with R's console as the source of truth. */
+async function runRBlocks(r: RDriver, x: Lesson, sc: Scope): Promise<GeneratedLesson> {
+  const out: GeneratedLesson = {};
+  // Every block starts from an empty workspace. A block that fails for want of a name an earlier block
+  // set is an author assuming the workspace carries over; what it shows is not the lesson's output.
+  const earlier = new Set<string>();
+  const carried = (where: string, message: string | undefined) => {
+    const name = rMissing(message);
+    if (name && earlier.has(name)) {
+      sc.error(`${where}: fails because ${quote(name)} is not set here; it was set in an earlier block, but every block starts from an empty workspace, so set it again in this one`);
+    }
+  };
+  for (const [si, section] of x.sections.entries()) {
+    for (const [bi, b] of section.blocks.entries()) {
+      const key = blockKey(si, bi);
+      const where = `section ${section.id} block ${bi + 1}`;
+      await runOneR(r, b, key, where, sc, out, carried);
+      for (const name of rAssigned(b)) earlier.add(name);
+      await forgotLibrary(r, out[key], where, sc);
+    }
+  }
+  return out;
+}
+
+/**
+ * A block that calls glm.nb() without library(MASS) fails with "could not find function", which reads
+ * like a lesson about a mistake. Every block starts with nothing attached, so say which call is missing.
+ */
+async function forgotLibrary(r: RDriver, gen: GeneratedBlock | undefined, where: string, sc: Scope): Promise<void> {
+  const messages = [gen?.error?.message, gen?.left?.error?.message, gen?.right?.error?.message, ...(gen?.shell ?? []).map((l) => l.error?.message)];
+  for (const m of messages) {
+    const name = /could not find function "([^"]+)"/.exec(m ?? '')?.[1] ?? /object '([^']+)' not found/.exec(m ?? '')?.[1];
+    if (!name) continue;
+    const pkg = await r.packageExporting(name);
+    if (pkg) sc.error(`${where}: ${name} comes from ${pkg}, and every block starts with nothing attached; add library(${pkg}) to this block`);
+  }
+}
+
+async function runOneR(
+  r: RDriver, b: LessonBlock, key: string, where: string, sc: Scope, out: GeneratedLesson,
+  carried: (where: string, message: string | undefined) => void,
+): Promise<void> {
+  {
+    {
+      if (b.kind === 'task') {
+        const tests = (b.tests ?? []) as Test[];
+        // The answer must work, or the task cannot be completed.
+        const solved = await r.task(b.solution, b.run, tests);
+        if (solved.run.error) sc.error(`${where}: the solution stops with an error (${solved.run.error.message})`);
+        else {
+          const failed = solved.outcomes.filter((o) => !o.pass);
+          for (const o of failed) {
+            sc.error(`${where}: the solution fails its own test ${quote(o.id)}${o.error ? ` (${o.error})` : o.got !== undefined ? ` (got ${quote(o.got)}, wanted ${quote(o.want ?? '')})` : ''}`);
+          }
+        }
+        // And the starter must NOT, or the reader is asked to do something already done.
+        const start = await r.task(b.starter, b.run, tests);
+        if (!start.run.error && start.outcomes.every((o) => o.pass)) {
+          sc.error(`${where}: the starter already passes every test, so there is nothing for the reader to do`);
+        }
+      } else if (b.kind === 'predict' || b.kind === 'annotate') {
+        const run = await r.runScript(b.code);
+        const gen: GeneratedBlock = { stdout: stableR(run.stdout) };
+        const err = toRErr(run.error);
+        if (err) gen.error = err;
+        if (err?.type === 'SyntaxError') sc.error(`${where}: the code is not valid R (${err.message})`);
+        carried(where, err?.message);
+        if (b.kind === 'predict') {
+          if (err && err.type !== 'SyntaxError') {
+            sc.error(`${where}: this code stops with an error, so there is no output to predict; use a quiz asking what goes wrong`);
+          } else if (!run.stdout.trim()) {
+            sc.error(`${where}: this code prints nothing, so there is nothing to predict`);
+          }
+          const choices = b.choices;
+          if (Array.isArray(choices) && choices.length > 0) {
+            const real = normOutput(run.stdout);
+            const hits = choices.filter((c) => normOutput(String(c)) === real);
+            if (hits.length === 0) sc.error(`${where}: none of the choices matches what the code prints (${quote(real)})`);
+            else if (hits.length > 1) sc.error(`${where}: ${hits.length} choices match the real output, so more than one is correct`);
+          }
+        }
+        out[key] = gen;
+      } else if (b.kind === 'order') {
+        // Indentation means nothing to R, but it is kept so the assembled program reads as written.
+        const code = (b.lines ?? []).map((l) => `${'  '.repeat(Math.max(0, l.indent))}${l.text}`).join('\n') + '\n';
+        const run = await r.runScript(code);
+        const gen: GeneratedBlock = { stdout: stableR(run.stdout) };
+        const err = toRErr(run.error);
+        if (err) {
+          gen.error = err;
+          sc.error(`${where}: the lines in the given order do not run (${err.message})`);
+        }
+        out[key] = gen;
+      } else if (b.kind === 'code') {
+        const run = await r.runScript(b.code);
+        const gen: GeneratedBlock = { stdout: stableR(run.stdout) };
+        const err = toRErr(run.error);
+        if (err) gen.error = err;
+        if (err?.type === 'SyntaxError') sc.error(`${where}: the code is not valid R (${err.message})`);
+        carried(where, err?.message);
+        if (run.truncated) sc.error(`${where}: prints more than a reader could follow; print less`);
+        if (!run.stdout && !err && !b.hideOutput) sc.warn(`${where}: prints nothing and raises nothing, so there is no output to show`);
+        out[key] = gen;
+      } else if (b.kind === 'shell') {
+        const lines = await r.runShell(b.lines);
+        out[key] = {
+          shell: lines.map((line) => ({
+            source: line.source,
+            stdout: stableR(line.stdout),
+            ...(line.error ? { error: toRErr(line.error) as NonNullable<ReturnType<typeof toRErr>> } : {}),
+          })),
+        };
+        // A session may show a failure on purpose, but two kinds are always authoring bugs, and both
+        // cascade into "object not found" errors that look like real output to a reader.
+        const broken = new Set<string>();
+        lines.forEach((line, li) => {
+          if (line.error?.type === 'SyntaxError') sc.error(`${where}: shell line ${li + 1} ${quote(line.source)} is not a complete line of R`);
+          const assigned = R_ASSIGN.exec(line.source)?.[1];
+          if (assigned && line.error) broken.add(assigned);
+          const missing = rMissing(line.error?.message);
+          if (missing && broken.has(missing)) {
+            sc.error(`${where}: shell line ${li + 1} ${quote(line.source)} fails because an earlier line failed to set ${quote(missing)}; the rest of this session is not real output`);
+          } else {
+            carried(`${where} line ${li + 1}`, line.error?.message);
+          }
+        });
+      } else if (b.kind === 'interactive') {
+        const at: Scope = {
+          error: (m) => sc.error(`${where}: ${m}`),
+          warn: (m) => sc.warn(`${where}: ${m}`),
+        };
+        const h = await precomputeR(r, b.experiment);
+        const gen = checkOneExperiment(at, b.experiment, h, KEBAB, 'a kebab-case id such as "growing-list"');
+        if (gen) out[key] = { experiment: gen };
+      } else if (b.kind === 'compare') {
+        const left = await r.runScript(b.left.code);
+        const right = await r.runScript(b.right.code);
+        out[key] = {
+          left: { stdout: stableR(left.stdout), ...(left.error ? { error: toRErr(left.error) } : {}) },
+          right: { stdout: stableR(right.stdout), ...(right.error ? { error: toRErr(right.error) } : {}) },
+        };
+        for (const [side, run] of [['left', left], ['right', right]] as const) {
+          if (run.error?.type === 'SyntaxError') sc.error(`${where}: the ${side} side is not valid R (${run.error.message})`);
+        }
+        const same = left.stdout === right.stdout && left.error?.message === right.error?.message;
+        if (same) sc.warn(`${where}: both sides do exactly the same thing, so the comparison shows nothing`);
+        carried(`${where} (left)`, left.error?.message);
+        carried(`${where} (right)`, right.error?.message);
+      }
+    }
+  }
+}
+
 export interface LessonCheckResult { generated: Map<string, GeneratedLesson>; index: unknown[] }
 
 export async function checkLessons(
   issues: Issues, topics: Map<string, Topic>, harness: (() => Promise<Harness>) | null,
+  rDriver: (() => Promise<RDriver>) | null = null,
 ): Promise<LessonCheckResult> {
   const loaded = await loadLessons(issues);
   const generated = new Map<string, GeneratedLesson>();
@@ -556,10 +837,13 @@ export async function checkLessons(
 
   for (const { lesson } of loaded) {
     if (!nonEmpty(lesson?.id)) continue;
-    if (harness) {
+    const runner = langOf(lesson) === 'r' ? rDriver : harness;
+    if (runner) {
       const sc = scope(issues, 'lessons', lesson.id);
       try {
-        generated.set(lesson.id, runBlocks(await harness(), lesson, sc));
+        generated.set(lesson.id, langOf(lesson) === 'r'
+          ? await runRBlocks(await (rDriver as () => Promise<RDriver>)(), lesson, sc)
+          : runBlocks(await (harness as () => Promise<Harness>)(), lesson, sc));
       } catch (e) {
         issues.error('lessons', lesson.id, `running blocks crashed: ${(e as Error).message}`);
       }

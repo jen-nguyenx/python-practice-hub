@@ -1,0 +1,363 @@
+{
+  "s0-b1": {
+    "shell": [
+      {
+        "source": "2 + 3 * 4",
+        "stdout": "[1] 14\n"
+      },
+      {
+        "source": "sqrt(16)",
+        "stdout": "[1] 4\n"
+      },
+      {
+        "source": "x <- 7",
+        "stdout": ""
+      },
+      {
+        "source": "x",
+        "stdout": "[1] 7\n"
+      },
+      {
+        "source": "x * 2",
+        "stdout": "[1] 14\n"
+      },
+      {
+        "source": "y <- x + 1",
+        "stdout": ""
+      },
+      {
+        "source": "y",
+        "stdout": "[1] 8\n"
+      }
+    ]
+  },
+  "s1-b1": {
+    "shell": [
+      {
+        "source": "breaks <- c(26, 30, 54, 25, 70)",
+        "stdout": ""
+      },
+      {
+        "source": "length(breaks)",
+        "stdout": "[1] 5\n"
+      },
+      {
+        "source": "breaks + 1",
+        "stdout": "[1] 27 31 55 26 71\n"
+      },
+      {
+        "source": "breaks / 10",
+        "stdout": "[1] 2.6 3.0 5.4 2.5 7.0\n"
+      },
+      {
+        "source": "mean(breaks)",
+        "stdout": "[1] 41\n"
+      },
+      {
+        "source": "sd(breaks)",
+        "stdout": "[1] 20.07486\n"
+      },
+      {
+        "source": "summary(breaks)",
+        "stdout": "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n     25      26      30      41      54      70 \n"
+      }
+    ]
+  },
+  "s1-b2": {
+    "stdout": "[1] -5  0  5\n"
+  },
+  "s1-b5": {
+    "shell": [
+      {
+        "source": "x <- c(2.567, 3.141, 10.5)",
+        "stdout": ""
+      },
+      {
+        "source": "round(x, digits = 1)",
+        "stdout": "[1]  2.6  3.1 10.5\n"
+      },
+      {
+        "source": "round(digits = 1, x = x)",
+        "stdout": "[1]  2.6  3.1 10.5\n"
+      },
+      {
+        "source": "seq(from = 0, to = 20, by = 5)",
+        "stdout": "[1]  0  5 10 15 20\n"
+      },
+      {
+        "source": "seq(0, 20, 5)",
+        "stdout": "[1]  0  5 10 15 20\n"
+      },
+      {
+        "source": "rep(\"A\", times = 3)",
+        "stdout": "[1] \"A\" \"A\" \"A\"\n"
+      }
+    ]
+  },
+  "s2-b1": {
+    "shell": [
+      {
+        "source": "breaks <- c(26, 30, 54, 25, 70)",
+        "stdout": ""
+      },
+      {
+        "source": "breaks[1]",
+        "stdout": "[1] 26\n"
+      },
+      {
+        "source": "breaks[c(2, 4)]",
+        "stdout": "[1] 30 25\n"
+      },
+      {
+        "source": "breaks[-1]",
+        "stdout": "[1] 30 54 25 70\n"
+      },
+      {
+        "source": "breaks > 28",
+        "stdout": "[1] FALSE  TRUE  TRUE FALSE  TRUE\n"
+      },
+      {
+        "source": "breaks[breaks > 28]",
+        "stdout": "[1] 30 54 70\n"
+      },
+      {
+        "source": "sum(breaks > 28)",
+        "stdout": "[1] 3\n"
+      }
+    ]
+  },
+  "s2-b3": {
+    "stdout": "[1]  8 12\n"
+  },
+  "s3-b1": {
+    "shell": [
+      {
+        "source": "head(mtcars, 3)",
+        "stdout": "               mpg cyl disp  hp drat    wt  qsec vs am gear carb\nMazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4\nMazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4\nDatsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1\n"
+      },
+      {
+        "source": "nrow(mtcars)",
+        "stdout": "[1] 32\n"
+      },
+      {
+        "source": "names(mtcars)",
+        "stdout": " [1] \"mpg\"  \"cyl\"  \"disp\" \"hp\"   \"drat\" \"wt\"   \"qsec\" \"vs\"   \"am\"   \"gear\"\n[11] \"carb\"\n"
+      },
+      {
+        "source": "str(mtcars[, 1:4])",
+        "stdout": "'data.frame':\t32 obs. of  4 variables:\n $ mpg : num  21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...\n $ cyl : num  6 6 4 6 8 6 8 4 4 6 ...\n $ disp: num  160 160 108 258 360 ...\n $ hp  : num  110 110 93 110 175 105 245 62 95 123 ...\n"
+      }
+    ]
+  },
+  "s3-b3": {
+    "shell": [
+      {
+        "source": "mtcars$mpg[1:5]",
+        "stdout": "[1] 21.0 21.0 22.8 21.4 18.7\n"
+      },
+      {
+        "source": "mtcars[1:3, c(\"mpg\", \"wt\")]",
+        "stdout": "               mpg    wt\nMazda RX4     21.0 2.620\nMazda RX4 Wag 21.0 2.875\nDatsun 710    22.8 2.320\n"
+      },
+      {
+        "source": "mtcars[mtcars$mpg > 30, c(\"mpg\", \"hp\")]",
+        "stdout": "                mpg  hp\nFiat 128       32.4  66\nHonda Civic    30.4  52\nToyota Corolla 33.9  65\nLotus Europa   30.4 113\n"
+      },
+      {
+        "source": "subset(mtcars, mpg > 30, select = c(mpg, hp))",
+        "stdout": "                mpg  hp\nFiat 128       32.4  66\nHonda Civic    30.4  52\nToyota Corolla 33.9  65\nLotus Europa   30.4 113\n"
+      }
+    ]
+  },
+  "s3-b4": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "[1] 13\n               mpg cyl  hp    wt\nMazda RX4     21.0   6 110 2.620\nMazda RX4 Wag 21.0   6 110 2.875\nDatsun 710    22.8   4  93 2.320\nFiat 128      32.4   4  66 2.200\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n  15.00   21.00   22.80   24.39   30.40   33.90 \n",
+          "values": {
+            "counts": [
+              8,
+              3,
+              2
+            ]
+          }
+        },
+        "1": {
+          "stdout": "[1] 6\n                mpg cyl hp    wt\nFiat 128       32.4   4 66 2.200\nHonda Civic    30.4   4 52 1.615\nToyota Corolla 33.9   4 65 1.835\nFiat X1-9      27.3   4 66 1.935\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n  26.00   28.07   30.40   30.07   31.90   33.90 \n",
+          "values": {
+            "counts": [
+              6,
+              0,
+              0
+            ]
+          }
+        },
+        "2": {
+          "stdout": "[1] 7\n                     mpg cyl  hp    wt\nDuster 360          14.3   8 245 3.570\nCadillac Fleetwood  10.4   8 205 5.250\nLincoln Continental 10.4   8 215 5.424\nChrysler Imperial   14.7   8 230 5.345\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n  10.40   11.85   14.30   13.41   14.85   15.80 \n",
+          "values": {
+            "counts": [
+              0,
+              0,
+              7
+            ]
+          }
+        },
+        "3": {
+          "stdout": "[1] 5\n               mpg cyl  hp    wt\nMazda RX4     21.0   6 110 2.620\nMazda RX4 Wag 21.0   6 110 2.875\nLotus Europa  30.4   4 113 1.513\nFerrari Dino  19.7   6 175 2.770\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n   19.7    21.0    21.0    22.7    21.4    30.4 \n",
+          "values": {
+            "counts": [
+              2,
+              3,
+              0
+            ]
+          }
+        }
+      },
+      "shared": {
+        "engines": [
+          "4 cylinders",
+          "6 cylinders",
+          "8 cylinders"
+        ]
+      }
+    }
+  },
+  "s4-b1": {
+    "shell": [
+      {
+        "source": "str(warpbreaks)",
+        "stdout": "'data.frame':\t54 obs. of  3 variables:\n $ breaks : num  26 30 54 25 70 52 51 26 67 18 ...\n $ wool   : Factor w/ 2 levels \"A\",\"B\": 1 1 1 1 1 1 1 1 1 1 ...\n $ tension: Factor w/ 3 levels \"L\",\"M\",\"H\": 1 1 1 1 1 1 1 1 1 2 ...\n"
+      },
+      {
+        "source": "levels(warpbreaks$tension)",
+        "stdout": "[1] \"L\" \"M\" \"H\"\n"
+      },
+      {
+        "source": "table(warpbreaks$tension)",
+        "stdout": "\n L  M  H \n18 18 18 \n"
+      },
+      {
+        "source": "f <- factor(c(\"low\", \"high\", \"medium\", \"high\"))",
+        "stdout": ""
+      },
+      {
+        "source": "levels(f)",
+        "stdout": "[1] \"high\"   \"low\"    \"medium\"\n"
+      },
+      {
+        "source": "f2 <- factor(c(\"low\", \"high\", \"medium\", \"high\"), levels = c(\"low\", \"medium\", \"high\"))",
+        "stdout": ""
+      },
+      {
+        "source": "levels(f2)",
+        "stdout": "[1] \"low\"    \"medium\" \"high\"  \n"
+      }
+    ]
+  },
+  "s4-b3": {
+    "experiment": {
+      "runs": {
+        "0": {
+          "stdout": "[1] \"L\" \"M\" \"H\"\n  M H\nL 0 0\nM 1 0\nH 0 1\n    L     M     H \n36.39 26.39 21.67 \n     L      M      H \n  0.00 -10.00 -14.72 \n",
+          "values": {
+            "gap": [
+              0,
+              -10,
+              -14.72
+            ]
+          }
+        },
+        "1": {
+          "stdout": "[1] \"M\" \"L\" \"H\"\n  L H\nM 0 0\nL 1 0\nH 0 1\n    M     L     H \n26.39 36.39 21.67 \n    M     L     H \n 0.00 10.00 -4.72 \n",
+          "values": {
+            "gap": [
+              10,
+              0,
+              -4.72
+            ]
+          }
+        },
+        "2": {
+          "stdout": "[1] \"H\" \"L\" \"M\"\n  L M\nH 0 0\nL 1 0\nM 0 1\n    H     L     M \n21.67 36.39 26.39 \n    H     L     M \n 0.00 14.72  4.72 \n",
+          "values": {
+            "gap": [
+              14.72,
+              4.72,
+              0
+            ]
+          }
+        }
+      },
+      "shared": {
+        "tension": [
+          "L",
+          "M",
+          "H"
+        ]
+      }
+    }
+  },
+  "s5-b1": {
+    "shell": [
+      {
+        "source": "oz <- c(41, 36, NA, 18)",
+        "stdout": ""
+      },
+      {
+        "source": "mean(oz)",
+        "stdout": "[1] NA\n"
+      },
+      {
+        "source": "is.na(oz)",
+        "stdout": "[1] FALSE FALSE  TRUE FALSE\n"
+      },
+      {
+        "source": "sum(is.na(oz))",
+        "stdout": "[1] 1\n"
+      },
+      {
+        "error": {
+          "line": 5,
+          "message": "Error in mean.default(oz, TRUE) : 'trim' must be numeric of length one",
+          "type": "Error"
+        },
+        "source": "mean(oz, TRUE)",
+        "stdout": ""
+      },
+      {
+        "source": "mean(oz, na.rm = TRUE)",
+        "stdout": "[1] 31.66667\n"
+      }
+    ]
+  },
+  "s5-b3": {
+    "stdout": "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.     NAs \n   1.00   18.00   31.50   42.13   63.25  168.00      37 \n  Ozone Solar.R    Wind    Temp   Month     Day \n     37       7       0       0       0       0 \n[1] 153\n[1] 111\n"
+  },
+  "s6-b1": {
+    "stdout": "'data.frame':\t6 obs. of  3 variables:\n $ field: int  1 2 3 4 5 6\n $ spray: chr  \"A\" \"B\" \"A\" \"C\" ...\n $ count: int  10 11 7 2 17 1\n[1] \"A\" \"B\" \"C\"\n"
+  },
+  "s6-b3": {
+    "shell": [
+      {
+        "source": "tapply(warpbreaks$breaks, warpbreaks$tension, mean)",
+        "stdout": "       L        M        H \n36.38889 26.38889 21.66667 \n"
+      },
+      {
+        "source": "tapply(warpbreaks$breaks, warpbreaks$tension, median)",
+        "stdout": "   L    M    H \n29.5 27.0 20.5 \n"
+      },
+      {
+        "source": "tapply(InsectSprays$count, InsectSprays$spray, max)",
+        "stdout": " A  B  C  D  E  F \n23 21  7 12  6 26 \n"
+      },
+      {
+        "source": "tapply(airquality$Ozone, airquality$Month, mean)",
+        "stdout": " 5  6  7  8  9 \nNA NA NA NA NA \n"
+      },
+      {
+        "source": "tapply(airquality$Ozone, airquality$Month, mean, na.rm = TRUE)",
+        "stdout": "       5        6        7        8        9 \n23.61538 29.44444 59.11538 59.96154 31.44828 \n"
+      }
+    ]
+  }
+}

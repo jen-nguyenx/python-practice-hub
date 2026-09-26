@@ -3,6 +3,8 @@ import { useEffect, useState } from 'preact/hooks';
 import { href } from '../../app/router.ts';
 import { py, store } from '../../app/services.ts';
 import type { Settings as SettingsT } from '../../engine/types.ts';
+import type { UnitId } from '../../content/units.ts';
+import { UNIT_IDS, UNITS, unitOf } from '../../content/units.ts';
 import { LinkButton } from '../components/Button.tsx';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { Icon } from '../components/Icon.tsx';
@@ -24,6 +26,7 @@ const ACCENT_OPTIONS: { id: SettingsT['accent']; label: string }[] = [
 const PYODIDE_VERSION = '314.0.7';
 
 const SECTIONS = [
+  { id: 'unit', label: 'Your unit' },
   { id: 'appearance', label: 'Appearance' },
   { id: 'editor', label: 'Editor' },
   { id: 'progress', label: 'Progress' },
@@ -134,6 +137,22 @@ export function Settings() {
         </nav>
 
         <div class="set-sections">
+          <SettingsSection id="unit" title="Your unit">
+            <SettingRow
+              id="set-course"
+              label="Which unit you are studying"
+              desc={`Decides your home page, the lessons on offer and the tools in the bar. ${UNITS.cits1401.code} is in Python, ${UNITS.stat2402.code} in R. Switching keeps everything you have done in both.`}
+              stack
+            >
+              <Segmented<UnitId>
+                labelledBy="set-course-label"
+                value={unitOf(s)}
+                onChange={(v) => set({ unit: v })}
+                options={UNIT_IDS.map((id) => ({ value: id, label: <>{UNITS[id].code}</> }))}
+              />
+            </SettingRow>
+          </SettingsSection>
+
           <SettingsSection id="appearance" title="Appearance">
             <SettingRow id="set-theme" label="Theme" desc="System follows your computer's light or dark setting.">
               <Segmented<SettingsT['theme']>
@@ -263,12 +282,12 @@ export function Settings() {
             <SettingRow
               id="set-privacy"
               label="Privacy"
-              desc="Your progress stays in this browser. No accounts, no tracking. Only Python and fonts are downloaded."
+              desc="Your progress stays in this browser. No accounts, no tracking. Only Python (or R, for STAT2402) and fonts are downloaded."
             />
             <SettingRow
               id="set-unit"
               label="Not affiliated with UWA"
-              desc="Aligned with public CITS1401 materials. Check your LMS for this semester's rules."
+              desc="Aligned with public CITS1401 and STAT2402 materials. Check your LMS for this semester's rules."
             />
           </SettingsSection>
         </div>

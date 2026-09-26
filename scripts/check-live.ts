@@ -14,6 +14,7 @@ import type { SeedQuestion } from './lib/browser.ts';
 import {
   checkCalibration, checkConfidence, checkExamPlan, checkGlossary, checkPlacement, checkMainRoutes, checkPaletteReference,
   checkMarketsSwitch, checkNavExpands, checkPhoneNav, checkProjectBuild, checkReferenceSearch, checkReportSections, checkRevisionPack, checkTermMarks, checkReviewSession, visit,
+  checkStatExams, checkStatPath, checkUnitChooser,
 } from './lib/checks.ts';
 import type { Ctx } from './lib/checks.ts';
 
@@ -58,8 +59,10 @@ try {
       ? `Serving your local build (${mine}).`
       : `NOTE: serving ${served}, your local build is ${mine}. If you just deployed, the CDN may still be catching up.`);
   }
+  // A first visit asks which unit; everything below is written for CITS1401.
+  await checkUnitChooser(c);
   if (!(await waitForPython(page))) failures.push('Python never reported itself ready');
-  // A first visit opens the welcome tour, whose dialog swallows every click after it.
+  // Choosing CITS1401 opens the welcome tour, whose dialog swallows every click after it.
   await dismissTour(page);
 
   await checkMainRoutes(c);
@@ -84,6 +87,10 @@ try {
   await checkMarketsSwitch(c);
   // Just past the seeded history, in a topic that history has unlocked.
   await checkConfidence(c, (index[41] ?? index[index.length - 1]).qid);
+  // Last, because it downloads R: the STAT2402 path and the R sandbox on what students actually have.
+  const lessonIndex: { track: string }[] = JSON.parse(readFileSync('src/content/generated/lesson-index.json', 'utf8'));
+  await checkStatPath(c, lessonIndex.filter((l) => l.track === 'stat2402').length);
+  await checkStatExams(c);
 } catch (e) {
   // A check that throws is a failed check, not a crashed script: say which one and keep the rest.
   failures.push(`check threw: ${(e as Error).message.split('\n')[0]}`);

@@ -378,6 +378,7 @@ a.tp-q:focus-visible { outline: 2px solid var(--focus); outline-offset: -3px; bo
 .wi-tick.is-at .wi-dot { box-shadow: inset 0 0 0 1px var(--text), 0 0 0 3px var(--bg); outline: 2px solid var(--text); outline-offset: 2px; }
 .wi-tick.is-at .wi-tick-n { color: var(--text); font-weight: 700; }
 .wi-plot .wi-dotm { stroke: var(--surface); stroke-width: 1.5; }
+.wi-plot .wi-dotp { fill: var(--text-faint); opacity: 0.55; }
 .wi-plot .wi-dotm.is-a { fill: var(--blue); }
 .wi-plot .wi-dotm.is-b { fill: var(--hint); }
 .wi-plot .wi-dotm.is-c { fill: var(--text); }

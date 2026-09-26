@@ -59,17 +59,24 @@ export function AppShell({ route, children }: { route: Route; children: Componen
   // question, the Playground and the tests warm it up themselves, and the pill can start it by hand.
   useEffect(() => {
     if (warmed.current) return;
+    // A STAT2402 student's code is R; downloading Python for them would be ten megabytes for nothing. So
+    // the home page's "which unit?" is answered first, and Python starts only if the answer is CITS1401.
+    if (settings.unit === 'stat2402' || (settings.unit === null && route.name === 'landing')) return;
     warmed.current = true;
     if (savingData()) return;
     scheduleIdle(() => {
       try { py.warmUp(); } catch { /* the pill shows the error state */ }
     });
-  }, []);
+  }, [settings.unit, route.name]);
 
   // First-run tour.
   useEffect(() => {
-    if (ready && !settings.seenTour && !NO_TOUR_ROUTES.includes(route.name) && !tourOpen.value) tourOpen.value = true;
-  }, [ready, settings.seenTour, route.name]);
+    // Not before the unit is chosen: the home page is asking that question, and the tour describes the
+    // CITS1401 ladder, so a STAT2402 student never gets it at all.
+    if (ready && !settings.seenTour && settings.unit === 'cits1401' && !NO_TOUR_ROUTES.includes(route.name) && !tourOpen.value) {
+      tourOpen.value = true;
+    }
+  }, [ready, settings.seenTour, settings.unit, route.name]);
 
   // "?" opens the shortcut sheet.
   useEffect(() => {

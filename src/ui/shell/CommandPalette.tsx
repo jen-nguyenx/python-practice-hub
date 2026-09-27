@@ -4,7 +4,7 @@
 import { Fragment } from 'preact';
 import { signal } from '@preact/signals';
 import { useEffect, useId, useMemo, useRef, useState } from 'preact/hooks';
-import { href, navigate } from '../../app/router.ts';
+import { href, navigate, route } from '../../app/router.ts';
 import { store } from '../../app/services.ts';
 import { FORMAT_LABEL } from '../../content/ids.ts';
 import { QUESTION_BY_ID, QUESTION_INDEX } from '../../content/loadIndex.ts';
@@ -22,7 +22,8 @@ import { continueInfo } from './homeData.ts';
 import { safeTopicProgress } from './progressData.ts';
 import { toggleTheme } from './ThemeToggle.tsx';
 import { glossaryJump, mainFill, paletteOpen, referenceJump, shortcutSheetOpen } from './uiState.ts';
-import { unitOf } from '../../content/units.ts';
+import { UNITS, unitOf } from '../../content/units.ts';
+import { switchUnitTo } from './UnitSwitch.tsx';
 
 type Group = 'Pages and actions' | 'Lessons' | 'Reference' | 'Glossary' | 'Topics' | 'Questions';
 interface Item {
@@ -48,7 +49,13 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
   const events = store.events.value;
   const settings = store.settings.value;
   const progress = safeTopicProgress(events, settings);
+  const other = unitOf(settings) === 'stat2402' ? UNITS.cits1401 : UNITS.stat2402;
+  const switchItem: Item = {
+    id: 'a-unit', group: 'Pages and actions', label: `Switch to ${other.code}`, detail: `${other.name}, in ${other.lang === 'r' ? 'R' : 'Python'}. Everything you have done stays.`,
+    icon: 'refresh', search: 'switch unit course change python r stat2402 cits1401 statistics', run: () => switchUnitTo(other.id, route.value),
+  };
   const actions: Item[] = [
+    switchItem,
     { id: 'a-home', group: 'Pages and actions', label: 'Topics', detail: 'Home', icon: 'ladder', search: 'home ladder', href: href.landing(), run: go(href.landing()) },
     { id: 'a-lessons', group: 'Pages and actions', label: 'Lessons', detail: 'Explanations from the beginning to beyond the unit', icon: 'book', search: 'learn teach read tutorial guide', href: href.lessons(), run: go(href.lessons()) },
     { id: 'a-revision', group: 'Pages and actions', label: 'Revision pack', detail: 'Every cheat sheet on one printable page', icon: 'download', search: 'print pdf paper cheat sheet revision pack closed book', href: href.revision(), run: go(href.revision()) },
@@ -135,7 +142,7 @@ function buildItems(): { items: Item[]; continueItem: Item | null } {
   // A STAT2402 student's app is their lessons and R. The topics, questions, Python reference and glossary
   // are CITS1401's, and searching "regression" should not turn up a Python recipe.
   if (unitOf(settings) === 'stat2402') {
-    const keep = new Set(['a-lessons', 'a-settings', 'a-theme', 'a-keys']);
+    const keep = new Set(['a-unit', 'a-lessons', 'a-settings', 'a-theme', 'a-keys']);
     const statActions: Item[] = [
       { id: 'a-home', group: 'Pages and actions', label: 'Home', detail: 'Your STAT2402 path', icon: 'home', search: 'home path start', href: href.landing(), run: go(href.landing()) },
       ...actions.filter((a) => keep.has(a.id)),

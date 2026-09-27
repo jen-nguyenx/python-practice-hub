@@ -54,6 +54,9 @@ html, body { height: 100%; overflow: hidden; }
 .tb-sep { flex: none; margin: 0 8px; color: var(--text-faint); font-weight: 400; }
 
 .tb-tools { flex: none; display: flex; align-items: center; gap: var(--sp-3); }
+/* The unit switch: both units always in sight, the one in force pressed in. Codes on a wide screen, the language on a phone. */
+.tb-unit .segm-opt { font-family: var(--mono); letter-spacing: 0.04em; }
+.tb-unit-lang { display: none; }
 .tb-search {
   display: inline-flex; align-items: center; gap: 8px; width: 260px; height: 32px; padding: 0 8px 0 10px;
   border: 1px solid var(--border); border-radius: var(--r-2); background: var(--bg); color: var(--text-muted);
@@ -231,6 +234,9 @@ html, body { height: 100%; overflow: hidden; }
   .tb-logo { width: 48px; }
   .tb-logo .logo-mark { width: 28px; height: 28px; }
   .tb-tools { gap: 4px; }
+  .tb-unit-code { display: none; }
+  .tb-unit-lang { display: inline; }
+  .tb-unit .segm-opt { font-family: var(--sans); letter-spacing: 0; padding: 0 8px; }
   /* On a phone the bar is a row along the bottom, where opening it makes no sense. */
   .actbar, .actbar.is-wide { flex-direction: row; gap: 0; width: auto; padding: 0 0 env(safe-area-inset-bottom); border-right: 0; border-top: 1px solid var(--border); overflow: hidden; }
   .actbar-toggle { display: none; }

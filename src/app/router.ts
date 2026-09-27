@@ -88,6 +88,15 @@ export function navigate(path: string, replace = false) {
   location.hash = target;
 }
 
+/**
+ * Pages both units have, each showing that unit's own version (#/exam and #/report pick by unit). Switching
+ * unit on any other page -- a Python question, an R lesson, the R Playground -- lands on the new unit's home.
+ */
+export function routeSurvivesUnitSwitch(r: Route): boolean {
+  if (r.name === 'report') return !r.topicId;
+  return r.name === 'landing' || r.name === 'lessons' || r.name === 'exam' || r.name === 'settings';
+}
+
 export const href = {
   landing: () => '#/',
   topic: (id: string) => `#/topic/${id}`,

@@ -569,6 +569,20 @@ export async function checkStatPath(c: Ctx, lessonCount: number): Promise<void> 
     if (bar.length !== 6) c.fail(`STAT2402 bar: ${bar.length} destinations, expected Home, Lessons, Exams, Progress, R Playground and Settings`);
     if (bar.some((t) => /Review|Look up/.test(t))) c.fail('STAT2402 bar: still offers a CITS1401 destination');
 
+    // The way back: the title bar's unit switch, on every page, to Python's ladder and back again.
+    const unitSwitch = (code: string) => page.locator('.tb-unit [role="radio"]', { hasText: code }).first();
+    if ((await unitSwitch('CITS1401').count()) === 0) c.fail('title bar: a STAT2402 student has no switch back to CITS1401');
+    else {
+      await unitSwitch('CITS1401').click();
+      if (!(await page.locator('.tiles').first().waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false))) {
+        c.fail('title bar: switching to CITS1401 did not show the topic ladder');
+      }
+      await unitSwitch('STAT2402').click();
+      if (!(await page.locator('.stat-home').first().waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false))) {
+        c.fail('title bar: switching back to STAT2402 did not show its home');
+      }
+    }
+
     await visit(c, '#/lessons');
     const tracks = await page.locator('.lx-track-title').allInnerTexts();
     if (!tracks.includes('STAT2402')) c.fail('#/lessons: the STAT2402 track is missing for a STAT2402 student');

@@ -1,6 +1,6 @@
-// Cursor spotlight (the pixel "travelling rim"), adapted from Jen's landing page.
+// Cursor spotlight (the "travelling rim"), adapted from Jen's landing page.
 // Writes the pointer coordinates that src/styles/spotlight.css reads:
-//   --mx/--my  on a surface: pointer coords local to that element, so its pixels are brightest nearest the cursor.
+//   --mx/--my  on a surface: pointer coords local to that element, so its rim is brightest nearest the cursor.
 // Only a hovered surface is lit, so only the surfaces under the pointer are written: the innermost one and
 // any it sits inside. The lessons page has dozens of cards, and measuring each one on every frame would be
 // a layout read per card per frame for light nobody can see.

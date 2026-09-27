@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { sanitizeExport } from './validate.ts';
 import { assembleParsons, PARSONS_MAX_INDENT } from '../engine/grade.ts';
-import { parseHash } from '../app/router.ts';
+import { parseHash, routeSurvivesUnitSwitch } from '../app/router.ts';
 
 const file = (extra: Record<string, unknown>) => ({ format: 'pyladder-export', version: 1, exportedAt: 1, events: [], ...extra });
 
@@ -56,6 +56,14 @@ describe('hash router', () => {
     expect(() => parseHash('#/topic/%')).not.toThrow();
     expect(parseHash('#/topic/%').name).toBe('topic');
     expect(() => parseHash('#/q/%E0%A4%A')).not.toThrow();
+  });
+
+  it('keeps a page through a unit switch only when both units have it', () => {
+    for (const h of ['#/', '#/lessons', '#/exam', '#/report', '#/settings']) expect(routeSurvivesUnitSwitch(parseHash(h))).toBe(true);
+    // A Python question, one topic's report, an R lesson's quiz and the R Playground each belong to one unit.
+    for (const h of ['#/q/t01-s1-q1', '#/report/strings', '#/quiz/regression-in-r', '#/r', '#/playground', '#/lesson/core-strings']) {
+      expect(routeSurvivesUnitSwitch(parseHash(h))).toBe(false);
+    }
   });
 
   it('still decodes a valid escape', () => {

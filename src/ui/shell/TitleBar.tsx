@@ -14,6 +14,7 @@ import { ThemeToggle } from './ThemeToggle.tsx';
 import { paletteOpen } from './uiState.ts';
 import { store } from '../../app/services.ts';
 import { unitOf } from '../../content/units.ts';
+import { UnitSwitch } from './UnitSwitch.tsx';
 
 export interface Crumb { label: string; href?: string }
 
@@ -93,6 +94,7 @@ export function TitleBar({ route }: { route: Route }) {
       </a>
       <Breadcrumb route={route} />
       <div class="tb-tools">
+        <UnitSwitch route={route} />
         <button
           type="button"
           class="tb-search"

@@ -68,7 +68,7 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 
 ## Rules that matter
 - **Two units, two paths.** `settings.unit` is null until the home page's "Which unit are you studying?"
-  is answered (changeable in Settings), and `unitOf()` treats null as CITS1401, so nothing changed for an
+  is answered (changeable any time from the title bar's unit switch, `UnitSwitch.tsx`, or Settings), and `unitOf()` treats null as CITS1401, so nothing changed for an
   existing student until they choose. Each track belongs to a unit (`TRACK_UNIT`); `visibleTracks()` is
   the one rule, and a unit sees only its own tracks (Markets belongs to neither and keeps its switch).
   STAT2402 gets its own home, a six-item bar (Home, Lessons, Exams, Progress, R Playground, Settings), an R

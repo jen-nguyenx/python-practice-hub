@@ -568,6 +568,10 @@ export async function checkStatPath(c: Ctx, lessonCount: number): Promise<void> 
     const bar = await page.locator('.actbar-item').allInnerTexts();
     if (bar.length !== 6) c.fail(`STAT2402 bar: ${bar.length} destinations, expected Home, Lessons, Exams, Progress, R Playground and Settings`);
     if (bar.some((t) => /Review|Look up/.test(t))) c.fail('STAT2402 bar: still offers a CITS1401 destination');
+    // The unit switch flips between the two bars in one click, so the destinations both have keep one order.
+    const names = await page.locator('.actbar-item').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? ''));
+    const want = ['Home', 'Lessons', 'R Playground', 'Exams', 'Progress', 'Settings'];
+    if (names.join('|') !== want.join('|')) c.fail(`STAT2402 bar: ${names.join(', ')}, not ${want.join(', ')} (the CITS1401 order)`);
 
     // The way back: the title bar's unit switch, on every page, to Python's ladder and back again.
     const unitSwitch = (code: string) => page.locator('.tb-unit [role="radio"]', { hasText: code }).first();

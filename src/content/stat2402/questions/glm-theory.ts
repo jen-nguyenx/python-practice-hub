@@ -11,6 +11,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'A GLM has three parts: a distribution for the response, a linear predictor and a link. Which of them does the formula `count ~ spray` set in this model?',
     code: 'fit <- glm(count ~ spray, family = poisson, data = InsectSprays)\nfamily(fit)\n',
     options: [
@@ -26,6 +27,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'Under this family, with one value of φ for the whole model, two observations have means 2 and 4. How does the standard deviation of the second compare with the first?',
     code: 'fam <- Gamma()\nfam$variance(c(1, 2, 4))\n',
     options: [
@@ -41,6 +43,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'The binomial variance function is V(μ) = μ(1 − μ). What does this print?',
     code: 'fam <- binomial()\nfam$variance(c(0.2, 0.5))\n',
     choices: [
@@ -56,6 +59,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'The same model is refitted as `glm(dist ~ speed, family = gaussian, data = cars)`. What dispersion will `summary()` of that fit report? Give it to one decimal place.',
     code: 'fit <- lm(dist ~ speed, data = cars)\nsummary(fit)$sigma\n',
     answer: 'round(summary(fit)$sigma^2, 1)',
@@ -68,6 +72,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'This is the linear predictor for a car weighing 3 thousand pounds. What probability of a manual gearbox does the model give it? Give it to three decimal places.',
     code: 'fit <- glm(am ~ wt, family = binomial, data = mtcars)\npredict(fit, data.frame(wt = 3))\n',
     answer: 'round(plogis(predict(fit, data.frame(wt = 3))), 3)',
@@ -79,6 +84,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'Why do these two fits give the same coefficients?',
     code: 'coef(lm(dist ~ speed, data = cars))\ncoef(glm(dist ~ speed, family = gaussian, data = cars))\n',
     options: [
@@ -94,6 +100,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'What does the quasi-Poisson family specify?',
     code: 'fam <- quasipoisson()\nfam$link\nfam$variance(c(1, 5))\nfam$dispersion\n',
     options: [
@@ -109,6 +116,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'choice',
     marks: 2,
+    diff: 'hard',
     prompt: 'R uses each family\'s canonical link as its default. Which of these default links does **not** guarantee that a fitted mean lies in the range its response can take?',
     options: [
       { text: 'The Gamma family\'s inverse link, 1/μ: a negative linear predictor gives a negative mean, though a Gamma response is always positive', correct: true },
@@ -123,6 +131,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'Someone fits this model and gets this output. What should they do next?',
     code: 'fit <- glm(am ~ wt, family = binomial, data = mtcars, control = glm.control(maxit = 3))\nfit$converged\n',
     options: [
@@ -138,6 +147,7 @@ const questions: StatQuestion[] = [
     lessonId: 'glm-theory',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt: 'Write a function `to_link(fit, mu)` that takes a fitted `glm()` and some means on its response scale, and returns them on the link scale. Use the fit\'s own link function, `family(fit)$linkfun`, so the same function works for any family.',
     run: 'function',
     fnName: 'to_link',

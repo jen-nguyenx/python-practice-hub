@@ -49,7 +49,7 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `src/ui/shell/landing/UnitChooser.tsx`, `StatHome.tsx` | The first-visit "which unit?" question, and STAT2402's home |
 | `src/content/statQuestionSchema.ts`, `stat2402/questions/` | STAT2402 exam questions, one file per lesson; checked by `scripts/verify/statQuestions.ts` |
 | `src/engine/statExam.ts`, `src/ui/stat/`, `StatExams.tsx`, `StatQuiz.tsx` | STAT2402 exams: lesson quizzes (`#/quiz/:id`), practice test and mock final (`#/exam`) |
-| `src/engine/statProgress.ts`, `StatProgress.tsx` | STAT2402 progress (`#/report`): lessons read, marks per lesson and per kind rebuilt from `stat_test` events, what to work on |
+| `src/engine/statProgress.ts`, `StatProgress.tsx` | STAT2402 progress (`#/report`): lessons read, marks per lesson, per difficulty and per kind rebuilt from `stat_test` events, what to work on |
 | `src/content/recipes/`, `recipeSchema.ts` | The reference: one file per area, every snippet run by the verifier |
 | `src/content/conceptWords.ts` | Concept tags in a student's words; nothing shows a raw tag |
 | `src/content/glossary.ts`, `glossarySchema.ts` | The glossary: one entry per word the course uses, each demo run by the verifier |
@@ -65,13 +65,14 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
 | `docs/plan/PLAN.md` | Product plan (§0 amendments override the rest) |
 | `docs/build/CONTRACTS.md` | Architecture, event logging, ownership rules |
 | `docs/build/CONTENT.md` | How to write questions (mix table, quality bar, concept order) |
+| `docs/build/ADDING.md` | What every unit, topic and lesson must ship with (difficulty, exams, Progress, hover, checks), and where each lives. Read before adding one |
 
 ## Rules that matter
 - **Two units, two paths.** `settings.unit` is null until the home page's "Which unit are you studying?"
   is answered (changeable any time from the title bar's unit switch, `UnitSwitch.tsx`, or Settings), and `unitOf()` treats null as CITS1401, so nothing changed for an
   existing student until they choose. Each track belongs to a unit (`TRACK_UNIT`); `visibleTracks()` is
   the one rule, and a unit sees only its own tracks (Markets belongs to neither and keeps its switch).
-  STAT2402 gets its own home, a six-item bar (Home, Lessons, Exams, Progress, R Playground, Settings), an R
+  STAT2402 gets its own home, a six-item bar (Home, Lessons, R Playground, Exams, Progress, Settings: CITS1401's bar filtered, so shared destinations keep one order), an R
   runtime pill, a lessons-and-exams palette, and no tour; Python is never warmed for it. Everything CITS1401
   has -- topics, questions, tests, the run-in, the report -- is untouched and unreachable from the STAT2402 bar;
   `#/exam` and `#/report` show whichever unit's exams and progress are in force. One browser keeps one event
@@ -87,7 +88,8 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
   "STAT2402 lessons (R)" in `docs/build/CONTENT.md`.
 - **STAT2402 exams are the lesson rule applied to tests.** A quiz for every lesson, a practice test and a
   mock final (100 marks, two hours) draw from `src/content/stat2402/questions/`, where every lesson must
-  have at least six questions. Each shows R code with the output the verifier recorded; a number
+  have at least six questions, every question a `diff` and every lesson at least one easy, one medium and
+  one hard (the same rubric as CITS1401). Each shows R code with the output the verifier recorded; a number
   question's right answer is an R expression the verifier evaluates, a predict question's right choice is
   proved to be R's output, and a write question is marked by running its tests in the browser's R. Results
   are `stat_test` events. It is its own runner (`src/ui/stat/`), not the CITS1401 one: the question bank,
@@ -100,6 +102,8 @@ Vite 8, TypeScript 7 (erasable syntax only, `verbatimModuleSyntax`, import local
   read a student's IndexedDB. `checkStatPath` in `scripts/lib/checks.ts` fails the smoke if it can.
   See SECURITY.md.
 - **Unlock rule** (`src/engine/progress.ts`): topic 1 always open; topic N+1 unlocks when topic N was opened and its `minimum` is met (questions solved without revealing the answer; hints are fine; `code` of them must be code formats), or its topic test was passed, or a **placement check** was answered through it (`placement` event — access only, the minimum still has to be met), or Settings "Unlock all topics" is on.
+- **A new unit, topic or lesson ships with everything the others have** -- difficulty on every question,
+  quizzes and a mock final, a Progress page, the hover, smoke checks. `docs/build/ADDING.md` is the list.
 - **Everything is derived from the append-only event log** (`src/engine/types.ts` `AppEvent`). Add a new event type rather than mutating state.
 - **Content changes must pass the verifier** with 0 errors: solutions pass tests in Pyodide, buggy variants and distractors fail tagged tests, read-format answers are generated not typed.
 - **A lesson never states what Python does.** Every output a reader sees in `src/content/lessons/**` is

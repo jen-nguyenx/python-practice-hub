@@ -14,7 +14,7 @@ export function DiffView({ before, after, beforeLabel = 'Before', afterLabel = '
     changed = Math.max(rows.filter((r) => r.kind === 'del').length, rows.filter((r) => r.kind === 'add').length);
   }
   return (
-    <figure class="diff">
+    <figure class="code-diff">
       <figcaption class="diff-caption">
         <span class="diff-key del">− {beforeLabel}</span>
         <span class="diff-key add">+ {afterLabel}</span>

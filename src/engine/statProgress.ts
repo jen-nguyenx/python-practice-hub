@@ -5,6 +5,8 @@
 // That is recovered from the bank: a quiz or practice test marks every question out of its own weight, and
 // the mock final shares 100 marks out in proportion to the weights (scaleMarks), so doing the same sum
 // again gives the same marks back.
+import type { Diff } from '../content/ids.ts';
+import { DIFFS } from '../content/ids.ts';
 import type { StatQuestion, StatQuestionKind } from '../content/statQuestionSchema.ts';
 import { STAT_QUESTION_KINDS } from '../content/statQuestionSchema.ts';
 import type { StatAttempt } from './statExam.ts';
@@ -27,6 +29,8 @@ export interface StatLessonRow {
   quiz: { best: number | null; last: number | null; attempts: number; lastTs: number | null };
   /** Every question from this lesson answered on any paper: a quiz, a practice test or a mock final. */
   marks: StatMarks;
+  /** The same, split by difficulty, as the CITS1401 report splits a topic. */
+  byDiff: Record<Diff, StatMarks>;
   label: 'strong' | 'weak' | 'ok' | 'not-started';
 }
 
@@ -47,6 +51,7 @@ export interface StatProgressData {
   mock: { best: StatAttempt | null; last: StatAttempt | null; attempts: number; percents: number[] };
   practice: { best: StatAttempt | null; last: StatAttempt | null; attempts: number };
   kinds: { kind: StatQuestionKind; marks: StatMarks }[];
+  diffs: { diff: Diff; marks: StatMarks }[];
   strengths: { lessonId: string; share: number }[];
   workOn: StatWorkOn[];
 }
@@ -78,6 +83,8 @@ export function statProgress(events: readonly AppEvent[], lessonOrder: readonly 
   const days = new Set<number>();
   const perLesson = new Map(lessonOrder.map((id) => [id, empty()]));
   const perKind = new Map(STAT_QUESTION_KINDS.map((k) => [k, empty()]));
+  const perDiff = new Map(DIFFS.map((d) => [d, empty()]));
+  const perLessonDiff = new Map(lessonOrder.map((id) => [id, { easy: empty(), medium: empty(), hard: empty() } as Record<Diff, StatMarks>]));
   const all = empty();
   let papers = 0;
 
@@ -97,7 +104,7 @@ export function statProgress(events: readonly AppEvent[], lessonOrder: readonly 
       const total = outOf[i];
       if (!q || total === null || total <= 0) return;
       const earned = Math.min(Math.max(ev.earned[i] ?? 0, 0), total);
-      for (const m of [perLesson.get(q.lessonId), perKind.get(q.kind), all]) {
+      for (const m of [perLesson.get(q.lessonId), perKind.get(q.kind), perDiff.get(q.diff), perLessonDiff.get(q.lessonId)?.[q.diff], all]) {
         if (!m) continue;
         m.earned += earned;
         m.total += total;
@@ -118,6 +125,7 @@ export function statProgress(events: readonly AppEvent[], lessonOrder: readonly 
       read: read.has(lessonId),
       quiz: { best: bestAttempt(quizzes)?.percent ?? null, last: quizzes[0]?.percent ?? null, attempts: quizzes.length, lastTs: quizzes[0]?.ts ?? null },
       marks,
+      byDiff: perLessonDiff.get(lessonId) ?? { easy: empty(), medium: empty(), hard: empty() },
       label,
     };
   });
@@ -149,6 +157,7 @@ export function statProgress(events: readonly AppEvent[], lessonOrder: readonly 
     mock: { best: bestAttempt(mocks), last: mocks[0] ?? null, attempts: mocks.length, percents: mocks.map((m) => m.percent).reverse() },
     practice: { best: bestAttempt(practices), last: practices[0] ?? null, attempts: practices.length },
     kinds: STAT_QUESTION_KINDS.map((kind) => ({ kind, marks: perKind.get(kind) ?? empty() })),
+    diffs: DIFFS.map((diff) => ({ diff, marks: perDiff.get(diff) ?? empty() })),
     strengths,
     workOn: workOn.slice(0, 4),
   };

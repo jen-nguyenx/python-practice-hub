@@ -33,6 +33,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'The second sample below has the same shape as the first, but a scale four times as big, so its mean is four times as big too. What happens to `sd / mean` and to the variance?',
     code:
       'set.seed(3)\n' +
@@ -55,6 +56,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'This model predicts a simulated insurance claim amount from the driver\'s age. What does the `age` estimate tell you?',
     code: `${CLAIMS}${CLAIMS_FIT}summary(fit)\nexp(coef(fit))\n`,
     options: [
@@ -71,6 +73,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'From the output, each extra year of age multiplies the expected claim amount by `exp(coef(fit)["age"])`. What percentage change is that? Give it to one decimal place.',
     code: `${CLAIMS}${CLAIMS_FIT}exp(coef(fit))\n`,
     answer: 'round(100 * (exp(coef(fit)[["age"]]) - 1), 1)',
@@ -83,6 +86,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt:
       'Two models for the same simulated claim amounts, predicting at ages older than any driver in the data. The first uses `family = Gamma`, R\'s default inverse link; the second uses `family = Gamma(link = "log")`. What do the predictions show?',
     code:
@@ -105,6 +109,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'This model\'s estimated dispersion is shown above. What is the estimated coefficient of variation of repair cost around its fitted mean? Give it to 2 decimal places.',
     code: `${REPAIRS}${REPAIRS_FIT}summary(fit)$dispersion\n`,
     answer: 'round(sqrt(summary(fit)$dispersion), 2)',
@@ -116,6 +121,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'Why does this comparison use `test = "F"` rather than `test = "Chisq"`?',
     code:
       'set.seed(5)\n' +
@@ -143,6 +149,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'Why do the `lm_log` predictions and the `lm_log` average both sit below the `gamma` ones?',
     code:
       `${CLAIMS}` +
@@ -165,6 +172,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt:
       'These amounts were simulated with the same spread at every fitted value (not growing with the mean), then fitted with a Gamma GLM anyway. `f` is the fitted values split into three equal-sized groups, and `r` the deviance residuals. What does the pattern below say?',
     code:
@@ -192,6 +200,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'Two samples with the same shape, 9. The second has a scale four times the first. What do the last two lines print?',
     code:
       'set.seed(60)\n' +
@@ -212,6 +221,7 @@ const questions: StatQuestion[] = [
     lessonId: 'gamma-regression',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt:
       'Write a function `multiplier(fit, predictor, delta)` that takes a Gamma `glm()` fitted with a log link, the name of one of its predictors as a string, and a change `delta` in that predictor. Return the factor by which the expected mean is multiplied for a change of `delta` in `predictor`, holding everything else fixed.',
     run: 'function',

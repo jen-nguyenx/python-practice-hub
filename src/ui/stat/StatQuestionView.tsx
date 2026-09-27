@@ -7,6 +7,7 @@ import type { StatAnswer, StatItem } from '../../engine/statExam.ts';
 import { correctAnswer, displayOrder } from '../../engine/statExam.ts';
 import { STAT_KIND_LABEL } from '../../content/statQuestionSchema.ts';
 import { normOutput } from '../../runtime/r/driver.ts';
+import { DiffChip } from '../components/Chip.tsx';
 import { CodeBlock } from '../components/CodeBlock.tsx';
 import { CodeLang } from '../components/codeLang.ts';
 import { Icon } from '../components/Icon.tsx';
@@ -50,6 +51,7 @@ export function StatQuestionView({ item, number, answer, onAnswer, review }: {
           <span>Question {number}</span>
           <span>{STAT_KIND_LABEL[q.kind]}</span>
           <span>{item.marks} {item.marks === 1 ? 'mark' : 'marks'}</span>
+          <span class="sq-diff"><DiffChip diff={q.diff} showText /></span>
         </p>
         <Markdown text={q.prompt} class="lb-md sq-prompt" />
 

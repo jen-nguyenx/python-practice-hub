@@ -11,6 +11,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'What does this print?',
     code:
       'fit <- glm(breaks ~ wool + tension, family = poisson, data = warpbreaks)\n' +
@@ -29,6 +30,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'Below are loom 5 of `warpbreaks` and its fitted value under a Poisson model. What is its Pearson residual? Give it to two decimal places.',
     code: 'fit <- glm(breaks ~ wool + tension, family = poisson, data = warpbreaks)\nwarpbreaks[5, ]\nfitted(fit)[5]\n',
     answer: 'round(residuals(fit, type = "pearson")[[5]], 2)',
@@ -40,6 +42,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: '`quakes` records 1000 earthquakes near Fiji, with each one\'s magnitude (`mag`) and how many seismic stations reported it (`stations`). Below are the Pearson residuals of a Poisson model, averaged over the low, middle and high thirds of its linear predictor. What do they suggest?',
     code:
       'fit <- glm(stations ~ mag, family = poisson, data = quakes)\n' +
@@ -58,6 +61,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'A Poisson model is fitted to 150 simulated counts. The first line below is the average Pearson residual in the low, middle and high thirds of the linear predictor; the second is their standard deviation. What is wrong with the model?',
     code:
       'set.seed(6)\n' +
@@ -81,6 +85,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'Below are the Pearson residual and the hat value of plot 39 in `InsectSprays`, under a Poisson model. Work out its standardised residual, r / √(1 − h), and give it to two decimal places.',
     code:
       'fit <- glm(count ~ spray, family = poisson, data = InsectSprays)\n' +
@@ -95,6 +100,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'This model predicts a car\'s number of carburettors from its weight. The output shows the number of coefficients, the number of cars, and the six largest hat values. How many cars have a hat value above the 2p/n rule of thumb?',
     code:
       'fit <- glm(carb ~ wt, family = poisson, data = mtcars)\n' +
@@ -111,6 +117,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'An observation has a hat value far above 2p/n, but its Cook\'s distance is tiny. What does that tell you?',
     options: [
       { text: 'Its predictor values are unusual, but its response is in line with the rest, so leaving it out would barely change the fit', correct: true },
@@ -125,6 +132,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'The code finds the observation with the largest Cook\'s distance and refits the model without it. What is the right reading?',
     code:
       'set.seed(12)\n' +
@@ -147,6 +155,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'choice',
     marks: 2,
+    diff: 'hard',
     prompt: 'These 50 counts were drawn from exactly the Poisson model that was fitted. The table shows every value their deviance residuals take, and how often. A normal quantile plot of residuals like these can only be a few flat steps. What is the right conclusion?',
     code:
       'set.seed(1)\n' +
@@ -166,6 +175,7 @@ const questions: StatQuestion[] = [
     lessonId: 'residual-diagnostics',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt: 'Write a function `most_influential(fit)` that takes a fitted `glm()` and returns the row number of the observation with the largest Cook\'s distance, as a single number. The tests accept it with or without a name.',
     run: 'function',
     fnName: 'most_influential',

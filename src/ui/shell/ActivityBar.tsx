@@ -1,7 +1,7 @@
 // 52px icon bar down the left side (docs/build/DESIGN.md "Frame"): Topics, Lessons, Playground, Review, Exams, Report, then Settings
 // at the bottom. Muted 20px icons; the current section is ink with a 2px accent bar on its left edge. Under 700px it
-// becomes a bottom tab bar with short labels. A STAT2402 student gets a shorter bar: their home, their lessons,
-// their exams, their progress, the R Playground and Settings -- the rest is built on CITS1401's questions.
+// becomes a bottom tab bar with short labels. A STAT2402 student gets a shorter bar in the same order: their home, their lessons,
+// the R Playground, their exams, their progress and Settings -- the rest is built on CITS1401's questions.
 import { Fragment } from 'preact';
 import { href } from '../../app/router.ts';
 import type { Route } from '../../app/router.ts';
@@ -27,18 +27,21 @@ export const NAV: { key: NavKey; label: string; short: string; tiny?: string; ic
 ];
 
 /**
- * STAT2402's bar. Exams opens STAT2402's own R papers and Progress its own report (#/report shows whichever
- * unit is in force, as #/exam does); Review and Look up stand on the CITS1401 question bank and the Python
- * reference, so offering them here would send a statistics student to a Python ladder.
+ * STAT2402's bar: CITS1401's, with the Python-only destinations left out and two relabelled. Exams opens
+ * STAT2402's own R papers and Progress its own report (#/report shows whichever unit is in force, as #/exam
+ * does); Review and Look up stand on the CITS1401 question bank and the Python reference, so offering them
+ * here would send a statistics student to a Python ladder.
+ *
+ * Built from NAV rather than written out, so the destinations both units have stay in the same order: the
+ * unit switch flips between the two bars in one click, and a bar that reshuffled itself would make a
+ * student hunt for Exams every time.
  */
-export const STAT_NAV: typeof NAV = [
-  { key: 'topics', label: 'Home', short: 'Home', icon: 'home', href: href.landing() },
-  { key: 'lessons', label: 'Lessons', short: 'Lessons', icon: 'book', href: href.lessons() },
-  { key: 'tests', label: 'Exams', short: 'Exams', icon: 'clock', href: href.exam() },
-  { key: 'report', label: 'Progress', short: 'Progress', icon: 'chart', href: href.report() },
-  { key: 'playground', label: 'R Playground', short: 'R Playground', tiny: 'R', icon: 'code', href: href.rPlayground() },
-  { key: 'settings', label: 'Settings', short: 'Settings', icon: 'sliders', href: href.settings() },
-];
+const STAT_KEEP: readonly NavKey[] = ['topics', 'lessons', 'playground', 'tests', 'report', 'settings'];
+const STAT_AS: Partial<Record<NavKey, Partial<(typeof NAV)[number]>>> = {
+  topics: { label: 'Home', short: 'Home', icon: 'home' },
+  playground: { label: 'R Playground', short: 'R Playground', tiny: 'R', href: href.rPlayground() },
+};
+export const STAT_NAV: typeof NAV = NAV.filter((n) => STAT_KEEP.includes(n.key)).map((n) => ({ ...n, ...STAT_AS[n.key] }));
 
 export function navFor(unit: UnitId): typeof NAV {
   return unit === 'stat2402' ? STAT_NAV : NAV;

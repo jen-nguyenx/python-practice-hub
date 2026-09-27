@@ -246,6 +246,16 @@ const SHOTS: Shot[] = [
   { name: 'stat-exams', hash: '#/settings', prepare: async (page) => { await toStat(page); await go(page, '#/exam'); } },
   { name: 'stat-progress', hash: '#/settings', prepare: async (page) => { await toStat(page); await go(page, '#/report'); } },
   {
+    name: 'stat-practice',
+    hash: '#/settings',
+    prepare: async (page) => {
+      await toStat(page);
+      await go(page, '#/exam');
+      await page.getByRole('radio', { name: /^Practice/ }).click().catch(() => {});
+      await page.waitForTimeout(600);
+    },
+  },
+  {
     name: 'r-playground',
     hash: '#/settings',
     prepare: async (page) => {

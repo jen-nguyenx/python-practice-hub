@@ -4,7 +4,8 @@
 /* ---------- one question ---------- */
 .sq { display: grid; gap: 14px; }
 .sq-meta { display: flex; flex-wrap: wrap; gap: 4px 0; margin: 0; font-family: var(--mono); font-size: var(--fs-12); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
-.sq-meta span + span::before { content: "·"; margin: 0 10px; color: var(--text-faint); }
+.sq-meta > span + span::before { content: "·"; margin: 0 10px; color: var(--text-faint); }
+.sq-meta .diff { font-size: inherit; letter-spacing: inherit; }
 .sq-prompt { font-size: var(--fs-16); }
 .sq-code { display: grid; gap: 8px; }
 .sq-code .code-block { margin: 0; }
@@ -72,5 +73,5 @@
   .sx-review-lesson { display: none; }
   .sx-quiz { grid-template-columns: 28px minmax(0, 1fr) 16px; }
   .sx-quiz-best { grid-column: 2; }
-  .sp-col-last { display: none; }
+  .sp-col-last, .sp-col-diff { display: none; }
 }

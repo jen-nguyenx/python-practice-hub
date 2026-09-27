@@ -11,6 +11,7 @@ const questions: StatQuestion[] = [
     lessonId: 'regression-in-r',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'This model predicts stopping distance in feet from speed in miles per hour. What does the `speed` estimate tell you?',
     code: 'fit <- lm(dist ~ speed, data = cars)\ncoef(fit)\n',
     options: [
@@ -26,6 +27,7 @@ const questions: StatQuestion[] = [
     lessonId: 'regression-in-r',
     kind: 'number',
     marks: 2,
+    diff: 'easy',
     prompt: 'From the output, what is the estimated slope on `speed`? Give it to two decimal places.',
     code: 'fit <- lm(dist ~ speed, data = cars)\nsummary(fit)$coefficients\n',
     answer: 'round(coef(fit)[["speed"]], 2)',
@@ -38,6 +40,7 @@ const questions: StatQuestion[] = [
     lessonId: 'regression-in-r',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'Using the coefficients below, what stopping distance does the model predict for a car going 20 mph? Give it to one decimal place.',
     code: 'fit <- lm(dist ~ speed, data = cars)\ncoef(fit)\n',
     answer: 'round(predict(fit, data.frame(speed = 20)), 1)',
@@ -50,6 +53,7 @@ const questions: StatQuestion[] = [
     lessonId: 'regression-in-r',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'The p-value in the `speed` row is tiny. Which statement is right?',
     code: 'fit <- lm(dist ~ speed, data = cars)\nsummary(fit)$coefficients\n',
     options: [
@@ -65,6 +69,7 @@ const questions: StatQuestion[] = [
     lessonId: 'regression-in-r',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'What does this print?',
     code: 'fit <- lm(mpg ~ wt + hp, data = mtcars)\nnames(coef(fit))\n',
     choices: [
@@ -80,6 +85,7 @@ const questions: StatQuestion[] = [
     lessonId: 'regression-in-r',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'The `wt` estimate is different in these two models. Why?',
     code: 'coef(lm(mpg ~ wt, data = mtcars))\ncoef(lm(mpg ~ wt + hp, data = mtcars))\n',
     options: [
@@ -95,6 +101,7 @@ const questions: StatQuestion[] = [
     lessonId: 'regression-in-r',
     kind: 'number',
     marks: 2,
+    diff: 'easy',
     prompt: 'What percentage of the variation in stopping distance does this model account for? Give a whole number.',
     code: 'fit <- lm(dist ~ speed, data = cars)\nsummary(fit)$r.squared\n',
     answer: 'round(100 * summary(fit)$r.squared)',
@@ -107,6 +114,7 @@ const questions: StatQuestion[] = [
     lessonId: 'regression-in-r',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt: 'Write a function `stop_at(mph)` that fits `lm(dist ~ speed, data = cars)` and returns the predicted stopping distance at speed `mph` as a plain number.',
     run: 'function',
     fnName: 'stop_at',

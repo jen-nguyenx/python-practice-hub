@@ -1,6 +1,7 @@
 // STAT2402 exams, as pure logic: which questions a lesson quiz, a practice test or the mock final asks,
 // what each is worth, how an answer is marked, and what past attempts say. No UI and no R here: a "write"
 // answer is marked by running its tests in R, and this file only turns tests passed into marks.
+import type { Diff } from '../content/ids.ts';
 import type { GeneratedStatQuestion, GeneratedStatQuestions, StatQuestion } from '../content/statQuestionSchema.ts';
 import { normOutput } from '../runtime/r/driver.ts';
 import type { AppEvent } from './types.ts';
@@ -159,20 +160,29 @@ function freshFirst(qs: readonly StatQuestion[], rng: () => number, avoid: Reado
   return [...s.filter((q) => !avoid.has(q.id)), ...s.filter((q) => avoid.has(q.id))];
 }
 
-/** A lesson's quiz: every question written for it, in the order written. */
+const DIFF_RANK: Record<Diff, number> = { easy: 0, medium: 1, hard: 2 };
+
+/** A lesson's quiz: every question written for it, easy first and hard last, in the order written within each. */
 export function buildQuiz(bank: StatBank, lessonId: string): StatItem[] {
-  return bank.questions.filter((q) => q.lessonId === lessonId).map((q) => item(bank, q));
+  return bank.questions
+    .filter((q) => q.lessonId === lessonId)
+    .map((q, i) => ({ q, i }))
+    .sort((a, b) => DIFF_RANK[a.q.diff] - DIFF_RANK[b.q.diff] || a.i - b.i)
+    .map(({ q }) => item(bank, q));
 }
 
 /**
  * The mock final: one reading or number question from every lesson, then MOCK_WRITE_QUESTIONS write
  * questions from different lessons, marked out of MOCK_TOTAL_MARKS in proportion to their weights.
+ * Like the CITS1401 papers it prefers medium and hard questions to easy ones, but never at the price of a
+ * question seen in the last attempts: fresh beats hard.
  */
 export function buildMock(bank: StatBank, lessonOrder: readonly string[], rng: () => number, avoid: ReadonlySet<string> = new Set()): StatItem[] {
   const picked: StatQuestion[] = [];
+  const rank = (q: StatQuestion) => (avoid.has(q.id) ? 2 : 0) + (q.diff === 'easy' ? 1 : 0);
   for (const lessonId of lessonOrder) {
     const pool = bank.questions.filter((q) => q.lessonId === lessonId && q.kind !== 'write');
-    const q = freshFirst(pool, rng, avoid)[0];
+    const q = shuffle(pool, rng).sort((a, b) => rank(a) - rank(b))[0];
     if (q) picked.push(q);
   }
   const writes: StatQuestion[] = [];
@@ -189,11 +199,18 @@ export function buildMock(bank: StatBank, lessonOrder: readonly string[], rng: (
   return all.map((q, i) => item(bank, q, marks[i]));
 }
 
-export interface PracticeSetup { lessonIds: readonly string[]; count: number; includeWrite: boolean }
+export interface PracticeSetup {
+  lessonIds: readonly string[];
+  count: number;
+  includeWrite: boolean;
+  /** Only questions at this difficulty; 'all' (or left out) for any. */
+  diff?: Diff | 'all';
+}
 
 export function practiceEligible(bank: StatBank, setup: Omit<PracticeSetup, 'count'>): StatQuestion[] {
   const lessons = new Set(setup.lessonIds);
-  return bank.questions.filter((q) => lessons.has(q.lessonId) && (setup.includeWrite || q.kind !== 'write'));
+  const diff = setup.diff ?? 'all';
+  return bank.questions.filter((q) => lessons.has(q.lessonId) && (setup.includeWrite || q.kind !== 'write') && (diff === 'all' || q.diff === diff));
 }
 
 /** A practice test: `count` questions from the chosen lessons, spread across them, fresh ones first. */

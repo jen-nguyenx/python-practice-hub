@@ -197,7 +197,8 @@
 .flag-note { font-size: var(--fs-13); font-weight: 600; display: block; margin-top: 10px; margin-bottom: 4px; }
 
 /* ---------- diff ---------- */
-.diff { margin: 0; display: grid; gap: 4px; min-width: 0; }
+/* `.code-diff`, not `.diff`: that name is the difficulty pips (Chip.tsx), and this sheet stays loaded once a question has opened it. */
+.code-diff { margin: 0; display: grid; gap: 4px; min-width: 0; }
 .diff-caption { display: flex; gap: 12px; flex-wrap: wrap; font-size: var(--fs-12); }
 .diff-key.del { color: var(--bad); }
 .diff-key.add { color: var(--ok); }

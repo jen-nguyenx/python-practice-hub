@@ -6,6 +6,7 @@
 // correct answer is an R expression the verifier evaluates, never a number typed by an author; a
 // "predict" question's right choice is the one that matches R's real output. Authoring rules:
 // docs/build/CONTENT.md "STAT2402 exam questions".
+import type { Diff } from './ids.ts';
 import type { Md, Test } from './schema.ts';
 
 export type StatQuestionKind = 'choice' | 'number' | 'predict' | 'write';
@@ -29,6 +30,11 @@ interface StatQuestionBase {
   prompt: Md;
   /** How much it is worth relative to the others, 1 to 10. The mock final rescales to 100 marks. */
   marks: number;
+  /**
+   * The same rubric as the CITS1401 bank: easy = one idea used as taught, under 2 minutes; medium = two
+   * ideas together or one twist, 2 to 6 minutes; hard = needs planning or has a trap in it, 6 to 15 minutes.
+   */
+  diff: Diff;
   /** Shown once the test is marked: why the answer is what it is. Md; never an R-computed number. */
   explain: Md;
 }

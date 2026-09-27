@@ -30,6 +30,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt:
       'A batch of sensors has Weibull lifetimes with scale 6 years. The lines below give the failure rate (density divided by the chance of still working) at age 2 and age 10, first for shape 0.8, then for shape 2.5. What do the two batches show?',
     code:
@@ -49,6 +50,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'number',
     marks: 3,
+    diff: 'hard',
     prompt:
       'A batch of bearings has Weibull shape 3 and scale 12,000 hours (both chosen for this question). The line above confirms every Weibull has failed this same share by its own scale. By what age, in hours, have a tenth of the bearings failed (the B10 life)? Round to the nearest 10 hours.',
     code: 'shape <- 3\nscale <- 12000\nround(pweibull(scale, shape, scale), 3)\n',
@@ -62,6 +64,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt:
       'A durability test runs 200 light bulbs for 1000 hours and then switches off. A bulb still lit when the test ends is recorded with status 0. What do you know about that bulb\'s true lifetime?',
     options: [
@@ -78,6 +81,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: '35 bearings ran until every one failed, so these lifetimes are complete. What does the 95% interval for the shape say about how they failed?',
     code: 'library(MASS)\nset.seed(6)\nhours <- rweibull(35, shape = 1.5, scale = 800)\nfit <- fitdistr(hours, "weibull")\nfit\nconfint(fit)\n',
     options: [
@@ -94,6 +98,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt:
       '400 simulated laptop batteries, many still working when the test ended. `drop_fit` leaves those batteries out; `full_fit` tells `survreg()` which ones are censored. Why does the first predicted median fall so far short of the second?',
     code:
@@ -117,6 +122,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'This `survreg()` fit\'s printed Scale is below 1. What does that say about how these batteries fail?',
     code: `${BATTERIES}fit <- survreg(Surv(time, status) ~ 1, dist = "weibull")\nsummary(fit)\n`,
     options: [
@@ -133,6 +139,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: '`exp()` of the `padceramic` coefficient is the time ratio between the two pad designs. Which sentence says what it means?',
     code: `${BRAKES}${BRAKES_FIT}summary(fit)\nexp(coef(fit))\n`,
     options: [
@@ -149,6 +156,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'number',
     marks: 3,
+    diff: 'easy',
     prompt: 'What is the predicted median lifetime, in kilometres, for the ceramic pads? Round to the nearest 100.',
     code: `${BRAKES}${BRAKES_FIT}pads <- data.frame(pad = c("organic", "ceramic"))\nround(predict(fit, newdata = pads, type = "quantile", p = 0.5))\n`,
     answer: 'round(predict(fit, newdata = pads, type = "quantile", p = 0.5)[[2]], -2)',
@@ -161,6 +169,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'Four components: the first and third failed, the second and fourth were still running when the records were pulled. What does this print?',
     code: 'library(survival)\ntime <- c(5, 8, 3, 10)\nstatus <- c(1, 0, 1, 0)\nSurv(time, status)\n',
     choices: [
@@ -177,6 +186,7 @@ const questions: StatQuestion[] = [
     lessonId: 'weibull-lifetimes',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt:
       'Write a function `time_ratios(fit)` that takes a `survreg()` Weibull fit and returns the time ratio for every predictor in the model: `exp()` of every coefficient except the intercept, as a vector.',
     run: 'function',

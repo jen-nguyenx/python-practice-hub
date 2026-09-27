@@ -7,7 +7,7 @@ import type { AppEvent } from './types.ts';
 
 const ORDER = ['a', 'b', 'c'];
 const q = (id: string, lessonId: string, kind: StatQuestion['kind'], marks: number): StatQuestion =>
-  ({ id, lessonId, kind, marks, prompt: 'p', explain: 'e' }) as StatQuestion;
+  ({ id, lessonId, kind, marks, diff: kind === 'write' ? 'hard' : kind === 'number' ? 'medium' : 'easy', prompt: 'p', explain: 'e' }) as StatQuestion;
 const BANK: StatQuestion[] = [
   q('a1', 'a', 'choice', 2), q('a2', 'a', 'number', 3), q('a3', 'a', 'write', 5),
   q('b1', 'b', 'choice', 2), q('b2', 'b', 'predict', 2), q('b3', 'b', 'number', 3),
@@ -62,6 +62,9 @@ describe('STAT2402 progress', () => {
     const a = p.lessons.find((l) => l.lessonId === 'a')!;
     expect(a.marks).toEqual({ earned: 3.5, total: 12, answered: 4 });
     expect(p.kinds.find((k) => k.kind === 'choice')!.marks).toEqual({ earned: 4, total: 6, answered: 3 });
+    // Choices are easy here, numbers medium and writing hard.
+    expect(p.diffs.find((d) => d.diff === 'hard')!.marks).toEqual({ earned: 0, total: 5, answered: 1 });
+    expect(a.byDiff.medium).toEqual({ earned: 1.5, total: 3, answered: 1 });
     expect(p.share).toBeCloseTo(5.5 / 14);
   });
 

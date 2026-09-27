@@ -25,6 +25,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt:
       'This Poisson model predicts the number of articles a biochemistry PhD student published from marital status and mentor output alone. What does comparing the two numbers below tell you?',
     code: `${PSCL}\n${DATA}\nfit <- glm(art ~ mar + ment, family = poisson, data = bioChemists)\nsum(bioChemists$art == 0)\nsum(dpois(0, fitted(fit)))\n`,
@@ -42,6 +43,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'number',
     marks: 3,
+    diff: 'easy',
     prompt: 'Using the output above, how many more zeros are there in the data than this Poisson model expects? Give a whole number.',
     code: `${PSCL}\n${DATA}\nfit <- glm(art ~ mar + ment, family = poisson, data = bioChemists)\nsum(bioChemists$art == 0)\nsum(dpois(0, fitted(fit)))\n`,
     answer: 'round(sum(bioChemists$art == 0) - sum(dpois(0, fitted(fit))))',
@@ -54,6 +56,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt:
       'A survey asks shoppers how many items they returned to a store last year. Some shoppers never return anything, on principle; others might have returned something if a purchase had gone wrong, but nothing did. Which kind of zero is which?',
     options: [
@@ -70,6 +73,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt:
       'The zero-inflation part of this model estimates the chance of being a structural zero, a student who was never going to publish. The `kid5` estimate is positive. What does that say?',
     code: `${PSCL}\n${DATA}\nzip2 <- zeroinfl(art ~ fem + mar + phd | fem + kid5, data = bioChemists, dist = "poisson")\nsummary(zip2)$coefficients$zero\n`,
@@ -87,6 +91,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'number',
     marks: 2,
+    diff: 'easy',
     prompt:
       'The output gives the predicted chance of being a structural zero for two married men with no young children and a department prestige score of 3, whose mentors published 0 and 10 articles. What is the predicted chance for the one whose mentor published nothing? Give it to 3 decimal places.',
     code:
@@ -105,6 +110,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'predict',
     marks: 2,
+    diff: 'medium',
     prompt: 'Each of 10,000 counts is made a structural zero with chance 0.4; the rest come from a Poisson with mean 2. What does this print?',
     code: 'set.seed(41)\ny <- ifelse(runif(10000) < 0.4, 0, rpois(10000, lambda = 2))\nround(mean(y == 0), 2)\n',
     choices: ['[1] 0.48', '[1] 0.4', '[1] 0.14', '[1] 0.6'],
@@ -116,6 +122,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt:
       'A gym tracks how many classes each member attended last month. Some members never signed up for any class and always show 0; every member who does turn up for at least one class typically attends several. Which model fits this two-step story better?',
     options: [
@@ -131,6 +138,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'A quarter of these simulated counts were made structural zeros before an ordinary negative binomial count was added on top. What does the AIC table say about the four fits?',
     code:
       `${PSCL}\nlibrary(MASS)\n${SIM_ZI}` +
@@ -153,6 +161,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: '`nb` is model1 and `zinb` is model2 below. What does the vuong() table say?',
     code: `${PSCL}\nlibrary(MASS)\n${SIM_ZI}` + 'nb <- glm.nb(y ~ x, data = d)\nzinb <- zeroinfl(y ~ x, data = d, dist = "negbin")\nvuong(nb, zinb)\n',
     options: [
@@ -169,6 +178,7 @@ const questions: StatQuestion[] = [
     lessonId: 'zero-inflated',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt:
       'Write a function `structural_share(fit)` that takes a fitted `zeroinfl` model and returns the average predicted chance of being a structural zero, across every unit the model was fitted to, as a single number.',
     run: 'function',

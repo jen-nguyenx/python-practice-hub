@@ -11,6 +11,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'What does this print?',
     code: 'x <- c(10, 20, 30, 40, 50)\nx[-2]\n',
     choices: [
@@ -26,6 +27,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'predict',
     marks: 2,
+    diff: 'medium',
     prompt: 'What does this print?',
     code: 'sizes <- factor(c("small", "large", "medium", "small"))\nlevels(sizes)\n',
     choices: [
@@ -41,6 +43,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'Which statement about the columns of `iris` is right?',
     code: 'str(iris)\n',
     options: [
@@ -56,6 +59,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'What has this line picked out of `mtcars`?',
     code: 'mtcars[mtcars$mpg > 30, c("mpg", "wt")]\n',
     options: [
@@ -71,6 +75,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'A model of `breaks ~ tension` is fitted to `wb` next. Which tension will the other two be compared with?',
     code: 'wb <- warpbreaks\nlevels(wb$tension)\nwb$tension <- relevel(wb$tension, ref = "H")\nlevels(wb$tension)\n',
     options: [
@@ -86,6 +91,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'Why do these two lines give different answers?',
     code: 'mean(airquality$Ozone)\nmean(airquality$Ozone, na.rm = TRUE)\n',
     options: [
@@ -101,6 +107,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'number',
     marks: 2,
+    diff: 'easy',
     prompt: 'From the output, how many days in `airquality` have no ozone reading?',
     code: 'summary(airquality$Ozone)\n',
     answer: 'sum(is.na(airquality$Ozone))',
@@ -113,6 +120,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'In `mtcars`, `am` is 1 for a manual gearbox and 0 for an automatic. What percentage of the cars have a manual gearbox? Give a whole number.',
     code: 'table(mtcars$am)\nnrow(mtcars)\n',
     answer: 'round(100 * mean(mtcars$am == 1))',
@@ -125,6 +133,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'On average, how many more breaks does a length of yarn get at low tension (`L`) than at high tension (`H`)? Give it to two decimal places.',
     code: 'tapply(warpbreaks$breaks, warpbreaks$tension, mean)\n',
     answer: 'round(mean(warpbreaks$breaks[warpbreaks$tension == "L"]) - mean(warpbreaks$breaks[warpbreaks$tension == "H"]), 2)',
@@ -137,6 +146,7 @@ const questions: StatQuestion[] = [
     lessonId: 'r-basics',
     kind: 'write',
     marks: 5,
+    diff: 'hard',
     prompt: 'Write a function `group_means(values, groups)` that returns the mean of `values` within each group of `groups`, leaving out missing values: one number per group, in the order of the groups\' levels.',
     run: 'function',
     fnName: 'group_means',

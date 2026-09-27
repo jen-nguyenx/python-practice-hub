@@ -6,6 +6,7 @@ import { store } from '../../app/services.ts';
 import { href } from '../../app/router.ts';
 import { lessonsInTrack } from '../../content/lessons/index.ts';
 import { loadStatBank } from '../../content/statBank.ts';
+import type { Diff } from '../../content/ids.ts';
 import type { StatAttempt, StatBank, StatItem, StatTestKind } from '../../engine/statExam.ts';
 import {
   bestAttempt, buildMock, buildPractice, minutesFor, MOCK_MINUTES, MOCK_TOTAL_MARKS, MOCK_WRITE_QUESTIONS,
@@ -38,7 +39,11 @@ function readTab(): Tab {
   }
 }
 
-interface Setup { lessonIds: string[]; count: number; includeWrite: boolean }
+interface Setup { lessonIds: string[]; count: number; includeWrite: boolean; diff: Diff | 'all' }
+
+const DIFF_CHOICES: { value: Diff | 'all'; label: string }[] = [
+  { value: 'all', label: 'Any' }, { value: 'easy', label: 'Easy' }, { value: 'medium', label: 'Medium' }, { value: 'hard', label: 'Hard' },
+];
 
 function readSetup(all: string[]): Setup {
   try {
@@ -48,9 +53,10 @@ function readSetup(all: string[]): Setup {
       lessonIds: lessonIds.length ? lessonIds : all,
       count: (PRACTICE_COUNTS as readonly number[]).includes(raw?.count ?? 0) ? raw!.count! : 10,
       includeWrite: typeof raw?.includeWrite === 'boolean' ? raw.includeWrite : true,
+      diff: DIFF_CHOICES.some((d) => d.value === raw?.diff) ? raw!.diff! : 'all',
     };
   } catch {
-    return { lessonIds: all, count: 10, includeWrite: true };
+    return { lessonIds: all, count: 10, includeWrite: true, diff: 'all' };
   }
 }
 
@@ -237,7 +243,7 @@ function PracticePanel({ bank, order, onStart }: { bank: StatBank | null; order:
     () => (bank ? buildPractice(bank, setup, order, seededRng(seed), recentQids(history)) : []),
     [bank, setup, seed, history],
   );
-  const eligible = (id: string) => (bank ? practiceEligible(bank, { lessonIds: [id], includeWrite: setup.includeWrite }).length : 0);
+  const eligible = (id: string) => (bank ? practiceEligible(bank, { lessonIds: [id], includeWrite: setup.includeWrite, diff: setup.diff }).length : 0);
   const minutes = minutesFor(selection);
 
   const toggle = (id: string) => {
@@ -296,6 +302,10 @@ function PracticePanel({ bank, order, onStart }: { bank: StatBank | null; order:
             <span id="sx-count-l" class="ms-label">Questions</span>
             <Segmented labelledBy="sx-count-l" value={String(setup.count)}
               options={PRACTICE_COUNTS.map((c) => ({ value: String(c), label: String(c) }))} onChange={(v) => setSetup({ count: Number(v) })} />
+          </div>
+          <div class="ms-field">
+            <span id="sx-diff-l" class="ms-label">Difficulty</span>
+            <Segmented<Diff | 'all'> labelledBy="sx-diff-l" value={setup.diff} options={DIFF_CHOICES} onChange={(diff) => setSetup({ diff })} />
           </div>
           <div class="ms-field ms-switch">
             <Switch checked={setup.includeWrite} onChange={(includeWrite) => setSetup({ includeWrite })} label="Include writing R" describedBy="sx-write-sub" />

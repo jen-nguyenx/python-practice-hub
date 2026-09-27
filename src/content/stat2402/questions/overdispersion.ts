@@ -13,6 +13,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'The ratio of residual deviance to its degrees of freedom is far above 1. What does that tell you?',
     code: 'fit <- glm(Freq ~ Class + Sex + Age + Survived, family = poisson, data = as.data.frame(Titanic))\ndeviance(fit) / df.residual(fit)\n',
     options: [
@@ -28,6 +29,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'Work out the Pearson dispersion by hand: the sum of the squared Pearson residuals, divided by the residual degrees of freedom. Give it to the nearest whole number.',
     code: 'fit <- glm(Freq ~ Class + Sex + Age + Survived, family = poisson, data = as.data.frame(Titanic))\nsummary(fit)\n',
     answer: 'round(sum(residuals(fit, type = "pearson")^2) / df.residual(fit))',
@@ -39,6 +41,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'Compare the two `SexFemale` rows. What actually changed between them?',
     code:
       'titanic_df <- as.data.frame(Titanic)\n' +
@@ -59,6 +62,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'What does this print?',
     code: 'qfit <- glm(Freq ~ Class + Sex + Age + Survived, family = quasipoisson, data = as.data.frame(Titanic))\nAIC(qfit)\n',
     choices: ['[1] NA', '[1] 1385.1', 'Error in AIC(qfit) : dispersion parameter not allowed', '[1] 0'],
@@ -69,6 +73,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'Every loom given the same wool shares nothing else, so this splits the counts by wool alone rather than by wool and tension together. What does the table say?',
     code:
       'm <- with(warpbreaks, tapply(breaks, wool, mean))\n' +
@@ -87,6 +92,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'number',
     marks: 3,
+    diff: 'hard',
     prompt: 'Fit the counts on spray, then compute the Pearson dispersion: the sum of the squared Pearson residuals divided by the residual degrees of freedom. Give it to two decimal places.',
     code: 'fit <- glm(count ~ spray, family = poisson, data = InsectSprays)\nsummary(fit)\n',
     answer: 'round(sum(residuals(fit, type = "pearson")^2) / df.residual(fit), 2)',
@@ -98,6 +104,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'This model drops wool and keeps only tension. Judging by the ratio of deviance to degrees of freedom, what should you do next?',
     code: 'fit <- glm(breaks ~ tension, family = poisson, data = warpbreaks)\ndeviance(fit) / df.residual(fit)\n',
     options: [
@@ -113,6 +120,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'A Poisson model is fitted to counts that are really overdispersed, and its standard errors are used anyway. What is the practical risk?',
     options: [
       { text: 'Standard errors that are too small make coefficients look more certain than they are, so unimportant predictors can appear statistically significant', correct: true },
@@ -127,6 +135,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'A colleague says a negative binomial model is always better than quasi-Poisson because it has an extra parameter. What is wrong with that reasoning?',
     options: [
       { text: 'Having more parameters does not by itself make a model better; the real choice is whether you need a likelihood (for AIC or likelihood-ratio tests) and whether the negative binomial\'s variance shape, mu + mu^2/theta, actually suits the data', correct: true },
@@ -141,6 +150,7 @@ const questions: StatQuestion[] = [
     lessonId: 'overdispersion',
     kind: 'write',
     marks: 6,
+    diff: 'hard',
     prompt: 'Write a function `is_overdispersed(fit, threshold = 2)` that takes a fitted Poisson `glm()` and returns `TRUE` if its Pearson dispersion (the sum of the squared Pearson residuals divided by the residual degrees of freedom) is greater than `threshold`, and `FALSE` otherwise.',
     run: 'function',
     fnName: 'is_overdispersed',

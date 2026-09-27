@@ -312,6 +312,16 @@ workspace the code left — write `round(coef(fit)[["speed"]], 2)`, never `3.93`
 **`marks`** (1 to 10) are relative weights: 2 for a quick read, 3 for a number that takes a step of
 working, 5 or more for `write`. The mock final rescales whatever it picks to 100.
 
+**`diff`** is required, on the same rubric as the CITS1401 bank (`DIFF_LEGEND` in `src/ui/components/Chip.tsx`,
+shown to students as one to three pips): `easy` = one idea used as taught, under 2 minutes (read a number off
+the output, predict a familiar print); `medium` = two ideas together or one twist, 2 to 6 minutes (a
+coefficient on the log or logit scale, a prediction from two coefficients, a short function); `hard` = needs
+planning or has a trap in it, 6 to 15 minutes (link scale against response scale, censoring, marginality, a
+write question with several steps). **Every lesson needs at least one of each**, or the verifier fails; aim
+for about 40% easy, 40% medium and 20% hard. Judge by what the student has to do, not by `marks`. A lesson
+quiz asks them easy first, a practice test can be limited to one level, and the mock final prefers medium and
+hard questions to easy ones (never at the cost of one seen in the last attempts).
+
 **`explain`** is shown after marking: why the right answer is right and, briefly, why the tempting wrong
 ones are wrong. It is where a quiz teaches, so never leave it thin.
 

@@ -11,6 +11,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'A trial has 10 tries, each succeeding with probability 0.3. Which line gives the probability of **fewer than 4** successes?',
     options: [
       { text: '`pbinom(3, size = 10, prob = 0.3)`', correct: true },
@@ -25,6 +26,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'A trial has 10 tries, each succeeding with probability 0.2. Using the output, what is the probability of **4 or more** successes? Give it to three decimal places.',
     code: 'pbinom(3, size = 10, prob = 0.2)\n',
     answer: 'round(1 - pbinom(3, size = 10, prob = 0.2), 3)',
@@ -36,6 +38,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'The time to finish a task is normally distributed with mean 30 minutes and standard deviation 5 minutes. What does the number R prints mean?',
     code: 'qnorm(0.8, mean = 30, sd = 5)\n',
     options: [
@@ -51,6 +54,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'Ten thousand counts are simulated from a Poisson distribution with λ = 4. Why are the two numbers close to each other?',
     code: 'set.seed(1)\ny <- rpois(10000, lambda = 4)\nc(mean = mean(y), variance = var(y))\n',
     options: [
@@ -66,6 +70,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'Five counts were observed. What is each number R prints?',
     code: 'y <- c(1, 0, 2, 1, 3)\nprod(dpois(y, lambda = 1))\nprod(dpois(y, lambda = 2))\n',
     options: [
@@ -81,6 +86,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'number',
     marks: 2,
+    diff: 'easy',
     prompt: 'The code finds the maximum likelihood estimate of λ for seven counts. From the output, what is the estimate? Give it to two decimal places.',
     code:
       'y <- c(3, 1, 4, 1, 5, 9, 2)\n' +
@@ -95,6 +101,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: '3 successes were seen in 10 tries. What does this print?',
     code:
       'loglik <- function(p) dbinom(3, size = 10, prob = p, log = TRUE)\n' +
@@ -113,6 +120,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'Both samples have the same mean, so both estimate λ at the same value. Each line is how far the log-likelihood falls between that estimate and λ = 3.5. What do the two numbers tell you?',
     code:
       'small <- c(2, 4, 3, 0, 5, 3, 1, 2)\n' +
@@ -133,6 +141,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'A Poisson model with no predictors is fitted to six counts. Which statement describes what `glm()` has done?',
     code:
       'y <- c(4, 1, 3, 6, 2, 5)\n' +
@@ -154,6 +163,7 @@ const questions: StatQuestion[] = [
     lessonId: 'probability-and-likelihood',
     kind: 'write',
     marks: 5,
+    diff: 'hard',
     prompt: 'Write a function `binom_mle(successes, n)` that finds the maximum likelihood estimate of the success probability p with `optimize()`: maximise the binomial log-likelihood `dbinom(successes, size = n, prob = p, log = TRUE)` over p between 0 and 1, and return where the top is. The tests allow for `optimize()` stopping a little short of the exact answer.',
     run: 'function',
     fnName: 'binom_mle',

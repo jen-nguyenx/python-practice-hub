@@ -16,7 +16,10 @@ import type { StatMarks, StatWorkOn } from '../../engine/statProgress.ts';
 import { shareOf, statProgress } from '../../engine/statProgress.ts';
 import { STAT_MIN_FOR_STRONG } from '../../engine/statProgress.ts';
 import { streak } from '../../engine/streak.ts';
+import { DIFFS } from '../../content/ids.ts';
+import type { Diff } from '../../content/ids.ts';
 import { IconButton, LinkButton } from '../components/Button.tsx';
+import { DIFF_LEGEND, DiffChip } from '../components/Chip.tsx';
 import { Icon } from '../components/Icon.tsx';
 import { formatDate, heatStep, pct, plural, relativeDay } from '../report/format.ts';
 import { Section } from '../report/ReportView.tsx';
@@ -28,16 +31,19 @@ import '../report/report.css';
 import '../testmode/testmode.css';
 import '../stat/stat.css';
 
+const DIFF_WORD: Record<Diff, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
+
 /** Marks as a person writes them: whole, or to the half mark a write question can earn. */
 const marksText = (x: number) => (Number.isInteger(x) ? String(x) : x.toFixed(1));
 
-function MarksCell({ marks, loading, what }: { marks: StatMarks; loading: boolean; what: string }) {
-  if (loading) return <td class="n"><span class="rp-heat heat h-0" aria-label={`${what}: loading`}>…</span></td>;
+function MarksCell({ marks, loading, what, cls }: { marks: StatMarks; loading: boolean; what: string; cls?: string }) {
+  const tdClass = `n${cls ? ' ' + cls : ''}`;
+  if (loading) return <td class={tdClass}><span class="rp-heat heat h-0" aria-label={`${what}: loading`}>…</span></td>;
   const share = shareOf(marks);
-  if (share === null) return <td class="n"><span class="rp-heat heat h-0" aria-label={`${what}: no questions answered yet`}>–</span></td>;
+  if (share === null) return <td class={tdClass}><span class="rp-heat heat h-0" aria-label={`${what}: no questions answered yet`}>–</span></td>;
   const label = `${what}: ${marksText(marks.earned)} of ${marksText(marks.total)} marks over ${plural(marks.answered, 'question')}`;
   return (
-    <td class="n">
+    <td class={tdClass}>
       <span class={`rp-heat heat h-${heatStep(share)}`} aria-label={label} title={label}>{pct(share)}</span>
     </td>
   );
@@ -193,6 +199,7 @@ export function StatProgress() {
                       <th scope="col">Lesson</th>
                       <th scope="col" class="n">Read</th>
                       <th scope="col" class="n">Quiz best</th>
+                      {DIFFS.map((d) => <th key={d} scope="col" class="n sp-col-diff" title={DIFF_LEGEND[d]}>{DIFF_WORD[d]}</th>)}
                       <th scope="col" class="n" title="Every question from this lesson on any quiz, practice test or mock final">All marks</th>
                       <th scope="col" class="sp-col-last">Last quiz</th>
                       <th scope="col" class="rp-no-print"><span class="sr-only">Quiz</span></th>
@@ -218,6 +225,7 @@ export function StatProgress() {
                               {l.quiz.best === null ? '–' : `${l.quiz.best}%`}
                             </span>
                           </td>
+                          {DIFFS.map((d) => <MarksCell key={d} marks={l.byDiff[d]} loading={loading} what={`${DIFF_WORD[d]} questions`} cls="sp-col-diff" />)}
                           <MarksCell marks={l.marks} loading={loading} what="All marks" />
                           <td class="sp-col-last rp-muted rp-nowrap">{l.quiz.lastTs ? `${relativeDay(l.quiz.lastTs, now)} · ${l.quiz.last}%` : '–'}</td>
                           <td class="rp-no-print rp-nowrap"><a href={href.quiz(l.lessonId)}>{l.quiz.attempts ? 'Retake' : 'Take quiz'}</a></td>
@@ -230,7 +238,8 @@ export function StatProgress() {
             </div>
           </Section>
 
-          <Section id="sp-kinds" title="Kinds of question" note="Across every quiz and paper">
+          <Section id="sp-kinds" title="Kinds of question and difficulty" note="Across every quiz and paper">
+            <div class="rp-duo">
             <div class="rp-card rp-flush">
               <div class="rp-table-wrap">
                 <table class="rp-table sp-table">
@@ -246,6 +255,23 @@ export function StatProgress() {
                   </tbody>
                 </table>
               </div>
+            </div>
+            <div class="rp-card rp-flush">
+              <div class="rp-table-wrap">
+                <table class="rp-table sp-table">
+                  <thead><tr><th scope="col">Difficulty</th><th scope="col" class="n">Marks</th><th scope="col">Answered</th></tr></thead>
+                  <tbody>
+                    {data.diffs.map((d) => (
+                      <tr key={d.diff}>
+                        <th scope="row"><DiffChip diff={d.diff} showText /></th>
+                        <MarksCell marks={d.marks} loading={loading} what={`${DIFF_WORD[d.diff]} questions`} />
+                        <td class="rp-muted">{loading ? '…' : d.marks.answered ? plural(d.marks.answered, 'question') : 'none yet'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
             </div>
           </Section>
 

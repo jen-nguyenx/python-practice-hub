@@ -8,6 +8,7 @@ import { loadStatBank } from '../../content/statBank.ts';
 import type { StatBank } from '../../engine/statExam.ts';
 import { bestAttempt, buildQuiz, minutesFor, statHistory } from '../../engine/statExam.ts';
 import { STAT_KIND_LABEL } from '../../content/statQuestionSchema.ts';
+import { DIFFS } from '../../content/ids.ts';
 import { Button, LinkButton } from '../components/Button.tsx';
 import { Icon } from '../components/Icon.tsx';
 import type { StatProgress } from '../stat/progress.ts';
@@ -71,6 +72,8 @@ export function StatQuiz({ lessonId }: { lessonId: string }) {
   }
 
   const kinds = [...new Set(items.map((i) => i.q.kind))];
+  const diffLine = DIFFS.map((d) => [d, items.filter((i) => i.q.diff === d).length] as const)
+    .filter(([, n]) => n > 0).map(([d, n]) => `${n} ${d}`).join(', ') + '.';
   return (
     <div class="tx-page sx">
       <header class="tx-head">
@@ -88,6 +91,7 @@ export function StatQuiz({ lessonId }: { lessonId: string }) {
       <section class="tx-card" aria-labelledby="sx-quiz-start">
         <div class="tx-card-head"><h2 id="sx-quiz-start">Before you start</h2></div>
         {bank ? <p class="tx-muted">Kinds of question: {kinds.map((k) => STAT_KIND_LABEL[k]).join(', ')}.</p> : null}
+        {bank ? <p class="tx-muted">{diffLine} Easy ones come first.</p> : null}
         <div class="tx-actions">
           <Button variant={saved ? 'secondary' : 'primary'} size="lg" disabled={!bank || items.length === 0}
             onClick={() => { clearStatProgress(key); setSaved(null); setRun({ runId: Date.now() }); }}>

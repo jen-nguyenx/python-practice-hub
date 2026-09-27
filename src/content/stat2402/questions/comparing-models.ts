@@ -13,6 +13,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'This model predicts the number of days a student was absent from school. Look at the two deviances printed at the bottom. What does the gap between them measure?',
     code: 'library(MASS)\nfit <- glm(Days ~ Eth + Sex + Age + Lrn, family = poisson, data = quine)\nfit\n',
     options: [
@@ -29,6 +30,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'Three models for the same esoph data (oesophageal cancer cases and controls by age group, alcohol group and tobacco group). Reading the coefficient counts above, which pair is nested?',
     code:
       'm1 <- glm(cbind(ncases, ncontrols) ~ agegp, family = binomial, data = esoph)\n' +
@@ -48,6 +50,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'number',
     marks: 3,
+    diff: 'easy',
     prompt: 'Reading the anova() table above, how many extra coefficients does adding spray to the model buy?',
     code:
       'small <- glm(count ~ 1, family = poisson, data = InsectSprays)\n' +
@@ -63,6 +66,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'The Pr(>Chi) value in the second row is small. What does it tell you?',
     code:
       'library(MASS)\n' +
@@ -82,6 +86,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'This table only offers to drop the interaction, not Eth or Sex on their own. Why?',
     code: 'library(MASS)\nfit <- glm(Days ~ Eth * Sex, family = poisson, data = quine)\ndrop1(fit, test = "Chisq")\n',
     options: [
@@ -97,6 +102,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'These two models are not nested, since neither is the other with some coefficients fixed at zero. Using the table above, by how much does the larger AIC exceed the smaller one? Give it to one decimal place.',
     code:
       'library(MASS)\n' +
@@ -113,6 +119,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'Both models use the formula Days ~ Age, fitted to different sets of rows. R prints a table without complaint. What is wrong with comparing these two AICs directly?',
     code:
       'library(MASS)\n' +
@@ -133,6 +140,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'What does this print?',
     code: 'qfit <- glm(count ~ spray, family = quasipoisson, data = InsectSprays)\nAIC(qfit)\n',
     choices: ['[1] NA', '[1] 342.6', 'Error in AIC(qfit) : no applicable method', '[1] 0'],
@@ -143,6 +151,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'The quine counts are far more spread out than a Poisson model allows. Compare the Lrn row in the two tables above. What changed?',
     code:
       'library(MASS)\n' +
@@ -163,6 +172,7 @@ const questions: StatQuestion[] = [
     lessonId: 'comparing-models',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt: 'Write a function aic_winner(fit1, fit2) that takes two fitted glms describing the same response and data, and returns TRUE if fit1 has the lower (better) AIC, and FALSE otherwise.',
     run: 'function',
     fnName: 'aic_winner',

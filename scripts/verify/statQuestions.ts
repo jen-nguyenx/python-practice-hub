@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { GeneratedStatQuestion, GeneratedStatQuestions, StatQuestion } from '../../src/content/statQuestionSchema.ts';
 import { STAT_QUESTION_KINDS } from '../../src/content/statQuestionSchema.ts';
+import { DIFFS } from '../../src/content/ids.ts';
 import type { Test } from '../../src/content/schema.ts';
 import type { RDriver } from '../../src/runtime/r/driver.ts';
 import { normOutput } from '../../src/runtime/r/driver.ts';
@@ -80,6 +81,7 @@ function checkStatic(sc: Scope, q: StatQuestion, fileLesson: string, seen: Set<s
   if (!nonEmpty(l.prompt)) sc.error(`${where}: the prompt is empty`);
   if (!nonEmpty(l.explain)) sc.error(`${where}: explain is empty; a marked answer with no reason teaches nothing`);
   if (typeof l.marks !== 'number' || !Number.isInteger(l.marks) || l.marks < 1 || l.marks > 10) sc.error(`${where}: marks must be a whole number from 1 to 10`);
+  if (!DIFFS.includes(l.diff as StatQuestion['diff'])) sc.error(`${where}: diff must be one of ${DIFFS.join(', ')}`);
   void lessonTracks;
   switch (q.kind) {
     case 'choice': {
@@ -205,6 +207,9 @@ export async function checkStatQuestions(
     if (qs.length === 0) sc.error(`the lesson ${id} has no exam questions; add src/content/stat2402/questions/${id}.ts`);
     else if (qs.length < MIN_PER_LESSON) sc.error(`only ${qs.length} questions; a lesson quiz needs at least ${MIN_PER_LESSON}`);
     else if (new Set(qs.map((q) => q.kind)).size < 3) sc.warn('uses fewer than three kinds of question; mix reading, numbers, predicting and writing');
+    // A quiz climbs: something to start on, something to stretch, and one that takes planning.
+    const missing = DIFFS.filter((d) => qs.length > 0 && !qs.some((q) => q.diff === d));
+    if (missing.length) sc.error(`has no ${missing.join(' or ')} question; every lesson needs at least one easy, one medium and one hard`);
   }
 
   if (rDriver) {

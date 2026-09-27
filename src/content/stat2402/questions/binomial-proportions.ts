@@ -13,6 +13,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'Each row of esoph records ncases (people with the cancer) and ncontrols (people without it) examined at one combination of age, alcohol and tobacco group. Which is the right way to give glm() this response?',
     code: 'head(esoph)\n',
     options: [
@@ -28,6 +29,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'The two columns of coefficients differ, though both models ran without complaint. Why?',
     code:
       'right <- glm(cbind(ncases, ncontrols) ~ agegp, family = binomial, data = esoph)\n' +
@@ -46,6 +48,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'This models the proportion of Warsaw schoolgirls who had reached menarche, out of the number surveyed at each age. What does the Age estimate tell you?',
     code: 'library(MASS)\nfit <- glm(cbind(Menarche, Total - Menarche) ~ Age, family = binomial, data = menarche)\nsummary(fit)$coefficients\n',
     options: [
@@ -61,6 +64,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'Using the coefficients above, at what age does the model predict that half the girls have reached menarche? Give it to one decimal place.',
     code: 'library(MASS)\nfit <- glm(cbind(Menarche, Total - Menarche) ~ Age, family = binomial, data = menarche)\ncoef(fit)\n',
     answer: 'round(-coef(fit)[[1]] / coef(fit)[[2]], 1)',
@@ -73,6 +77,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'predict',
     marks: 2,
+    diff: 'medium',
     prompt: 'What does this print?',
     code:
       'library(MASS)\n' +
@@ -89,6 +94,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'Two different ways of giving glm() the same esoph counts. What do you expect from the two columns above, and why?',
     code:
       'esoph$prop <- esoph$ncases / (esoph$ncases + esoph$ncontrols)\n' +
@@ -108,6 +114,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'All three models share the same response and the same esoph data. Whichever one has the lowest AIC in the table above, what can you say about it?',
     code:
       'fit_logit <- glm(cbind(ncases, ncontrols) ~ agegp + alcgp + tobgp, family = binomial, data = esoph)\n' +
@@ -127,6 +134,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'The coefficient estimates (not shown) are identical between these two fits. Reading the standard errors above, what does switching from binomial to quasibinomial change?',
     code:
       'fit <- glm(cbind(ncases, ncontrols) ~ agegp + alcgp + tobgp, family = binomial, data = esoph)\n' +
@@ -146,6 +154,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'number',
     marks: 3,
+    diff: 'easy',
     prompt: 'A quick check for overdispersion is the ratio of the residual deviance to its degrees of freedom, both printed above. Work it out, to two decimal places.',
     code:
       'fit <- glm(cbind(ncases, ncontrols) ~ agegp + alcgp + tobgp, family = binomial, data = esoph)\n' +
@@ -161,6 +170,7 @@ const questions: StatQuestion[] = [
     lessonId: 'binomial-proportions',
     kind: 'write',
     marks: 5,
+    diff: 'hard',
     prompt: 'Write a function dose_at(fit, p) that takes a binomial glm with the logit link and one numeric predictor, and returns the value of the predictor at which the fitted proportion equals p, as a plain number. At the fitted proportion p, the log-odds are log(p / (1 - p)), so solve b0 + b1 * dose = log(p / (1 - p)) for dose.',
     run: 'function',
     fnName: 'dose_at',

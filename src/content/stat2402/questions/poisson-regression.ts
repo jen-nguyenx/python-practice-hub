@@ -12,6 +12,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'The `depth` coefficient is negative and its p-value is tiny. Which reading is right?',
     code: 'fit <- glm(stations ~ depth, family = poisson, data = quakes)\nsummary(fit)\n',
     options: [
@@ -27,6 +28,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'What is the rate ratio for an increase of 100 km in depth? Give your answer to two decimal places.',
     code: 'fit <- glm(stations ~ depth, family = poisson, data = quakes)\ncoef(fit)\n',
     answer: 'round(exp(100 * coef(fit)[["depth"]]), 2)',
@@ -38,6 +40,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'Using the coefficients above, what count does the model predict for an earthquake at 300 km depth? Give your answer to one decimal place.',
     code: 'fit <- glm(stations ~ depth, family = poisson, data = quakes)\ncoef(fit)\n',
     answer: 'round(predict(fit, data.frame(depth = 300), type = "response"), 1)',
@@ -50,6 +53,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'Which tension level is the baseline that `tensionM` and `tensionH` are compared against?',
     code: 'fit <- glm(breaks ~ tension, family = poisson, data = warpbreaks)\nsummary(fit)\n',
     options: [
@@ -65,6 +69,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'choice',
     marks: 3,
+    diff: 'easy',
     prompt: 'The rate ratio for `tensionH` is below 1. What does that mean?',
     code: 'fit <- glm(breaks ~ tension, family = poisson, data = warpbreaks)\nexp(coef(fit))\n',
     options: [
@@ -80,6 +85,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'predict',
     marks: 2,
+    diff: 'medium',
     prompt: 'Someone fits this model without setting `family`. What does the link turn out to be?',
     code: 'fit <- glm(count ~ spray, data = InsectSprays)\nfamily(fit)$link\n',
     choices: ['[1] "identity"', '[1] "log"', '[1] "logit"', '[1] "poisson"'],
@@ -90,6 +96,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'predict',
     marks: 2,
+    diff: 'medium',
     prompt: 'What does this print?',
     code: 'fit <- glm(breaks ~ tension, family = poisson, data = warpbreaks)\nnew <- data.frame(tension = "H")\npredict(fit, new)\n',
     choices: ['       1 \n3.075775', '       1 \n21.66667', '[1] 3.075775', '       1 \n-3.075775'],
@@ -100,6 +107,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'A council records cable faults at two kinds of site, watched for different numbers of months. What does the `regionsouth` rate ratio tell you?',
     code:
       'sites <- data.frame(\n' +
@@ -122,6 +130,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'In the `count ~ spray` model, the dispersion line reads "taken to be 1". What does that mean?',
     code: 'fit <- glm(count ~ spray, family = poisson, data = InsectSprays)\nsummary(fit)\n',
     options: [
@@ -137,6 +146,7 @@ const questions: StatQuestion[] = [
     lessonId: 'poisson-regression',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt: 'Write a function `predicted_count(fit, newdata)` that takes a fitted Poisson regression and a data frame of new rows, and returns the predicted counts as plain numbers (no names).',
     run: 'function',
     fnName: 'predicted_count',

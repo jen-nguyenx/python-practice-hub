@@ -13,6 +13,7 @@ const questions: StatQuestion[] = [
     lessonId: 'negative-binomial',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'Read Theta and its standard error at the bottom of this summary. What does the size of Theta tell you about these counts, compared with a Poisson model?',
     code: 'library(MASS)\nnb <- glm.nb(Days ~ Eth + Sex + Age + Lrn, data = quine)\nsummary(nb)\n',
     options: [
@@ -29,6 +30,7 @@ const questions: StatQuestion[] = [
     lessonId: 'negative-binomial',
     kind: 'number',
     marks: 3,
+    diff: 'hard',
     prompt: 'For a student with Eth = "A", Sex = "M", Age = "F3" and Lrn = "AL", read the fitted mean above and combine it with Theta from the model to get the negative binomial variance the model gives this student: mean + mean-squared / theta. Round to one decimal place.',
     code:
       'library(MASS)\n' +
@@ -46,6 +48,7 @@ const questions: StatQuestion[] = [
     lessonId: 'negative-binomial',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'anova() cannot test a Poisson fit against a negative binomial fit of the same formula, so the likelihood ratio statistic is worked out by hand instead, from twice the gap between the log-likelihoods. Its textbook chi-squared p-value on 1 degree of freedom is conservative here. Why?',
     code:
       'library(MASS)\n' +
@@ -67,6 +70,7 @@ const questions: StatQuestion[] = [
     lessonId: 'negative-binomial',
     kind: 'number',
     marks: 3,
+    diff: 'easy',
     prompt: 'By how much is the negative binomial\'s AIC below the Poisson\'s in the table above? Give it to one decimal place.',
     code:
       'library(MASS)\n' +
@@ -83,6 +87,7 @@ const questions: StatQuestion[] = [
     lessonId: 'negative-binomial',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: 'The quasi-Poisson variance is phi times the mean; the negative binomial variance is the mean plus mean-squared over theta. As the mean grows, how do these two extra-spread rules compare?',
     code:
       'library(MASS)\n' +
@@ -104,6 +109,7 @@ const questions: StatQuestion[] = [
     lessonId: 'negative-binomial',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'What does this print?',
     code:
       'library(MASS)\n' +
@@ -120,6 +126,7 @@ const questions: StatQuestion[] = [
     lessonId: 'negative-binomial',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'Read the three columns of standard errors above. Why are the quasi-Poisson ones bigger than the Poisson ones by the same multiple for every coefficient, while the negative binomial\'s move by a different amount for each one?',
     code:
       'fit <- glm(count ~ spray, family = poisson, data = InsectSprays)\n' +
@@ -141,6 +148,7 @@ const questions: StatQuestion[] = [
     lessonId: 'negative-binomial',
     kind: 'number',
     marks: 3,
+    diff: 'easy',
     prompt: 'Using the two log-likelihoods above, work out the likelihood ratio statistic: twice the gap between them. Give it to one decimal place.',
     code:
       'library(MASS)\n' +
@@ -158,6 +166,7 @@ const questions: StatQuestion[] = [
     lessonId: 'negative-binomial',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt: 'Write a function nb_extra(fit, mu) that takes a fitted glm.nb model and a mean mu, and returns how many times bigger the negative binomial variance at that mean is than the Poisson variance at the same mean: (mu + mu^2 / theta) / mu, simplified to 1 + mu / theta.',
     run: 'function',
     fnName: 'nb_extra',

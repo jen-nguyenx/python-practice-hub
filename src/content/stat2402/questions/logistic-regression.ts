@@ -12,6 +12,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'The response is 1 for a straight engine (`vs`) and 0 for a V-shaped one. What does this range tell you about fitting `vs` with `lm()`?',
     code: 'fit <- lm(vs ~ wt, data = mtcars)\nrange(fitted(fit))\n',
     options: [
@@ -27,6 +28,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'number',
     marks: 2,
+    diff: 'easy',
     prompt: 'The odds of an event are p / (1 - p). Using the probability shown above, what are the odds? Give your answer to two decimal places.',
     code: 'p <- 0.35\np\n',
     answer: 'p / (1 - p)',
@@ -38,6 +40,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt: 'Using the coefficients above, what probability of being a case does the model predict for someone aged 30? First get the log-odds (intercept + slope x age), then convert with `plogis()`. Give your answer to two decimal places.',
     code: 'fit <- glm(case ~ age, family = binomial, data = infert)\ncoef(fit)\n',
     answer: 'round(predict(fit, data.frame(age = 30), type = "response"), 2)',
@@ -50,6 +53,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'predict',
     marks: 2,
+    diff: 'medium',
     prompt: 'What does this print?',
     code: 'fit <- glm(vs ~ wt, family = binomial, data = mtcars)\nnew <- data.frame(wt = c(2, 4))\nround(predict(fit, new, type = "response"), 3)\n',
     choices: [
@@ -65,6 +69,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt: 'The `hp` value above is below 1, but only a little. What is the right way to read it?',
     code: 'fit <- glm(vs ~ hp, family = binomial, data = mtcars)\nexp(coef(fit))\n',
     options: [
@@ -80,6 +85,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'What does the interval in the `wt` row represent?',
     code: 'fit <- glm(vs ~ wt, family = binomial, data = mtcars)\nexp(confint(fit))\n',
     options: [
@@ -95,6 +101,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'Why does this summary use a `z value` column rather than the `t value` an `lm()` summary shows?',
     code: 'fit <- glm(case ~ age + parity + induced + spontaneous, family = binomial, data = infert)\nsummary(fit)\n',
     options: [
@@ -110,6 +117,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt: 'The residual deviance here is noticeably lower than the null deviance. What does that tell you?',
     code: 'fit <- glm(case ~ age + parity + induced + spontaneous, family = binomial, data = infert)\nsummary(fit)\n',
     options: [
@@ -125,6 +133,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'What does this print?',
     code: 'fit <- glm(vs ~ hp, family = binomial, data = mtcars)\nclass(fit)\n',
     choices: ['[1] "glm" "lm"', '[1] "glm"', '[1] "lm" "glm"', '[1] "binomial"'],
@@ -135,6 +144,7 @@ const questions: StatQuestion[] = [
     lessonId: 'logistic-regression',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt: 'Write a function `predicted_prob(fit, newdata)` that takes a fitted logistic regression and a data frame of new rows, and returns the predicted probabilities as plain numbers (no names).',
     run: 'function',
     fnName: 'predicted_prob',

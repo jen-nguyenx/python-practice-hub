@@ -15,10 +15,10 @@ function bank(): StatBank {
   const questions: StatQuestion[] = [];
   for (const l of LESSONS) {
     questions.push(
-      { id: `${l}-choice`, lessonId: l, kind: 'choice', marks: 2, prompt: 'p', explain: 'e', options: [{ text: 'right', correct: true }, { text: 'wrong' }, { text: 'also wrong' }] },
-      { id: `${l}-number`, lessonId: l, kind: 'number', marks: 3, prompt: 'p', explain: 'e', code: 'x', answer: 'y', tol: 0.006 },
-      { id: `${l}-predict`, lessonId: l, kind: 'predict', marks: 2, prompt: 'p', explain: 'e', code: 'x', choices: ['[1] 1', '[1] 2'] },
-      { id: `${l}-write`, lessonId: l, kind: 'write', marks: 5, prompt: 'p', explain: 'e', run: 'function', fnName: 'f', starter: 's', solution: 'f', tests: [] },
+      { id: `${l}-choice`, lessonId: l, kind: 'choice', marks: 2, diff: 'easy', prompt: 'p', explain: 'e', options: [{ text: 'right', correct: true }, { text: 'wrong' }, { text: 'also wrong' }] },
+      { id: `${l}-number`, lessonId: l, kind: 'number', marks: 3, diff: 'medium', prompt: 'p', explain: 'e', code: 'x', answer: 'y', tol: 0.006 },
+      { id: `${l}-predict`, lessonId: l, kind: 'predict', marks: 2, diff: 'easy', prompt: 'p', explain: 'e', code: 'x', choices: ['[1] 1', '[1] 2'] },
+      { id: `${l}-write`, lessonId: l, kind: 'write', marks: 5, diff: 'hard', prompt: 'p', explain: 'e', run: 'function', fnName: 'f', starter: 's', solution: 'f', tests: [] },
     );
   }
   const generated: StatBank['generated'] = {};
@@ -104,10 +104,23 @@ describe('papers', () => {
     expect(paper.reduce((n, p) => n + p.marks, 0)).toBe(MOCK_TOTAL_MARKS);
   });
 
-  it('prefers questions not seen in the last attempts', () => {
+  it('prefers questions not seen in the last attempts, even over harder ones', () => {
     const avoid = new Set(LESSONS.flatMap((l) => [`${l}-choice`, `${l}-number`]));
     const paper = buildMock(b, LESSONS, seededRng(3), avoid);
     expect(paper.filter((p) => p.q.kind !== 'write').every((p) => p.q.kind === 'predict')).toBe(true);
+  });
+
+  it('prefers a medium or hard question to an easy one when both are fresh', () => {
+    for (const seed of [1, 2, 3, 4, 5]) {
+      const reading = buildMock(b, LESSONS, seededRng(seed)).filter((p) => p.q.kind !== 'write');
+      expect(reading.every((p) => p.q.diff !== 'easy')).toBe(true);
+    }
+  });
+
+  it('keeps a practice test to one difficulty when asked', () => {
+    const picked = buildPractice(b, { lessonIds: LESSONS, count: 10, includeWrite: true, diff: 'easy' }, LESSONS, seededRng(2));
+    expect(picked.length).toBeGreaterThan(0);
+    expect(picked.every((p) => p.q.diff === 'easy')).toBe(true);
   });
 
   it('spreads a practice test across the chosen lessons', () => {
@@ -117,8 +130,8 @@ describe('papers', () => {
     expect(picked.some((p) => p.q.kind === 'write')).toBe(false);
   });
 
-  it('gives a lesson quiz every question written for that lesson', () => {
-    expect(buildQuiz(b, 'c').map((p) => p.q.id)).toEqual(['c-choice', 'c-number', 'c-predict', 'c-write']);
+  it('gives a lesson quiz every question written for that lesson, easy first and hard last', () => {
+    expect(buildQuiz(b, 'c').map((p) => p.q.id)).toEqual(['c-choice', 'c-predict', 'c-number', 'c-write']);
   });
 
   it('adds marks up per lesson', () => {

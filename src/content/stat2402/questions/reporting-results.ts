@@ -15,6 +15,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt:
       'This quasi-Poisson model compares the mean insect count under five sprays with spray A. The `sprayC` estimate is negative. What is the right way to turn it into something a grower can use?',
     code: 'fit <- glm(count ~ spray, family = quasipoisson, data = InsectSprays)\nsummary(fit)$coefficients\n',
@@ -35,6 +36,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'number',
     marks: 3,
+    diff: 'medium',
     prompt:
       'Using the coefficients below, what percentage change in the mean insect count does the `sprayC` estimate imply, compared with spray A? Give it to one decimal place.',
     code: 'fit <- glm(count ~ spray, family = quasipoisson, data = InsectSprays)\nsummary(fit)$coefficients\n',
@@ -49,6 +51,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt:
       'This negative binomial model of school absences compares ethnicity N with the baseline, ethnicity A, holding sex fixed. You want a 95% interval for the percentage change in mean days absent that the `EthN` row implies. Which is the correct way to build it?',
     code:
@@ -72,6 +75,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'number',
     marks: 3,
+    diff: 'easy',
     prompt:
       'The output gives a 95% interval, built on the link scale, for the predicted mean number of days absent for an ethnicity N, sex M child. What is the lower end of that interval? Give it to one decimal place.',
     code:
@@ -92,6 +96,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt:
       'Both lines below give a 95% interval for the chance of a straight engine (`vs`) in a 300 hp car, built two different ways. Which is the right one to report?',
     code:
@@ -118,6 +123,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'number',
     marks: 2,
+    diff: 'easy',
     prompt:
       'What percentage chance does the model give a 120 hp car of having a straight engine? Give a whole number.',
     code: 'fit <- glm(vs ~ hp, family = binomial, data = mtcars)\npredict(fit, data.frame(hp = 120), type = "response")\n',
@@ -132,6 +138,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'choice',
     marks: 3,
+    diff: 'hard',
     prompt: 'This is the odds ratio for an extra 10 hp. Which sentence reports it correctly?',
     code: 'fit <- glm(vs ~ hp, family = binomial, data = mtcars)\nexp(10 * coef(fit)[["hp"]])\n',
     options: [
@@ -151,6 +158,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'choice',
     marks: 2,
+    diff: 'easy',
     prompt:
       'A girth of 30 inches is nowhere near the widest tree measured. What is wrong with reporting the predicted volume below as a real prediction?',
     code: 'fit <- lm(Volume ~ Girth, data = trees)\nrange(trees$Girth)\npredict(fit, data.frame(Girth = 30))\n',
@@ -171,6 +179,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'choice',
     marks: 2,
+    diff: 'medium',
     prompt: "The `mag` row's p-value is well above 0.05. Which conclusion is right?",
     code: 'gfit <- glm(accel ~ mag, family = Gamma(link = "log"), data = attenu)\nsummary(gfit)$coefficients\n',
     options: [
@@ -190,6 +199,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'choice',
     marks: 3,
+    diff: 'medium',
     prompt:
       "A colleague wants to write: \"Lowering a car's horsepower would increase the chance it has a straight engine.\" What is wrong with that sentence, even though the `hp` row below is significant?",
     code: 'fit <- glm(vs ~ hp, family = binomial, data = mtcars)\nsummary(fit)$coefficients\n',
@@ -210,6 +220,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'predict',
     marks: 2,
+    diff: 'easy',
     prompt: 'What does this print?',
     code: 'library(MASS)\nnb <- glm.nb(Days ~ Eth + Sex, data = quine)\nnames(coef(nb))\n',
     choices: [
@@ -226,6 +237,7 @@ const questions: StatQuestion[] = [
     lessonId: 'reporting-results',
     kind: 'write',
     marks: 5,
+    diff: 'medium',
     prompt:
       'Write a function `pct_change(fit, term)` that takes a fitted glm and the name of one of its coefficients (a string) and returns, as a plain number rounded to 1 decimal place, the percentage change that coefficient implies on the response\'s mean — or, for a binomial model, on the odds.',
     run: 'function',
